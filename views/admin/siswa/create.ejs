@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Tambah Siswa - Admin Panel</title>
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+</head>
+
+<body id="page-top">
+    <div id="wrapper">
+        <%- include('../partials/sidebar') %>
+        
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <%- include('../partials/topbar', { user }) %>
+                
+                <div class="container-fluid">
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Tambah Siswa</h1>
+                        <a href="/admin/siswa" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-arrow-left"></i> Kembali
+                        </a>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Form Tambah Siswa</h6>
+                                </div>
+                                <div class="card-body">
+                                    <form action="/admin/siswa/create" method="POST" enctype="multipart/form-data">
+                                        <div class="form-group">
+                                            <label for="nis">NIS <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="nis" name="nis" required>
+                                            <small class="form-text text-muted">Nomor Induk Siswa (harus unik)</small>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="nama">Nama Lengkap <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="nama" name="nama" required>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="kelas">Kelas <span class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control" id="kelas" name="kelas" required placeholder="Contoh: XII RPL 1">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="jurusan">Jurusan</label>
+                                                    <select class="form-control" id="jurusan" name="jurusan">
+                                                        <option value="">Pilih Jurusan</option>
+                                                        <% if (typeof jurusan !== 'undefined') { %>
+                                                            <% jurusan.forEach(j => { %>
+                                                                <option value="<%= j.nama %>"><%= j.kode %> - <%= j.nama %></option>
+                                                            <% }) %>
+                                                        <% } %>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="foto">Foto Siswa</label>
+                                            <input type="file" class="form-control-file" id="foto" name="foto" accept="image/*">
+                                            <small class="form-text text-muted">Format: JPG, PNG, GIF. Maksimal 2MB</small>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="status" name="status" value="aktif" checked>
+                                                <label class="custom-control-label" for="status">Status Aktif</label>
+                                            </div>
+                                        </div>
+
+                                        <hr>
+                                        <div class="form-group mb-0">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-save"></i> Simpan
+                                            </button>
+                                            <a href="/admin/siswa" class="btn btn-secondary ml-2">
+                                                <i class="fas fa-times"></i> Batal
+                                            </a>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-info">
+                                        <i class="fas fa-info-circle"></i> Informasi
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="text-primary">Tips Pengisian:</h6>
+                                    <ul class="small">
+                                        <li>NIS harus unik dan tidak boleh sama dengan siswa lain</li>
+                                        <li>Nama lengkap sesuai dengan dokumen resmi</li>
+                                        <li>Format kelas: [Tingkat] [Jurusan] [Nomor], contoh: XII RPL 1</li>
+                                        <li>Foto akan digunakan untuk sistem presensi</li>
+                                    </ul>
+
+                                    <hr>
+                                    <h6 class="text-success">Alternatif:</h6>
+                                    <p class="small">Anda juga bisa melakukan sinkronisasi data siswa dari database CBT untuk mengimpor data secara otomatis.</p>
+                                    <a href="/admin/siswa" class="btn btn-info btn-sm">
+                                        <i class="fas fa-sync-alt"></i> Sinkronisasi CBT
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-warning">
+                                        <i class="fas fa-camera"></i> Preview Foto
+                                    </h6>
+                                </div>
+                                <div class="card-body text-center">
+                                    <div id="imagePreview" style="display: none;">
+                                        <img id="preview" src="" alt="Preview" class="img-thumbnail" style="max-width: 200px; max-height: 200px;">
+                                    </div>
+                                    <div id="noImage" class="text-muted">
+                                        <i class="fas fa-user fa-3x mb-2"></i>
+                                        <p>Belum ada foto dipilih</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <%- include('../partials/footer') %>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/assets/vendor/jquery/jquery.min.js"></script>
+    <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="/assets/js/sb-admin-2.min.js"></script>
+
+    <script>
+    // Preview image
+    document.getElementById('foto').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('preview').src = e.target.result;
+                document.getElementById('imagePreview').style.display = 'block';
+                document.getElementById('noImage').style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            document.getElementById('imagePreview').style.display = 'none';
+            document.getElementById('noImage').style.display = 'block';
+        }
+    });
+
+    // Auto-generate NIS suggestion
+    document.getElementById('kelas').addEventListener('blur', function() {
+        const kelas = this.value;
+        const nisField = document.getElementById('nis');
+        
+        if (kelas && !nisField.value) {
+            // Generate NIS suggestion based on current year and class
+            const year = new Date().getFullYear().toString().substr(-2);
+            const classCode = kelas.replace(/\s+/g, '').toUpperCase();
+            const randomNum = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+            nisField.value = year + classCode + randomNum;
+        }
+    });
+    </script>
+</body>
+</html>

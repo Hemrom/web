@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Admin Panel</title>
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+    <div id="wrapper">
+        <%- include('../partials/sidebar') %>
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <%- include('../partials/topbar', { user }) %>
+                <div class="container-fluid">
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Tambah Berita</h1>
+                        <a href="/admin/berita" class="d-none d-sm-inline-block btn btn-sm btn-secondary shadow-sm">
+                            <i class="fas fa-arrow-left fa-sm text-white-50"></i> Kembali
+                        </a>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Form Tambah Berita</h6>
+                                </div>
+                                <div class="card-body">
+                                    <form method="POST" action="/admin/berita/create" enctype="multipart/form-data">
+                                        <div class="form-group">
+                                            <label for="judul">Judul Berita *</label>
+                                            <input type="text" class="form-control" id="judul" name="judul" required>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="kategori">Kategori *</label>
+                                            <select class="form-control" id="kategori" name="kategori" required>
+                                                <option value="pengumuman">Pengumuman</option>
+                                                <option value="kegiatan">Kegiatan</option>
+                                                <option value="prestasi">Prestasi</option>
+                                                <option value="umum">Umum</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="konten">Konten Berita *</label>
+                                            <textarea class="form-control" id="konten" name="konten" rows="10" required></textarea>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="gambar">Gambar Berita (opsional)</label>
+                                            <input type="file" class="form-control-file" id="gambar" name="gambar" accept="image/*">
+                                            <small class="form-text text-muted">Format: JPG, PNG, GIF. Ukuran maksimal: 2MB</small>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="status">Status *</label>
+                                            <select class="form-control" id="status" name="status" required>
+                                                <option value="draft">Draft</option>
+                                                <option value="published">Published</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <button type="submit" class="btn btn-primary">Simpan</button>
+                                        <a href="/admin/berita" class="btn btn-secondary">Batal</a>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-4">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Panduan</h6>
+                                </div>
+                                <div class="card-body">
+                                    <h6>Tips Menulis Berita:</h6>
+                                    <ul class="small">
+                                        <li>Judul harus menarik dan informatif</li>
+                                        <li>Gunakan bahasa yang mudah dipahami</li>
+                                        <li>Sertakan gambar yang relevan</li>
+                                        <li>Pilih kategori yang sesuai</li>
+                                        <li>Gunakan status "Draft" untuk preview</li>
+                                        <li>Publish setelah yakin konten sudah benar</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <%- include('../partials/footer') %>
+        </div>
+    </div>
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+    <script src="/assets/vendor/jquery/jquery.min.js"></script>
+    <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="/assets/js/sb-admin-2.min.js"></script>
+</body>
+</html>

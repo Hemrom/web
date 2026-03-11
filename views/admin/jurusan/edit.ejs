@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Edit Jurusan - Admin Panel</title>
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+</head>
+
+<body id="page-top">
+    <div id="wrapper">
+        <%- include('../partials/sidebar') %>
+        
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <%- include('../partials/topbar', { user }) %>
+                
+                <div class="container-fluid">
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Edit Jurusan</h1>
+                        <a href="/admin/jurusan" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-arrow-left"></i> Kembali
+                        </a>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Form Edit Jurusan</h6>
+                                </div>
+                                <div class="card-body">
+                                    <form action="/admin/jurusan/edit/<%= jurusan.id %>" method="POST">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="kode">Kode Jurusan <span class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control" id="kode" name="kode" value="<%= jurusan.kode %>" required maxlength="10">
+                                                    <small class="form-text text-muted">Kode singkat jurusan (harus unik)</small>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="form-group">
+                                                    <label for="nama">Nama Jurusan <span class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control" id="nama" name="nama" value="<%= jurusan.nama %>" required maxlength="100">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="deskripsi">Deskripsi</label>
+                                            <textarea class="form-control" id="deskripsi" name="deskripsi" rows="4"><%= jurusan.deskripsi || '' %></textarea>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="kepala_jurusan">Kepala Jurusan</label>
+                                            <input type="text" class="form-control" id="kepala_jurusan" name="kepala_jurusan" value="<%= jurusan.kepala_jurusan || '' %>" maxlength="100">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="status">Status</label>
+                                            <select class="form-control" id="status" name="status" required>
+                                                <option value="aktif" <%= jurusan.status === 'aktif' ? 'selected' : '' %>>Aktif</option>
+                                                <option value="nonaktif" <%= jurusan.status === 'nonaktif' ? 'selected' : '' %>>Nonaktif</option>
+                                            </select>
+                                        </div>
+
+                                        <hr>
+                                        <div class="form-group mb-0">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-save"></i> Simpan Perubahan
+                                            </button>
+                                            <a href="/admin/jurusan" class="btn btn-secondary ml-2">
+                                                <i class="fas fa-times"></i> Batal
+                                            </a>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-info">
+                                        <i class="fas fa-info-circle"></i> Informasi Jurusan
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-sm table-borderless">
+                                        <tr>
+                                            <td><strong>ID:</strong></td>
+                                            <td><%= jurusan.id %></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Jumlah Siswa:</strong></td>
+                                            <td><span class="badge badge-info"><%= jumlahSiswa %> siswa</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Dibuat:</strong></td>
+                                            <td><%= new Date(jurusan.created_at).toLocaleDateString('id-ID') %></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Diperbarui:</strong></td>
+                                            <td><%= new Date(jurusan.updated_at).toLocaleDateString('id-ID') %></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <% if (jumlahSiswa > 0) { %>
+                            <div class="card shadow mb-4 border-left-warning">
+                                <div class="card-body">
+                                    <div class="text-warning small">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        <strong>Perhatian:</strong> Jurusan ini memiliki <%= jumlahSiswa %> siswa. Perubahan nama jurusan akan mempengaruhi data siswa.
+                                    </div>
+                                </div>
+                            </div>
+                            <% } %>
+
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-success">
+                                        <i class="fas fa-users"></i> Siswa Jurusan Ini
+                                    </h6>
+                                </div>
+                                <div class="card-body text-center">
+                                    <% if (jumlahSiswa > 0) { %>
+                                        <h3 class="text-success"><%= jumlahSiswa %></h3>
+                                        <p class="small text-muted">Siswa aktif</p>
+                                        <a href="/admin/siswa?jurusan=<%= encodeURIComponent(jurusan.nama) %>" class="btn btn-sm btn-success">
+                                            <i class="fas fa-eye"></i> Lihat Siswa
+                                        </a>
+                                    <% } else { %>
+                                        <i class="fas fa-users fa-3x text-muted mb-2"></i>
+                                        <p class="small text-muted">Belum ada siswa</p>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <%- include('../partials/footer') %>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/assets/vendor/jquery/jquery.min.js"></script>
+    <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="/assets/js/sb-admin-2.min.js"></script>
+
+    <script>
+    // Auto uppercase kode
+    document.getElementById('kode').addEventListener('input', function(e) {
+        this.value = this.value.toUpperCase();
+    });
+    </script>
+</body>
+</html>

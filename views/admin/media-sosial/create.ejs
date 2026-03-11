@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Admin Panel</title>
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+    <div id="wrapper">
+        <%- include('../partials/sidebar') %>
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <%- include('../partials/topbar', { user }) %>
+                <div class="container-fluid">
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Tambah Media Sosial</h1>
+                        <a href="/admin/media-sosial" class="d-none d-sm-inline-block btn btn-sm btn-secondary shadow-sm">
+                            <i class="fas fa-arrow-left fa-sm text-white-50"></i> Kembali
+                        </a>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Form Tambah Media Sosial</h6>
+                                </div>
+                                <div class="card-body">
+                                    <form action="/admin/media-sosial/create" method="POST">
+                                        <div class="form-group">
+                                            <label for="judul">Judul</label>
+                                            <input type="text" class="form-control" id="judul" name="judul" required>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="deskripsi">Deskripsi</label>
+                                            <textarea class="form-control" id="deskripsi" name="deskripsi" rows="3"></textarea>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="platform">Platform</label>
+                                            <select class="form-control" id="platform" name="platform" required onchange="updateEmbedHelp()">
+                                                <option value="">Pilih Platform</option>
+                                                <option value="tiktok">TikTok</option>
+                                                <option value="youtube">YouTube</option>
+                                                <option value="instagram">Instagram</option>
+                                                <option value="facebook">Facebook</option>
+                                                <option value="twitter">Twitter</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="embed_url">URL Embed</label>
+                                            <input type="url" class="form-control" id="embed_url" name="embed_url" required>
+                                            <small class="form-text text-muted" id="embedHelp">
+                                                Masukkan URL dari platform media sosial yang dipilih
+                                            </small>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urutan">Urutan</label>
+                                            <input type="number" class="form-control" id="urutan" name="urutan" value="0" min="0">
+                                            <small class="form-text text-muted">Urutan tampil (semakin kecil semakin atas)</small>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="status">Status</label>
+                                            <select class="form-control" id="status" name="status">
+                                                <option value="aktif">Aktif</option>
+                                                <option value="nonaktif">Non-aktif</option>
+                                            </select>
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary">Simpan</button>
+                                        <a href="/admin/media-sosial" class="btn btn-secondary">Batal</a>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Panduan URL Embed</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <strong>TikTok:</strong><br>
+                                        <small>https://www.tiktok.com/@username/video/1234567890</small>
+                                    </div>
+                                    <div class="mb-3">
+                                        <strong>YouTube:</strong><br>
+                                        <small>https://www.youtube.com/watch?v=VIDEO_ID<br>
+                                        atau https://youtu.be/VIDEO_ID</small>
+                                    </div>
+                                    <div class="mb-3">
+                                        <strong>Instagram:</strong><br>
+                                        <small>https://www.instagram.com/p/POST_ID/</small>
+                                    </div>
+                                    <div class="mb-3">
+                                        <strong>Facebook:</strong><br>
+                                        <small>URL video Facebook lengkap</small>
+                                    </div>
+                                    <div class="mb-3">
+                                        <strong>Twitter:</strong><br>
+                                        <small>https://twitter.com/username/status/TWEET_ID</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <%- include('../partials/footer') %>
+        </div>
+    </div>
+
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <script src="/assets/vendor/jquery/jquery.min.js"></script>
+    <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="/assets/js/sb-admin-2.min.js"></script>
+
+    <script>
+    function updateEmbedHelp() {
+        const platform = document.getElementById('platform').value;
+        const helpText = document.getElementById('embedHelp');
+        
+        switch(platform) {
+            case 'tiktok':
+                helpText.textContent = 'Contoh: https://www.tiktok.com/@username/video/1234567890';
+                break;
+            case 'youtube':
+                helpText.textContent = 'Contoh: https://www.youtube.com/watch?v=VIDEO_ID atau https://youtu.be/VIDEO_ID';
+                break;
+            case 'instagram':
+                helpText.textContent = 'Contoh: https://www.instagram.com/p/POST_ID/';
+                break;
+            case 'facebook':
+                helpText.textContent = 'Masukkan URL video Facebook lengkap';
+                break;
+            case 'twitter':
+                helpText.textContent = 'Contoh: https://twitter.com/username/status/TWEET_ID';
+                break;
+            default:
+                helpText.textContent = 'Masukkan URL dari platform media sosial yang dipilih';
+        }
+    }
+    </script>
+</body>
+</html>

@@ -1,0 +1,210 @@
+/* Frontend Theme - SMK Negeri 1 Kras */
+/* Color Variables */
+:root {
+    --primary-blue: #0ea5e9;
+    --primary-blue-dark: #0284c7;
+    --primary-blue-light: #38bdf8;
+    --secondary-blue: #0369a1;
+    --accent-blue: #7dd3fc;
+    --light-blue: #e0f2fe;
+    --dark-blue: #0c4a6e;
+    --gray-50: #f8fafc;
+    --gray-100: #f1f5f9;
+    --gray-200: #e2e8f0;
+    --gray-300: #cbd5e1;
+    --gray-400: #94a3b8;
+    --gray-500: #64748b;
+    --gray-600: #475569;
+    --gray-700: #334155;
+    --gray-800: #1e293b;
+    --gray-900: #0f172a;
+}
+
+* { 
+    font-family: 'Inter', sans-serif; 
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    line-height: 1.6;
+    color: var(--gray-700);
+}
+
+/* Header & Navigation */
+.navbar-modern {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 20px rgba(14, 165, 233, 0.1);
+    padding: 1rem 0;
+    transition: all 0.3s ease;
+}
+.navbar-modern.scrolled {
+    background: rgba(255, 255, 255, 0.98) !important;
+    box-shadow: 0 4px 30px rgba(14, 165, 233, 0.15);
+}
+.navbar-brand { 
+    font-weight: 700; 
+    color: var(--primary-blue) !important; 
+    font-size: 1.5rem;
+    text-decoration: none;
+}
+.navbar-brand:hover {
+    color: var(--primary-blue-dark) !important;
+    text-decoration: none;
+}
+.navbar-toggler {
+    border: none;
+    padding: 0.25rem 0.5rem;
+}
+.navbar-toggler:focus {
+    box-shadow: none;
+}
+.navbar-nav {
+    align-items: center;
+}
+.nav-item {
+    margin: 0 0.25rem;
+}
+.nav-link { 
+    font-weight: 500; 
+    color: var(--gray-600) !important; 
+    padding: 0.75rem 1rem !important;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+    text-decoration: none;
+}
+.nav-link:hover { 
+    color: var(--primary-blue) !important;
+    background-color: var(--light-blue);
+    text-decoration: none;
+}
+.nav-link.active {
+    color: var(--primary-blue) !important;
+    background-color: var(--light-blue);
+}
+
+/* Page Header */
+.page-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+    padding: 10rem 0 6rem;
+    color: white;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="rgba(255,255,255,0.05)" points="0,1000 1000,0 1000,1000"/></svg>');
+}
+.page-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+}
+.page-subtitle {
+    font-size: 1.3rem;
+    opacity: 0.9;
+    position: relative;
+    z-index: 1;
+}
+
+/* Content Section */
+.content-section {
+    padding: 6rem 0;
+    background: var(--gray-50);
+}
+
+/* Cards */
+.card-modern {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(14, 165, 233, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid var(--gray-100);
+}
+.card-modern:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(14, 165, 233, 0.15);
+}
+
+/* Buttons */
+.btn-primary {
+    background: var(--primary-blue);
+    border-color: var(--primary-blue);
+    color: white;
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+}
+.btn-primary:hover {
+    background: var(--primary-blue-dark);
+    border-color: var(--primary-blue-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(14, 165, 233, 0.3);
+}
+
+/* Footer */
+.footer {
+    background: var(--gray-900);
+    color: white;
+    padding: 4rem 0 2rem;
+}
+.footer-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: white;
+}
+.footer-link {
+    color: var(--gray-300);
+    text-decoration: none;
+    margin-bottom: 0.5rem;
+    display: block;
+    transition: color 0.3s ease;
+}
+.footer-link:hover {
+    color: var(--accent-blue);
+    text-decoration: none;
+}
+.footer-bottom {
+    border-top: 1px solid var(--gray-700);
+    margin-top: 3rem;
+    padding-top: 2rem;
+    text-align: center;
+    color: var(--gray-400);
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+    .navbar-collapse {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-top: 1rem;
+        padding: 1rem;
+    }
+    .nav-item {
+        margin: 0.25rem 0;
+    }
+    .nav-link {
+        padding: 0.75rem 1rem !important;
+        border-radius: 8px;
+    }
+    .page-title { font-size: 2.5rem; }
+}
+
+@media (max-width: 768px) {
+    .page-title { font-size: 2rem; }
+    .page-subtitle { font-size: 1rem; }
+}

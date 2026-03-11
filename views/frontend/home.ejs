@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Website Sekolah</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+    <link rel="alternate icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%230ea5e9'/><rect x='8' y='16' width='16' height='3' rx='1' fill='white'/><polygon points='6,16 26,16 24,12 8,12' fill='white'/><circle cx='24' cy='14' r='1' fill='%230284c7'/><line x1='24' y1='15' x2='24' y2='20' stroke='%230284c7' stroke-width='1'/><circle cx='24' cy='20' r='1.5' fill='%230284c7'/><text x='16' y='26' text-anchor='middle' font-family='Arial' font-size='6' font-weight='bold' fill='white'>SMK</text></svg>">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Color Variables */
+        :root {
+            --primary-blue: #0ea5e9;
+            --primary-blue-dark: #0284c7;
+            --primary-blue-light: #38bdf8;
+            --secondary-blue: #0369a1;
+            --accent-blue: #7dd3fc;
+            --light-blue: #e0f2fe;
+            --dark-blue: #0c4a6e;
+            --success-green: #10b981;
+            --warning-orange: #f59e0b;
+            --danger-red: #ef4444;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+        }
+        
+        * { 
+            font-family: 'Inter', sans-serif; 
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            line-height: 1.6;
+            color: var(--gray-700);
+        }
+        
+        /* Header & Navigation */
+        .navbar-modern {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(14, 165, 233, 0.1);
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+        .navbar-modern.scrolled {
+            background: rgba(255, 255, 255, 0.98) !important;
+            box-shadow: 0 4px 30px rgba(14, 165, 233, 0.15);
+        }
+        .navbar-brand { 
+            font-weight: 700; 
+            color: var(--primary-blue) !important; 
+            font-size: 1.5rem;
+            text-decoration: none;
+        }
+        .navbar-brand:hover {
+            color: var(--primary-blue-dark) !important;
+            text-decoration: none;
+        }
+        .navbar-toggler {
+            border: none;
+            padding: 0.25rem 0.5rem;
+        }
+        .navbar-toggler:focus {
+            box-shadow: none;
+        }
+        .navbar-nav {
+            align-items: center;
+        }
+        .nav-item {
+            margin: 0 0.25rem;
+        }
+        .nav-link { 
+            font-weight: 500; 
+            color: var(--gray-600) !important; 
+            padding: 0.75rem 1rem !important;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            text-decoration: none;
+        }
+        .nav-link:hover { 
+            color: var(--primary-blue) !important;
+            background-color: var(--light-blue);
+            text-decoration: none;
+        }
+        .nav-link.active {
+            color: var(--primary-blue) !important;
+            background-color: var(--light-blue);
+        }
+        
+        /* Hero Section with Slider */
+        .hero-section {
+            position: relative;
+            overflow: hidden;
+            padding-top: 80px;
+            min-height: 100vh;
+        }
+        .hero-slider {
+            position: relative;
+            height: 100vh;
+        }
+        .hero-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+        }
+        .hero-slide.active {
+            opacity: 1;
+        }
+        .hero-slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.2) 100%);
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            color: white;
+            max-width: 600px;
+        }
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.6), 0 2px 4px rgba(0,0,0,0.4);
+        }
+        .hero-subtitle {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            opacity: 0.95;
+            text-shadow: 0 3px 6px rgba(0,0,0,0.6), 0 1px 3px rgba(0,0,0,0.4);
+        }
+        .hero-description {
+            font-size: 1.1rem;
+            font-weight: 400;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.6), 0 1px 2px rgba(0,0,0,0.4);
+        }
+        .btn-hero {
+            background: white;
+            color: var(--primary-blue);
+            font-weight: 600;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            border: none;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .btn-hero:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            color: var(--primary-blue);
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.95);
+        }
+        
+        /* Slider Controls */
+        .slider-nav {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 3;
+        }
+        .slider-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+        }
+        .slider-dot.active {
+            background: white;
+            transform: scale(1.3);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .slider-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 3;
+            backdrop-filter: blur(5px);
+        }
+        .slider-arrow:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: translateY(-50%) scale(1.1);
+        }
+        .slider-arrow.prev {
+            left: 30px;
+        }
+        .slider-arrow.next {
+            right: 30px;
+        }
+        
+        /* Default Hero (fallback) */
+        .hero-default {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding-top: 80px;
+        }
+        .hero-default::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="rgba(255,255,255,0.1)" points="0,1000 1000,0 1000,1000"/></svg>');
+        }
+        
+        /* Stats Section */
+        .stats-section {
+            background: var(--gray-50);
+            padding: 5rem 0;
+        }
+        .stat-card {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(14, 165, 233, 0.08);
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease;
+            border: 1px solid var(--gray-100);
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(14, 165, 233, 0.15);
+        }
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary-blue);
+            margin-bottom: 0.5rem;
+        }
+        .stat-label {
+            font-size: 1.1rem;
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+        
+        /* Features Section */
+        .features-section {
+            padding: 6rem 0;
+            background: white;
+        }
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: var(--gray-800);
+        }
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--gray-600);
+            margin-bottom: 4rem;
+        }
+        .feature-card {
+            text-align: center;
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            background: white;
+            box-shadow: 0 4px 20px rgba(14, 165, 233, 0.08);
+            height: 100%;
+            transition: all 0.3s ease;
+            border: 1px solid var(--gray-100);
+        }
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(14, 165, 233, 0.15);
+        }
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            color: white;
+            font-size: 2rem;
+        }
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--gray-800);
+        }
+        .feature-desc {
+            color: var(--gray-600);
+            line-height: 1.6;
+        }
+        
+        /* News Section */
+        .news-section {
+            background: var(--gray-50);
+            padding: 6rem 0;
+        }
+        .news-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(14, 165, 233, 0.08);
+            transition: all 0.3s ease;
+            height: 100%;
+            border: 1px solid var(--gray-100);
+        }
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(14, 165, 233, 0.15);
+        }
+        .news-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        .news-badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: var(--primary-blue);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+        .news-content {
+            padding: 2rem;
+        }
+        .news-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--gray-800);
+            line-height: 1.4;
+        }
+        .news-excerpt {
+            color: var(--gray-600);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        .news-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--gray-500);
+        }
+        .news-meta a {
+            color: var(--primary-blue);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .news-meta a:hover {
+            color: var(--primary-blue-dark);
+        }
+        
+        /* Gallery Section */
+        .gallery-section {
+            padding: 6rem 0;
+            background: white;
+        }
+        .gallery-item {
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(14, 165, 233, 0.08);
+        }
+        .gallery-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(14, 165, 233, 0.15);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+        .gallery-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to top, rgba(14, 165, 233, 0.8), transparent);
+            display: flex;
+            align-items: flex-end;
+            padding: 1.5rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+        .gallery-title {
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            padding: 6rem 0;
+            color: white;
+            text-align: center;
+        }
+        .cta-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        .cta-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 3rem;
+        }
+        
+        /* Buttons */
+        .btn-primary {
+            background: var(--primary-blue);
+            border-color: var(--primary-blue);
+            color: white;
+            font-weight: 600;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: var(--primary-blue-dark);
+            border-color: var(--primary-blue-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(14, 165, 233, 0.3);
+        }
+        .btn-outline-primary {
+            color: var(--primary-blue);
+            border-color: var(--primary-blue);
+            font-weight: 600;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+        .btn-outline-primary:hover {
+            background: var(--primary-blue);
+            border-color: var(--primary-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(14, 165, 233, 0.3);
+        }
+        
+        /* Footer */
+        .footer {
+            background: var(--gray-900);
+            color: white;
+            padding: 4rem 0 2rem;
+        }
+        .footer-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+        .footer-link {
+            color: var(--gray-300);
+            text-decoration: none;
+            margin-bottom: 0.5rem;
+            display: block;
+            transition: color 0.3s ease;
+        }
+        .footer-link:hover {
+            color: var(--accent-blue);
+            text-decoration: none;
+        }
+        .footer-bottom {
+            border-top: 1px solid var(--gray-700);
+            margin-top: 3rem;
+            padding-top: 2rem;
+            text-align: center;
+            color: var(--gray-400);
+        }
+        
+        /* Responsive */
+        @media (max-width: 991px) {
+            .navbar-collapse {
+                background: white;
+                border-radius: 15px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                margin-top: 1rem;
+                padding: 1rem;
+            }
+            .nav-item {
+                margin: 0.25rem 0;
+            }
+            .nav-link {
+                padding: 0.75rem 1rem !important;
+                border-radius: 8px;
+            }
+            .hero-title { font-size: 2.5rem; }
+            .section-title { font-size: 2rem; }
+            .stat-number { font-size: 2rem; }
+        }
+        
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2rem; }
+            .hero-subtitle { font-size: 1rem; }
+            .section-title { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-modern fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-graduation-cap me-2"></i><%= profil.nama_sekolah || 'SMK Negeri 1 Kras' %>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">Beranda</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/profil">Profil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/berita">Berita</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/galeri">Galeri</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/guru">Guru</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/media-sosial">Media Sosial</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/kontak">Kontak</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section with Slider -->
+    <section class="hero-section">
+        <% if (slider && slider.length > 0) { %>
+            <div class="hero-slider">
+                <% slider.forEach((slide, index) => { %>
+                    <div class="hero-slide <%= index === 0 ? 'active' : '' %>" style="background-image: url('/uploads/<%= slide.gambar %>')">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <div class="hero-content">
+                                        <% if (slide.subjudul) { %>
+                                            <h2 class="hero-subtitle"><%= slide.subjudul %></h2>
+                                        <% } %>
+                                        <h1 class="hero-title"><%= slide.judul %></h1>
+                                        <% if (slide.deskripsi) { %>
+                                            <p class="hero-description"><%= slide.deskripsi %></p>
+                                        <% } %>
+                                        <% if (slide.link_url && slide.link_text) { %>
+                                            <a href="<%= slide.link_url %>" class="btn-hero"><%= slide.link_text %></a>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+                
+                <!-- Slider Navigation -->
+                <% if (slider.length > 1) { %>
+                    <button class="slider-arrow prev" onclick="changeSlide(-1)">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="slider-arrow next" onclick="changeSlide(1)">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    
+                    <div class="slider-nav">
+                        <% slider.forEach((slide, index) => { %>
+                            <div class="slider-dot <%= index === 0 ? 'active' : '' %>" onclick="goToSlide(<%= index %>)"></div>
+                        <% }); %>
+                    </div>
+                <% } %>
+            </div>
+        <% } else { %>
+            <!-- Default Hero (fallback) -->
+            <div class="hero-default">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-lg-6">
+                            <div class="hero-content">
+                                <h1 class="hero-title">Membangun Masa Depan Melalui Pendidikan</h1>
+                                <p class="hero-description"><%= profil.visi || 'Menciptakan generasi yang cerdas, berkarakter, dan siap menghadapi tantangan masa depan' %></p>
+                                <a href="/profil" class="btn-hero">Pelajari Lebih Lanjut</a>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="text-center">
+                                <img src="/assets/img/undraw_rocket.svg" alt="Education" style="max-width: 100%; height: auto;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-number">1000+</div>
+                                <div class="stat-label">Siswa Aktif</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-number">50+</div>
+                                <div class="stat-label">Guru Berpengalaman</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-number">25+</div>
+                                <div class="stat-label">Tahun Berpengalaman</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-number">95%</div>
+                                <div class="stat-label">Tingkat Kelulusan</div>
+                            </div>
+                        </div>
+                    </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <h2 class="section-title">Mengapa Memilih Kami?</h2>
+            <p class="section-subtitle">Kami berkomitmen memberikan pendidikan terbaik dengan fasilitas modern dan tenaga pengajar berkualitas</p>
+            
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                        </div>
+                        <h3 class="feature-title">Guru Berkualitas</h3>
+                        <p class="feature-desc">Tenaga pengajar berpengalaman dan bersertifikat yang siap membimbing siswa mencapai prestasi terbaik</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-laptop"></i>
+                        </div>
+                        <h3 class="feature-title">Fasilitas Modern</h3>
+                        <p class="feature-desc">Dilengkapi dengan fasilitas pembelajaran modern termasuk laboratorium komputer dan perpustakaan digital</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <h3 class="feature-title">Prestasi Gemilang</h3>
+                        <p class="feature-desc">Meraih berbagai prestasi di tingkat regional dan nasional dalam bidang akademik maupun non-akademik</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- News Section -->
+    <section class="news-section">
+        <div class="container">
+            <h2 class="section-title">Berita & Pengumuman Terbaru</h2>
+            <p class="section-subtitle">Ikuti perkembangan terbaru dari sekolah kami</p>
+            
+            <div class="row">
+                <% if (berita.length === 0) { %>
+                    <div class="col-12 text-center">
+                        <p class="text-muted">Belum ada berita terbaru</p>
+                    </div>
+                <% } else { %>
+                    <% berita.slice(0, 3).forEach(b => { %>
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="news-card">
+                                <div class="news-image" style="background-image: url('<%= b.gambar ? '/uploads/' + b.gambar : '/assets/img/undraw_posting_photo.svg' %>')">
+                                    <div class="news-badge"><%= b.kategori %></div>
+                                </div>
+                                <div class="news-content">
+                                    <h3 class="news-title"><%= b.judul %></h3>
+                                    <p class="news-excerpt"><%= b.konten.substring(0, 120) %>...</p>
+                                    <div class="news-meta">
+                                        <span><%= new Date(b.created_at).toLocaleDateString('id-ID') %></span>
+                                        <a href="/berita/<%= b.slug %>" class="text-primary font-weight-600">Baca Selengkapnya</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } %>
+            </div>
+            
+                    <div class="text-center mt-4">
+                        <a href="/berita" class="btn btn-primary btn-lg">Lihat Semua Berita</a>
+                    </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="gallery-section">
+        <div class="container">
+            <h2 class="section-title">Galeri Kegiatan</h2>
+            <p class="section-subtitle">Dokumentasi kegiatan dan prestasi siswa-siswi kami</p>
+            
+            <div class="row">
+                <% if (galeri.length === 0) { %>
+                    <div class="col-12 text-center">
+                        <p class="text-muted">Belum ada foto galeri</p>
+                    </div>
+                <% } else { %>
+                    <% galeri.slice(0, 6).forEach(g => { %>
+                        <div class="col-lg-4 col-md-6">
+                            <div class="gallery-item">
+                                <img src="/uploads/<%= g.gambar %>" alt="<%= g.judul %>">
+                                <div class="gallery-overlay">
+                                    <div class="gallery-title"><%= g.judul %></div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } %>
+            </div>
+            
+            <div class="text-center mt-4">
+                <a href="/galeri" class="btn btn-outline-primary btn-lg">Lihat Semua Galeri</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2 class="cta-title">Bergabunglah Dengan Kami</h2>
+            <p class="cta-subtitle">Wujudkan impian pendidikan terbaik untuk masa depan yang cerah</p>
+            <a href="/kontak" class="btn btn-hero btn-lg">Hubungi Kami Sekarang</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <h3 class="footer-title"><%= profil.nama_sekolah || 'Sekolah Kita' %></h3>
+                    <p class="text-muted">Memberikan pendidikan berkualitas untuk menciptakan generasi yang cerdas dan berkarakter.</p>
+                    <div class="mt-3">
+                        <a href="#" class="text-white mr-3"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white mr-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white mr-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h4 class="footer-title">Menu</h4>
+                    <a href="/" class="footer-link">Beranda</a>
+                    <a href="/profil" class="footer-link">Profil</a>
+                    <a href="/berita" class="footer-link">Berita</a>
+                    <a href="/galeri" class="footer-link">Galeri</a>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h4 class="footer-title">Informasi</h4>
+                    <a href="/guru" class="footer-link">Guru & Staff</a>
+                    <a href="/kontak" class="footer-link">Kontak</a>
+                    <a href="#" class="footer-link">Fasilitas</a>
+                    <a href="#" class="footer-link">Prestasi</a>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <h4 class="footer-title">Kontak Kami</h4>
+                    <p class="text-muted">
+                        <i class="fas fa-map-marker-alt mr-2"></i>
+                        <%= profil.alamat || 'Alamat Sekolah' %>
+                    </p>
+                    <p class="text-muted">
+                        <i class="fas fa-phone mr-2"></i>
+                        <%= profil.telepon || '(021) 12345678' %>
+                    </p>
+                    <p class="text-muted">
+                        <i class="fas fa-envelope mr-2"></i>
+                        <%= profil.email || 'info@sekolah.sch.id' %>
+                    </p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 <%= profil.nama_sekolah || 'Website Sekolah' %>. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <script>
+        // Smooth scrolling
+        $('a[href^="#"]').on('click', function(event) {
+            var target = $(this.getAttribute('href'));
+            if( target.length ) {
+                event.preventDefault();
+                $('html, body').stop().animate({
+                    scrollTop: target.offset().top - 80
+                }, 1000);
+            }
+        });
+        
+        // Navbar background on scroll
+        $(window).scroll(function() {
+            if ($(window).scrollTop() > 50) {
+                $('.navbar-modern').addClass('scrolled');
+            } else {
+                $('.navbar-modern').removeClass('scrolled');
+            }
+        });
+        
+        // Initialize tooltips and popovers
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+        
+        // Slider functionality
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.hero-slide');
+        const dots = document.querySelectorAll('.slider-dot');
+        const totalSlides = slides.length;
+        
+        function showSlide(index) {
+            // Hide all slides
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+            
+            // Show current slide
+            if (slides[index]) {
+                slides[index].classList.add('active');
+            }
+            if (dots[index]) {
+                dots[index].classList.add('active');
+            }
+        }
+        
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            showSlide(currentSlide);
+        }
+        
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            showSlide(currentSlide);
+        }
+        
+        function goToSlide(index) {
+            currentSlide = index;
+            showSlide(currentSlide);
+        }
+        
+        function changeSlide(direction) {
+            if (direction === 1) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+        }
+        
+        // Auto-play slider
+        if (totalSlides > 1) {
+            setInterval(nextSlide, 5000); // Change slide every 5 seconds
+        }
+    </script>
+</body>
+</html>

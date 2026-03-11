@@ -1,0 +1,56 @@
+========================================
+CARA MENJALANKAN WEBSITE SEKOLAH
+========================================
+
+LANGKAH 1: SETUP DATABASE
+--------------------------
+Buka MySQL (phpMyAdmin, MySQL Workbench, atau Command Line)
+Jalankan semua query yang ada di file: config/database.sql
+
+Atau copy-paste query ini ke MySQL:
+
+CREATE DATABASE IF NOT EXISTS sekolah_db;
+USE sekolah_db;
+
+(lalu copy semua isi file config/database.sql)
+
+LANGKAH 2: KONFIGURASI
+-----------------------
+File .env sudah dibuat dengan konfigurasi default:
+- DB_HOST=localhost
+- DB_USER=root
+- DB_PASSWORD= (kosong)
+- DB_NAME=sekolah_db
+
+Jika MySQL Anda berbeda, edit file .env
+
+LANGKAH 3: JALANKAN SERVER
+---------------------------
+Cara 1: Double click file START.bat
+
+Cara 2: Buka terminal/cmd di folder ini, lalu ketik:
+npm start
+
+LANGKAH 4: AKSES WEBSITE
+-------------------------
+- Website Public: http://localhost:3000
+- Admin Panel: http://localhost:3000/admin
+
+LOGIN ADMIN:
+Username: admin
+Password: admin123
+
+========================================
+TROUBLESHOOTING
+========================================
+
+Error: Unknown database 'sekolah_db'
+Solusi: Jalankan file config/database.sql di MySQL
+
+Error: ECONNREFUSED
+Solusi: Pastikan MySQL service sudah running
+
+Error: Cannot find module
+Solusi: Jalankan: npm install
+
+========================================

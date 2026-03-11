@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Admin Panel</title>
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="/assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+    <div id="wrapper">
+        <%- include('partials/sidebar') %>
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <%- include('partials/topbar', { user }) %>
+                <div class="container-fluid">
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Kontak Masuk</h1>
+                    </div>
+
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Pesan dari Pengunjung</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Tanggal</th>
+                                            <th>Nama</th>
+                                            <th>Email</th>
+                                            <th>Subjek</th>
+                                            <th>Pesan</th>
+                                            <th>Status</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% if (kontak.length === 0) { %>
+                                            <tr>
+                                                <td colspan="8" class="text-center">Belum ada pesan masuk</td>
+                                            </tr>
+                                        <% } else { %>
+                                            <% kontak.forEach((item, index) => { %>
+                                                <tr>
+                                                    <td><%= index + 1 %></td>
+                                                    <td><%= new Date(item.created_at).toLocaleDateString('id-ID') %></td>
+                                                    <td><%= item.nama %></td>
+                                                    <td><%= item.email %></td>
+                                                    <td><%= item.subjek || '-' %></td>
+                                                    <td>
+                                                        <small><%= item.pesan.substring(0, 50) %>...</small>
+                                                        <button type="button" class="btn btn-sm btn-link" data-toggle="modal" data-target="#pesanModal<%= item.id %>">
+                                                            Lihat
+                                                        </button>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge badge-<%= item.status === 'baru' ? 'primary' : item.status === 'dibaca' ? 'info' : 'success' %>">
+                                                            <%= item.status %>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <form method="POST" action="/admin/kontak/update-status/<%= item.id %>" style="display: inline;">
+                                                            <select name="status" class="form-control form-control-sm" onchange="this.form.submit()">
+                                                                <option value="baru" <%= item.status === 'baru' ? 'selected' : '' %>>Baru</option>
+                                                                <option value="dibaca" <%= item.status === 'dibaca' ? 'selected' : '' %>>Dibaca</option>
+                                                                <option value="dibalas" <%= item.status === 'dibalas' ? 'selected' : '' %>>Dibalas</option>
+                                                            </select>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                                
+                                                <!-- Modal -->
+                                                <div class="modal fade" id="pesanModal<%= item.id %>" tabindex="-1" role="dialog">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title">Pesan dari <%= item.nama %></h5>
+                                                                <button type="button" class="close" data-dismiss="modal">
+                                                                    <span>&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p><strong>Email:</strong> <%= item.email %></p>
+                                                                <p><strong>Subjek:</strong> <%= item.subjek || '-' %></p>
+                                                                <p><strong>Tanggal:</strong> <%= new Date(item.created_at).toLocaleString('id-ID') %></p>
+                                                                <hr>
+                                                                <p><strong>Pesan:</strong></p>
+                                                                <p><%= item.pesan %></p>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <a href="mailto:<%= item.email %>" class="btn btn-primary">Balas via Email</a>
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <% }); %>
+                                        <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <%- include('partials/footer') %>
+        </div>
+    </div>
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+    <script src="/assets/vendor/jquery/jquery.min.js"></script>
+    <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="/assets/js/sb-admin-2.min.js"></script>
+    <script src="/assets/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="/assets/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="/assets/js/demo/datatables-demo.js"></script>
+</body>
+</html>

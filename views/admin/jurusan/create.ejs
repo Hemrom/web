@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Tambah Jurusan - Admin Panel</title>
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+</head>
+
+<body id="page-top">
+    <div id="wrapper">
+        <%- include('../partials/sidebar') %>
+        
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <%- include('../partials/topbar', { user }) %>
+                
+                <div class="container-fluid">
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Tambah Jurusan</h1>
+                        <a href="/admin/jurusan" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-arrow-left"></i> Kembali
+                        </a>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Form Tambah Jurusan</h6>
+                                </div>
+                                <div class="card-body">
+                                    <form action="/admin/jurusan/create" method="POST">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="kode">Kode Jurusan <span class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control" id="kode" name="kode" required maxlength="10" placeholder="Contoh: TKJ">
+                                                    <small class="form-text text-muted">Kode singkat jurusan (harus unik)</small>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="form-group">
+                                                    <label for="nama">Nama Jurusan <span class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control" id="nama" name="nama" required maxlength="100" placeholder="Contoh: Teknik Komputer dan Jaringan">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="deskripsi">Deskripsi</label>
+                                            <textarea class="form-control" id="deskripsi" name="deskripsi" rows="4" placeholder="Deskripsi singkat tentang jurusan ini..."></textarea>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="kepala_jurusan">Kepala Jurusan</label>
+                                            <input type="text" class="form-control" id="kepala_jurusan" name="kepala_jurusan" maxlength="100" placeholder="Nama kepala jurusan">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="status">Status</label>
+                                            <select class="form-control" id="status" name="status" required>
+                                                <option value="aktif" selected>Aktif</option>
+                                                <option value="nonaktif">Nonaktif</option>
+                                            </select>
+                                        </div>
+
+                                        <hr>
+                                        <div class="form-group mb-0">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-save"></i> Simpan
+                                            </button>
+                                            <a href="/admin/jurusan" class="btn btn-secondary ml-2">
+                                                <i class="fas fa-times"></i> Batal
+                                            </a>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-info">
+                                        <i class="fas fa-info-circle"></i> Informasi
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="text-primary">Tips Pengisian:</h6>
+                                    <ul class="small">
+                                        <li>Kode jurusan harus unik dan singkat (contoh: TKJ, RPL, MM)</li>
+                                        <li>Nama jurusan harus lengkap dan jelas</li>
+                                        <li>Deskripsi membantu siswa memahami jurusan</li>
+                                        <li>Kepala jurusan bisa diisi nanti jika belum ada</li>
+                                    </ul>
+
+                                    <hr>
+                                    <h6 class="text-success">Contoh Jurusan:</h6>
+                                    <ul class="small">
+                                        <li><strong>TKJ</strong> - Teknik Komputer dan Jaringan</li>
+                                        <li><strong>RPL</strong> - Rekayasa Perangkat Lunak</li>
+                                        <li><strong>MM</strong> - Multimedia</li>
+                                        <li><strong>TKR</strong> - Teknik Kendaraan Ringan</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="card shadow mb-4 border-left-warning">
+                                <div class="card-body">
+                                    <div class="text-warning small">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        <strong>Catatan:</strong> Setelah jurusan dibuat, sistem akan otomatis mendeteksi siswa berdasarkan nama kelas yang mengandung kode jurusan.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <%- include('../partials/footer') %>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/assets/vendor/jquery/jquery.min.js"></script>
+    <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="/assets/js/sb-admin-2.min.js"></script>
+
+    <script>
+    // Auto uppercase kode
+    document.getElementById('kode').addEventListener('input', function(e) {
+        this.value = this.value.toUpperCase();
+    });
+    </script>
+</body>
+</html>

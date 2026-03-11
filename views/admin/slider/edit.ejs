@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Admin Panel</title>
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+    <div id="wrapper">
+        <%- include('../partials/sidebar') %>
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <%- include('../partials/topbar', { user }) %>
+                <div class="container-fluid">
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Edit Slider</h1>
+                        <a href="/admin/slider" class="d-none d-sm-inline-block btn btn-sm btn-secondary shadow-sm">
+                            <i class="fas fa-arrow-left fa-sm text-white-50"></i> Kembali
+                        </a>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Form Edit Slider</h6>
+                                </div>
+                                <div class="card-body">
+                                    <form method="POST" action="/admin/slider/edit/<%= slider.id %>" enctype="multipart/form-data">
+                                        <div class="form-group">
+                                            <label for="judul">Judul *</label>
+                                            <input type="text" class="form-control" id="judul" name="judul" value="<%= slider.judul %>" required>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="subjudul">Subjudul</label>
+                                            <input type="text" class="form-control" id="subjudul" name="subjudul" value="<%= slider.subjudul || '' %>">
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="deskripsi">Deskripsi</label>
+                                            <textarea class="form-control" id="deskripsi" name="deskripsi" rows="3"><%= slider.deskripsi || '' %></textarea>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="gambar">Gambar Slider</label>
+                                            <% if (slider.gambar) { %>
+                                                <div class="mb-2">
+                                                    <img src="/uploads/<%= slider.gambar %>" alt="Current Image" style="max-width: 300px; height: auto; border-radius: 5px;">
+                                                </div>
+                                            <% } %>
+                                            <input type="file" class="form-control-file" id="gambar" name="gambar" accept="image/*">
+                                            <small class="form-text text-muted">Kosongkan jika tidak ingin mengubah gambar. Format: JPG, PNG, GIF. Ukuran maksimal: 2MB.</small>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="link_url">URL Link (opsional)</label>
+                                            <input type="url" class="form-control" id="link_url" name="link_url" value="<%= slider.link_url || '' %>" placeholder="https://example.com">
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="link_text">Teks Link (opsional)</label>
+                                            <input type="text" class="form-control" id="link_text" name="link_text" value="<%= slider.link_text || '' %>" placeholder="Pelajari Lebih Lanjut">
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="urutan">Urutan</label>
+                                            <input type="number" class="form-control" id="urutan" name="urutan" value="<%= slider.urutan %>" min="0">
+                                            <small class="form-text text-muted">Semakin kecil angka, semakin awal ditampilkan</small>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="status">Status</label>
+                                            <select class="form-control" id="status" name="status">
+                                                <option value="aktif" <%= slider.status === 'aktif' ? 'selected' : '' %>>Aktif</option>
+                                                <option value="nonaktif" <%= slider.status === 'nonaktif' ? 'selected' : '' %>>Non-aktif</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <button type="submit" class="btn btn-primary">Update</button>
+                                        <a href="/admin/slider" class="btn btn-secondary">Batal</a>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-4">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Panduan</h6>
+                                </div>
+                                <div class="card-body">
+                                    <h6>Tips Membuat Slider:</h6>
+                                    <ul class="small">
+                                        <li>Gunakan gambar dengan resolusi tinggi (1920x1080px)</li>
+                                        <li>Pastikan teks pada gambar mudah dibaca</li>
+                                        <li>Judul sebaiknya singkat dan menarik</li>
+                                        <li>Deskripsi maksimal 2-3 kalimat</li>
+                                        <li>Atur urutan sesuai prioritas</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <%- include('../partials/footer') %>
+        </div>
+    </div>
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+    <script src="/assets/vendor/jquery/jquery.min.js"></script>
+    <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="/assets/js/sb-admin-2.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Admin Panel</title>
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="/assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+    <div id="wrapper">
+        <%- include('../partials/sidebar') %>
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <%- include('../partials/topbar', { user }) %>
+                <div class="container-fluid">
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Kelola Berita</h1>
+                        <a href="/admin/berita/create" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                            <i class="fas fa-plus fa-sm text-white-50"></i> Tambah Berita
+                        </a>
+                    </div>
+
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Data Berita</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Gambar</th>
+                                            <th>Judul</th>
+                                            <th>Kategori</th>
+                                            <th>Penulis</th>
+                                            <th>Status</th>
+                                            <th>Tanggal</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% if (berita.length === 0) { %>
+                                            <tr>
+                                                <td colspan="8" class="text-center">Belum ada data berita</td>
+                                            </tr>
+                                        <% } else { %>
+                                            <% berita.forEach((item, index) => { %>
+                                                <tr>
+                                                    <td><%= index + 1 %></td>
+                                                    <td>
+                                                        <% if (item.gambar) { %>
+                                                            <img src="/uploads/<%= item.gambar %>" alt="<%= item.judul %>" 
+                                                                 style="width: 60px; height: 40px; object-fit: cover; border-radius: 5px;">
+                                                        <% } else { %>
+                                                            <span class="text-muted">-</span>
+                                                        <% } %>
+                                                    </td>
+                                                    <td><%= item.judul %></td>
+                                                    <td><span class="badge badge-info"><%= item.kategori %></span></td>
+                                                    <td><%= item.penulis || '-' %></td>
+                                                    <td>
+                                                        <span class="badge badge-<%= item.status === 'published' ? 'success' : 'secondary' %>">
+                                                            <%= item.status %>
+                                                        </span>
+                                                    </td>
+                                                    <td><%= new Date(item.created_at).toLocaleDateString('id-ID') %></td>
+                                                    <td>
+                                                        <a href="/admin/berita/edit/<%= item.id %>" class="btn btn-warning btn-sm">
+                                                            <i class="fas fa-edit"></i>
+                                                        </a>
+                                                        <form method="POST" action="/admin/berita/delete/<%= item.id %>" 
+                                                              style="display: inline;" 
+                                                              onsubmit="return confirm('Yakin ingin menghapus berita ini?')">
+                                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            <% }); %>
+                                        <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <%- include('../partials/footer') %>
+        </div>
+    </div>
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+    <script src="/assets/vendor/jquery/jquery.min.js"></script>
+    <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="/assets/js/sb-admin-2.min.js"></script>
+    <script src="/assets/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="/assets/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="/assets/js/demo/datatables-demo.js"></script>
+</body>
+</html>

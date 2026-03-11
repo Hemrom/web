@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Edit Siswa - Admin Panel</title>
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+</head>
+
+<body id="page-top">
+    <div id="wrapper">
+        <%- include('../partials/sidebar') %>
+        
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <%- include('../partials/topbar', { user }) %>
+                
+                <div class="container-fluid">
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Edit Siswa</h1>
+                        <a href="/admin/siswa" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-arrow-left"></i> Kembali
+                        </a>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Form Edit Siswa</h6>
+                                </div>
+                                <div class="card-body">
+                                    <form action="/admin/siswa/edit/<%= siswa.id %>" method="POST" enctype="multipart/form-data">
+                                        <div class="form-group">
+                                            <label for="nis">NIS <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="nis" name="nis" value="<%= siswa.nis %>" required>
+                                            <small class="form-text text-muted">Nomor Induk Siswa (harus unik)</small>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="nama">Nama Lengkap <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="nama" name="nama" value="<%= siswa.nama %>" required>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="kelas">Kelas <span class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control" id="kelas" name="kelas" value="<%= siswa.kelas %>" required placeholder="Contoh: XII RPL 1">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="jurusan">Jurusan</label>
+                                                    <select class="form-control" id="jurusan" name="jurusan">
+                                                        <option value="">Pilih Jurusan</option>
+                                                        <% if (typeof jurusan !== 'undefined') { %>
+                                                            <% jurusan.forEach(j => { %>
+                                                                <option value="<%= j.nama %>" <%= siswa.jurusan === j.nama ? 'selected' : '' %>><%= j.kode %> - <%= j.nama %></option>
+                                                            <% }) %>
+                                                        <% } %>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="foto">Foto Siswa</label>
+                                            <input type="file" class="form-control-file" id="foto" name="foto" accept="image/*">
+                                            <small class="form-text text-muted">Format: JPG, PNG, GIF. Maksimal 2MB. Kosongkan jika tidak ingin mengubah foto.</small>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="status">Status</label>
+                                            <select class="form-control" id="status" name="status" required>
+                                                <option value="aktif" <%= siswa.status === 'aktif' ? 'selected' : '' %>>Aktif</option>
+                                                <option value="nonaktif" <%= siswa.status === 'nonaktif' ? 'selected' : '' %>>Nonaktif</option>
+                                            </select>
+                                        </div>
+
+                                        <hr>
+                                        <div class="form-group mb-0">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-save"></i> Simpan Perubahan
+                                            </button>
+                                            <a href="/admin/siswa" class="btn btn-secondary ml-2">
+                                                <i class="fas fa-times"></i> Batal
+                                            </a>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-warning">
+                                        <i class="fas fa-camera"></i> Foto Saat Ini
+                                    </h6>
+                                </div>
+                                <div class="card-body text-center">
+                                    <% if (siswa.foto) { %>
+                                        <img src="/uploads/siswa/<%= siswa.foto %>" alt="Foto Siswa" class="img-thumbnail mb-3" style="max-width: 200px; max-height: 200px;">
+                                        <p class="small text-muted">Foto saat ini</p>
+                                    <% } else { %>
+                                        <div class="text-muted">
+                                            <i class="fas fa-user fa-3x mb-2"></i>
+                                            <p>Belum ada foto</p>
+                                        </div>
+                                    <% } %>
+                                    
+                                    <div id="imagePreview" style="display: none;">
+                                        <hr>
+                                        <img id="preview" src="" alt="Preview" class="img-thumbnail" style="max-width: 200px; max-height: 200px;">
+                                        <p class="small text-info">Preview foto baru</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-info">
+                                        <i class="fas fa-info-circle"></i> Informasi Siswa
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-sm table-borderless">
+                                        <tr>
+                                            <td><strong>ID:</strong></td>
+                                            <td><%= siswa.id %></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Dibuat:</strong></td>
+                                            <td><%= new Date(siswa.created_at).toLocaleDateString('id-ID') %></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Diperbarui:</strong></td>
+                                            <td><%= new Date(siswa.updated_at).toLocaleDateString('id-ID') %></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-success">
+                                        <i class="fas fa-chart-line"></i> Statistik Presensi
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <p class="small text-muted">Fitur statistik presensi akan tersedia setelah sistem presensi diimplementasikan.</p>
+                                    <div class="text-center">
+                                        <i class="fas fa-calendar-check fa-2x text-muted"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <%- include('../partials/footer') %>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/assets/vendor/jquery/jquery.min.js"></script>
+    <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="/assets/js/sb-admin-2.min.js"></script>
+
+    <script>
+    // Preview image
+    document.getElementById('foto').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('preview').src = e.target.result;
+                document.getElementById('imagePreview').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            document.getElementById('imagePreview').style.display = 'none';
+        }
+    });
+    </script>
+</body>
+</html>
