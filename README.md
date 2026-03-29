@@ -254,3 +254,4 @@ Proyek ini dibuat khusus untuk SMK Negeri 1 Kras.
 **Status**: Production Ready ✅  
 **Version**: 1.0.0  
 **Last Updated**: 2024
+# website
