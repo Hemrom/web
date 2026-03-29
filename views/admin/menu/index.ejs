@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Admin Panel</title>
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <%- include('../partials/sidebar') %>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <%- include('../partials/topbar', { user }) %>
+            <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Kelola Menu Navigasi</h1>
+                    <a href="/admin/menu/create" class="btn btn-sm btn-primary shadow-sm">
+                        <i class="fas fa-plus fa-sm text-white-50"></i> Tambah Menu
+                    </a>
+                </div>
+
+                <% if (success) { %>
+                <div class="alert alert-success alert-dismissible fade show">
+                    <% if (success === 'created') { %>Menu berhasil ditambahkan.
+                    <% } else if (success === 'updated') { %>Menu berhasil diperbarui.
+                    <% } else if (success === 'deleted') { %>Menu berhasil dihapus.
+                    <% } else { %>Operasi berhasil.<% } %>
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                </div>
+                <% } %>
+                <% if (error) { %>
+                <div class="alert alert-danger alert-dismissible fade show">
+                    <% if (error === 'not_found') { %>Menu tidak ditemukan.
+                    <% } else { %>Terjadi kesalahan.<% } %>
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                </div>
+                <% } %>
+
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Daftar Menu</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Label</th>
+                                        <th>URL</th>
+                                        <th>Urutan</th>
+                                        <th>Icon</th>
+                                        <th>Target</th>
+                                        <th>Status</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (menus.length === 0) { %>
+                                    <tr><td colspan="7" class="text-center">Belum ada menu</td></tr>
+                                    <% } else { %>
+                                    <% menus.forEach(menu => { %>
+                                    <tr>
+                                        <td>
+                                            <% if (menu.icon) { %><i class="<%= menu.icon %> mr-1"></i><% } %>
+                                            <strong><%= menu.label %></strong>
+                                        </td>
+                                        <td><%= menu.url %></td>
+                                        <td><%= menu.urutan %></td>
+                                        <td><small class="text-muted"><%= menu.icon || '-' %></small></td>
+                                        <td><%= menu.target %></td>
+                                        <td>
+                                            <span class="badge badge-<%= menu.status === 'aktif' ? 'success' : 'secondary' %> toggle-status"
+                                                  data-id="<%= menu.id %>" style="cursor:pointer;">
+                                                <%= menu.status %>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="/admin/menu/edit/<%= menu.id %>" class="btn btn-warning btn-sm">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <form method="POST" action="/admin/menu/delete/<%= menu.id %>" style="display:inline"
+                                                  onsubmit="return confirm('Hapus menu <%= menu.label %>? Sub-menu juga akan ikut terhapus.')">
+                                                <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <% if (menu.children && menu.children.length > 0) { %>
+                                    <% menu.children.forEach(child => { %>
+                                    <tr class="table-light">
+                                        <td style="padding-left:2.5rem;">
+                                            <i class="fas fa-level-up-alt fa-rotate-90 text-muted mr-1"></i>
+                                            <% if (child.icon) { %><i class="<%= child.icon %> mr-1"></i><% } %>
+                                            <%= child.label %>
+                                        </td>
+                                        <td><%= child.url %></td>
+                                        <td><%= child.urutan %></td>
+                                        <td><small class="text-muted"><%= child.icon || '-' %></small></td>
+                                        <td><%= child.target %></td>
+                                        <td>
+                                            <span class="badge badge-<%= child.status === 'aktif' ? 'success' : 'secondary' %> toggle-status"
+                                                  data-id="<%= child.id %>" style="cursor:pointer;">
+                                                <%= child.status %>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="/admin/menu/edit/<%= child.id %>" class="btn btn-warning btn-sm">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <form method="POST" action="/admin/menu/delete/<%= child.id %>" style="display:inline"
+                                                  onsubmit="return confirm('Hapus sub-menu <%= child.label %>?')">
+                                                <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <% if (child.children && child.children.length > 0) { %>
+                                    <% child.children.forEach(grand => { %>
+                                    <tr>
+                                        <td style="padding-left:4.5rem;">
+                                            <i class="fas fa-level-up-alt fa-rotate-90 text-muted mr-1" style="font-size:0.75rem;"></i>
+                                            <% if (grand.icon) { %><i class="<%= grand.icon %> mr-1"></i><% } %>
+                                            <span class="text-muted"><%= grand.label %></span>
+                                        </td>
+                                        <td><%= grand.url %></td>
+                                        <td><%= grand.urutan %></td>
+                                        <td><small class="text-muted"><%= grand.icon || '-' %></small></td>
+                                        <td><%= grand.target %></td>
+                                        <td>
+                                            <span class="badge badge-<%= grand.status === 'aktif' ? 'success' : 'secondary' %> toggle-status"
+                                                  data-id="<%= grand.id %>" style="cursor:pointer;">
+                                                <%= grand.status %>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="/admin/menu/edit/<%= grand.id %>" class="btn btn-warning btn-sm">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <form method="POST" action="/admin/menu/delete/<%= grand.id %>" style="display:inline"
+                                                  onsubmit="return confirm('Hapus sub-menu <%= grand.label %>?')">
+                                                <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                    <% } %>
+                                    <% }) %>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%- include('../partials/footer') %>
+    </div>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="/assets/js/sb-admin-2.min.js"></script>
+<script>
+document.querySelectorAll('.toggle-status').forEach(function(el) {
+    el.addEventListener('click', function() {
+        var id = this.dataset.id;
+        var badge = this;
+        fetch('/admin/menu/toggle/' + id, { method: 'POST' })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    badge.textContent = data.status;
+                    badge.className = 'badge badge-' + (data.status === 'aktif' ? 'success' : 'secondary') + ' toggle-status';
+                    badge.dataset.id = id;
+                }
+            });
+    });
+});
+</script>
+</body>
+</html>

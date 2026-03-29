@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Admin Panel</title>
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <%- include('../partials/sidebar') %>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <%- include('../partials/topbar', { user }) %>
+            <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Edit <%= label %></h1>
+                    <a href="/admin/dashboard" class="btn btn-sm btn-secondary shadow-sm">
+                        <i class="fas fa-arrow-left fa-sm"></i> Kembali
+                    </a>
+                </div>
+
+                <% if (success == 1) { %>
+                <div class="alert alert-success alert-dismissible fade show">
+                    Konten berhasil disimpan.
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                </div>
+                <% } %>
+
+                <% if (typeof error !== 'undefined' && error) { %>
+                <div class="alert alert-danger alert-dismissible fade show">
+                    <%= error %>
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                </div>
+                <% } %>
+
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary"><%= label %></h6>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="/admin/profil-konten/<%= konten.tipe %>" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label>Judul</label>
+                                <input type="text" class="form-control" name="judul" value="<%= konten.judul || label %>">
+                            </div>
+                            <div class="form-group">
+                                <label>Konten</label>
+                                <textarea class="form-control" name="konten" id="editor" rows="10"><%= konten.konten || '' %></textarea>
+                            </div>
+                            <% if (konten.tipe === 'sambutan') { %>
+                            <div class="form-group">
+                                <label>Foto Kepala Sekolah</label>
+                                <% if (konten.foto) { %>
+                                <div class="mb-2">
+                                    <img src="/uploads/<%= konten.foto %>" style="max-width:150px; border-radius:8px;">
+                                </div>
+                                <% } %>
+                                <input type="file" class="form-control-file" name="foto" accept="image/*">
+                                <small class="text-muted">Kosongkan jika tidak ingin mengubah foto</small>
+                            </div>
+                            <% } %>
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                            <a href="/profil/<%= konten.tipe.replace('_', '-') %>" target="_blank" class="btn btn-info">
+                                <i class="fas fa-eye"></i> Lihat di Website
+                            </a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%- include('../partials/footer') %>
+    </div>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="/assets/js/sb-admin-2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/lang/summernote-id-ID.min.js"></script>
+<script>
+    $('#editor').summernote({
+        height: 400,
+        lang: 'id-ID',
+        toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+            ['fontsize', ['fontsize']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['height', ['height']],
+            ['insert', ['link', 'picture', 'hr']],
+            ['view', ['fullscreen', 'codeview']]
+        ],
+        styleTags: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
+        fontSizes: ['10', '11', '12', '13', '14', '16', '18', '20', '24', '28', '32', '36']
+    });
+</script>
+</body>
+</html>

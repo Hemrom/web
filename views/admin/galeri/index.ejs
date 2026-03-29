@@ -2,7 +2,6 @@
 <html lang="id">
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title><%= title %> - Admin Panel</title>
     <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
@@ -10,61 +9,98 @@
     <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
 </head>
 <body id="page-top">
-    <div id="wrapper">
-        <%- include('../partials/sidebar') %>
-        <div id="content-wrapper" class="d-flex flex-column">
-            <div id="content">
-                <%- include('../partials/topbar', { user }) %>
-                <div class="container-fluid">
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Kelola Galeri</h1>
-                        <a href="/admin/galeri/create" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                            <i class="fas fa-plus fa-sm text-white-50"></i> Tambah Foto
-                        </a>
+<div id="wrapper">
+    <%- include('../partials/sidebar') %>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <%- include('../partials/topbar', { user }) %>
+            <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Kelola Galeri</h1>
+                    <a href="/admin/galeri/create" class="btn btn-sm btn-primary shadow-sm">
+                        <i class="fas fa-plus fa-sm"></i> Tambah Foto
+                    </a>
+                </div>
+
+                <% if (typeof success !== 'undefined' && success == 1) { %>
+                <div class="alert alert-success alert-dismissible fade show">Foto berhasil ditambahkan. <button type="button" class="close" data-dismiss="alert">&times;</button></div>
+                <% } else if (typeof success !== 'undefined' && success == 2) { %>
+                <div class="alert alert-success alert-dismissible fade show">Foto berhasil diperbarui. <button type="button" class="close" data-dismiss="alert">&times;</button></div>
+                <% } else if (typeof success !== 'undefined' && success == 3) { %>
+                <div class="alert alert-success alert-dismissible fade show">Foto berhasil dihapus. <button type="button" class="close" data-dismiss="alert">&times;</button></div>
+                <% } %>
+
+                <div class="row">
+                    <% if (!albums || albums.length === 0) { %>
+                    <div class="col-12"><div class="alert alert-info">Belum ada foto di galeri</div></div>
+                    <% } else { %>
+                    <% albums.forEach(function(album, idx) { %>
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                        <div class="card shadow h-100">
+                            <div style="position:relative;overflow:hidden;">
+                                <img src="/uploads/<%= album.cover %>" class="card-img-top" alt="<%= album.judul %>" style="height:180px;object-fit:cover;">
+                                <% if (album.fotos.length > 1) { %>
+                                <span style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.6);color:white;border-radius:20px;padding:2px 8px;font-size:0.75rem;">
+                                    <i class="fas fa-images mr-1"></i><%= album.fotos.length %> foto
+                                </span>
+                                <% } %>
+                            </div>
+                            <div class="card-body d-flex flex-column">
+                                <h6 class="card-title font-weight-bold mb-1"><%= album.judul %></h6>
+                                <% if (album.kategori) { %><span class="badge badge-info mb-2"><%= album.kategori %></span><% } %>
+                                <% if (album.deskripsi) { %>
+                                <p class="card-text small text-muted mb-2" style="overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;"><%- album.deskripsi.replace(/<[^>]*>/g,'') %></p>
+                                <% } %>
+                                <div class="mt-auto">
+                                    <button class="btn btn-info btn-sm mb-1" data-toggle="modal" data-target="#albumModal<%= idx %>">
+                                        <i class="fas fa-eye"></i> Lihat (<%= album.fotos.length %>)
+                                    </button>
+                                    <a href="/admin/galeri/edit/<%= album.id %>" class="btn btn-warning btn-sm mb-1">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <form method="POST" action="/admin/galeri/delete-album" style="display:inline" onsubmit="return confirm('Hapus semua foto dengan judul <%= album.judul %>?')">
+                                        <input type="hidden" name="judul" value="<%= album.judul %>">
+                                        <button class="btn btn-danger btn-sm mb-1"><i class="fas fa-trash"></i> Hapus</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="row">
-                        <% if (galeri.length === 0) { %>
-                            <div class="col-12">
-                                <div class="alert alert-info">Belum ada foto di galeri</div>
-                            </div>
-                        <% } else { %>
-                            <% galeri.forEach(item => { %>
-                                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                                    <div class="card shadow">
-                                        <img src="/uploads/<%= item.gambar %>" class="card-img-top" alt="<%= item.judul %>" style="height: 200px; object-fit: cover;">
-                                        <div class="card-body">
-                                            <h6 class="card-title"><%= item.judul %></h6>
-                                            <p class="card-text small text-muted"><%= item.deskripsi || '-' %></p>
-                                            <% if (item.kategori) { %>
-                                                <span class="badge badge-info"><%= item.kategori %></span>
-                                            <% } %>
-                                            <div class="mt-2">
-                                                <form method="POST" action="/admin/galeri/delete/<%= item.id %>" 
-                                                      style="display: inline;" 
-                                                      onsubmit="return confirm('Yakin ingin menghapus foto ini?')">
-                                                    <button type="submit" class="btn btn-danger btn-sm">
-                                                        <i class="fas fa-trash"></i> Hapus
-                                                    </button>
-                                                </form>
-                                            </div>
+                    <!-- Modal foto album -->
+                    <div class="modal fade" id="albumModal<%= idx %>" tabindex="-1">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title"><%= album.judul %></h5>
+                                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <% album.fotos.forEach(function(foto) { %>
+                                        <div class="col-4 col-md-3 mb-2" style="position:relative;">
+                                            <img src="/uploads/<%= foto.gambar %>" style="width:100%;height:100px;object-fit:cover;border-radius:6px;">
+                                            <form method="POST" action="/admin/galeri/delete/<%= foto.id %>" style="position:absolute;top:4px;right:8px;" onsubmit="return confirm('Hapus foto ini?')">
+                                                <button class="btn btn-danger btn-sm" style="padding:2px 6px;font-size:0.7rem;"><i class="fas fa-times"></i></button>
+                                            </form>
                                         </div>
+                                        <% }) %>
                                     </div>
                                 </div>
-                            <% }); %>
-                        <% } %>
+                            </div>
+                        </div>
                     </div>
+                    <% }) %>
+                    <% } %>
                 </div>
             </div>
-            <%- include('../partials/footer') %>
         </div>
+        <%- include('../partials/footer') %>
     </div>
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a>
-    <script src="/assets/vendor/jquery/jquery.min.js"></script>
-    <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
-    <script src="/assets/js/sb-admin-2.min.js"></script>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="/assets/js/sb-admin-2.min.js"></script>
 </body>
 </html>

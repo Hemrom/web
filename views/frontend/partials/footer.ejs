@@ -1,0 +1,64 @@
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <h3 class="footer-title" style="margin-bottom:6px;"><%= profil.nama_sekolah || 'Sekolah Kita' %></h3>
+                <p class="text-muted" style="margin-bottom:6px;font-size:0.9rem;">Memberikan pendidikan berkualitas untuk menciptakan generasi yang cerdas dan berkarakter.</p>
+                <% if (mediaSosialFooter && mediaSosialFooter.length > 0) { %>
+                <div class="mt-1">
+                    <% mediaSosialFooter.forEach(function(ms) { %>
+                        <% 
+                            const iconMap = { youtube: 'youtube', instagram: 'instagram', facebook: 'facebook-f', twitter: 'twitter', tiktok: 'tiktok', threads: 'threads' };
+                            const icon = iconMap[ms.platform] || ms.platform;
+                        %>
+                        <a href="<%= ms.embed_url %>" target="_blank" rel="noopener" class="text-white mr-3" title="<%= ms.judul %>">
+                            <i class="fab fa-<%= icon %>"></i>
+                        </a>
+                    <% }) %>
+                </div>
+                <% } %>
+            </div>
+            <div class="col-lg-2 col-md-6 mb-4">
+                <h4 class="footer-title">Menu</h4>
+                <a href="/" class="footer-link">Beranda</a>
+                <a href="/profil" class="footer-link">Profil</a>
+                <a href="/berita" class="footer-link">Berita</a>
+                <a href="/galeri" class="footer-link">Galeri</a>
+            </div>
+            <div class="col-lg-2 col-md-6 mb-4">
+                <h4 class="footer-title">Informasi</h4>
+                <a href="/guru" class="footer-link">Guru & Staff</a>
+                <a href="/kontak" class="footer-link">Kontak</a>
+                <a href="/media-sosial" class="footer-link">Media Sosial</a>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4 text-right">
+                <h4 class="footer-title">Kontak Kami</h4>
+                <% if (profil.alamat) { %>
+                <p class="mb-1" style="color:#fff;font-size:0.9rem;">
+                    <%= profil.alamat %> <i class="fas fa-map-marker-alt ml-2"></i>
+                </p>
+                <% } %>
+                <% if (profil.telepon) { %>
+                <p class="mb-1" style="color:#fff;font-size:0.9rem;">
+                    <%= profil.telepon %> <i class="fas fa-phone ml-2"></i>
+                </p>
+                <% } %>
+                <% if (profil.whatsapp) { %>
+                <p class="mb-1" style="font-size:0.9rem;">
+                    <a href="https://wa.me/<%= profil.whatsapp.replace(/[^0-9]/g, '') %>" target="_blank" rel="noopener" style="color:#25d366;">
+                        <%= profil.whatsapp %> <i class="fab fa-whatsapp ml-2"></i>
+                    </a>
+                </p>
+                <% } %>
+                <% if (profil.email) { %>
+                <p class="mb-1" style="color:#fff;font-size:0.9rem;">
+                    <%= profil.email %> <i class="fas fa-envelope ml-2"></i>
+                </p>
+                <% } %>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <%= new Date().getFullYear() %> <%= profil.nama_sekolah || 'Website Sekolah' %>. All rights reserved.</p>
+        </div>
+    </div>
+</footer>

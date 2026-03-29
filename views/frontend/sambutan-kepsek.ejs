@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Website Sekolah</title>
+    <link rel="icon" type="image/png" href="/uploads/logo-sekolah.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #0ea5e9;
+            --secondary-blue: #0369a1;
+            --light-blue: #e0f2fe;
+            --gray-50: #f8fafc;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --gray-300: #cbd5e1;
+            --accent-blue: #7dd3fc;
+        }
+        * { font-family: 'Inter', sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
+        body { line-height: 1.6; color: var(--gray-700); }
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            padding: 10rem 0 4rem;
+            color: white;
+            text-align: center;
+        }
+        .page-title { font-size: 3rem; font-weight: 800; margin-bottom: 0.5rem; }
+        .content-section { padding: 5rem 0; background: var(--gray-50); }
+        .kepsek-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(14,165,233,0.08);
+            padding: 3rem;
+        }
+        .kepsek-foto {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid var(--light-blue);
+            box-shadow: 0 4px 20px rgba(14,165,233,0.2);
+        }
+        .kepsek-nama {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-top: 1rem;
+        }
+        .kepsek-jabatan {
+            color: var(--primary-blue);
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+        }
+        .sambutan-text {
+            font-size: 1.05rem;
+            line-height: 1.9;
+            text-align: justify;
+            color: var(--gray-700);
+        }
+        .sambutan-text p { margin-bottom: 1.2rem; }
+        .quote-mark {
+            font-size: 5rem;
+            color: var(--light-blue);
+            line-height: 0.5;
+            font-family: Georgia, serif;
+        }
+        .footer { background: var(--gray-900); color: white; padding: 4rem 0 2rem; }
+        .footer-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem; }
+        .footer-link { color: var(--gray-300); text-decoration: none; margin-bottom: 0.5rem; display: block; }
+        .footer-link:hover { color: var(--accent-blue); }
+        .footer-bottom { border-top: 1px solid #334155; margin-top: 3rem; padding-top: 2rem; text-align: center; color: #94a3b8; }
+        @media (max-width: 991px) { .page-title { font-size: 2rem; } }
+    </style>
+</head>
+<body>
+    <%- include('partials/navbar') %>
+
+    <section class="page-header">
+        <div class="container">
+            <h1 class="page-title">Sambutan Kepala Sekolah</h1>
+            <p style="opacity:0.9">Pesan dan harapan dari pimpinan sekolah</p>
+        </div>
+    </section>
+
+    <section class="content-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-9">
+                    <div class="kepsek-card">
+                        <div class="row align-items-start">
+                            <div class="col-md-3 text-center mb-4 mb-md-0">
+                                <% if (kepsek && kepsek.foto) { %>
+                                <img src="/uploads/<%= kepsek.foto %>" class="kepsek-foto" alt="Kepala Sekolah">
+                                <% } else { %>
+                                <div class="kepsek-foto d-flex align-items-center justify-content-center mx-auto" style="background:var(--light-blue);">
+                                    <i class="fas fa-user-tie fa-4x" style="color:var(--primary-blue)"></i>
+                                </div>
+                                <% } %>
+                                <div class="kepsek-nama"><%= kepsek && kepsek.judul ? kepsek.judul : 'Kepala Sekolah' %></div>
+                                <div class="kepsek-jabatan">Kepala Sekolah</div>
+                                <div style="font-size:0.9rem;color:#64748b"><%= profil.nama_sekolah || '' %></div>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="quote-mark">"</div>
+                                <div class="sambutan-text">
+                                    <% if (kepsek && kepsek.konten && kepsek.konten.trim()) { %>
+                                        <%- kepsek.konten %>
+                                    <% } else { %>
+                                        <p class="text-muted text-center py-4">Sambutan kepala sekolah belum tersedia.</p>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <%- include('partials/related') %>
+    <%- include('partials/footer') %>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(window).scroll(function() {
+            if ($(window).scrollTop() > 50) $('.navbar-modern').css('box-shadow','0 4px 30px rgba(14,165,233,0.15)');
+            else $('.navbar-modern').css('box-shadow','0 2px 20px rgba(14,165,233,0.1)');
+        });
+    </script>
+</body>
+</html>
+
+

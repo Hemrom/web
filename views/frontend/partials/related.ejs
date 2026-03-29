@@ -1,0 +1,87 @@
+<section style="padding:3rem 0;background:#f8fafc;border-top:1px solid #e2e8f0;">
+    <div class="container">
+        <div class="row">
+
+            <!-- Berita Terbaru -->
+            <div class="col-lg-5 mb-4">
+                <h5 style="font-weight:700;color:#1e293b;margin-bottom:1.2rem;padding-bottom:0.5rem;border-bottom:3px solid var(--primary-blue,#0ea5e9);">
+                    <i class="fas fa-newspaper mr-2" style="color:var(--primary-blue,#0ea5e9);"></i>Berita Terbaru
+                </h5>
+                <% if (typeof relatedBerita !== 'undefined' && relatedBerita.length > 0) { %>
+                <% relatedBerita.forEach(function(b) { %>
+                <a href="/berita/<%= b.slug %>" style="display:flex;gap:0.75rem;margin-bottom:1rem;text-decoration:none;align-items:flex-start;">
+                    <div style="flex-shrink:0;width:70px;height:60px;border-radius:8px;overflow:hidden;background:#e2e8f0;">
+                        <% if (b.gambar) { %>
+                        <img src="/uploads/<%= b.gambar %>" style="width:100%;height:100%;object-fit:cover;" alt="">
+                        <% } else { %>
+                        <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
+                            <i class="fas fa-image" style="color:#94a3b8;font-size:1.2rem;"></i>
+                        </div>
+                        <% } %>
+                    </div>
+                    <div style="flex:1;">
+                        <p style="font-size:0.85rem;font-weight:600;color:#1e293b;margin:0 0 0.25rem;line-height:1.4;"><%= b.judul.length > 60 ? b.judul.substring(0,60)+'...' : b.judul %></p>
+                        <span style="font-size:0.75rem;color:#94a3b8;"><i class="fas fa-calendar-alt mr-1"></i><%= new Date(b.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}) %></span>
+                    </div>
+                </a>
+                <% }) %>
+                <a href="/berita" style="font-size:0.85rem;color:var(--primary-blue,#0ea5e9);font-weight:600;text-decoration:none;">
+                    Lihat semua berita <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+                <% } else { %>
+                <p style="color:#94a3b8;font-size:0.9rem;">Belum ada berita.</p>
+                <% } %>
+            </div>
+
+            <!-- Menu Navigasi -->
+            <div class="col-lg-3 mb-4">
+                <h5 style="font-weight:700;color:#1e293b;margin-bottom:1.2rem;padding-bottom:0.5rem;border-bottom:3px solid var(--primary-blue,#0ea5e9);">
+                    <i class="fas fa-sitemap mr-2" style="color:var(--primary-blue,#0ea5e9);"></i>Navigasi
+                </h5>
+                <% if (typeof menuItems !== 'undefined' && menuItems.length > 0) { %>
+                <% menuItems.forEach(function(m) { %>
+                <div style="margin-bottom:0.4rem;">
+                    <a href="<%= m.url %>" style="display:flex;align-items:center;gap:0.5rem;color:#475569;text-decoration:none;font-size:0.9rem;padding:0.35rem 0;transition:color 0.2s;" onmouseover="this.style.color='var(--primary-blue,#0ea5e9)'" onmouseout="this.style.color='#475569'">
+                        <i class="fas fa-chevron-right" style="font-size:0.65rem;color:var(--primary-blue,#0ea5e9);"></i>
+                        <%= m.label %>
+                    </a>
+                    <% if (m.children && m.children.length > 0) { %>
+                    <% m.children.forEach(function(c) { %>
+                    <a href="<%= c.url %>" style="display:flex;align-items:center;gap:0.5rem;color:#64748b;text-decoration:none;font-size:0.85rem;padding:0.25rem 0 0.25rem 1.2rem;transition:color 0.2s;" onmouseover="this.style.color='var(--primary-blue,#0ea5e9)'" onmouseout="this.style.color='#64748b'">
+                        <i class="fas fa-minus" style="font-size:0.6rem;color:#cbd5e1;"></i>
+                        <%= c.label %>
+                    </a>
+                    <% }) %>
+                    <% } %>
+                </div>
+                <% }) %>
+                <% } %>
+            </div>
+
+            <!-- Konten Terkait -->
+            <div class="col-lg-4 mb-4">
+                <h5 style="font-weight:700;color:#1e293b;margin-bottom:1.2rem;padding-bottom:0.5rem;border-bottom:3px solid var(--primary-blue,#0ea5e9);">
+                    <i class="fas fa-link mr-2" style="color:var(--primary-blue,#0ea5e9);"></i>Konten Terkait
+                </h5>
+                <% const relatedLinks = [
+                    { label:'Profil Sekolah', url:'/profil', icon:'fas fa-school' },
+                    { label:'Visi & Misi', url:'/profil/visi-misi', icon:'fas fa-eye' },
+                    { label:'Sejarah Sekolah', url:'/profil/sejarah', icon:'fas fa-history' },
+                    { label:'Sambutan Kepala Sekolah', url:'/profil/kepala-sekolah', icon:'fas fa-user-tie' },
+                    { label:'Guru & Staff', url:'/guru', icon:'fas fa-users' },
+                    { label:'Galeri', url:'/galeri', icon:'fas fa-images' },
+                    { label:'Berita', url:'/berita', icon:'fas fa-newspaper' },
+                    { label:'Media Sosial', url:'/media-sosial', icon:'fas fa-share-alt' },
+                    { label:'Kontak', url:'/kontak', icon:'fas fa-envelope' },
+                ]; %>
+                <% relatedLinks.forEach(function(rl) { %>
+                <a href="<%= rl.url %>" style="display:flex;align-items:center;gap:0.75rem;padding:0.6rem 0.75rem;margin-bottom:0.4rem;border-radius:8px;text-decoration:none;color:#475569;background:white;border:1px solid #e2e8f0;font-size:0.88rem;transition:all 0.2s;" onmouseover="this.style.background='var(--light-blue,#e0f2fe)';this.style.color='var(--primary-blue,#0ea5e9)';this.style.borderColor='var(--primary-blue,#0ea5e9)'" onmouseout="this.style.background='white';this.style.color='#475569';this.style.borderColor='#e2e8f0'">
+                    <i class="<%= rl.icon %>" style="width:16px;color:var(--primary-blue,#0ea5e9);"></i>
+                    <%= rl.label %>
+                </a>
+                <% }) %>
+            </div>
+
+        </div>
+    </div>
+</section>

@@ -155,7 +155,7 @@ exports.store = async (req, res) => {
       [nis, nama, kelas, jurusan, foto, 'aktif']
     );
     
-    res.redirect('/admin/siswa?success=1');
+    res.redirect('/admin/data-sekolah?tab=siswa&success=1');
   } catch (error) {
     console.error(error);
     res.status(500).send('Terjadi kesalahan');
@@ -204,7 +204,7 @@ exports.update = async (req, res) => {
       );
     }
     
-    res.redirect('/admin/siswa?success=2');
+    res.redirect('/admin/data-sekolah?tab=siswa&success=1');
   } catch (error) {
     console.error(error);
     res.status(500).send('Terjadi kesalahan');
@@ -215,7 +215,7 @@ exports.update = async (req, res) => {
 exports.destroy = async (req, res) => {
   try {
     await db.query('DELETE FROM siswa WHERE id = ?', [req.params.id]);
-    res.redirect('/admin/siswa?success=3');
+    res.redirect('/admin/data-sekolah?tab=siswa&success=1');
   } catch (error) {
     console.error(error);
     res.status(500).send('Terjadi kesalahan');

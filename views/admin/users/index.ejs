@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Admin Panel</title>
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <%- include('../partials/sidebar') %>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <%- include('../partials/topbar', { user }) %>
+            <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Manajemen User</h1>
+                    <a href="/admin/users/create" class="btn btn-sm btn-primary shadow-sm">
+                        <i class="fas fa-plus fa-sm text-white-50"></i> Tambah User
+                    </a>
+                </div>
+
+                <% if (success == 1) { %>
+                <div class="alert alert-success alert-dismissible fade show">
+                    User berhasil disimpan.
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                </div>
+                <% } %>
+
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Daftar User</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Username</th>
+                                        <th>Nama Lengkap</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (users.length === 0) { %>
+                                    <tr><td colspan="6" class="text-center">Belum ada user</td></tr>
+                                    <% } else { %>
+                                    <% users.forEach((u, i) => { %>
+                                    <tr>
+                                        <td><%= i + 1 %></td>
+                                        <td><%= u.username %></td>
+                                        <td><%= u.nama_lengkap %></td>
+                                        <td><%= u.email || '-' %></td>
+                                        <td><span class="badge badge-<%= u.role === 'admin' ? 'danger' : 'info' %>"><%= u.role %></span></td>
+                                        <td>
+                                            <a href="/admin/users/edit/<%= u.id %>" class="btn btn-warning btn-sm">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </a>
+                                            <% if (u.id !== user.userId) { %>
+                                            <form method="POST" action="/admin/users/delete/<%= u.id %>" style="display:inline"
+                                                  onsubmit="return confirm('Hapus user <%= u.username %>?')">
+                                                <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Hapus</button>
+                                            </form>
+                                            <% } %>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%- include('../partials/footer') %>
+    </div>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="/assets/js/sb-admin-2.min.js"></script>
+</body>
+</html>

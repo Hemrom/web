@@ -10,6 +10,18 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage }).single('gambar');
+const uploadEditor = multer({ storage }).single('file');
+const uploadFields = multer({ storage }).any();
+
+// Upload gambar dari editor Summernote
+exports.uploadGambar = (req, res) => {
+  uploadEditor(req, res, (err) => {
+    if (err || !req.file) {
+      return res.json({ error: 'Upload gagal' });
+    }
+    res.json({ url: '/uploads/' + req.file.filename });
+  });
+};
 
 const createSlug = (text) => {
   return text.toLowerCase()
@@ -43,21 +55,21 @@ exports.createPage = (req, res) => {
 };
 
 exports.create = (req, res) => {
-  upload(req, res, async (err) => {
+  uploadFields(req, res, async (err) => {
     if (err) {
-      return res.status(500).send('Error upload file');
+      console.error('Upload error:', err);
+      return res.status(500).send('Error upload file: ' + err.message);
     }
-    
     try {
       const { judul, konten, kategori, status } = req.body;
       const slug = createSlug(judul);
-      const gambar = req.file ? req.file.filename : null;
-      
+      const gambar = req.files && req.files.find(f => f.fieldname === 'gambar') 
+        ? req.files.find(f => f.fieldname === 'gambar').filename 
+        : null;
       await db.query(
         'INSERT INTO berita (judul, slug, konten, gambar, penulis_id, kategori, status) VALUES (?, ?, ?, ?, ?, ?, ?)',
         [judul, slug, konten, gambar, req.session.userId, kategori, status]
       );
-      
       res.redirect('/admin/berita');
     } catch (error) {
       console.error(error);
@@ -84,16 +96,17 @@ exports.editPage = async (req, res) => {
 };
 
 exports.update = (req, res) => {
-  upload(req, res, async (err) => {
+  uploadFields(req, res, async (err) => {
     if (err) {
-      return res.status(500).send('Error upload file');
+      console.error('Upload error:', err);
+      return res.status(500).send('Error upload file: ' + err.message);
     }
-    
     try {
       const { judul, konten, kategori, status } = req.body;
       const slug = createSlug(judul);
-      const gambar = req.file ? req.file.filename : null;
-      
+      const gambar = req.files && req.files.find(f => f.fieldname === 'gambar')
+        ? req.files.find(f => f.fieldname === 'gambar').filename
+        : null;
       if (gambar) {
         await db.query(
           'UPDATE berita SET judul = ?, slug = ?, konten = ?, gambar = ?, kategori = ?, status = ? WHERE id = ?',
@@ -105,7 +118,6 @@ exports.update = (req, res) => {
           [judul, slug, konten, kategori, status, req.params.id]
         );
       }
-      
       res.redirect('/admin/berita');
     } catch (error) {
       console.error(error);

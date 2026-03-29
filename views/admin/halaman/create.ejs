@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Admin Panel</title>
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <%- include('../partials/sidebar') %>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <%- include('../partials/topbar', { user }) %>
+            <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Buat Halaman Baru</h1>
+                    <a href="/admin/kontrol-website?tab=halaman" class="btn btn-sm btn-secondary shadow-sm">
+                        <i class="fas fa-arrow-left fa-sm"></i> Kembali
+                    </a>
+                </div>
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <% if (error) { %>
+                        <div class="alert alert-danger"><%= error %></div>
+                        <% } %>
+                        <form method="POST" action="/admin/halaman/create" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label>Judul Halaman *</label>
+                                <input type="text" class="form-control" name="judul" value="<%= old.judul || '' %>" required>
+                                <small class="text-muted">URL akan dibuat otomatis dari judul. Contoh: "Visi Misi" → /page/visi-misi</small>
+                            </div>
+                            <div class="form-group">
+                                <label>Konten</label>
+                                <textarea class="form-control" name="konten" id="editor" rows="12"><%= old.konten || '' %></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Foto/Gambar (opsional)</label>
+                                <input type="file" class="form-control-file" name="foto" accept="image/*">
+                            </div>
+
+                            <!-- Galeri Foto -->
+                            <div class="form-group">
+                                <label class="font-weight-bold">Galeri Foto</label>
+                                <div class="border rounded p-3" style="background:#f8fafc;">
+                                    <input type="file" class="form-control-file mb-2" name="galeri_foto" accept="image/*" multiple id="galeriInput">
+                                    <small class="text-muted">Bisa pilih beberapa foto sekaligus</small>
+                                    <div id="galeri-preview" class="row mt-2"></div>
+                                </div>
+                            </div>
+
+                            <!-- Embed Media Sosial -->
+                            <div class="form-group">
+                                <label class="font-weight-bold">Embed Media Sosial</label>
+                                <div class="border rounded p-3" style="background:#f8fafc;">
+                                    <label class="font-weight-bold text-primary mb-2"><i class="fas fa-plus-circle mr-1"></i>Tambah Embed</label>
+                                    <div id="embed-list">
+                                        <div class="embed-item border rounded p-2 mb-2" style="background:white;">
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <select name="embed_platform[]" class="form-control form-control-sm">
+                                                        <option value="youtube">YouTube</option>
+                                                        <option value="instagram">Instagram</option>
+                                                        <option value="tiktok">TikTok</option>
+                                                        <option value="facebook">Facebook</option>
+                                                        <option value="twitter">Twitter/X</option>
+                                                        <option value="threads">Threads</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <input type="text" name="embed_url[]" class="form-control form-control-sm" placeholder="URL embed...">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <input type="text" name="embed_judul[]" class="form-control form-control-sm" placeholder="Judul (opsional)">
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <button type="button" class="btn btn-danger btn-sm remove-embed"><i class="fas fa-times"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-outline-primary btn-sm mt-1" id="add-embed">
+                                        <i class="fas fa-plus mr-1"></i>Tambah Embed
+                                    </button>
+                                    <small class="d-block text-muted mt-1">Paste URL langsung dari YouTube, Instagram, TikTok, dll.</small>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Status</label>
+                                <select class="form-control" name="status">
+                                    <option value="aktif">Aktif</option>
+                                    <option value="nonaktif">Non-aktif</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Simpan Halaman</button>
+                            <a href="/admin/kontrol-website?tab=halaman" class="btn btn-secondary">Batal</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%- include('../partials/footer') %>
+    </div>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="/assets/js/sb-admin-2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/lang/summernote-id-ID.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#editor').summernote({
+        height: 450,
+        lang: 'id-ID',
+        toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'clear']],
+            ['fontname', ['fontname']],
+            ['fontsize', ['fontsize']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['height', ['height']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'hr']],
+            ['view', ['fullscreen', 'codeview', 'help']]
+        ],
+        styleTags: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote'],
+        fontSizes: ['8','9','10','11','12','13','14','16','18','20','24','28','32','36','48','64'],
+        fontNames: ['Arial','Arial Black','Comic Sans MS','Courier New','Georgia','Helvetica','Impact','Tahoma','Times New Roman','Trebuchet MS','Verdana']
+    });
+});
+
+// Tambah/hapus embed row
+document.getElementById('add-embed').addEventListener('click', function() {
+    const item = document.querySelector('.embed-item').cloneNode(true);
+    item.querySelectorAll('input').forEach(i => i.value = '');
+    document.getElementById('embed-list').appendChild(item);
+});
+document.getElementById('embed-list').addEventListener('click', function(e) {
+    if (e.target.closest('.remove-embed')) {
+        const items = document.querySelectorAll('.embed-item');
+        if (items.length > 1) e.target.closest('.embed-item').remove();
+    }
+});
+
+// Preview foto galeri
+document.getElementById('galeriInput').addEventListener('change', function() {
+    const preview = document.getElementById('galeri-preview');
+    preview.innerHTML = '';
+    Array.from(this.files).forEach(function(file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.innerHTML += `
+            <div class="col-md-3 col-sm-4 mb-2">
+                <div class="card border-0 shadow-sm">
+                    <img src="${e.target.result}" class="card-img-top" style="height:120px;object-fit:cover;border-radius:8px 8px 0 0;">
+                    <div class="card-body p-2">
+                        <input type="text" class="form-control form-control-sm" name="galeri_keterangan" placeholder="Keterangan...">
+                    </div>
+                </div>
+            </div>`;
+        };
+        reader.readAsDataURL(file);
+    });
+});
+</script>
+</body>
+</html>

@@ -2,111 +2,159 @@
 <html lang="id">
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title><%= title %> - Admin Panel</title>
     <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
 </head>
 <body id="page-top">
-    <div id="wrapper">
-        <%- include('../partials/sidebar') %>
-        <div id="content-wrapper" class="d-flex flex-column">
-            <div id="content">
-                <%- include('../partials/topbar', { user }) %>
-                <div class="container-fluid">
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Edit Berita</h1>
-                        <a href="/admin/berita" class="d-none d-sm-inline-block btn btn-sm btn-secondary shadow-sm">
-                            <i class="fas fa-arrow-left fa-sm text-white-50"></i> Kembali
-                        </a>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-lg-8">
-                            <div class="card shadow mb-4">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Form Edit Berita</h6>
-                                </div>
-                                <div class="card-body">
-                                    <form method="POST" action="/admin/berita/edit/<%= berita.id %>" enctype="multipart/form-data">
-                                        <div class="form-group">
-                                            <label for="judul">Judul Berita *</label>
-                                            <input type="text" class="form-control" id="judul" name="judul" value="<%= berita.judul %>" required>
+<div id="wrapper">
+    <%- include('../partials/sidebar') %>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <%- include('../partials/topbar', { user }) %>
+            <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Edit Berita</h1>
+                    <a href="/admin/berita" class="btn btn-sm btn-secondary shadow-sm">
+                        <i class="fas fa-arrow-left fa-sm"></i> Kembali
+                    </a>
+                </div>
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Form Edit Berita</h6>
+                            </div>
+                            <div class="card-body">
+                                <form method="POST" action="/admin/berita/edit/<%= berita.id %>" enctype="multipart/form-data">
+                                    <div class="form-group">
+                                        <label>Judul Berita *</label>
+                                        <input type="text" class="form-control" name="judul" value="<%= berita.judul %>" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Kategori *</label>
+                                        <select class="form-control" name="kategori" required>
+                                            <option value="pengumuman" <%= berita.kategori === 'pengumuman' ? 'selected' : '' %>>Pengumuman</option>
+                                            <option value="kegiatan" <%= berita.kategori === 'kegiatan' ? 'selected' : '' %>>Kegiatan</option>
+                                            <option value="prestasi" <%= berita.kategori === 'prestasi' ? 'selected' : '' %>>Prestasi</option>
+                                            <option value="umum" <%= berita.kategori === 'umum' ? 'selected' : '' %>>Umum</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Konten Berita *</label>
+                                        <textarea id="konten" name="konten" rows="12"><%- berita.konten %></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Gambar Berita</label>
+                                        <% if (berita.gambar) { %>
+                                        <div class="mb-2">
+                                            <img src="/uploads/<%= berita.gambar %>" style="max-width:300px; border-radius:5px;">
                                         </div>
-                                        
-                                        <div class="form-group">
-                                            <label for="kategori">Kategori *</label>
-                                            <select class="form-control" id="kategori" name="kategori" required>
-                                                <option value="pengumuman" <%= berita.kategori === 'pengumuman' ? 'selected' : '' %>>Pengumuman</option>
-                                                <option value="kegiatan" <%= berita.kategori === 'kegiatan' ? 'selected' : '' %>>Kegiatan</option>
-                                                <option value="prestasi" <%= berita.kategori === 'prestasi' ? 'selected' : '' %>>Prestasi</option>
-                                                <option value="umum" <%= berita.kategori === 'umum' ? 'selected' : '' %>>Umum</option>
-                                            </select>
-                                        </div>
-                                        
-                                        <div class="form-group">
-                                            <label for="konten">Konten Berita *</label>
-                                            <textarea class="form-control" id="konten" name="konten" rows="10" required><%= berita.konten %></textarea>
-                                        </div>
-                                        
-                                        <div class="form-group">
-                                            <label for="gambar">Gambar Berita</label>
-                                            <% if (berita.gambar) { %>
-                                                <div class="mb-2">
-                                                    <img src="/uploads/<%= berita.gambar %>" alt="Current Image" style="max-width: 300px; height: auto; border-radius: 5px;">
-                                                </div>
-                                            <% } %>
-                                            <input type="file" class="form-control-file" id="gambar" name="gambar" accept="image/*">
-                                            <small class="form-text text-muted">Kosongkan jika tidak ingin mengubah gambar. Format: JPG, PNG, GIF. Ukuran maksimal: 2MB</small>
-                                        </div>
-                                        
-                                        <div class="form-group">
-                                            <label for="status">Status *</label>
-                                            <select class="form-control" id="status" name="status" required>
-                                                <option value="draft" <%= berita.status === 'draft' ? 'selected' : '' %>>Draft</option>
-                                                <option value="published" <%= berita.status === 'published' ? 'selected' : '' %>>Published</option>
-                                            </select>
-                                        </div>
-                                        
-                                        <button type="submit" class="btn btn-primary">Update</button>
-                                        <a href="/admin/berita" class="btn btn-secondary">Batal</a>
-                                    </form>
-                                </div>
+                                        <% } %>
+                                        <input type="file" class="form-control-file" name="gambar" accept="image/*">
+                                        <small class="text-muted">Kosongkan jika tidak ingin mengubah gambar</small>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Status *</label>
+                                        <select class="form-control" name="status" required>
+                                            <option value="draft" <%= berita.status === 'draft' ? 'selected' : '' %>>Draft</option>
+                                            <option value="published" <%= berita.status === 'published' ? 'selected' : '' %>>Published</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Update</button>
+                                    <a href="/admin/berita" class="btn btn-secondary">Batal</a>
+                                </form>
                             </div>
                         </div>
-                        
-                        <div class="col-lg-4">
-                            <div class="card shadow mb-4">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Panduan</h6>
-                                </div>
-                                <div class="card-body">
-                                    <h6>Tips Menulis Berita:</h6>
-                                    <ul class="small">
-                                        <li>Judul harus menarik dan informatif</li>
-                                        <li>Gunakan bahasa yang mudah dipahami</li>
-                                        <li>Sertakan gambar yang relevan</li>
-                                        <li>Pilih kategori yang sesuai</li>
-                                        <li>Gunakan status "Draft" untuk preview</li>
-                                        <li>Publish setelah yakin konten sudah benar</li>
-                                    </ul>
-                                </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Tips</h6>
+                            </div>
+                            <div class="card-body small">
+                                <ul>
+                                    <li>Gunakan paragraf agar mudah dibaca</li>
+                                    <li>Tekan Enter untuk paragraf baru</li>
+                                    <li>Gunakan Heading untuk sub-judul</li>
+                                    <li>Sertakan gambar yang relevan</li>
+                                </ul>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <%- include('../partials/footer') %>
         </div>
+        <%- include('../partials/footer') %>
     </div>
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a>
-    <script src="/assets/vendor/jquery/jquery.min.js"></script>
-    <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
-    <script src="/assets/js/sb-admin-2.min.js"></script>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="/assets/js/sb-admin-2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
+<script>
+// Custom button: Float Center
+$.extend($.summernote.plugins, {
+    'floatCenter': function(context) {
+        var ui = $.summernote.ui;
+        context.memo('button.floatCenter', function() {
+            return ui.button({
+                contents: '<i class="fas fa-align-center"/>',
+                tooltip: 'Float Center',
+                click: function() {
+                    var $img = $(context.layoutInfo.editable).find('img:focus, img.note-float-left, img.note-float-right').last();
+                    if (!$img.length) $img = $(context.layoutInfo.editable).find('img').last();
+                    $img.css({ 'float': 'none', 'display': 'block', 'margin': '1.5rem auto' });
+                    $img.removeClass('note-float-left note-float-right');
+                }
+            }).render();
+        });
+    }
+});
+
+$('#konten').summernote({
+    height: 450,
+    lang: 'id-ID',
+    toolbar: [
+        ['style', ['style']],
+        ['font', ['bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'clear']],
+        ['fontname', ['fontname']],
+        ['fontsize', ['fontsize']],
+        ['color', ['color']],
+        ['para', ['ul', 'ol', 'paragraph']],
+        ['height', ['height']],
+        ['table', ['table']],
+        ['insert', ['link', 'picture', 'hr']],
+        ['view', ['fullscreen', 'codeview', 'help']]
+    ],
+    styleTags: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote'],
+    fontSizes: ['8','9','10','11','12','13','14','16','18','20','24','28','32','36','48','64'],
+    fontNames: ['Arial','Arial Black','Comic Sans MS','Courier New','Georgia','Helvetica','Impact','Tahoma','Times New Roman','Trebuchet MS','Verdana'],
+    callbacks: {
+        onImageUpload: function(files) {
+            var formData = new FormData();
+            formData.append('file', files[0]);
+            $.ajax({
+                url: '/admin/berita/upload-gambar',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(res) {
+                    if (res.url) {
+                        $('#konten').summernote('insertImage', res.url, function($image) {
+                            $image.css({ 'max-width': '100%', 'display': 'block', 'margin': '1.5rem auto' });
+                        });
+                    }
+                }
+            });
+        }
+    }
+});
+</script>
 </body>
 </html>

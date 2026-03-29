@@ -78,11 +78,22 @@ exports.dashboard = async (req, res) => {
 exports.profilPage = async (req, res) => {
   try {
     const [profil] = await db.query('SELECT * FROM profil_sekolah LIMIT 1');
+    const [slider] = await db.query('SELECT * FROM slider ORDER BY urutan ASC');
+    const [mediaSosial] = await db.query('SELECT * FROM media_sosial ORDER BY urutan ASC');
+    const [kepsekRows] = await db.query("SELECT * FROM profil_konten WHERE tipe = 'sambutan' LIMIT 1");
+    const [visiMisiRows] = await db.query("SELECT * FROM profil_konten WHERE tipe = 'visi_misi' LIMIT 1");
+    const [sejarahRows] = await db.query("SELECT * FROM profil_konten WHERE tipe = 'sejarah' LIMIT 1");
     res.render('admin/profil', {
       title: 'Profil Sekolah',
       user: req.session,
       profil: profil[0] || {},
-      success: req.query.success
+      slider,
+      mediaSosial,
+      kepsek: kepsekRows[0] || null,
+      visiMisiKonten: visiMisiRows[0] || null,
+      sejarahKonten: sejarahRows[0] || null,
+      success: req.query.success,
+      activeTab: req.query.tab || 'profil'
     });
   } catch (error) {
     console.error(error);
@@ -97,30 +108,33 @@ exports.updateProfil = async (req, res) => {
     }
     
     try {
-      const { nama_sekolah, alamat, telepon, email, visi, misi } = req.body;
+      const { nama_sekolah, alamat, telepon, whatsapp, email, visi, misi,
+              npsn, status, jenjang, akreditasi, no_sk_akreditasi,
+              sk_pendirian, tanggal_sk, sk_izin, tanggal_sk_izin, maps, website } = req.body;
       const logo = req.file ? req.file.filename : null;
-      
+
+      const fields = { nama_sekolah, alamat, telepon, whatsapp: whatsapp || null, email, visi, misi,
+                       npsn, status, jenjang, akreditasi, no_sk_akreditasi,
+                       sk_pendirian, tanggal_sk: tanggal_sk || null,
+                       sk_izin, tanggal_sk_izin: tanggal_sk_izin || null,
+                       maps, website };
+
       const [existing] = await db.query('SELECT * FROM profil_sekolah LIMIT 1');
-      
+
       if (existing.length === 0) {
-        await db.query(
-          'INSERT INTO profil_sekolah (nama_sekolah, alamat, telepon, email, visi, misi, logo) VALUES (?, ?, ?, ?, ?, ?, ?)',
-          [nama_sekolah, alamat, telepon, email, visi, misi, logo]
-        );
+        if (logo) fields.logo = logo;
+        const cols = Object.keys(fields).join(', ');
+        const placeholders = Object.keys(fields).map(() => '?').join(', ');
+        await db.query(`INSERT INTO profil_sekolah (${cols}) VALUES (${placeholders})`, Object.values(fields));
       } else {
-        if (logo) {
-          await db.query(
-            'UPDATE profil_sekolah SET nama_sekolah = ?, alamat = ?, telepon = ?, email = ?, visi = ?, misi = ?, logo = ? WHERE id = ?',
-            [nama_sekolah, alamat, telepon, email, visi, misi, logo, existing[0].id]
-          );
-        } else {
-          await db.query(
-            'UPDATE profil_sekolah SET nama_sekolah = ?, alamat = ?, telepon = ?, email = ?, visi = ?, misi = ? WHERE id = ?',
-            [nama_sekolah, alamat, telepon, email, visi, misi, existing[0].id]
-          );
-        }
+        if (logo) fields.logo = logo;
+        const setClause = Object.keys(fields).map(k => `${k} = ?`).join(', ');
+        await db.query(
+          `UPDATE profil_sekolah SET ${setClause} WHERE id = ?`,
+          [...Object.values(fields), existing[0].id]
+        );
       }
-      
+
       res.redirect('/admin/profil?success=1');
     } catch (error) {
       console.error(error);

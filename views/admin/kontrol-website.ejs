@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Admin Panel</title>
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+    <style>
+        .nav-tabs .nav-link { color: #6c757d; font-weight: 500; }
+        .nav-tabs .nav-link.active { color: #4e73df; font-weight: 600; border-bottom: 2px solid #4e73df; }
+    </style>
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <%- include('partials/sidebar') %>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <%- include('partials/topbar', { user }) %>
+            <div class="container-fluid">
+                <h1 class="h3 mb-4 text-gray-800">Kontrol Website</h1>
+
+                <% if (success == 1) { %>
+                <div class="alert alert-success alert-dismissible fade show">
+                    Data berhasil disimpan.
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                </div>
+                <% } %>
+
+                <div class="card shadow mb-4">
+                    <div class="card-header p-0">
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item">
+                                <a class="nav-link <%= activeTab === 'halaman' ? 'active' : '' %>" href="?tab=halaman">
+                                    <i class="fas fa-file-alt mr-1"></i> Kelola Halaman
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link <%= activeTab === 'menu' ? 'active' : '' %>" href="?tab=menu">
+                                    <i class="fas fa-bars mr-1"></i> Kelola Menu
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link <%= activeTab === 'users' ? 'active' : '' %>" href="?tab=users">
+                                    <i class="fas fa-user-cog mr-1"></i> Manajemen User
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link <%= activeTab === 'tampilan' ? 'active' : '' %>" href="?tab=tampilan">
+                                    <i class="fas fa-palette mr-1"></i> Tampilan Website
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+
+                        <!-- Tab: Kelola Halaman -->
+                        <% if (activeTab === 'halaman') { %>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">Kelola Halaman</h5>
+                            <a href="/admin/halaman/create" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus"></i> Buat Halaman Baru
+                            </a>
+                        </div>
+                        <div class="alert alert-info small">
+                            <i class="fas fa-info-circle"></i> Setelah membuat halaman, salin URL-nya (contoh: <code>/page/visi-misi</code>) dan gunakan sebagai URL di menu navigasi.
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead class="thead-light">
+                                    <tr><th>#</th><th>Judul</th><th>URL</th><th>Status</th><th>Aksi</th></tr>
+                                </thead>
+                                <tbody>
+                                    <% if (!halaman || halaman.length === 0) { %>
+                                    <tr><td colspan="5" class="text-center">Belum ada halaman</td></tr>
+                                    <% } else { %>
+                                    <% halaman.forEach((h, i) => { %>
+                                    <tr>
+                                        <td><%= i+1 %></td>
+                                        <td><%= h.judul %></td>
+                                        <td><a href="/page/<%= h.slug %>" target="_blank" class="text-primary">/page/<%= h.slug %></a></td>
+                                        <td><span class="badge badge-<%= h.status === 'aktif' ? 'success' : 'secondary' %>"><%= h.status %></span></td>
+                                        <td>
+                                            <a href="/admin/halaman/edit/<%= h.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                                            <form method="POST" action="/admin/halaman/delete/<%= h.id %>" style="display:inline" onsubmit="return confirm('Hapus halaman ini?')">
+                                                <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Tab: Kelola Menu -->
+                        <% } else if (activeTab === 'menu') { %>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">Kelola Menu Navigasi</h5>
+                            <a href="/admin/menu/create" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus"></i> Tambah Menu
+                            </a>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead class="thead-light">
+                                    <tr><th>#</th><th>Label</th><th>URL</th><th>Urutan</th><th>Status</th><th>Aksi</th></tr>
+                                </thead>
+                                <tbody>
+                                    <% if (!menus || menus.length === 0) { %>
+                                    <tr><td colspan="6" class="text-center">Belum ada menu</td></tr>
+                                    <% } else { %>
+                                    <% let no = 0; %>
+                                    <% menus.forEach((m) => { no++; %>
+                                    <tr class="table-light">
+                                        <td><strong><%= no %></strong></td>
+                                        <td><strong><i class="fas fa-bars mr-1 text-muted"></i> <%= m.label %></strong></td>
+                                        <td><code><%= m.url %></code></td>
+                                        <td><%= m.urutan %></td>
+                                        <td><span class="badge badge-<%= m.status === 'aktif' ? 'success' : 'secondary' %>"><%= m.status %></span></td>
+                                        <td>
+                                            <a href="/admin/menu/edit/<%= m.id %>" class="btn btn-warning btn-sm" title="Edit"><i class="fas fa-edit"></i></a>
+                                            <form method="POST" action="/admin/menu/delete/<%= m.id %>" style="display:inline" onsubmit="return confirm('Hapus menu <%= m.label %> beserta sub-menu-nya?')">
+                                                <button class="btn btn-danger btn-sm" title="Hapus"><i class="fas fa-trash"></i></button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <% if (m.children && m.children.length > 0) { %>
+                                    <% m.children.forEach((c) => { %>
+                                    <tr>
+                                        <td class="pl-4 text-muted"></td>
+                                        <td class="pl-4"><span class="text-muted mr-1">↳</span> <%= c.label %></td>
+                                        <td><code><%= c.url %></code></td>
+                                        <td><%= c.urutan %></td>
+                                        <td><span class="badge badge-<%= c.status === 'aktif' ? 'success' : 'secondary' %>"><%= c.status %></span></td>
+                                        <td>
+                                            <a href="/admin/menu/edit/<%= c.id %>" class="btn btn-warning btn-sm" title="Edit"><i class="fas fa-edit"></i></a>
+                                            <form method="POST" action="/admin/menu/delete/<%= c.id %>" style="display:inline" onsubmit="return confirm('Hapus sub-menu <%= c.label %>?')">
+                                                <button class="btn btn-danger btn-sm" title="Hapus"><i class="fas fa-trash"></i></button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <% if (c.children && c.children.length > 0) { %>
+                                    <% c.children.forEach((g) => { %>
+                                    <tr>
+                                        <td class="pl-5 text-muted"></td>
+                                        <td style="padding-left:3.5rem;"><span class="text-muted mr-1" style="font-size:0.75rem;">↳↳</span> <%= g.label %></td>
+                                        <td><code><%= g.url %></code></td>
+                                        <td><%= g.urutan %></td>
+                                        <td><span class="badge badge-<%= g.status === 'aktif' ? 'success' : 'secondary' %>"><%= g.status %></span></td>
+                                        <td>
+                                            <a href="/admin/menu/edit/<%= g.id %>" class="btn btn-warning btn-sm" title="Edit"><i class="fas fa-edit"></i></a>
+                                            <form method="POST" action="/admin/menu/delete/<%= g.id %>" style="display:inline" onsubmit="return confirm('Hapus sub-menu <%= g.label %>?')">
+                                                <button class="btn btn-danger btn-sm" title="Hapus"><i class="fas fa-trash"></i></button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                    <% } %>
+                                    <% }) %>
+                                    <% } %>
+                                    <% }) %>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Tab: Manajemen User -->
+                        <% } else if (activeTab === 'users') { %>                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">Manajemen User</h5>
+                            <a href="/admin/users/create" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus"></i> Tambah User
+                            </a>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead class="thead-light">
+                                    <tr><th>#</th><th>Username</th><th>Nama Lengkap</th><th>Email</th><th>Role</th><th>Aksi</th></tr>
+                                </thead>
+                                <tbody>
+                                    <% if (!users || users.length === 0) { %>
+                                    <tr><td colspan="6" class="text-center">Belum ada user</td></tr>
+                                    <% } else { %>
+                                    <% users.forEach((u, i) => { %>
+                                    <tr>
+                                        <td><%= i+1 %></td>
+                                        <td><%= u.username %></td>
+                                        <td><%= u.nama_lengkap %></td>
+                                        <td><%= u.email || '-' %></td>
+                                        <td><span class="badge badge-<%= u.role === 'admin' ? 'danger' : 'info' %>"><%= u.role %></span></td>
+                                        <td>
+                                            <a href="/admin/users/edit/<%= u.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                                            <% if (u.id !== user.userId) { %>
+                                            <form method="POST" action="/admin/users/delete/<%= u.id %>" style="display:inline" onsubmit="return confirm('Hapus user ini?')">
+                                                <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                            </form>
+                                            <% } %>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Tab: Tampilan Website -->
+                        <% } else if (activeTab === 'tampilan') { %>
+
+                        <!-- Maintenance Mode -->
+                        <div class="card border-left-<%= settings.maintenance_mode === '1' ? 'danger' : 'warning' %> shadow-sm mb-4">
+                            <div class="card-body py-3">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <h6 class="font-weight-bold mb-1">
+                                            <i class="fas fa-tools mr-2 text-<%= settings.maintenance_mode === '1' ? 'danger' : 'warning' %>"></i>
+                                            Mode Maintenance
+                                        </h6>
+                                        <% if (settings.maintenance_mode === '1') { %>
+                                        <span class="badge badge-danger">AKTIF — Frontend tidak bisa diakses pengunjung</span>
+                                        <% } else { %>
+                                        <span class="badge badge-secondary">NONAKTIF — Website berjalan normal</span>
+                                        <% } %>
+                                    </div>
+                                    <form method="POST" action="/admin/kontrol-website/maintenance" onsubmit="return confirm('<%= settings.maintenance_mode === '1' ? 'Matikan maintenance? Website akan kembali online.' : 'Aktifkan maintenance? Pengunjung tidak bisa mengakses website.' %>')">
+                                        <button type="submit" class="btn btn-<%= settings.maintenance_mode === '1' ? 'success' : 'danger' %> btn-sm">
+                                            <i class="fas fa-<%= settings.maintenance_mode === '1' ? 'check-circle' : 'tools' %> mr-1"></i>
+                                            <%= settings.maintenance_mode === '1' ? 'Matikan Maintenance' : 'Aktifkan Maintenance' %>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <form method="POST" action="/admin/kontrol-website/tampilan">
+                            <h5 class="mb-3">Mode Tampilan</h5>
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Mode Gelap / Terang</label>
+                                        <div class="d-flex mt-2">
+                                            <div class="mr-3">
+                                                <input type="radio" name="theme_mode" id="mode_light" value="light" <%= (settings.theme_mode || 'light') === 'light' ? 'checked' : '' %>>
+                                                <label for="mode_light" class="ml-1"><i class="fas fa-sun text-warning"></i> Terang (Light)</label>
+                                            </div>
+                                            <div>
+                                                <input type="radio" name="theme_mode" id="mode_dark" value="dark" <%= settings.theme_mode === 'dark' ? 'checked' : '' %>>
+                                                <label for="mode_dark" class="ml-1"><i class="fas fa-moon text-primary"></i> Gelap (Dark)</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h5 class="mb-3">Warna Tema</h5>
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Warna Utama</label>
+                                        <div class="d-flex align-items-center">
+                                            <input type="color" class="form-control mr-2" name="primary_color" value="<%= settings.primary_color || '#0ea5e9' %>" style="width:60px;height:38px;padding:2px;">
+                                            <input type="text" class="form-control" id="primary_hex" value="<%= settings.primary_color || '#0ea5e9' %>" style="width:100px;" oninput="document.querySelector('[name=primary_color]').value=this.value">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Warna Sekunder</label>
+                                        <div class="d-flex align-items-center">
+                                            <input type="color" class="form-control mr-2" name="secondary_color" value="<%= settings.secondary_color || '#0369a1' %>" style="width:60px;height:38px;padding:2px;">
+                                            <input type="text" class="form-control" id="secondary_hex" value="<%= settings.secondary_color || '#0369a1' %>" style="width:100px;" oninput="document.querySelector('[name=secondary_color]').value=this.value">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Warna Navbar</label>
+                                        <div class="d-flex align-items-center">
+                                            <input type="color" class="form-control mr-2" name="navbar_bg" value="<%= settings.navbar_bg || '#ffffff' %>" style="width:60px;height:38px;padding:2px;">
+                                            <input type="text" class="form-control" id="navbar_hex" value="<%= settings.navbar_bg || '#ffffff' %>" style="width:100px;" oninput="document.querySelector('[name=navbar_bg]').value=this.value">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Warna Footer</label>
+                                        <div class="d-flex align-items-center">
+                                            <input type="color" class="form-control mr-2" name="footer_bg" value="<%= settings.footer_bg || '#0f172a' %>" style="width:60px;height:38px;padding:2px;">
+                                            <input type="text" class="form-control" id="footer_hex" value="<%= settings.footer_bg || '#0f172a' %>" style="width:100px;" oninput="document.querySelector('[name=footer_bg]').value=this.value">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h5 class="mb-3">Preset Warna Cepat</h5>
+                            <div class="d-flex flex-wrap mb-4">
+                                <% const presets = [
+                                    { label:'Biru (Default)', p:'#0ea5e9', s:'#0369a1' },
+                                    { label:'Hijau', p:'#10b981', s:'#059669' },
+                                    { label:'Ungu', p:'#8b5cf6', s:'#7c3aed' },
+                                    { label:'Merah', p:'#ef4444', s:'#dc2626' },
+                                    { label:'Oranye', p:'#f59e0b', s:'#d97706' },
+                                    { label:'Pink', p:'#ec4899', s:'#db2777' },
+                                    { label:'Teal', p:'#14b8a6', s:'#0d9488' },
+                                    { label:'Indigo', p:'#6366f1', s:'#4f46e5' },
+                                ]; %>
+                                <% presets.forEach(function(pr) { %>
+                                <button type="button" class="btn btn-sm mr-2 mb-2 preset-btn"
+                                    style="background:<%= pr.p %>;color:white;border:none;"
+                                    data-primary="<%= pr.p %>" data-secondary="<%= pr.s %>">
+                                    <%= pr.label %>
+                                </button>
+                                <% }) %>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save mr-1"></i> Simpan Tampilan
+                            </button>
+                            <a href="/" target="_blank" class="btn btn-info ml-2">
+                                <i class="fas fa-eye mr-1"></i> Lihat Website
+                            </a>
+                        </form>
+                        <% } %>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%- include('partials/footer') %>
+<script>
+document.querySelectorAll('.preset-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        const p = this.dataset.primary;
+        const s = this.dataset.secondary;
+        document.querySelector('[name=primary_color]').value = p;
+        document.querySelector('[name=secondary_color]').value = s;
+        document.getElementById('primary_hex').value = p;
+        document.getElementById('secondary_hex').value = s;
+    });
+});
+// Sync color picker to text input
+document.querySelectorAll('input[type=color]').forEach(function(el) {
+    el.addEventListener('input', function() {
+        const name = this.name;
+        const map = { primary_color:'primary_hex', secondary_color:'secondary_hex', navbar_bg:'navbar_hex', footer_bg:'footer_hex' };
+        if (map[name]) document.getElementById(map[name]).value = this.value;
+    });
+});
+</script>
+    </div>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="/assets/js/sb-admin-2.min.js"></script>
+</body>
+</html>

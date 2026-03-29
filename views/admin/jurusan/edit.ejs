@@ -21,7 +21,7 @@
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Edit Jurusan</h1>
-                        <a href="/admin/jurusan" class="btn btn-secondary btn-sm">
+                        <a href="/admin/data-sekolah?tab=jurusan" class="btn btn-secondary btn-sm">
                             <i class="fas fa-arrow-left"></i> Kembali
                         </a>
                     </div>
@@ -37,46 +37,73 @@
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="kode">Kode Jurusan <span class="text-danger">*</span></label>
+                                                    <label>Kode Jurusan <span class="text-danger">*</span></label>
                                                     <input type="text" class="form-control" id="kode" name="kode" value="<%= jurusan.kode %>" required maxlength="10">
-                                                    <small class="form-text text-muted">Kode singkat jurusan (harus unik)</small>
                                                 </div>
                                             </div>
                                             <div class="col-md-8">
                                                 <div class="form-group">
-                                                    <label for="nama">Nama Jurusan <span class="text-danger">*</span></label>
-                                                    <input type="text" class="form-control" id="nama" name="nama" value="<%= jurusan.nama %>" required maxlength="100">
+                                                    <label>Nama Jurusan <span class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control" name="nama" value="<%= jurusan.nama %>" required maxlength="100">
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="deskripsi">Deskripsi</label>
-                                            <textarea class="form-control" id="deskripsi" name="deskripsi" rows="4"><%= jurusan.deskripsi || '' %></textarea>
+                                            <label>Deskripsi</label>
+                                            <textarea class="form-control" name="deskripsi" rows="3"><%= jurusan.deskripsi || '' %></textarea>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="kepala_jurusan">Kepala Jurusan</label>
-                                            <input type="text" class="form-control" id="kepala_jurusan" name="kepala_jurusan" value="<%= jurusan.kepala_jurusan || '' %>" maxlength="100">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Kepala Jurusan</label>
+                                                    <input type="text" class="form-control" name="kepala_jurusan" value="<%= jurusan.kepala_jurusan || '' %>" maxlength="100">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Status</label>
+                                                    <select class="form-control" name="status">
+                                                        <option value="aktif" <%= jurusan.status === 'aktif' ? 'selected' : '' %>>Aktif</option>
+                                                        <option value="nonaktif" <%= jurusan.status === 'nonaktif' ? 'selected' : '' %>>Nonaktif</option>
+                                                    </select>
+                                                </div>
+                                            </div>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="status">Status</label>
-                                            <select class="form-control" id="status" name="status" required>
-                                                <option value="aktif" <%= jurusan.status === 'aktif' ? 'selected' : '' %>>Aktif</option>
-                                                <option value="nonaktif" <%= jurusan.status === 'nonaktif' ? 'selected' : '' %>>Nonaktif</option>
-                                            </select>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Icon <small class="text-muted">(Font Awesome class)</small></label>
+                                                    <input type="text" class="form-control" name="icon" value="<%= jurusan.icon || 'fas fa-graduation-cap' %>" placeholder="fas fa-graduation-cap">
+                                                    <small class="text-muted">Contoh: fas fa-network-wired, fas fa-car, fas fa-utensils</small>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Warna Kartu</label>
+                                                    <select class="form-control" name="warna">
+                                                        <option value="linear-gradient(135deg,#0ea5e9,#0369a1)" <%= (jurusan.warna||'').includes('#0ea5e9') ? 'selected' : '' %>>Biru</option>
+                                                        <option value="linear-gradient(135deg,#f59e0b,#d97706)" <%= (jurusan.warna||'').includes('#f59e0b') ? 'selected' : '' %>>Kuning/Oranye</option>
+                                                        <option value="linear-gradient(135deg,#ef4444,#dc2626)" <%= (jurusan.warna||'').includes('#ef4444') ? 'selected' : '' %>>Merah</option>
+                                                        <option value="linear-gradient(135deg,#10b981,#059669)" <%= (jurusan.warna||'').includes('#10b981') ? 'selected' : '' %>>Hijau</option>
+                                                        <option value="linear-gradient(135deg,#8b5cf6,#7c3aed)" <%= (jurusan.warna||'').includes('#8b5cf6') ? 'selected' : '' %>>Ungu</option>
+                                                        <option value="linear-gradient(135deg,#ec4899,#db2777)" <%= (jurusan.warna||'').includes('#ec4899') ? 'selected' : '' %>>Pink</option>
+                                                        <option value="linear-gradient(135deg,#6366f1,#4f46e5)" <%= (jurusan.warna||'').includes('#6366f1') ? 'selected' : '' %>>Indigo</option>
+                                                        <option value="linear-gradient(135deg,#14b8a6,#0d9488)" <%= (jurusan.warna||'').includes('#14b8a6') ? 'selected' : '' %>>Teal</option>
+                                                    </select>
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <hr>
-                                        <div class="form-group mb-0">
-                                            <button type="submit" class="btn btn-primary">
-                                                <i class="fas fa-save"></i> Simpan Perubahan
-                                            </button>
-                                            <a href="/admin/jurusan" class="btn btn-secondary ml-2">
-                                                <i class="fas fa-times"></i> Batal
-                                            </a>
-                                        </div>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save"></i> Simpan Perubahan
+                                        </button>
+                                        <a href="/admin/data-sekolah?tab=jurusan" class="btn btn-secondary ml-2">
+                                            <i class="fas fa-times"></i> Batal
+                                        </a>
                                     </form>
                                 </div>
                             </div>

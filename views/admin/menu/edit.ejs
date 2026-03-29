@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Admin Panel</title>
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <%- include('../partials/sidebar') %>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <%- include('../partials/topbar', { user }) %>
+            <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Edit Menu</h1>
+                    <a href="/admin/kontrol-website?tab=menu" class="btn btn-sm btn-secondary shadow-sm">
+                        <i class="fas fa-arrow-left fa-sm"></i> Kembali
+                    </a>
+                </div>
+
+                <% if (error) { %>
+                <div class="alert alert-danger"><%= error %></div>
+                <% } %>
+
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <form method="POST" action="/admin/menu/edit/<%= menu.id %>">
+                            <div class="form-group">
+                                <label>Label Menu <span class="text-danger">*</span></label>
+                                <input type="text" name="label" class="form-control" maxlength="100"
+                                       value="<%= menu.label %>" required>
+                            </div>
+                            <div class="form-group">
+                                <label>URL <span class="text-danger">*</span></label>
+                                <input type="text" name="url" class="form-control" maxlength="255"
+                                       value="<%= menu.url %>" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Parent Menu (kosongkan jika menu utama)</label>
+                                <select name="parent_id" class="form-control">
+                                    <option value="">-- Menu Utama --</option>
+                                    <% parents.forEach(p => { %>
+                                    <% if (p.id !== menu.id) { %>
+                                    <option value="<%= p.id %>" <%= menu.parent_id == p.id ? 'selected' : '' %>>
+                                        <%= p.parent_id ? '&nbsp;&nbsp;&nbsp;↳ ' : '' %><%= p.label %>
+                                    </option>
+                                    <% } %>
+                                    <% }) %>
+                                </select>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label>Urutan</label>
+                                    <input type="number" name="urutan" class="form-control" min="0"
+                                           value="<%= menu.urutan %>">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label>Status</label>
+                                    <select name="status" class="form-control">
+                                        <option value="aktif" <%= menu.status === 'aktif' ? 'selected' : '' %>>Aktif</option>
+                                        <option value="nonaktif" <%= menu.status === 'nonaktif' ? 'selected' : '' %>>Nonaktif</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label>Target</label>
+                                    <select name="target" class="form-control">
+                                        <option value="_self" <%= menu.target === '_self' ? 'selected' : '' %>>_self (tab sama)</option>
+                                        <option value="_blank" <%= menu.target === '_blank' ? 'selected' : '' %>>_blank (tab baru)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Icon (Font Awesome class, opsional)</label>
+                                <input type="text" name="icon" class="form-control" maxlength="100"
+                                       value="<%= menu.icon || '' %>" placeholder="contoh: fas fa-home">
+                                <small class="form-text text-muted">Kosongkan jika tidak ingin menampilkan icon.</small>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save mr-1"></i> Simpan Perubahan
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%- include('../partials/footer') %>
+    </div>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="/assets/js/sb-admin-2.min.js"></script>
+</body>
+</html>

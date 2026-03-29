@@ -5,20 +5,27 @@ const path = require('path');
 const storage = multer.diskStorage({
   destination: './uploads/',
   filename: (req, file, cb) => {
-    cb(null, 'galeri-' + Date.now() + path.extname(file.originalname));
+    cb(null, 'galeri-' + Date.now() + '-' + Math.random().toString(36).substr(2,5) + path.extname(file.originalname));
   }
 });
 
-const upload = multer({ storage }).single('gambar');
+const uploadMulti = multer({ storage }).array('gambar', 30);
+const uploadSingle = multer({ storage }).single('gambar');
 
 exports.index = async (req, res) => {
   try {
-    const [galeri] = await db.query('SELECT * FROM galeri ORDER BY created_at DESC');
-    res.render('admin/galeri/index', {
-      title: 'Kelola Galeri',
-      user: req.session,
-      galeri
+    const [rows] = await db.query('SELECT * FROM galeri ORDER BY judul ASC, created_at DESC');
+    // Group by judul
+    const albumMap = {};
+    rows.forEach(item => {
+      const key = item.judul;
+      if (!albumMap[key]) {
+        albumMap[key] = { judul: item.judul, kategori: item.kategori, deskripsi: item.deskripsi, cover: item.gambar, fotos: [], id: item.id };
+      }
+      albumMap[key].fotos.push(item);
     });
+    const albums = Object.values(albumMap);
+    res.render('admin/galeri/index', { title: 'Kelola Galeri', user: req.session, albums, success: req.query.success });
   } catch (error) {
     console.error(error);
     res.status(500).send('Terjadi kesalahan');
@@ -26,32 +33,54 @@ exports.index = async (req, res) => {
 };
 
 exports.createPage = (req, res) => {
-  res.render('admin/galeri/create', {
-    title: 'Tambah Galeri',
-    user: req.session
-  });
+  res.render('admin/galeri/create', { title: 'Tambah Galeri', user: req.session });
 };
 
 exports.create = (req, res) => {
-  upload(req, res, async (err) => {
-    if (err) {
-      return res.status(500).send('Error upload file');
+  uploadMulti(req, res, async (err) => {
+    if (err) return res.status(500).send('Error upload file');
+    try {
+      const { judul, deskripsi, kategori } = req.body;
+      if (!req.files || req.files.length === 0) return res.status(400).send('Minimal 1 gambar harus diupload');
+      for (let i = 0; i < req.files.length; i++) {
+        const judulItem = Array.isArray(judul) ? (judul[i] || judul[0]) : judul;
+        const deskripsiItem = Array.isArray(deskripsi) ? (deskripsi[i] || '') : (deskripsi || '');
+        await db.query('INSERT INTO galeri (judul, deskripsi, gambar, kategori) VALUES (?, ?, ?, ?)',
+          [judulItem, deskripsiItem, req.files[i].filename, kategori]);
+      }
+      res.redirect('/admin/galeri?success=1');
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Terjadi kesalahan');
     }
-    
+  });
+};
+
+exports.editPage = async (req, res) => {
+  try {
+    const [rows] = await db.query('SELECT * FROM galeri WHERE id = ?', [req.params.id]);
+    if (rows.length === 0) return res.redirect('/admin/galeri');
+    res.render('admin/galeri/edit', { title: 'Edit Galeri', user: req.session, item: rows[0] });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Terjadi kesalahan');
+  }
+};
+
+exports.update = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.status(500).send('Error upload file');
     try {
       const { judul, deskripsi, kategori } = req.body;
       const gambar = req.file ? req.file.filename : null;
-      
-      if (!gambar) {
-        return res.status(400).send('Gambar harus diupload');
+      if (gambar) {
+        await db.query('UPDATE galeri SET judul=?, deskripsi=?, gambar=?, kategori=? WHERE id=?',
+          [judul, deskripsi, gambar, kategori, req.params.id]);
+      } else {
+        await db.query('UPDATE galeri SET judul=?, deskripsi=?, kategori=? WHERE id=?',
+          [judul, deskripsi, kategori, req.params.id]);
       }
-      
-      await db.query(
-        'INSERT INTO galeri (judul, deskripsi, gambar, kategori) VALUES (?, ?, ?, ?)',
-        [judul, deskripsi, gambar, kategori]
-      );
-      
-      res.redirect('/admin/galeri');
+      res.redirect('/admin/galeri?success=2');
     } catch (error) {
       console.error(error);
       res.status(500).send('Terjadi kesalahan');
@@ -62,7 +91,17 @@ exports.create = (req, res) => {
 exports.delete = async (req, res) => {
   try {
     await db.query('DELETE FROM galeri WHERE id = ?', [req.params.id]);
-    res.redirect('/admin/galeri');
+    res.redirect('/admin/galeri?success=3');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Terjadi kesalahan');
+  }
+};
+
+exports.deleteAlbum = async (req, res) => {
+  try {
+    await db.query('DELETE FROM galeri WHERE judul = ?', [req.body.judul]);
+    res.redirect('/admin/galeri?success=3');
   } catch (error) {
     console.error(error);
     res.status(500).send('Terjadi kesalahan');

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Admin Panel</title>
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+    <style>
+        .nav-tabs .nav-link { color: #6c757d; font-weight: 500; }
+        .nav-tabs .nav-link.active { color: #4e73df; font-weight: 600; border-bottom: 2px solid #4e73df; }
+    </style>
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <%- include('partials/sidebar') %>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <%- include('partials/topbar', { user }) %>
+            <div class="container-fluid">
+                <h1 class="h3 mb-4 text-gray-800">Data Sekolah</h1>
+
+                <% if (success == 1) { %>
+                <div class="alert alert-success alert-dismissible fade show">
+                    Data berhasil disimpan.
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                </div>
+                <% } %>
+
+                <div class="card shadow mb-4">
+                    <div class="card-header p-0">
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item">
+                                <a class="nav-link <%= activeTab === 'guru' ? 'active' : '' %>" href="?tab=guru">
+                                    <i class="fas fa-users mr-1"></i> Guru &amp; Staff
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link <%= activeTab === 'siswa' ? 'active' : '' %>" href="?tab=siswa">
+                                    <i class="fas fa-user-graduate mr-1"></i> Data Siswa
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link <%= activeTab === 'jurusan' ? 'active' : '' %>" href="?tab=jurusan">
+                                    <i class="fas fa-graduation-cap mr-1"></i> Data Jurusan
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+
+                        <!-- Tab: Guru & Staff -->
+                        <% if (activeTab === 'guru') { %>
+                        <% const guruMsg = typeof message !== 'undefined' && message ? message : null; %>
+                        <% if (guruMsg) { %>
+                        <div class="alert alert-<%= guruMsg.type === 'success' ? 'success' : 'danger' %> alert-dismissible fade show">
+                            <%= guruMsg.text %>
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        </div>
+                        <% } %>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">Guru &amp; Staff</h5>
+                            <div>
+                                <!-- Import -->
+                                <button class="btn btn-success btn-sm mr-1" onclick="document.getElementById('importForm').style.display=document.getElementById('importForm').style.display==='none'?'block':'none'">
+                                    <i class="fas fa-file-import"></i> Import Excel
+                                </button>
+                                <!-- Export -->
+                                <a href="/admin/guru/export" class="btn btn-warning btn-sm mr-1">
+                                    <i class="fas fa-file-export"></i> Export Excel
+                                </a>
+                                <a href="/admin/guru/sync-cbt" class="btn btn-info btn-sm mr-1">
+                                    <i class="fas fa-sync"></i> Sync CBT
+                                </a>
+                                <a href="/admin/guru/create" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-plus"></i> Tambah Guru
+                                </a>
+                            </div>
+                        </div>
+                        <!-- Form Import -->
+                        <div id="importForm" style="display:none;" class="card border-left-success shadow-sm mb-3">
+                            <div class="card-body py-3">
+                                <p class="mb-2 small font-weight-bold text-success"><i class="fas fa-info-circle mr-1"></i> Format kolom: NIP, Nama, Mata Pelajaran, Jabatan, Email, Telepon</p>
+                                <a href="/admin/guru/template" class="btn btn-outline-secondary btn-sm mb-2">
+                                    <i class="fas fa-download mr-1"></i> Download Template
+                                </a>
+                                <form method="POST" action="/admin/guru/import" enctype="multipart/form-data" class="d-flex align-items-center">
+                                    <input type="file" name="file" accept=".xlsx,.xls" class="form-control-file mr-2" required>
+                                    <button type="submit" class="btn btn-success btn-sm">Upload &amp; Import</button>
+                                </form>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead class="thead-light">
+                                    <tr><th>#</th><th>Foto</th><th>NIP</th><th>Nama</th><th>Mata Pelajaran</th><th>Jabatan</th><th>Aksi</th></tr>
+                                </thead>
+                                <tbody>
+                                    <% if (!guru || guru.length === 0) { %>
+                                    <tr><td colspan="7" class="text-center">Belum ada data guru</td></tr>
+                                    <% } else { %>
+                                    <% guru.forEach((g, i) => { %>
+                                    <tr>
+                                        <td><%= i+1 %></td>
+                                        <td>
+                                            <% if (g.foto) { %>
+                                            <img src="/uploads/<%= g.foto %>" style="width:40px;height:40px;object-fit:cover;border-radius:50%;">
+                                            <% } else { %>
+                                            <div style="width:40px;height:40px;background:#e2e8f0;border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                                                <i class="fas fa-user text-muted"></i>
+                                            </div>
+                                            <% } %>
+                                        </td>
+                                        <td><%= g.nip || '-' %></td>
+                                        <td><%= g.nama %></td>
+                                        <td><%= g.mata_pelajaran || '-' %></td>
+                                        <td><%= g.jabatan || '-' %></td>
+                                        <td>
+                                            <a href="/admin/guru/edit/<%= g.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                                            <form method="POST" action="/admin/guru/delete/<%= g.id %>" style="display:inline" onsubmit="return confirm('Hapus guru ini?')">
+                                                <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Tab: Siswa -->
+                        <% } else if (activeTab === 'siswa') { %>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">Data Siswa</h5>
+                            <a href="/admin/siswa/create" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus"></i> Tambah Siswa
+                            </a>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead class="thead-light">
+                                    <tr><th>#</th><th>NIS</th><th>Nama</th><th>Kelas</th><th>Jurusan</th><th>Status</th><th>Aksi</th></tr>
+                                </thead>
+                                <tbody>
+                                    <% if (!siswa || siswa.length === 0) { %>
+                                    <tr><td colspan="7" class="text-center">Belum ada data siswa</td></tr>
+                                    <% } else { %>
+                                    <% siswa.forEach((s, i) => { %>
+                                    <tr>
+                                        <td><%= i+1 %></td>
+                                        <td><%= s.nis %></td>
+                                        <td><%= s.nama %></td>
+                                        <td><%= s.kelas || '-' %></td>
+                                        <td><%= s.jurusan || '-' %></td>
+                                        <td><span class="badge badge-<%= s.status === 'aktif' ? 'success' : 'secondary' %>"><%= s.status %></span></td>
+                                        <td>
+                                            <a href="/admin/siswa/edit/<%= s.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                                            <form method="POST" action="/admin/siswa/delete/<%= s.id %>" style="display:inline" onsubmit="return confirm('Hapus siswa ini?')">
+                                                <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Tab: Jurusan -->
+                        <% } else if (activeTab === 'jurusan') { %>
+                        <% if (error === 'has_students') { %>
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            Jurusan tidak bisa dihapus karena masih memiliki data siswa.
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        </div>
+                        <% } %>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">Data Jurusan / Program Keahlian</h5>
+                            <a href="/admin/jurusan/create" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus"></i> Tambah Jurusan
+                            </a>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead class="thead-light">
+                                    <tr><th>#</th><th>Tampilan</th><th>Kode</th><th>Nama Jurusan</th><th>Kepala Jurusan</th><th>Status</th><th>Aksi</th></tr>
+                                </thead>
+                                <tbody>
+                                    <% if (!jurusan || jurusan.length === 0) { %>
+                                    <tr><td colspan="7" class="text-center">Belum ada data jurusan</td></tr>
+                                    <% } else { %>
+                                    <% jurusan.forEach((j, i) => { %>
+                                    <tr>
+                                        <td><%= i+1 %></td>
+                                        <td>
+                                            <div style="width:40px;height:40px;border-radius:8px;background:<%= j.warna || 'linear-gradient(135deg,#0ea5e9,#0369a1)' %>;display:flex;align-items:center;justify-content:center;">
+                                                <i class="<%= j.icon || 'fas fa-graduation-cap' %>" style="color:white;font-size:1.1rem;"></i>
+                                            </div>
+                                        </td>
+                                        <td><strong><%= j.kode %></strong></td>
+                                        <td><%= j.nama %></td>
+                                        <td><%= j.kepala_jurusan || '-' %></td>
+                                        <td><span class="badge badge-<%= j.status === 'aktif' ? 'success' : 'secondary' %>"><%= j.status %></span></td>
+                                        <td>
+                                            <a href="/admin/jurusan/edit/<%= j.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                                            <form method="POST" action="/admin/jurusan/delete/<%= j.id %>" style="display:inline" onsubmit="return confirm('Hapus jurusan <%= j.nama %>?')">
+                                                <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                        <small class="text-muted"><i class="fas fa-info-circle"></i> Data jurusan akan tampil otomatis di section "Program Keahlian" pada halaman beranda website.</small>
+                        <% } %>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%- include('partials/footer') %>
+    </div>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="/assets/js/sb-admin-2.min.js"></script>
+</body>
+</html>

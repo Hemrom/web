@@ -2,81 +2,385 @@
 <html lang="id">
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title><%= title %> - Admin Panel</title>
     <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+    <style>
+        .nav-tabs .nav-link { color: #6c757d; font-weight: 500; }
+        .nav-tabs .nav-link.active { color: #4e73df; font-weight: 600; border-bottom: 2px solid #4e73df; }
+        .tab-content { padding-top: 1.5rem; }
+    </style>
 </head>
 <body id="page-top">
-    <div id="wrapper">
-        <%- include('partials/sidebar') %>
-        <div id="content-wrapper" class="d-flex flex-column">
-            <div id="content">
-                <%- include('partials/topbar', { user }) %>
-                <div class="container-fluid">
-                    <h1 class="h3 mb-4 text-gray-800">Profil Sekolah</h1>
+<div id="wrapper">
+    <%- include('partials/sidebar') %>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <%- include('partials/topbar', { user }) %>
+            <div class="container-fluid">
+                <h1 class="h3 mb-4 text-gray-800">Pengaturan Website Sekolah</h1>
 
-                    <% if (success) { %>
-                        <div class="alert alert-success">Profil berhasil diperbarui!</div>
-                    <% } %>
+                <% if (success == 1) { %>
+                <div class="alert alert-success alert-dismissible fade show">
+                    Data berhasil disimpan.
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                </div>
+                <% } %>
 
-                    <div class="card shadow mb-4">
-                        <div class="card-body">
-                            <form method="POST" action="/admin/profil" enctype="multipart/form-data">
-                                <div class="form-group">
-                                    <label>Nama Sekolah</label>
-                                    <input type="text" class="form-control" name="nama_sekolah" value="<%= profil.nama_sekolah || '' %>" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Alamat</label>
-                                    <textarea class="form-control" name="alamat" rows="3"><%= profil.alamat || '' %></textarea>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Telepon</label>
-                                            <input type="text" class="form-control" name="telepon" value="<%= profil.telepon || '' %>">
-                                        </div>
+                <!-- Tab Navigation -->
+                <div class="card shadow mb-4">
+                    <div class="card-header p-0">
+                        <ul class="nav nav-tabs" id="profilTabs">
+                            <li class="nav-item">
+                                <a class="nav-link <%= activeTab === 'profil' ? 'active' : '' %>" href="?tab=profil">
+                                    <i class="fas fa-school mr-1"></i> Profil Sekolah
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link <%= activeTab === 'kepsek' ? 'active' : '' %>" href="?tab=kepsek">
+                                    <i class="fas fa-user-tie mr-1"></i> Profil Kepala Sekolah
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link <%= activeTab === 'visimisi' ? 'active' : '' %>" href="?tab=visimisi">
+                                    <i class="fas fa-eye mr-1"></i> Visi Misi
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link <%= activeTab === 'sejarah' ? 'active' : '' %>" href="?tab=sejarah">
+                                    <i class="fas fa-history mr-1"></i> Sejarah Sekolah
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link <%= activeTab === 'slider' ? 'active' : '' %>" href="?tab=slider">
+                                    <i class="fas fa-sliders-h mr-1"></i> Slider
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link <%= activeTab === 'medsos' ? 'active' : '' %>" href="?tab=medsos">
+                                    <i class="fas fa-share-alt mr-1"></i> Media Sosial
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+
+                        <!-- Tab: Profil Sekolah -->
+                        <% if (activeTab === 'profil') { %>
+                        <form method="POST" action="/admin/profil" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Nama Sekolah <small class="text-muted">Name: nama-sekolah</small></label>
+                                        <input type="text" class="form-control" name="nama_sekolah" value="<%= profil.nama_sekolah || '' %>" required>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Email</label>
-                                            <input type="email" class="form-control" name="email" value="<%= profil.email || '' %>">
-                                        </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>NPSN <small class="text-muted">Name: npsn</small></label>
+                                        <input type="text" class="form-control" name="npsn" value="<%= profil.npsn || '' %>">
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label>Visi</label>
-                                    <textarea class="form-control" name="visi" rows="3"><%= profil.visi || '' %></textarea>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Status Sekolah <small class="text-muted">Status Sekolah Negeri/Swasta · Name: status</small></label>
+                                        <select class="form-control" name="status">
+                                            <option value="">-- Pilih Status --</option>
+                                            <option value="Negeri" <%= profil.status === 'Negeri' ? 'selected' : '' %>>Negeri</option>
+                                            <option value="Swasta" <%= profil.status === 'Swasta' ? 'selected' : '' %>>Swasta</option>
+                                        </select>
+                                    </div>
                                 </div>
-                                <div class="form-group">
-                                    <label>Misi</label>
-                                    <textarea class="form-control" name="misi" rows="5"><%= profil.misi || '' %></textarea>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Jenjang Pendidikan <small class="text-muted">Status Sekolah Negeri/Swasta · Name: jenjang-pend</small></label>
+                                        <select class="form-control" name="jenjang">
+                                            <option value="">-- Pilih Jenjang --</option>
+                                            <option value="SD" <%= profil.jenjang === 'SD' ? 'selected' : '' %>>SD</option>
+                                            <option value="SMP" <%= profil.jenjang === 'SMP' ? 'selected' : '' %>>SMP</option>
+                                            <option value="SMA" <%= profil.jenjang === 'SMA' ? 'selected' : '' %>>SMA</option>
+                                            <option value="SMK" <%= profil.jenjang === 'SMK' ? 'selected' : '' %>>SMK</option>
+                                            <option value="MA" <%= profil.jenjang === 'MA' ? 'selected' : '' %>>MA</option>
+                                            <option value="MTs" <%= profil.jenjang === 'MTs' ? 'selected' : '' %>>MTs</option>
+                                            <option value="MI" <%= profil.jenjang === 'MI' ? 'selected' : '' %>>MI</option>
+                                        </select>
+                                    </div>
                                 </div>
-                                <div class="form-group">
-                                    <label>Logo Sekolah</label>
-                                    <input type="file" class="form-control-file" name="logo" accept="image/*">
-                                    <% if (profil.logo) { %>
-                                        <img src="/uploads/<%= profil.logo %>" alt="Logo" class="mt-2" style="max-width: 200px;">
-                                    <% } %>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Akreditasi <small class="text-muted">Name: akreditasi</small></label>
+                                        <input type="text" class="form-control" name="akreditasi" value="<%= profil.akreditasi || '' %>" placeholder="A / B / C">
+                                    </div>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Simpan</button>
-                            </form>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>No SK Akreditasi <small class="text-muted">Name: no-sk-akreditasi</small></label>
+                                        <input type="text" class="form-control" name="no_sk_akreditasi" value="<%= profil.no_sk_akreditasi || '' %>">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>SK Pendirian Sekolah <small class="text-muted">Name: sk-pendirian</small></label>
+                                        <input type="text" class="form-control" name="sk_pendirian" value="<%= profil.sk_pendirian || '' %>">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Tanggal SK Pendirian <small class="text-muted">Name: tanggal-sk</small></label>
+                                        <input type="date" class="form-control" name="tanggal_sk" value="<%= profil.tanggal_sk ? profil.tanggal_sk.toString().substring(0,10) : '' %>">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>SK Izin Operasional <small class="text-muted">Name: sk-izin</small></label>
+                                        <input type="text" class="form-control" name="sk_izin" value="<%= profil.sk_izin || '' %>">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Tanggal SK Izin Operasional <small class="text-muted">Name: tanggal-sk-izin</small></label>
+                                        <input type="date" class="form-control" name="tanggal_sk_izin" value="<%= profil.tanggal_sk_izin ? profil.tanggal_sk_izin.toString().substring(0,10) : '' %>">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Alamat <small class="text-muted">Name: alamat</small></label>
+                                        <textarea class="form-control" name="alamat" rows="2"><%= profil.alamat || '' %></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Google Maps <small class="text-muted">Paste embed src URL dari Google Maps · Name: maps</small></label>
+                                        <input type="text" class="form-control" name="maps" value="<%= profil.maps || '' %>" placeholder="https://www.google.com/maps/embed?pb=...">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Telepon</label>
+                                        <input type="text" class="form-control" name="telepon" value="<%= profil.telepon || '' %>">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>WhatsApp</label>
+                                        <input type="text" class="form-control" name="whatsapp" value="<%= profil.whatsapp || '' %>" placeholder="628123456789">
+                                        <small class="text-muted">Format: 628xxx (tanpa + atau spasi)</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="email" class="form-control" name="email" value="<%= profil.email || '' %>">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Website</label>
+                                        <input type="text" class="form-control" name="website" value="<%= profil.website || '' %>" placeholder="https://...">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Logo Sekolah</label>
+                                <% if (profil.logo) { %>
+                                <div class="mb-2">
+                                    <img src="/uploads/<%= profil.logo %>" style="max-width:150px; border-radius:8px;">
+                                </div>
+                                <% } %>
+                                <input type="file" class="form-control-file" name="logo" accept="image/*">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Simpan Profil</button>
+                        </form>
+
+                        <!-- Tab: Visi Misi -->
+                        <% } else if (activeTab === 'visimisi') { %>
+                        <% const vmk = (typeof visiMisiKonten !== 'undefined' && visiMisiKonten) ? visiMisiKonten : {}; %>
+                        <form method="POST" action="/admin/profil-konten/visi_misi" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label>Judul</label>
+                                <input type="text" class="form-control" name="judul" value="<%= vmk.judul || 'Visi & Misi' %>">
+                            </div>
+                            <div class="form-group">
+                                <label>Konten Visi &amp; Misi</label>
+                                <textarea class="form-control" name="konten" id="editor-visimisi" rows="12"><%= vmk.konten || '' %></textarea>
+                            </div>
+                            <input type="hidden" name="_redirect" value="/admin/profil?tab=visimisi&success=1">
+                            <button type="submit" class="btn btn-primary">Simpan Visi Misi</button>
+                            <a href="/profil/visi-misi" target="_blank" class="btn btn-info ml-2">
+                                <i class="fas fa-eye"></i> Lihat di Website
+                            </a>
+                        </form>
+                        <% } else if (activeTab === 'sejarah') { %>
+                        <% const sjk = (typeof sejarahKonten !== 'undefined' && sejarahKonten) ? sejarahKonten : {}; %>
+                        <form method="POST" action="/admin/profil-konten/sejarah" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label>Judul</label>
+                                <input type="text" class="form-control" name="judul" value="<%= sjk.judul || 'Sejarah Sekolah' %>">
+                            </div>
+                            <div class="form-group">
+                                <label>Konten Sejarah Sekolah</label>
+                                <textarea class="form-control" name="konten" id="editor-sejarah" rows="12"><%= sjk.konten || '' %></textarea>
+                            </div>
+                            <input type="hidden" name="_redirect" value="/admin/profil?tab=sejarah&success=1">
+                            <button type="submit" class="btn btn-primary">Simpan Sejarah</button>
+                            <a href="/profil/sejarah" target="_blank" class="btn btn-info ml-2">
+                                <i class="fas fa-eye"></i> Lihat di Website
+                            </a>
+                        </form>
+
+                        <% } else if (activeTab === 'kepsek') { %>
+                        <form method="POST" action="/admin/profil-konten/sambutan" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label>Nama Kepala Sekolah</label>
+                                <input type="text" class="form-control" name="judul" value="<%= kepsek && kepsek.judul ? kepsek.judul : '' %>" placeholder="Nama Kepala Sekolah">
+                            </div>
+                            <div class="form-group">
+                                <label>Foto Kepala Sekolah</label>
+                                <% if (kepsek && kepsek.foto) { %>
+                                <div class="mb-2">
+                                    <img src="/uploads/<%= kepsek.foto %>" style="max-width:150px; border-radius:8px;">
+                                </div>
+                                <% } %>
+                                <input type="file" class="form-control-file" name="foto" accept="image/*">
+                                <small class="text-muted">Kosongkan jika tidak ingin mengubah foto</small>
+                            </div>
+                            <div class="form-group">
+                                <label>Sambutan / Kata Pengantar</label>
+                                <textarea class="form-control" name="konten" id="editor-sambutan" rows="8"><%= kepsek && kepsek.konten ? kepsek.konten : '' %></textarea>
+                            </div>
+                            <input type="hidden" name="_redirect" value="/admin/profil?tab=kepsek&success=1">
+                            <button type="submit" class="btn btn-primary">Simpan Profil Kepala Sekolah</button>
+                        </form>
+
+                        <% } else if (activeTab === 'slider') { %>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">Kelola Slider</h5>
+                            <a href="/admin/slider/create" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus"></i> Tambah Slider
+                            </a>
                         </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr><th>#</th><th>Gambar</th><th>Judul</th><th>Urutan</th><th>Status</th><th>Aksi</th></tr>
+                                </thead>
+                                <tbody>
+                                    <% if (!slider || slider.length === 0) { %>
+                                    <tr><td colspan="6" class="text-center">Belum ada slider</td></tr>
+                                    <% } else { %>
+                                    <% slider.forEach((s, i) => { %>
+                                    <tr>
+                                        <td><%= i+1 %></td>
+                                        <td>
+                                            <% if (s.gambar) { %>
+                                            <img src="/uploads/<%= s.gambar %>" style="width:80px;height:50px;object-fit:cover;border-radius:4px;">
+                                            <% } else { %><span class="text-muted">-</span><% } %>
+                                        </td>
+                                        <td><%= s.judul %></td>
+                                        <td><%= s.urutan %></td>
+                                        <td><span class="badge badge-<%= s.status === 'aktif' ? 'success' : 'secondary' %>"><%= s.status %></span></td>
+                                        <td>
+                                            <a href="/admin/slider/edit/<%= s.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                                            <form method="POST" action="/admin/slider/delete/<%= s.id %>" style="display:inline" onsubmit="return confirm('Hapus slider ini?')">
+                                                <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Tab: Media Sosial -->
+                        <% } else if (activeTab === 'medsos') { %>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">Kelola Media Sosial</h5>
+                            <a href="/admin/media-sosial/create" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus"></i> Tambah Media Sosial
+                            </a>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr><th>#</th><th>Judul</th><th>Platform</th><th>Status</th><th>Aksi</th></tr>
+                                </thead>
+                                <tbody>
+                                    <% if (!mediaSosial || mediaSosial.length === 0) { %>
+                                    <tr><td colspan="5" class="text-center">Belum ada media sosial</td></tr>
+                                    <% } else { %>
+                                    <% mediaSosial.forEach((m, i) => { %>
+                                    <tr>
+                                        <td><%= i+1 %></td>
+                                        <td><%= m.judul %></td>
+                                        <td><span class="badge badge-info"><%= m.platform %></span></td>
+                                        <td><span class="badge badge-<%= m.status === 'aktif' ? 'success' : 'secondary' %>"><%= m.status %></span></td>
+                                        <td>
+                                            <a href="/admin/media-sosial/edit/<%= m.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                                            <form method="POST" action="/admin/media-sosial/delete/<%= m.id %>" style="display:inline" onsubmit="return confirm('Hapus?')">
+                                                <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                        <% } %>
+
                     </div>
                 </div>
             </div>
-            <%- include('partials/footer') %>
         </div>
+        <%- include('partials/footer') %>
     </div>
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a>
-    <script src="/assets/vendor/jquery/jquery.min.js"></script>
-    <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
-    <script src="/assets/js/sb-admin-2.min.js"></script>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="/assets/js/sb-admin-2.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/lang/summernote-id-ID.min.js"></script>
+<script>
+    const summernoteConfig = {
+        height: 450,
+        lang: 'id-ID',
+        toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'clear']],
+            ['fontname', ['fontname']],
+            ['fontsize', ['fontsize']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['height', ['height']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'hr']],
+            ['view', ['fullscreen', 'codeview', 'help']]
+        ],
+        styleTags: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote'],
+        fontSizes: ['8', '9', '10', '11', '12', '13', '14', '16', '18', '20', '24', '28', '32', '36', '48', '64'],
+        fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Georgia', 'Helvetica', 'Impact', 'Tahoma', 'Times New Roman', 'Trebuchet MS', 'Verdana']
+    };
+    $('#editor-sambutan').summernote(summernoteConfig);
+    $('#editor-visimisi').summernote(summernoteConfig);
+    $('#editor-sejarah').summernote(summernoteConfig);
+</script>
+
 </body>
 </html>

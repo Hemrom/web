@@ -5,7 +5,7 @@ exports.index = async (req, res) => {
   try {
     const [jurusan] = await db.query(`
       SELECT j.*, 
-        (SELECT COUNT(*) FROM siswa WHERE jurusan = j.nama AND status = 'aktif') as jumlah_siswa
+        (SELECT COUNT(*) FROM siswa WHERE jurusan = j.nama) as jumlah_siswa
       FROM jurusan j
       ORDER BY j.kode
     `);
@@ -33,14 +33,28 @@ exports.create = (req, res) => {
 // Simpan jurusan baru
 exports.store = async (req, res) => {
   try {
-    const { kode, nama, deskripsi, kepala_jurusan, status } = req.body;
-    
+    const { kode, nama, deskripsi, kepala_jurusan, status, icon, warna } = req.body;
+
+    // Tentukan warna badge otomatis berdasarkan warna gradient
+    const badgeMap = {
+      '#0ea5e9': { bg: '#e0f2fe', teks: '#0369a1' },
+      '#f59e0b': { bg: '#fef3c7', teks: '#d97706' },
+      '#ef4444': { bg: '#fee2e2', teks: '#dc2626' },
+      '#10b981': { bg: '#d1fae5', teks: '#059669' },
+      '#8b5cf6': { bg: '#ede9fe', teks: '#7c3aed' },
+      '#ec4899': { bg: '#fce7f3', teks: '#db2777' },
+      '#6366f1': { bg: '#e0e7ff', teks: '#4f46e5' },
+      '#14b8a6': { bg: '#ccfbf1', teks: '#0d9488' },
+    };
+    const colorKey = Object.keys(badgeMap).find(k => (warna || '').includes(k)) || '#0ea5e9';
+    const badge = badgeMap[colorKey];
+
     await db.query(
-      'INSERT INTO jurusan (kode, nama, deskripsi, kepala_jurusan, status) VALUES (?, ?, ?, ?, ?)',
-      [kode, nama, deskripsi, kepala_jurusan, status || 'aktif']
+      'INSERT INTO jurusan (kode, nama, deskripsi, kepala_jurusan, status, icon, warna, warna_badge, warna_teks_badge) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [kode, nama, deskripsi, kepala_jurusan, status || 'aktif', icon || 'fas fa-graduation-cap', warna || 'linear-gradient(135deg,#0ea5e9,#0369a1)', badge.bg, badge.teks]
     );
-    
-    res.redirect('/admin/jurusan?success=1');
+
+    res.redirect('/admin/data-sekolah?tab=jurusan&success=1');
   } catch (error) {
     console.error(error);
     if (error.code === 'ER_DUP_ENTRY') {
@@ -62,7 +76,7 @@ exports.edit = async (req, res) => {
     
     // Hitung jumlah siswa
     const [siswaCount] = await db.query(
-      'SELECT COUNT(*) as total FROM siswa WHERE jurusan = ? AND status = "aktif"',
+      'SELECT COUNT(*) as total FROM siswa WHERE jurusan = ?',
       [jurusan[0].nama]
     );
     
@@ -81,26 +95,33 @@ exports.edit = async (req, res) => {
 // Update jurusan
 exports.update = async (req, res) => {
   try {
-    const { kode, nama, deskripsi, kepala_jurusan, status } = req.body;
-    
-    // Ambil nama jurusan lama
+    const { kode, nama, deskripsi, kepala_jurusan, status, icon, warna } = req.body;
+
+    const badgeMap = {
+      '#0ea5e9': { bg: '#e0f2fe', teks: '#0369a1' },
+      '#f59e0b': { bg: '#fef3c7', teks: '#d97706' },
+      '#ef4444': { bg: '#fee2e2', teks: '#dc2626' },
+      '#10b981': { bg: '#d1fae5', teks: '#059669' },
+      '#8b5cf6': { bg: '#ede9fe', teks: '#7c3aed' },
+      '#ec4899': { bg: '#fce7f3', teks: '#db2777' },
+      '#6366f1': { bg: '#e0e7ff', teks: '#4f46e5' },
+      '#14b8a6': { bg: '#ccfbf1', teks: '#0d9488' },
+    };
+    const colorKey = Object.keys(badgeMap).find(k => (warna || '').includes(k)) || '#0ea5e9';
+    const badge = badgeMap[colorKey];
+
     const [oldJurusan] = await db.query('SELECT nama FROM jurusan WHERE id = ?', [req.params.id]);
-    
-    // Update jurusan
+
     await db.query(
-      'UPDATE jurusan SET kode = ?, nama = ?, deskripsi = ?, kepala_jurusan = ?, status = ? WHERE id = ?',
-      [kode, nama, deskripsi, kepala_jurusan, status, req.params.id]
+      'UPDATE jurusan SET kode = ?, nama = ?, deskripsi = ?, kepala_jurusan = ?, status = ?, icon = ?, warna = ?, warna_badge = ?, warna_teks_badge = ? WHERE id = ?',
+      [kode, nama, deskripsi, kepala_jurusan, status, icon || 'fas fa-graduation-cap', warna || 'linear-gradient(135deg,#0ea5e9,#0369a1)', badge.bg, badge.teks, req.params.id]
     );
-    
-    // Update jurusan di tabel siswa jika nama berubah
+
     if (oldJurusan[0].nama !== nama) {
-      await db.query(
-        'UPDATE siswa SET jurusan = ? WHERE jurusan = ?',
-        [nama, oldJurusan[0].nama]
-      );
+      await db.query('UPDATE siswa SET jurusan = ? WHERE jurusan = ?', [nama, oldJurusan[0].nama]);
     }
-    
-    res.redirect('/admin/jurusan?success=2');
+
+    res.redirect('/admin/data-sekolah?tab=jurusan&success=1');
   } catch (error) {
     console.error(error);
     if (error.code === 'ER_DUP_ENTRY') {
@@ -114,19 +135,18 @@ exports.update = async (req, res) => {
 // Hapus jurusan
 exports.destroy = async (req, res) => {
   try {
-    // Cek apakah ada siswa di jurusan ini
     const [jurusan] = await db.query('SELECT nama FROM jurusan WHERE id = ?', [req.params.id]);
     const [siswaCount] = await db.query(
       'SELECT COUNT(*) as total FROM siswa WHERE jurusan = ?',
       [jurusan[0].nama]
     );
-    
+
     if (siswaCount[0].total > 0) {
-      return res.redirect('/admin/jurusan?error=has_students');
+      return res.redirect('/admin/data-sekolah?tab=jurusan&error=has_students');
     }
-    
+
     await db.query('DELETE FROM jurusan WHERE id = ?', [req.params.id]);
-    res.redirect('/admin/jurusan?success=3');
+    res.redirect('/admin/data-sekolah?tab=jurusan&success=1');
   } catch (error) {
     console.error(error);
     res.status(500).send('Terjadi kesalahan');
@@ -143,7 +163,7 @@ exports.getSiswaByJurusan = async (req, res) => {
     }
     
     const [siswa] = await db.query(
-      'SELECT id, nis, nama, kelas FROM siswa WHERE jurusan = ? AND status = "aktif" ORDER BY kelas, nama',
+      'SELECT id, nis, nama, kelas FROM siswa WHERE jurusan = ? ORDER BY kelas, nama',
       [jurusan[0].nama]
     );
     

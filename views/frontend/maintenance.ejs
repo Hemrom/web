@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%= title %></title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; }
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+        }
+        .maintenance-box {
+            max-width: 520px;
+        }
+        .icon-wrap {
+            width: 100px;
+            height: 100px;
+            background: rgba(251,191,36,0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            animation: pulse 2s infinite;
+        }
+        .icon-wrap i { font-size: 2.8rem; color: #fbbf24; }
+        @keyframes pulse {
+            0%,100% { box-shadow: 0 0 0 0 rgba(251,191,36,0.3); }
+            50% { box-shadow: 0 0 0 20px rgba(251,191,36,0); }
+        }
+        h1 { font-size: 2rem; font-weight: 700; margin-bottom: 1rem; }
+        p { color: #94a3b8; font-size: 1.05rem; line-height: 1.7; margin-bottom: 1.5rem; }
+        .badge-maintenance {
+            display: inline-block;
+            background: rgba(251,191,36,0.2);
+            color: #fbbf24;
+            border: 1px solid rgba(251,191,36,0.4);
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+        .progress-bar-wrap {
+            background: rgba(255,255,255,0.1);
+            border-radius: 50px;
+            height: 6px;
+            margin: 2rem auto;
+            max-width: 300px;
+            overflow: hidden;
+        }
+        .progress-bar-inner {
+            height: 100%;
+            background: linear-gradient(90deg, #fbbf24, #f59e0b);
+            border-radius: 50px;
+            animation: loading 2.5s ease-in-out infinite;
+        }
+        @keyframes loading {
+            0% { width: 10%; }
+            50% { width: 80%; }
+            100% { width: 10%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="maintenance-box">
+        <div class="icon-wrap">
+            <i class="fas fa-tools"></i>
+        </div>
+        <span class="badge-maintenance"><i class="fas fa-wrench mr-1"></i> MAINTENANCE MODE</span>
+        <h1 style="margin-top:1.5rem;">Website Sedang Diperbaiki</h1>
+        <p>Kami sedang melakukan pemeliharaan dan peningkatan sistem. Website akan segera kembali online. Mohon maaf atas ketidaknyamanannya.</p>
+        <div class="progress-bar-wrap">
+            <div class="progress-bar-inner"></div>
+        </div>
+        <p style="font-size:0.85rem;color:#64748b;">Silakan kembali beberapa saat lagi.</p>
+    </div>
+</body>
+</html>
