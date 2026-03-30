@@ -169,5 +169,32 @@ git add .
 git commit -m "Perubahan terbaru"
 git push origin main
 ```
+---
+## Alur kerja yang paling aman untuk update
 
+## Di Windows
+
+Anda coding di lokal:
+```
+git add .
+git commit -m "Perubahan fitur terbaru"
+git push origin main
+```
+## Di VPS
+
+Setelah push berhasil:
+```
+cd /website
+git pull origin main
+```
+Kalau project Node.js atau PHP/Laravel/Next.js, biasanya ada langkah tambahan setelah pull.
+
+Contoh Node.js:
+```
+npm install
+npm run build
+pm2 restart all
+```
+
+---
 SMK Negeri 1 Kras — Kediri, Jawa Timur
