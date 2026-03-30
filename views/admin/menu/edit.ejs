@@ -29,8 +29,8 @@
 
                 <div class="card shadow mb-4">
                     <div class="card-body">
-                        <form method="POST" action="/admin/menu/edit/<%= menu.id %>
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">">
+                        <form method="POST" action="/admin/menu/edit/<%= menu.id %>">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                             <div class="form-group">
                                 <label>Label Menu <span class="text-danger">*</span></label>
                                 <input type="text" name="label" class="form-control" maxlength="100"

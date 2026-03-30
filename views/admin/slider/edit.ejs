@@ -31,8 +31,8 @@
                                     <h6 class="m-0 font-weight-bold text-primary">Form Edit Slider</h6>
                                 </div>
                                 <div class="card-body">
-                                    <form method="POST" action="/admin/slider/edit/<%= slider.id %>
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">" enctype="multipart/form-data">
+                                    <form method="POST" action="/admin/slider/edit/<%= slider.id %>" enctype="multipart/form-data">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                         <div class="form-group">
                                             <label for="judul">Judul *</label>
                                             <input type="text" class="form-control" id="judul" name="judul" value="<%= slider.judul %>" required>

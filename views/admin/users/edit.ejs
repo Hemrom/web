@@ -31,8 +31,8 @@
                         <% if (error) { %>
                         <div class="alert alert-danger"><%= error %></div>
                         <% } %>
-                        <form method="POST" action="/admin/users/edit/<%= editUser.id %>
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">">
+                        <form method="POST" action="/admin/users/edit/<%= editUser.id %>">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                             <div class="form-group">
                                 <label>Username *</label>
                                 <input type="text" class="form-control" name="username" value="<%= editUser.username %>" required>

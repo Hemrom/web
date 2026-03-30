@@ -8,7 +8,7 @@ const getMenuItems = async () => {
   if (cached) return cached;
   try {
     const [rows] = await db.query(
-      "SELECT id, judul, url, parent_id, urutan FROM menu_navigasi WHERE status = 'aktif' ORDER BY urutan ASC"
+      "SELECT id, label, url, parent_id, urutan FROM menu_navigasi WHERE status = 'aktif' ORDER BY urutan ASC"
     );
     const parents = rows.filter(r => r.parent_id === null);
     parents.forEach(p => {
@@ -79,10 +79,10 @@ exports.home = async (req, res) => {
       mediaSosialFooter
     ] = await Promise.all([
       getProfilSekolah(),
-      db.query('SELECT id, judul, slug, gambar, kategori, created_at FROM berita WHERE status = "published" ORDER BY created_at DESC LIMIT 6'),
+      db.query('SELECT id, judul, slug, gambar, konten, kategori, created_at FROM berita WHERE status = "published" ORDER BY created_at DESC LIMIT 6'),
       db.query('SELECT id, judul, gambar, kategori FROM galeri ORDER BY created_at DESC LIMIT 6'),
       db.query('SELECT * FROM slider WHERE status = "aktif" ORDER BY urutan ASC, created_at DESC'),
-      db.query("SELECT id, kode, nama, deskripsi, logo FROM jurusan WHERE status = 'aktif' ORDER BY kode ASC"),
+      db.query("SELECT id, kode, nama, deskripsi FROM jurusan WHERE status = 'aktif' ORDER BY kode ASC"),
       getMenuItems(),
       getMediaSosialFooter()
     ]);

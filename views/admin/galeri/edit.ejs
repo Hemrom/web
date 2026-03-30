@@ -26,8 +26,8 @@
                     <div class="col-lg-8">
                         <div class="card shadow mb-4">
                             <div class="card-body">
-                                <form method="POST" action="/admin/galeri/edit/<%= item.id %>
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">" enctype="multipart/form-data">
+                                <form method="POST" action="/admin/galeri/edit/<%= item.id %>" enctype="multipart/form-data">
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                     <div class="form-group">
                                         <label>Judul <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control" name="judul" value="<%= item.judul %>" required>

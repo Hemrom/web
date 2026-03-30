@@ -763,7 +763,7 @@
                                 </div>
                                 <div class="news-content">
                                     <h3 class="news-title"><%= b.judul %></h3>
-                                    <p class="news-excerpt"><%= b.konten.replace(/<[^>]*>/g, '').substring(0, 120) %>...</p>
+                                    <p class="news-excerpt"><%= (b.konten || '').replace(/<[^>]*>/g, '').substring(0, 120) %>...</p>
                                     <div class="news-meta">
                                         <span><%= new Date(b.created_at).toLocaleDateString('id-ID') %></span>
                                         <a href="/berita/<%= b.slug %>" class="text-primary font-weight-600">Baca Selengkapnya</a>

@@ -68,10 +68,10 @@
                                                         <a href="/admin/slider/edit/<%= item.id %>" class="btn btn-warning btn-sm">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
-                                                        <form method="POST" action="/admin/slider/delete/<%= item.id %>
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">" 
+                                                        <form method="POST" action="/admin/slider/delete/<%= item.id %>" 
                                                               style="display: inline;" 
                                                               onsubmit="return confirm('Yakin ingin menghapus slider ini?')">
+                                                                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                                             <button type="submit" class="btn btn-danger btn-sm">
                                                                 <i class="fas fa-trash"></i>
                                                             </button>

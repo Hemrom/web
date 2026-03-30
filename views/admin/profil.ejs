@@ -300,8 +300,8 @@
                                         <td><span class="badge badge-<%= s.status === 'aktif' ? 'success' : 'secondary' %>"><%= s.status %></span></td>
                                         <td>
                                             <a href="/admin/slider/edit/<%= s.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
-                                            <form method="POST" action="/admin/slider/delete/<%= s.id %>
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">" style="display:inline" onsubmit="return confirm('Hapus slider ini?')">
+                                            <form method="POST" action="/admin/slider/delete/<%= s.id %>" style="display:inline" onsubmit="return confirm('Hapus slider ini?')">
+                                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                                 <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
                                             </form>
                                         </td>
@@ -337,8 +337,8 @@
                                         <td><span class="badge badge-<%= m.status === 'aktif' ? 'success' : 'secondary' %>"><%= m.status %></span></td>
                                         <td>
                                             <a href="/admin/media-sosial/edit/<%= m.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
-                                            <form method="POST" action="/admin/media-sosial/delete/<%= m.id %>
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">" style="display:inline" onsubmit="return confirm('Hapus?')">
+                                            <form method="POST" action="/admin/media-sosial/delete/<%= m.id %>" style="display:inline" onsubmit="return confirm('Hapus?')">
+                                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                                 <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
                                             </form>
                                         </td>

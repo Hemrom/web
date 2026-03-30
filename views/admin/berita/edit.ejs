@@ -30,8 +30,8 @@
                                 <h6 class="m-0 font-weight-bold text-primary">Form Edit Berita</h6>
                             </div>
                             <div class="card-body">
-                                <form method="POST" action="/admin/berita/edit/<%= berita.id %>
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">" enctype="multipart/form-data">
+                                <form method="POST" action="/admin/berita/edit/<%= berita.id %>" enctype="multipart/form-data">
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                     <div class="form-group">
                                         <label>Judul Berita *</label>
                                         <input type="text" class="form-control" name="judul" value="<%= berita.judul %>" required>

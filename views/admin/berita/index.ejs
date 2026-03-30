@@ -55,8 +55,7 @@
                                                     <td><%= index + 1 %></td>
                                                     <td>
                                                         <% if (item.gambar) { %>
-                                                            <img src="/uploads/<%= item.gambar %>" alt="<%= item.judul %>" 
-                                                                 style="width: 60px; height: 40px; object-fit: cover; border-radius: 5px;">
+                                                            <img src="/uploads/<%= item.gambar %>" alt="<%= item.judul %>" style="width: 60px; height: 40px; object-fit: cover; border-radius: 5px;">
                                                         <% } else { %>
                                                             <span class="text-muted">-</span>
                                                         <% } %>
@@ -74,10 +73,8 @@
                                                         <a href="/admin/berita/edit/<%= item.id %>" class="btn btn-warning btn-sm">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
-                                                        <form method="POST" action="/admin/berita/delete/<%= item.id %>
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">" 
-                                                              style="display: inline;" 
-                                                              onsubmit="return confirm('Yakin ingin menghapus berita ini?')">
+                                                        <form method="POST" action="/admin/berita/delete/<%= item.id %>" style="display: inline;" onsubmit="return confirm('Yakin ingin menghapus berita ini?')">
+                                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                                             <button type="submit" class="btn btn-danger btn-sm">
                                                                 <i class="fas fa-trash"></i>
                                                             </button>

@@ -68,9 +68,9 @@
                                             <a href="/admin/halaman/edit/<%= h.id %>" class="btn btn-warning btn-sm">
                                                 <i class="fas fa-edit"></i> Edit
                                             </a>
-                                            <form method="POST" action="/admin/halaman/delete/<%= h.id %>
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">" style="display:inline"
+                                            <form method="POST" action="/admin/halaman/delete/<%= h.id %>" style="display:inline"
                                                   onsubmit="return confirm('Hapus halaman ini?')">
+                                                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                                 <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Hapus</button>
                                             </form>
                                         </td>

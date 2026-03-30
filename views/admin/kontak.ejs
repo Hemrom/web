@@ -66,8 +66,8 @@
                                                         </span>
                                                     </td>
                                                     <td>
-                                                        <form method="POST" action="/admin/kontak/update-status/<%= item.id %>
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">" style="display: inline;">
+                                                        <form method="POST" action="/admin/kontak/update-status/<%= item.id %>" style="display: inline;">
+                                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                                             <select name="status" class="form-control form-control-sm" onchange="this.form.submit()">
                                                                 <option value="baru" <%= item.status === 'baru' ? 'selected' : '' %>>Baru</option>
                                                                 <option value="dibaca" <%= item.status === 'dibaca' ? 'selected' : '' %>>Dibaca</option>
