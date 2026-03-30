@@ -330,7 +330,7 @@
                                 </div>
                                 <div class="news-content">
                                     <h3 class="news-title"><%= b.judul %></h3>
-                                    <p class="news-excerpt"><%= b.konten.replace(/<[^>]*>/g, '').substring(0, 150) %>...</p>
+                                    <p class="news-excerpt"><%= (b.konten || '').replace(/<[^>]*>/g, '').substring(0, 150) %>...</p>
                                     <div class="news-meta">
                                         <span><i class="fas fa-calendar-alt mr-1"></i> <%= new Date(b.created_at).toLocaleDateString('id-ID') %></span>
                                         <a href="/berita/<%= b.slug %>" class="read-more">Baca Selengkapnya</a>
