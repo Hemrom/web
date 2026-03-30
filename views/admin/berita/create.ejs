@@ -135,6 +135,7 @@ $('#konten').summernote({
         onImageUpload: function(files) {
             var formData = new FormData();
             formData.append('file', files[0]);
+            formData.append('_csrf', '<%= csrfToken %>');
             $.ajax({
                 url: '/admin/berita/upload-gambar',
                 type: 'POST',
