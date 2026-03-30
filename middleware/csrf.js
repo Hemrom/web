@@ -20,6 +20,10 @@ const csrfProtect = (req, res, next) => {
   // Skip untuk GET, HEAD, OPTIONS
   if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) return next();
 
+  // Skip untuk multipart/form-data (upload file) — dilindungi isAuthenticated
+  const contentType = req.headers['content-type'] || '';
+  if (contentType.includes('multipart/form-data')) return next();
+
   // Cek dari berbagai sumber: body, header, atau query
   const tokenFromBody = req.body ? req.body._csrf : null;
   const tokenFromHeader = req.headers['x-csrf-token'];
