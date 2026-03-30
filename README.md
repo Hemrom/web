@@ -195,6 +195,20 @@ npm install
 npm run build
 pm2 restart all
 ```
+---
+## Alur update lebih cepat
 
+## Dari Windows komputer lokal
+```
+git add .
+git commit -m "fix: sidebar brand text nowrap"
+git push
+```
+
+## Di VPS
+```
+git pull origin main
+pm2 restart 0
+```
 ---
 SMK Negeri 1 Kras — Kediri, Jawa Timur
