@@ -50,6 +50,9 @@ setup_*.js
 # Temporary files
 *.tmp
 *.temp
+*.zip
+*.rar
+*.7z
 
 # PM2 files
 .pm2/
