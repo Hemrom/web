@@ -1,133 +1,271 @@
-# Tutorial Deploy Website SMKN 1 Kras ke VPS
-## Dari Upload GitHub sampai Website Online
+# Tutorial Upload GitHub & Deploy VPS - SMKN 1 Kras
 
 ---
 
-## BAGIAN 1 — Upload ke GitHub (dari komputer lokal)
+# BAGIAN 1 — UPLOAD KE GITHUB
 
-Buka **Git Bash** di folder `E:\WEBSITE\smkn1kras.sch.id`, lalu jalankan:
+## Step 1.1 — Buat Repository di GitHub
+
+1. Buka https://github.com → login dengan akun kamu
+2. Klik tombol **"+"** pojok kanan atas → pilih **"New repository"**
+3. Isi form:
+   - Repository name: `web`
+   - Visibility: pilih **Private**
+   - JANGAN centang "Add a README file"
+4. Klik **"Create repository"**
+
+---
+
+## Step 1.2 — Buat Personal Access Token
+
+GitHub tidak menerima password biasa. Harus pakai token.
+
+1. Klik foto profil kanan atas → **Settings**
+2. Scroll paling bawah → klik **"Developer settings"**
+3. Klik **"Personal access tokens"** → **"Tokens (classic)"**
+4. Klik **"Generate new token"** → **"Generate new token (classic)"**
+5. Isi:
+   - Note: `smkn1kras deploy`
+   - Expiration: **No expiration**
+   - Centang: **repo** (centang kotak paling atas di bagian repo)
+6. Klik **"Generate token"** di bawah
+7. **COPY tokennya sekarang** — tidak bisa dilihat lagi setelah halaman ditutup
+   - Contoh: `ghp_aBcDeFgHiJkLmNoPqRsTuVwXyZ123456`
+   - Simpan di Notepad dulu
+
+---
+
+## Step 1.3 — Setup Identitas Git (Sekali Saja)
+
+Buka **Git Bash** di folder `E:\WEBSITE\smkn1kras.sch.id`
+
+Cara buka Git Bash di folder tersebut:
+- Buka File Explorer → masuk ke folder `E:\WEBSITE\smkn1kras.sch.id`
+- Klik kanan di area kosong → **"Git Bash Here"**
+
+Jalankan:
 
 ```bash
-git init
+git config --global user.email "emailkamu@gmail.com"
+git config --global user.name "Hemrom"
+```
+
+Ganti dengan email yang dipakai di GitHub.
+
+---
+
+## Step 1.4 — Upload Project ke GitHub
+
+Masih di Git Bash yang sama, jalankan **satu per satu**:
+
+```bash
+git remote remove origin
+```
+> Kalau muncul error "No such remote 'origin'", tidak apa-apa, lanjut ke perintah berikutnya.
+
+```bash
 git add .
-git commit -m "first commit"
+```
+
+```bash
+git commit -m "full project smkn1kras"
+```
+> Kalau muncul "nothing to commit", berarti sudah pernah commit. Lanjut saja.
+
+```bash
 git branch -M main
+```
+
+```bash
 git remote add origin https://github.com/Hemrom/web.git
+```
+
+```bash
 git push -u origin main
 ```
 
-Jika diminta login, masukkan username dan password/token GitHub kamu.
+Saat muncul popup login di browser → login dengan akun GitHub kamu.
 
-> Untuk update berikutnya cukup:
-> ```bash
-> git add .
-> git commit -m "update: deskripsi perubahan"
-> git push
-> ```
+Kalau muncul prompt di terminal:
+- **Username**: `Hemrom`
+- **Password**: paste **token** yang sudah dicopy di Step 1.2
 
----
-
-## BAGIAN 2 — Persiapan VPS
-
-### Spesifikasi VPS yang Direkomendasikan
-- OS: **Ubuntu 22.04 LTS**
-- RAM: minimal 1GB (2GB lebih baik)
-- Storage: minimal 20GB
-- Provider: Niagahoster, Dewaweb, DigitalOcean, Contabo, dll
-
-### Login ke VPS
-```bash
-ssh root@IP_VPS_KAMU
-# Contoh: ssh root@103.xxx.xxx.xxx
+Kalau berhasil akan muncul tulisan:
+```
+* [new branch]      main -> main
+branch 'main' set up to track 'origin/main'.
 ```
 
 ---
 
-## BAGIAN 3 — Install Semua yang Dibutuhkan di VPS
+## Step 1.5 — Verifikasi Upload Berhasil
 
-### 3.1 Update sistem
+Buka https://github.com/Hemrom/web — semua file project harus terlihat di sana.
+
+---
+
+## Step 1.6 — Cara Update Setelah Ada Perubahan Kode
+
+Setiap kali ada perubahan, buka Git Bash di folder project lalu jalankan:
+
+```bash
+git add .
+git commit -m "update: deskripsi perubahan"
+git push
+```
+
+---
+
+# BAGIAN 2 — SETUP VPS
+
+## Step 2.1 — Spesifikasi VPS yang Direkomendasikan
+
+- OS: **Ubuntu 22.04 LTS** (pilih ini saat order VPS)
+- RAM: minimal 1GB (2GB lebih baik)
+- Storage: minimal 20GB SSD
+- Provider: Niagahoster, Dewaweb, DigitalOcean, Contabo, Vultr
+
+---
+
+## Step 2.2 — Login ke VPS
+
+Buka **PowerShell** atau **Git Bash** di komputer lokal:
+
+```bash
+ssh root@IP_VPS_KAMU
+```
+
+Contoh: `ssh root@103.12.34.56`
+
+Masukkan password VPS yang diberikan provider.
+
+---
+
+## Step 2.3 — Update Sistem
+
 ```bash
 apt update && apt upgrade -y
 ```
 
-### 3.2 Install Node.js 20
+Tunggu sampai selesai (bisa 2-5 menit).
+
+---
+
+## Step 2.4 — Install Node.js 20
+
 ```bash
 curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
 apt install -y nodejs
-node -v   # Harus muncul v20.x.x
-npm -v    # Harus muncul 10.x.x
 ```
 
-### 3.3 Install PM2 (process manager)
+Verifikasi:
+```bash
+node -v
+npm -v
+```
+Harus muncul `v20.x.x` dan `10.x.x`
+
+---
+
+## Step 2.5 — Install PM2
+
 ```bash
 npm install -g pm2
-pm2 -v    # Harus muncul versi PM2
+pm2 -v
 ```
 
-### 3.4 Install MySQL
+---
+
+## Step 2.6 — Install MySQL
+
 ```bash
 apt install -y mysql-server
 systemctl start mysql
 systemctl enable mysql
-
-# Amankan MySQL
-mysql_secure_installation
-# Jawab: Y, Y, Y, Y, Y
 ```
 
-### 3.5 Install Nginx
+Amankan MySQL:
+```bash
+mysql_secure_installation
+```
+Jawab semua pertanyaan dengan **Y** (tekan Y lalu Enter).
+
+---
+
+## Step 2.7 — Install Nginx
+
 ```bash
 apt install -y nginx
 systemctl start nginx
 systemctl enable nginx
 ```
 
-### 3.6 Install Git
-```bash
-apt install -y git
-git --version
-```
+---
 
-### 3.7 Install Certbot (SSL gratis)
+## Step 2.8 — Install Git dan Certbot
+
 ```bash
-apt install -y certbot python3-certbot-nginx
+apt install -y git certbot python3-certbot-nginx
 ```
 
 ---
 
-## BAGIAN 4 — Setup Database MySQL
+# BAGIAN 3 — SETUP DATABASE DI VPS
 
 ```bash
-# Masuk ke MySQL
 mysql -u root -p
+```
 
-# Jalankan perintah berikut di dalam MySQL:
+Masukkan password root MySQL. Lalu jalankan perintah berikut **satu per satu** di dalam MySQL:
+
+```sql
 CREATE DATABASE sekolah_db CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+```
+
+```sql
 CREATE USER 'smkn1kras'@'localhost' IDENTIFIED BY 'GantiPasswordIni123!';
+```
+
+```sql
 GRANT ALL PRIVILEGES ON sekolah_db.* TO 'smkn1kras'@'localhost';
+```
+
+```sql
 FLUSH PRIVILEGES;
+```
+
+```sql
 EXIT;
 ```
 
 ---
 
-## BAGIAN 5 — Clone dan Setup Website
+# BAGIAN 4 — CLONE DAN SETUP WEBSITE DI VPS
 
-### 5.1 Clone dari GitHub
+## Step 4.1 — Clone dari GitHub
+
 ```bash
 cd /var/www
 git clone https://github.com/Hemrom/web.git smkn1kras
 cd smkn1kras
 ```
 
-### 5.2 Buat file .env
+Saat diminta login:
+- Username: `Hemrom`
+- Password: token GitHub kamu
+
+---
+
+## Step 4.2 — Buat File .env
+
 ```bash
 cp .env.example .env
 nano .env
 ```
 
-Isi file `.env` seperti ini:
-```env
+Hapus semua isinya dan ganti dengan ini:
+
+```
 NODE_ENV=production
 PORT=3000
 HOST=127.0.0.1
@@ -137,68 +275,88 @@ DB_USER=smkn1kras
 DB_PASSWORD=GantiPasswordIni123!
 DB_NAME=sekolah_db
 
-SESSION_SECRET=isi_dengan_random_string_minimal_64_karakter_contoh_xK9mP2qR7vN4wL1jH8
+SESSION_SECRET=GANTI_INI_DENGAN_HASIL_PERINTAH_DI_BAWAH
 COOKIE_SECURE=true
 ```
 
-> Untuk generate SESSION_SECRET yang aman:
-> ```bash
-> node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
-> ```
+Untuk mengisi SESSION_SECRET, buka terminal baru dan jalankan:
+```bash
+node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+```
+Copy hasilnya → paste ke SESSION_SECRET.
 
-### 5.3 Import database
+Simpan file: tekan `Ctrl+X` → tekan `Y` → tekan `Enter`
+
+---
+
+## Step 4.3 — Import Database
+
 ```bash
 mysql -u smkn1kras -p sekolah_db < config/database.sql
-# Masukkan password: GantiPasswordIni123!
 ```
 
-### 5.4 Install dependencies
+Masukkan password: `GantiPasswordIni123!`
+
+---
+
+## Step 4.4 — Install Dependencies
+
 ```bash
 npm install --omit=dev
 ```
 
-### 5.5 Buat folder yang dibutuhkan
+---
+
+## Step 4.5 — Buat Folder yang Dibutuhkan
+
 ```bash
 mkdir -p uploads logs public
 touch uploads/.gitkeep
 ```
 
-### 5.6 Setup akun login guru
+---
+
+## Step 4.6 — Setup Akun Login Guru
+
 ```bash
 node setup_guru_login.js
 ```
 
-### 5.7 Jalankan dengan PM2
+---
+
+## Step 4.7 — Jalankan dengan PM2
+
 ```bash
 pm2 start ecosystem.config.js --env production
 pm2 save
 pm2 startup
-# Jalankan perintah yang muncul dari pm2 startup
 ```
 
-Cek apakah berjalan:
+Setelah `pm2 startup`, akan muncul perintah panjang yang harus dijalankan. Copy dan jalankan perintah tersebut.
+
+Cek status:
 ```bash
 pm2 status
-# Harus muncul status "online"
 ```
+
+Harus muncul status **online**.
 
 ---
 
-## BAGIAN 6 — Konfigurasi Nginx
+# BAGIAN 5 — KONFIGURASI NGINX
 
-### 6.1 Buat config Nginx
+## Step 5.1 — Buat Config Nginx
+
 ```bash
 nano /etc/nginx/sites-available/smkn1kras
 ```
 
-Isi dengan:
+Paste isi berikut (ganti `smkn1kras.sch.id` dengan domain kamu):
+
 ```nginx
 server {
     listen 80;
     server_name smkn1kras.sch.id www.smkn1kras.sch.id;
-
-    # Redirect HTTP ke HTTPS (aktifkan setelah SSL terpasang)
-    # return 301 https://$host$request_uri;
 
     location / {
         proxy_pass http://127.0.0.1:3000;
@@ -217,42 +375,56 @@ server {
 }
 ```
 
-### 6.2 Aktifkan config
-```bash
-ln -s /etc/nginx/sites-available/smkn1kras /etc/nginx/sites-enabled/
-nginx -t   # Harus muncul "syntax is ok"
-systemctl reload nginx
-```
-
-### 6.3 Pasang SSL (setelah domain sudah diarahkan ke IP VPS)
-```bash
-certbot --nginx -d smkn1kras.sch.id -d www.smkn1kras.sch.id
-# Ikuti instruksi, pilih redirect HTTP ke HTTPS
-```
+Simpan: `Ctrl+X` → `Y` → `Enter`
 
 ---
 
-## BAGIAN 7 — Firewall
+## Step 5.2 — Aktifkan Config
+
+```bash
+ln -s /etc/nginx/sites-available/smkn1kras /etc/nginx/sites-enabled/
+nginx -t
+systemctl reload nginx
+```
+
+`nginx -t` harus muncul **"syntax is ok"**.
+
+---
+
+## Step 5.3 — Pasang SSL (Setelah Domain Aktif)
+
+Pastikan domain sudah diarahkan ke IP VPS dulu (DNS A record di panel domain).
+
+```bash
+certbot --nginx -d smkn1kras.sch.id -d www.smkn1kras.sch.id
+```
+
+Ikuti instruksi, pilih opsi redirect HTTP ke HTTPS.
+
+---
+
+# BAGIAN 6 — FIREWALL
 
 ```bash
 ufw allow ssh
 ufw allow 80
 ufw allow 443
-ufw deny 3000    # Tutup port Node.js dari akses luar
+ufw deny 3000
 ufw enable
-ufw status
 ```
+
+Ketik `y` saat diminta konfirmasi.
 
 ---
 
-## BAGIAN 8 — Cara Update Website
+# BAGIAN 7 — CARA UPDATE WEBSITE
 
-Setiap kali ada perubahan kode:
+Setiap ada perubahan kode:
 
-**Di komputer lokal:**
+**Di komputer lokal (Git Bash):**
 ```bash
 git add .
-git commit -m "update: deskripsi perubahan"
+git commit -m "update: deskripsi"
 git push
 ```
 
@@ -262,52 +434,45 @@ cd /var/www/smkn1kras
 bash update.sh
 ```
 
-Script `update.sh` otomatis:
-1. Pull kode terbaru dari GitHub
-2. Install dependency baru (jika ada)
-3. Reload app tanpa downtime
+Selesai — website otomatis update tanpa downtime.
 
 ---
 
-## BAGIAN 9 — Perintah Berguna
+# BAGIAN 8 — PERINTAH BERGUNA DI VPS
 
 ```bash
-# Cek status app
-pm2 status
+pm2 status                          # Cek status app
+pm2 logs smkn1kras.sch.id           # Lihat log real-time
+pm2 restart smkn1kras.sch.id        # Restart app
+pm2 reload smkn1kras.sch.id         # Reload tanpa downtime
+systemctl status nginx              # Cek Nginx
+systemctl reload nginx              # Reload Nginx
+systemctl status mysql              # Cek MySQL
+```
 
-# Lihat log real-time
-pm2 logs smkn1kras.sch.id
-
-# Restart app
-pm2 restart smkn1kras.sch.id
-
-# Cek Nginx
-systemctl status nginx
-
-# Cek MySQL
-systemctl status mysql
-
-# Backup database
+Backup database:
+```bash
 mysqldump -u smkn1kras -p sekolah_db > backup_$(date +%Y%m%d).sql
 ```
 
 ---
 
-## BAGIAN 10 — Checklist Sebelum Go Live
+# BAGIAN 9 — CHECKLIST SEBELUM GO LIVE
 
 - [ ] Domain sudah diarahkan ke IP VPS (DNS A record)
 - [ ] SSL certificate terpasang (HTTPS aktif)
 - [ ] File `.env` sudah diisi dengan benar
 - [ ] `COOKIE_SECURE=true` di `.env`
 - [ ] Database sudah diimport
-- [ ] Akun admin sudah bisa login
-- [ ] Upload foto berfungsi
+- [ ] `pm2 startup` sudah dijalankan
 - [ ] Firewall aktif, port 3000 ditutup
-- [ ] PM2 startup sudah dijalankan (auto-start saat VPS reboot)
+- [ ] Login admin berhasil
+- [ ] Upload foto berfungsi
+- [ ] Website bisa diakses dari browser
 
 ---
 
-## Akses Website
+# AKSES WEBSITE
 
 | Halaman | URL |
 |---------|-----|
@@ -315,10 +480,8 @@ mysqldump -u smkn1kras -p sekolah_db > backup_$(date +%Y%m%d).sql
 | Admin Panel | https://smkn1kras.sch.id/admin |
 | Portal Guru | https://smkn1kras.sch.id/guru/login |
 
-**Login Admin default:**
-- Username: `admin`
-- Password: `admin123` ← **Ganti segera setelah login pertama!**
+**Login Admin:** username `admin` / password `admin123`
+Ganti password segera setelah login pertama!
 
-**Login Guru default:**
-- Username: NIP atau `guru{id}`
-- Password: `smkn1kras` ← **Guru wajib ganti password**
+**Login Guru:** username = NIP atau `guru{id}` / password = `smkn1kras`
+Guru wajib ganti password setelah login pertama.
