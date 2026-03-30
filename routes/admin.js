@@ -44,7 +44,7 @@ router.post('/berita/create', isAuthenticated, csrfProtect, uploadLimiter, berit
 router.get('/berita/edit/:id', isAuthenticated, validateIdParam, beritaController.editPage);
 router.post('/berita/edit/:id', isAuthenticated, csrfProtect, validateIdParam, uploadLimiter, beritaController.update);
 router.post('/berita/delete/:id', isAuthenticated, csrfProtect, validateIdParam, beritaController.delete);
-router.post('/berita/upload-gambar', isAuthenticated, csrfProtect, uploadLimiter, beritaController.uploadGambar);
+router.post('/berita/upload-gambar', isAuthenticated, uploadLimiter, beritaController.uploadGambar);
 
 // Galeri
 router.get('/galeri', isAuthenticated, galeriController.index);

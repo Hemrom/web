@@ -20,10 +20,14 @@ const csrfProtect = (req, res, next) => {
   // Skip untuk GET, HEAD, OPTIONS
   if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) return next();
 
-  const tokenFromBody = req.body._csrf || req.headers['x-csrf-token'];
+  // Cek dari berbagai sumber: body, header, atau query
+  const tokenFromBody = req.body ? req.body._csrf : null;
+  const tokenFromHeader = req.headers['x-csrf-token'];
+  const tokenFromQuery = req.query._csrf;
+  const tokenFromRequest = tokenFromBody || tokenFromHeader || tokenFromQuery;
   const tokenFromSession = req.session.csrfToken;
 
-  if (!tokenFromBody || !tokenFromSession || tokenFromBody !== tokenFromSession) {
+  if (!tokenFromRequest || !tokenFromSession || tokenFromRequest !== tokenFromSession) {
     return res.status(403).json({ 
       success: false, 
       error: 'CSRF token tidak valid. Refresh halaman dan coba lagi.' 
