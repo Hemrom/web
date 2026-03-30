@@ -50,9 +50,13 @@ Website sekolah berbasis Node.js + Express + MySQL, dilengkapi panel admin, port
 ## Instalasi Lokal
 
 ### 1. Clone repository
-```bash
-git clone https://github.com/Hemrom/web.git
-cd web
+Kalau Anda sudah punya folder yang berisi file, maka jangan clone ke situ langsung. Lebih aman begini:
+```
+cd /website
+git init
+git remote add origin https://github.com/Hemrom/web.git
+git fetch origin
+git checkout -t origin/main
 ```
 
 ### 2. Install dependencies
@@ -131,7 +135,39 @@ Lihat panduan lengkap di [TUTORIAL_DEPLOY_VPS.md](TUTORIAL_DEPLOY_VPS.md)
 ├── uploads/          # File yang diupload
 └── logs/             # Log aplikasi
 ```
-
 ---
+## Cara update isi GitHub dari Windows
+
+Kalau Anda coding di Windows lalu ingin perubahan naik ke GitHub, alurnya adalah:
+Pertama kali, kalau project belum jadi repo Git
+Masuk ke folder project Anda di Windows, lalu buka Git Bash atau terminal:
+```
+git init
+git remote add origin https://github.com/Hemrom/web.git
+git branch -M main
+git add .
+git commit -m "Initial commit"
+git push -u origin main
+```
+## Kalau project itu memang hasil clone dari GitHub
+
+Maka setiap ada perubahan, cukup:
+```
+git add .
+git commit -m "Update coding terbaru"
+git push origin main
+```
+## Sebelum push, sebaiknya ambil update dulu
+
+Kalau repo di GitHub mungkin berubah dari tempat lain, lakukan dulu:
+```
+git pull origin main
+```
+baru lanjut:
+```
+git add .
+git commit -m "Perubahan terbaru"
+git push origin main
+```
 
 SMK Negeri 1 Kras — Kediri, Jawa Timur
