@@ -1,6 +1,7 @@
 const db = require('../config/database');
 const multer = require('multer');
 const path = require('path');
+const compressImage = require('../middleware/compressImage');
 
 const storage = multer.diskStorage({
   destination: './uploads/',
@@ -38,6 +39,7 @@ exports.update = (req, res) => {
   if (!TIPE_LABEL[tipe]) return res.status(404).send('Halaman tidak ditemukan');
   upload(req, res, async (err) => {
     if (err) return res.status(500).send('Error upload');
+    await compressImage(req, res, () => {});
     try {
       const { judul, konten } = req.body;
       if (!judul || !judul.trim()) {

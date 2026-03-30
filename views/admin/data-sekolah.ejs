@@ -1,9 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title><%= title %> - Admin Panel</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
     <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
@@ -86,6 +87,7 @@
                                     <i class="fas fa-download mr-1"></i> Download Template
                                 </a>
                                 <form method="POST" action="/admin/guru/import" enctype="multipart/form-data" class="d-flex align-items-center">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                     <input type="file" name="file" accept=".xlsx,.xls" class="form-control-file mr-2" required>
                                     <button type="submit" class="btn btn-success btn-sm">Upload &amp; Import</button>
                                 </form>
@@ -119,7 +121,8 @@
                                         <td><%= g.jabatan || '-' %></td>
                                         <td>
                                             <a href="/admin/guru/edit/<%= g.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
-                                            <form method="POST" action="/admin/guru/delete/<%= g.id %>" style="display:inline" onsubmit="return confirm('Hapus guru ini?')">
+                                            <form method="POST" action="/admin/guru/delete/<%= g.id %>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">" style="display:inline" onsubmit="return confirm('Hapus guru ini?')">
                                                 <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
                                             </form>
                                         </td>
@@ -157,7 +160,8 @@
                                         <td><span class="badge badge-<%= s.status === 'aktif' ? 'success' : 'secondary' %>"><%= s.status %></span></td>
                                         <td>
                                             <a href="/admin/siswa/edit/<%= s.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
-                                            <form method="POST" action="/admin/siswa/delete/<%= s.id %>" style="display:inline" onsubmit="return confirm('Hapus siswa ini?')">
+                                            <form method="POST" action="/admin/siswa/delete/<%= s.id %>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">" style="display:inline" onsubmit="return confirm('Hapus siswa ini?')">
                                                 <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
                                             </form>
                                         </td>
@@ -205,7 +209,8 @@
                                         <td><span class="badge badge-<%= j.status === 'aktif' ? 'success' : 'secondary' %>"><%= j.status %></span></td>
                                         <td>
                                             <a href="/admin/jurusan/edit/<%= j.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
-                                            <form method="POST" action="/admin/jurusan/delete/<%= j.id %>" style="display:inline" onsubmit="return confirm('Hapus jurusan <%= j.nama %>?')">
+                                            <form method="POST" action="/admin/jurusan/delete/<%= j.id %>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">" style="display:inline" onsubmit="return confirm('Hapus jurusan <%= j.nama %>?')">
                                                 <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
                                             </form>
                                         </td>

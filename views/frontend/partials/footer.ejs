@@ -2,10 +2,10 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-4 col-md-6 mb-4">
-                <h3 class="footer-title" style="margin-bottom:6px;"><%= profil.nama_sekolah || 'Sekolah Kita' %></h3>
-                <p class="text-muted" style="margin-bottom:6px;font-size:0.9rem;">Memberikan pendidikan berkualitas untuk menciptakan generasi yang cerdas dan berkarakter.</p>
+                <h3 class="footer-title"><%= profil.nama_sekolah || 'Sekolah Kita' %></h3>
+                <p style="font-size:0.9rem;color:#fff;">Memberikan pendidikan berkualitas untuk menciptakan generasi yang cerdas dan berkarakter.</p>
                 <% if (mediaSosialFooter && mediaSosialFooter.length > 0) { %>
-                <div class="mt-1">
+                <div class="mt-2">
                     <% mediaSosialFooter.forEach(function(ms) { %>
                         <% 
                             const iconMap = { youtube: 'youtube', instagram: 'instagram', facebook: 'facebook-f', twitter: 'twitter', tiktok: 'tiktok', threads: 'threads' };

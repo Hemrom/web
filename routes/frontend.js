@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const frontendController = require('../controllers/frontendController');
 const kontrolWebsiteController = require('../controllers/kontrolWebsiteController');
+const { formLimiter } = require('../middleware/security');
 
 // Dynamic theme CSS (tidak kena maintenance)
 router.get('/theme.css', kontrolWebsiteController.themeCss);
@@ -17,7 +18,7 @@ router.get('/berita/:slug', frontendController.beritaDetail);
 router.get('/galeri', frontendController.galeri);
 router.get('/guru', frontendController.guru);
 router.get('/kontak', frontendController.kontakPage);
-router.post('/kontak', frontendController.kontakSubmit);
+router.post('/kontak', formLimiter, frontendController.kontakSubmit);
 router.get('/media-sosial', frontendController.mediaSosial);
 
 // Halaman dinamis - harus di paling bawah

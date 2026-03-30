@@ -1,11 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Data Siswa - Admin Panel</title>
-    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
     <link href="/assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 </head>
@@ -213,6 +213,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
                     <form id="deleteForm" method="POST" style="display: inline;">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                         <button type="submit" class="btn btn-danger">Hapus</button>
                     </form>
                 </div>

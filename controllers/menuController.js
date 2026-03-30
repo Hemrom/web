@@ -1,4 +1,8 @@
-const db = require('../config/database');
+﻿const db = require('../config/database');
+const cache = require('../utils/cache');
+
+// Invalidate menu cache setiap kali ada perubahan
+const invalidateMenuCache = () => cache.del('menu');
 
 // Helper: get all menus for dropdown (support nested)
 const getParentMenus = async () => {
@@ -82,7 +86,7 @@ exports.create = async (req, res) => {
         target || '_self'
       ]
     );
-    res.redirect('/admin/kontrol-website?tab=menu&success=created');
+    invalidateMenuCache(); res.redirect('/admin/kontrol-website?tab=menu&success=created');
   } catch (err) {
     console.error(err);
     const parents = await getParentMenus();
@@ -158,7 +162,7 @@ exports.update = async (req, res) => {
         id
       ]
     );
-    res.redirect('/admin/kontrol-website?tab=menu&success=updated');
+    invalidateMenuCache(); res.redirect('/admin/kontrol-website?tab=menu&success=updated');
   } catch (err) {
     console.error(err);
     res.redirect('/admin/kontrol-website?tab=menu&error=1');
@@ -171,7 +175,7 @@ exports.delete = async (req, res) => {
     if (existing.length === 0) return res.redirect('/admin/kontrol-website?tab=menu&error=not_found');
     // CASCADE DELETE handled by FK constraint
     await db.query('DELETE FROM menu_navigasi WHERE id = ?', [req.params.id]);
-    res.redirect('/admin/kontrol-website?tab=menu&success=deleted');
+    invalidateMenuCache(); res.redirect('/admin/kontrol-website?tab=menu&success=deleted');
   } catch (err) {
     console.error(err);
     res.redirect('/admin/kontrol-website?tab=menu&error=1');

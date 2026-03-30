@@ -1,6 +1,7 @@
 const db = require('../config/database');
 const multer = require('multer');
 const path = require('path');
+const compressImage = require('../middleware/compressImage');
 
 const storage = multer.diskStorage({
   destination: './uploads/',
@@ -39,6 +40,7 @@ exports.createPage = (req, res) => {
 exports.create = (req, res) => {
   uploadMulti(req, res, async (err) => {
     if (err) return res.status(500).send('Error upload file');
+    await compressImage(req, res, () => {});
     try {
       const { judul, deskripsi, kategori } = req.body;
       if (!req.files || req.files.length === 0) return res.status(400).send('Minimal 1 gambar harus diupload');
@@ -70,6 +72,7 @@ exports.editPage = async (req, res) => {
 exports.update = (req, res) => {
   uploadSingle(req, res, async (err) => {
     if (err) return res.status(500).send('Error upload file');
+    await compressImage(req, res, () => {});
     try {
       const { judul, deskripsi, kategori } = req.body;
       const gambar = req.file ? req.file.filename : null;

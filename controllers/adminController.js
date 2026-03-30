@@ -2,6 +2,8 @@ const db = require('../config/database');
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const path = require('path');
+const compressImage = require('../middleware/compressImage');
+const cache = require('../utils/cache');
 
 const storage = multer.diskStorage({
   destination: './uploads/',
@@ -39,8 +41,14 @@ exports.login = async (req, res) => {
     req.session.username = user.username;
     req.session.role = user.role;
     req.session.nama = user.nama_lengkap;
-    
-    res.redirect('/admin/dashboard');
+
+    // Regenerate session ID setelah login (cegah session fixation)
+    const sessionData = { userId: user.id, username: user.username, role: user.role, nama: user.nama_lengkap };
+    req.session.regenerate((err) => {
+      if (err) { console.error(err); return res.status(500).send('Terjadi kesalahan'); }
+      Object.assign(req.session, sessionData);
+      res.redirect('/admin/dashboard');
+    });
   } catch (error) {
     console.error(error);
     res.status(500).send('Terjadi kesalahan');
@@ -106,7 +114,7 @@ exports.updateProfil = async (req, res) => {
     if (err) {
       return res.status(500).send('Error upload file');
     }
-    
+    await compressImage(req, res, () => {});
     try {
       const { nama_sekolah, alamat, telepon, whatsapp, email, visi, misi,
               npsn, status, jenjang, akreditasi, no_sk_akreditasi,
@@ -135,6 +143,7 @@ exports.updateProfil = async (req, res) => {
         );
       }
 
+      cache.del('profil_sekolah'); // Invalidate cache profil
       res.redirect('/admin/profil?success=1');
     } catch (error) {
       console.error(error);
@@ -142,7 +151,6 @@ exports.updateProfil = async (req, res) => {
     }
   });
 };
-
 exports.kontakMasuk = async (req, res) => {
   try {
     const [kontak] = await db.query('SELECT * FROM kontak_masuk ORDER BY created_at DESC');

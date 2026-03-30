@@ -1,6 +1,7 @@
 const db = require('../config/database');
 const multer = require('multer');
 const path = require('path');
+const compressImage = require('../middleware/compressImage');
 
 const storage = multer.diskStorage({
   destination: './uploads/',
@@ -15,10 +16,11 @@ const uploadFields = multer({ storage }).any();
 
 // Upload gambar dari editor Summernote
 exports.uploadGambar = (req, res) => {
-  uploadEditor(req, res, (err) => {
+  uploadEditor(req, res, async (err) => {
     if (err || !req.file) {
       return res.json({ error: 'Upload gagal' });
     }
+    await compressImage(req, res, () => {});
     res.json({ url: '/uploads/' + req.file.filename });
   });
 };
@@ -60,6 +62,7 @@ exports.create = (req, res) => {
       console.error('Upload error:', err);
       return res.status(500).send('Error upload file: ' + err.message);
     }
+    await compressImage(req, res, () => {});
     try {
       const { judul, konten, kategori, status } = req.body;
       const slug = createSlug(judul);
@@ -101,6 +104,7 @@ exports.update = (req, res) => {
       console.error('Upload error:', err);
       return res.status(500).send('Error upload file: ' + err.message);
     }
+    await compressImage(req, res, () => {});
     try {
       const { judul, konten, kategori, status } = req.body;
       const slug = createSlug(judul);

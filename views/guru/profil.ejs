@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%= title %></title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background: #f1f5f9; font-family: 'Segoe UI', sans-serif; }
+        .card-form { border: none; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+        .avatar-wrap { position: relative; display: inline-block; }
+        .avatar { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid #0ea5e9; }
+        .avatar-placeholder { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg,#0ea5e9,#0369a1); display:flex;align-items:center;justify-content:center;color:white;font-size:2.5rem; }
+        .form-label { font-weight: 600; font-size: 0.85rem; color: #374151; }
+        .form-control:focus { border-color: #0ea5e9; box-shadow: 0 0 0 0.2rem rgba(14,165,233,.2); }
+    </style>
+</head>
+<body>
+<%- include('partials/navbar') %>
+
+<div class="container py-4" style="max-width:720px;">
+    <div class="d-flex align-items-center mb-4 gap-2">
+        <a href="/guru/dashboard" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left"></i></a>
+        <h5 class="fw-bold mb-0 text-dark">Edit Profil Saya</h5>
+    </div>
+
+    <% if (success) { %>
+    <div class="alert alert-success py-2"><i class="fas fa-check-circle me-1"></i>Profil berhasil diperbarui.</div>
+    <% } %>
+    <% if (error) { %>
+    <div class="alert alert-danger py-2"><i class="fas fa-exclamation-circle me-1"></i><%= error %></div>
+    <% } %>
+
+    <div class="card card-form">
+        <div class="card-body p-4">
+            <!-- Foto -->
+            <div class="text-center mb-4">
+                <% if (guru.foto) { %>
+                <img src="/uploads/<%= guru.foto %>" class="avatar mb-2" alt="Foto" id="previewImg">
+                <% } else { %>
+                <div class="avatar-placeholder mx-auto mb-2" id="avatarPlaceholder"><i class="fas fa-user"></i></div>
+                <img src="" class="avatar mb-2 d-none" id="previewImg">
+                <% } %>
+                <div>
+                    <label for="fotoInput" class="btn btn-outline-primary btn-sm"><i class="fas fa-camera me-1"></i>Ganti Foto</label>
+                </div>
+            </div>
+
+            <form method="POST" action="/guru/profil" enctype="multipart/form-data">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <input type="file" name="foto" id="fotoInput" class="d-none" accept="image/*">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Nama Lengkap <span class="text-danger">*</span></label>
+                        <input type="text" name="nama" class="form-control" value="<%= guru.nama %>" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">NIP</label>
+                        <input type="text" name="nip" class="form-control" value="<%= guru.nip || '' %>">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Jabatan</label>
+                        <input type="text" name="jabatan" class="form-control" value="<%= guru.jabatan || '' %>">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Mata Pelajaran</label>
+                        <input type="text" name="mata_pelajaran" class="form-control" value="<%= guru.mata_pelajaran || '' %>">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" value="<%= guru.email || '' %>">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Telepon</label>
+                        <input type="text" name="telepon" class="form-control" value="<%= guru.telepon || '' %>">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Alamat</label>
+                        <textarea name="alamat" class="form-control" rows="2"><%= guru.alamat || '' %></textarea>
+                    </div>
+                </div>
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Simpan Perubahan</button>
+                    <a href="/guru/dashboard" class="btn btn-outline-secondary">Batal</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('fotoInput').addEventListener('change', function() {
+    const file = this.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+        const img = document.getElementById('previewImg');
+        const ph = document.getElementById('avatarPlaceholder');
+        img.src = e.target.result;
+        img.classList.remove('d-none');
+        if (ph) ph.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+    // Attach file to form
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    document.querySelector('input[name="foto"]').files = dt.files;
+});
+</script>
+</body>
+</html>

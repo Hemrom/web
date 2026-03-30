@@ -1,9 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title><%= title %> - Admin Panel</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
     <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
@@ -81,7 +82,8 @@
                                             <a href="/admin/menu/edit/<%= menu.id %>" class="btn btn-warning btn-sm">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <form method="POST" action="/admin/menu/delete/<%= menu.id %>" style="display:inline"
+                                            <form method="POST" action="/admin/menu/delete/<%= menu.id %>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">" style="display:inline"
                                                   onsubmit="return confirm('Hapus menu <%= menu.label %>? Sub-menu juga akan ikut terhapus.')">
                                                 <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
                                             </form>
@@ -109,7 +111,8 @@
                                             <a href="/admin/menu/edit/<%= child.id %>" class="btn btn-warning btn-sm">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <form method="POST" action="/admin/menu/delete/<%= child.id %>" style="display:inline"
+                                            <form method="POST" action="/admin/menu/delete/<%= child.id %>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">" style="display:inline"
                                                   onsubmit="return confirm('Hapus sub-menu <%= child.label %>?')">
                                                 <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
                                             </form>
@@ -137,7 +140,8 @@
                                             <a href="/admin/menu/edit/<%= grand.id %>" class="btn btn-warning btn-sm">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <form method="POST" action="/admin/menu/delete/<%= grand.id %>" style="display:inline"
+                                            <form method="POST" action="/admin/menu/delete/<%= grand.id %>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">" style="display:inline"
                                                   onsubmit="return confirm('Hapus sub-menu <%= grand.label %>?')">
                                                 <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
                                             </form>

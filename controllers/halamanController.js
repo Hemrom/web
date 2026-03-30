@@ -1,6 +1,7 @@
 const db = require('../config/database');
 const multer = require('multer');
 const path = require('path');
+const compressImage = require('../middleware/compressImage');
 
 const storage = multer.diskStorage({
   destination: './uploads/',
@@ -47,6 +48,7 @@ exports.createPage = (req, res) => {
 exports.create = (req, res) => {
   uploadFields(req, res, async (err) => {
     if (err) return res.status(500).send('Error upload');
+    await compressImage(req, res, () => {});
     try {
       const { judul, konten, status } = req.body;
       if (!judul || !judul.trim()) {
@@ -113,6 +115,7 @@ exports.editPage = async (req, res) => {
 exports.update = (req, res) => {
   uploadFields(req, res, async (err) => {
     if (err) return res.status(500).send('Error upload');
+    await compressImage(req, res, () => {});
     try {
       const { judul, konten, status, hapus_galeri } = req.body;
       const foto = req.files && req.files['foto'] ? req.files['foto'][0].filename : null;
@@ -182,6 +185,14 @@ exports.delete = async (req, res) => {
   }
 };
 
+// Mapping slug halaman progli ke keyword mata_pelajaran di tabel guru
+const PROGLI_SLUG_MAP = {
+  'progli-tkj': 'Produktif TKJ',
+  'progli-tkro': 'Produktif TKRO',
+  'progli-kuliner': 'Produktif Kuliner',
+  'progli-tptup': 'Produktif TPTUP',
+};
+
 // Frontend: tampilkan halaman berdasarkan slug
 exports.show = async (req, res) => {
   try {
@@ -200,6 +211,18 @@ exports.show = async (req, res) => {
     const [galeri] = await db.query('SELECT * FROM halaman_galeri WHERE halaman_id = ? ORDER BY urutan ASC', [rows[0].id]);
     const [embeds] = await db.query('SELECT * FROM halaman_embed WHERE halaman_id = ? ORDER BY urutan ASC', [rows[0].id]);
     const menuItems = await getMenuItems();
+
+    // Ambil pengajar jika halaman ini adalah halaman progli
+    let pengajar = [];
+    const mataPelajaranKeyword = PROGLI_SLUG_MAP[req.params.slug];
+    if (mataPelajaranKeyword) {
+      const [guruRows] = await db.query(
+        "SELECT id, nama, jabatan, foto, mata_pelajaran FROM guru WHERE mata_pelajaran = ? ORDER BY jabatan DESC, nama ASC",
+        [mataPelajaranKeyword]
+      );
+      pengajar = guruRows;
+    }
+
     res.render('frontend/halaman', {
       title: rows[0].judul,
       currentPage: req.params.slug,
@@ -209,7 +232,8 @@ exports.show = async (req, res) => {
       profil: profil[0] || {},
       menuItems,
       mediaSosialFooter,
-      relatedBerita
+      relatedBerita,
+      pengajar
     });
   } catch (err) {
     console.error(err);

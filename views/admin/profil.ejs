@@ -1,9 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title><%= title %> - Admin Panel</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
     <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
@@ -70,6 +71,7 @@
                         <!-- Tab: Profil Sekolah -->
                         <% if (activeTab === 'profil') { %>
                         <form method="POST" action="/admin/profil" enctype="multipart/form-data">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
@@ -210,6 +212,7 @@
                         <% } else if (activeTab === 'visimisi') { %>
                         <% const vmk = (typeof visiMisiKonten !== 'undefined' && visiMisiKonten) ? visiMisiKonten : {}; %>
                         <form method="POST" action="/admin/profil-konten/visi_misi" enctype="multipart/form-data">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                             <div class="form-group">
                                 <label>Judul</label>
                                 <input type="text" class="form-control" name="judul" value="<%= vmk.judul || 'Visi & Misi' %>">
@@ -227,6 +230,7 @@
                         <% } else if (activeTab === 'sejarah') { %>
                         <% const sjk = (typeof sejarahKonten !== 'undefined' && sejarahKonten) ? sejarahKonten : {}; %>
                         <form method="POST" action="/admin/profil-konten/sejarah" enctype="multipart/form-data">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                             <div class="form-group">
                                 <label>Judul</label>
                                 <input type="text" class="form-control" name="judul" value="<%= sjk.judul || 'Sejarah Sekolah' %>">
@@ -244,6 +248,7 @@
 
                         <% } else if (activeTab === 'kepsek') { %>
                         <form method="POST" action="/admin/profil-konten/sambutan" enctype="multipart/form-data">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                             <div class="form-group">
                                 <label>Nama Kepala Sekolah</label>
                                 <input type="text" class="form-control" name="judul" value="<%= kepsek && kepsek.judul ? kepsek.judul : '' %>" placeholder="Nama Kepala Sekolah">
@@ -295,7 +300,8 @@
                                         <td><span class="badge badge-<%= s.status === 'aktif' ? 'success' : 'secondary' %>"><%= s.status %></span></td>
                                         <td>
                                             <a href="/admin/slider/edit/<%= s.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
-                                            <form method="POST" action="/admin/slider/delete/<%= s.id %>" style="display:inline" onsubmit="return confirm('Hapus slider ini?')">
+                                            <form method="POST" action="/admin/slider/delete/<%= s.id %>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">" style="display:inline" onsubmit="return confirm('Hapus slider ini?')">
                                                 <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
                                             </form>
                                         </td>
@@ -331,7 +337,8 @@
                                         <td><span class="badge badge-<%= m.status === 'aktif' ? 'success' : 'secondary' %>"><%= m.status %></span></td>
                                         <td>
                                             <a href="/admin/media-sosial/edit/<%= m.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
-                                            <form method="POST" action="/admin/media-sosial/delete/<%= m.id %>" style="display:inline" onsubmit="return confirm('Hapus?')">
+                                            <form method="POST" action="/admin/media-sosial/delete/<%= m.id %>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">" style="display:inline" onsubmit="return confirm('Hapus?')">
                                                 <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
                                             </form>
                                         </td>

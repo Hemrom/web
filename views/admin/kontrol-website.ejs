@@ -1,9 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title><%= title %> - Admin Panel</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
     <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
@@ -83,7 +84,8 @@
                                         <td><span class="badge badge-<%= h.status === 'aktif' ? 'success' : 'secondary' %>"><%= h.status %></span></td>
                                         <td>
                                             <a href="/admin/halaman/edit/<%= h.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
-                                            <form method="POST" action="/admin/halaman/delete/<%= h.id %>" style="display:inline" onsubmit="return confirm('Hapus halaman ini?')">
+                                            <form method="POST" action="/admin/halaman/delete/<%= h.id %>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">" style="display:inline" onsubmit="return confirm('Hapus halaman ini?')">
                                                 <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
                                             </form>
                                         </td>
@@ -121,7 +123,8 @@
                                         <td><span class="badge badge-<%= m.status === 'aktif' ? 'success' : 'secondary' %>"><%= m.status %></span></td>
                                         <td>
                                             <a href="/admin/menu/edit/<%= m.id %>" class="btn btn-warning btn-sm" title="Edit"><i class="fas fa-edit"></i></a>
-                                            <form method="POST" action="/admin/menu/delete/<%= m.id %>" style="display:inline" onsubmit="return confirm('Hapus menu <%= m.label %> beserta sub-menu-nya?')">
+                                            <form method="POST" action="/admin/menu/delete/<%= m.id %>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">" style="display:inline" onsubmit="return confirm('Hapus menu <%= m.label %> beserta sub-menu-nya?')">
                                                 <button class="btn btn-danger btn-sm" title="Hapus"><i class="fas fa-trash"></i></button>
                                             </form>
                                         </td>
@@ -136,7 +139,8 @@
                                         <td><span class="badge badge-<%= c.status === 'aktif' ? 'success' : 'secondary' %>"><%= c.status %></span></td>
                                         <td>
                                             <a href="/admin/menu/edit/<%= c.id %>" class="btn btn-warning btn-sm" title="Edit"><i class="fas fa-edit"></i></a>
-                                            <form method="POST" action="/admin/menu/delete/<%= c.id %>" style="display:inline" onsubmit="return confirm('Hapus sub-menu <%= c.label %>?')">
+                                            <form method="POST" action="/admin/menu/delete/<%= c.id %>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">" style="display:inline" onsubmit="return confirm('Hapus sub-menu <%= c.label %>?')">
                                                 <button class="btn btn-danger btn-sm" title="Hapus"><i class="fas fa-trash"></i></button>
                                             </form>
                                         </td>
@@ -151,7 +155,8 @@
                                         <td><span class="badge badge-<%= g.status === 'aktif' ? 'success' : 'secondary' %>"><%= g.status %></span></td>
                                         <td>
                                             <a href="/admin/menu/edit/<%= g.id %>" class="btn btn-warning btn-sm" title="Edit"><i class="fas fa-edit"></i></a>
-                                            <form method="POST" action="/admin/menu/delete/<%= g.id %>" style="display:inline" onsubmit="return confirm('Hapus sub-menu <%= g.label %>?')">
+                                            <form method="POST" action="/admin/menu/delete/<%= g.id %>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">" style="display:inline" onsubmit="return confirm('Hapus sub-menu <%= g.label %>?')">
                                                 <button class="btn btn-danger btn-sm" title="Hapus"><i class="fas fa-trash"></i></button>
                                             </form>
                                         </td>
@@ -192,7 +197,8 @@
                                         <td>
                                             <a href="/admin/users/edit/<%= u.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
                                             <% if (u.id !== user.userId) { %>
-                                            <form method="POST" action="/admin/users/delete/<%= u.id %>" style="display:inline" onsubmit="return confirm('Hapus user ini?')">
+                                            <form method="POST" action="/admin/users/delete/<%= u.id %>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">" style="display:inline" onsubmit="return confirm('Hapus user ini?')">
                                                 <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
                                             </form>
                                             <% } %>
@@ -222,7 +228,8 @@
                                         <span class="badge badge-secondary">NONAKTIF — Website berjalan normal</span>
                                         <% } %>
                                     </div>
-                                    <form method="POST" action="/admin/kontrol-website/maintenance" onsubmit="return confirm('<%= settings.maintenance_mode === '1' ? 'Matikan maintenance? Website akan kembali online.' : 'Aktifkan maintenance? Pengunjung tidak bisa mengakses website.' %>')">
+                                    <form method="POST" action="/admin/kontrol-website/maintenance" onsubmit="return confirm('<%= settings.maintenance_mode === '1' ? 'Matikan maintenance? Website akan kembali online.' : 'Aktifkan maintenance? Pengunjung tidak bisa mengakses website.' %>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">')">
                                         <button type="submit" class="btn btn-<%= settings.maintenance_mode === '1' ? 'success' : 'danger' %> btn-sm">
                                             <i class="fas fa-<%= settings.maintenance_mode === '1' ? 'check-circle' : 'tools' %> mr-1"></i>
                                             <%= settings.maintenance_mode === '1' ? 'Matikan Maintenance' : 'Aktifkan Maintenance' %>
@@ -233,6 +240,7 @@
                         </div>
 
                         <form method="POST" action="/admin/kontrol-website/tampilan">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                             <h5 class="mb-3">Mode Tampilan</h5>
                             <div class="row mb-4">
                                 <div class="col-md-6">

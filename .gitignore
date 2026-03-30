@@ -42,6 +42,10 @@ Thumbs.db
 # Test and analysis files
 test_*.js
 analyze_*.js
+add_*.js
+fix_*.js
+create_*.js
+setup_*.js
 
 # Temporary files
 *.tmp

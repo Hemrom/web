@@ -1,62 +1,84 @@
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
+const compression = require('compression');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const HOST = process.env.HOST || '0.0.0.0';
+
+app.set('trust proxy', 1);
+
+// Health check
+app.get('/healthz', (req, res) => res.status(200).send('ok'));
+
+// Compression (gzip) — harus sebelum semua middleware lain
+app.use(compression({ level: 6, threshold: 1024 }));
 
 // Security middleware
 const { generalLimiter, helmetConfig, hpp } = require('./middleware/security');
+const { xssSanitize, secureHeaders } = require('./middleware/securityHardening');
+const { csrfMiddleware } = require('./middleware/csrf');
+
 app.use(helmetConfig);
 app.use(hpp());
 app.use(generalLimiter);
-
-// Sembunyikan info server
+app.use(secureHeaders);
 app.disable('x-powered-by');
 
-// Middleware
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-app.use(express.static('public'));
-app.use('/assets', express.static('assets'));
-app.use('/uploads', express.static('uploads'));
+app.use(express.json({ limit: '5mb' }));
+app.use(express.urlencoded({ extended: true, limit: '5mb' }));
+app.use(xssSanitize);
 
-// Session - konfigurasi aman
+// Static files dengan cache headers
+const staticOpts = { maxAge: '7d', etag: true, lastModified: true };
+app.use(express.static('public', staticOpts));
+app.use('/assets', express.static('assets', staticOpts));
+app.use('/uploads', express.static('uploads', { maxAge: '1d', etag: true }));
+
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'ganti-dengan-secret-panjang-acak-di-env',
+  secret: process.env.SESSION_SECRET || 'ganti-dengan-secret-panjang-acak',
   resave: false,
   saveUninitialized: false,
-  name: 'sid', // Sembunyikan nama default 'connect.sid'
+  name: 'sid',
   cookie: {
     maxAge: 24 * 60 * 60 * 1000,
-    httpOnly: true,   // Tidak bisa diakses JavaScript
-    secure: process.env.NODE_ENV === 'production', // HTTPS only di production
-    sameSite: 'strict' // Proteksi CSRF
+    httpOnly: true,
+    secure: process.env.COOKIE_SECURE === 'true',
+    sameSite: 'lax'
   }
 }));
 
-// View engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Routes
+// CSRF token tersedia di semua views
+app.use(csrfMiddleware);
+
 const maintenanceMiddleware = require('./middleware/maintenance');
-// Maintenance hanya untuk frontend (bukan /admin)
 app.use((req, res, next) => {
-  if (req.path.startsWith('/admin') || req.path.startsWith('/theme.css')) return next();
+  if (
+    req.path.startsWith('/admin') ||
+    req.path.startsWith('/theme.css') ||
+    req.path.startsWith('/healthz')
+  ) {
+    return next();
+  }
   maintenanceMiddleware(req, res, next);
 });
 
 app.use('/admin', require('./routes/admin'));
+app.use('/guru', require('./routes/guru'));
 app.use('/', require('./routes/frontend'));
 
-// 404 Handler
 app.use((req, res) => {
-  res.status(404).render('frontend/404', { title: 'Halaman Tidak Ditemukan' });
+  res.status(404).render('frontend/404', {
+    title: 'Halaman Tidak Ditemukan'
+  });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server berjalan di http://localhost:${PORT}`);
-  console.log(`Admin panel: http://localhost:${PORT}/admin`);
+app.listen(PORT, HOST, () => {
+  console.log(`Server berjalan di http://${HOST}:${PORT}`);
+  console.log(`Admin panel: http://${HOST}:${PORT}/admin`);
 });

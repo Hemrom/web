@@ -3,6 +3,7 @@ const cbtDb = require('../config/database-cbt');
 const multer = require('multer');
 const path = require('path');
 const XLSX = require('xlsx');
+const compressImage = require('../middleware/compressImage');
 
 const storage = multer.diskStorage({
   destination: './uploads/',
@@ -34,6 +35,46 @@ exports.index = async (req, res) => {
   }
 };
 
+exports.dashboard = async (req, res) => {
+  try {
+    const [[{ total }]] = await db.query('SELECT COUNT(*) as total FROM guru');
+    const [[{ totalFoto }]] = await db.query("SELECT COUNT(*) as totalFoto FROM guru WHERE foto IS NOT NULL AND foto != ''");
+    const [perProgli] = await db.query(`
+      SELECT mata_pelajaran, COUNT(*) as jumlah
+      FROM guru
+      WHERE mata_pelajaran IS NOT NULL AND mata_pelajaran != ''
+      GROUP BY mata_pelajaran
+      ORDER BY jumlah DESC
+    `);
+    const [perJabatan] = await db.query(`
+      SELECT jabatan, COUNT(*) as jumlah
+      FROM guru
+      WHERE jabatan IS NOT NULL AND jabatan != ''
+      GROUP BY jabatan
+      ORDER BY jumlah DESC
+    `);
+    const [guruTerbaru] = await db.query(
+      'SELECT id, nama, jabatan, mata_pelajaran, foto, created_at FROM guru ORDER BY created_at DESC LIMIT 8'
+    );
+    const [kaprogli] = await db.query(
+      "SELECT id, nama, jabatan, mata_pelajaran, foto FROM guru WHERE jabatan LIKE '%KAPROGLI%' ORDER BY jabatan ASC"
+    );
+
+    res.render('admin/guru/dashboard', {
+      title: 'Dashboard Guru',
+      user: req.session,
+      stats: { total, totalFoto, tanpaFoto: total - totalFoto },
+      perProgli,
+      perJabatan,
+      guruTerbaru,
+      kaprogli
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Terjadi kesalahan');
+  }
+};
+
 exports.createPage = (req, res) => {
   try {
     res.render('admin/guru/create', {
@@ -51,19 +92,29 @@ exports.create = (req, res) => {
     if (err) {
       return res.status(500).send('Error upload file');
     }
-    
+    await compressImage(req, res, () => {});
     try {
-      const { nip, nama, mata_pelajaran, jabatan, email, telepon } = req.body;
+      const { nip, nama, mata_pelajaran, jabatan, email, telepon, guru_username, guru_password } = req.body;
       const foto = req.file ? req.file.filename : null;
-      
+
+      // Hash password jika diisi
+      let hashedPassword = null;
+      if (guru_password && guru_password.trim()) {
+        const bcrypt = require('bcryptjs');
+        hashedPassword = await bcrypt.hash(guru_password.trim(), 10);
+      }
+
       await db.query(
-        'INSERT INTO guru (nip, nama, foto, mata_pelajaran, jabatan, email, telepon) VALUES (?, ?, ?, ?, ?, ?, ?)',
-        [nip, nama, foto, mata_pelajaran, jabatan, email, telepon]
+        'INSERT INTO guru (nip, nama, foto, mata_pelajaran, jabatan, email, telepon, guru_username, guru_password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        [nip || null, nama, foto, mata_pelajaran, jabatan, email, telepon, guru_username || null, hashedPassword]
       );
       
       res.redirect('/admin/data-sekolah?tab=guru');
     } catch (error) {
       console.error(error);
+      if (error.code === 'ER_DUP_ENTRY') {
+        return res.status(400).send('Username sudah digunakan oleh guru lain.');
+      }
       res.status(500).send('Terjadi kesalahan');
     }
   });
@@ -91,26 +142,44 @@ exports.update = (req, res) => {
     if (err) {
       return res.status(500).send('Error upload file');
     }
-    
+    await compressImage(req, res, () => {});
     try {
-      const { nip, nama, mata_pelajaran, jabatan, email, telepon } = req.body;
+      const { nip, nama, mata_pelajaran, jabatan, email, telepon, guru_username, guru_password } = req.body;
       const foto = req.file ? req.file.filename : null;
-      
+
+      // Siapkan update akun login
+      const bcrypt = require('bcryptjs');
+      let loginUpdate = '';
+      const params = [nip || null, nama, mata_pelajaran, jabatan, email, telepon];
+
+      if (guru_username !== undefined) {
+        loginUpdate += ', guru_username = ?';
+        params.push(guru_username || null);
+      }
+      if (guru_password && guru_password.trim()) {
+        const hash = await bcrypt.hash(guru_password.trim(), 10);
+        loginUpdate += ', guru_password = ?';
+        params.push(hash);
+      }
+
       if (foto) {
         await db.query(
-          'UPDATE guru SET nip = ?, nama = ?, foto = ?, mata_pelajaran = ?, jabatan = ?, email = ?, telepon = ? WHERE id = ?',
-          [nip, nama, foto, mata_pelajaran, jabatan, email, telepon, req.params.id]
+          `UPDATE guru SET nip=?, nama=?, mata_pelajaran=?, jabatan=?, email=?, telepon=?, foto=?${loginUpdate} WHERE id=?`,
+          [...params, foto, req.params.id]
         );
       } else {
         await db.query(
-          'UPDATE guru SET nip = ?, nama = ?, mata_pelajaran = ?, jabatan = ?, email = ?, telepon = ? WHERE id = ?',
-          [nip, nama, mata_pelajaran, jabatan, email, telepon, req.params.id]
+          `UPDATE guru SET nip=?, nama=?, mata_pelajaran=?, jabatan=?, email=?, telepon=?${loginUpdate} WHERE id=?`,
+          [...params, req.params.id]
         );
       }
       
       res.redirect('/admin/data-sekolah?tab=guru');
     } catch (error) {
       console.error(error);
+      if (error.code === 'ER_DUP_ENTRY') {
+        return res.status(400).send('Username sudah digunakan oleh guru lain.');
+      }
       res.status(500).send('Terjadi kesalahan');
     }
   });
@@ -213,7 +282,7 @@ exports.syncFromCBT = async (req, res) => {
 // Export guru ke Excel
 exports.exportExcel = async (req, res) => {
   try {
-    const [guru] = await db.query('SELECT nip, nama, mata_pelajaran, jabatan, email, telepon FROM guru ORDER BY nama ASC');
+    const [guru] = await db.query('SELECT nip, nama, mata_pelajaran, jabatan, email, telepon, guru_username FROM guru ORDER BY nama ASC');
     const data = guru.length > 0
       ? guru.map((g, i) => ({
           No: i + 1,
@@ -222,9 +291,10 @@ exports.exportExcel = async (req, res) => {
           'Mata Pelajaran': g.mata_pelajaran || '',
           Jabatan: g.jabatan || '',
           Email: g.email || '',
-          Telepon: g.telepon || ''
+          Telepon: g.telepon || '',
+          Username: g.guru_username || ''
         }))
-      : [{ No: '', NIP: '', Nama: '', 'Mata Pelajaran': '', Jabatan: '', Email: '', Telepon: '' }];
+      : [{ No: '', NIP: '', Nama: '', 'Mata Pelajaran': '', Jabatan: '', Email: '', Telepon: '', Username: '' }];
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Guru & Staff');
@@ -241,7 +311,7 @@ exports.exportExcel = async (req, res) => {
 // Download template kosong dengan header
 exports.downloadTemplate = (req, res) => {
   const data = [
-    { No: 1, NIP: '198001012005011001', Nama: 'Contoh Nama Guru', 'Mata Pelajaran': 'Matematika', Jabatan: 'Guru', Email: 'guru@sekolah.sch.id', Telepon: '08123456789' }
+    { No: 1, NIP: '198001012005011001', Nama: 'Contoh Nama Guru', 'Mata Pelajaran': 'Matematika', Jabatan: 'Guru', Email: 'guru@sekolah.sch.id', Telepon: '08123456789', Username: 'budi.santoso', Password: 'password123' }
   ];
   const ws = XLSX.utils.json_to_sheet(data);
   const wb = XLSX.utils.book_new();
@@ -301,6 +371,7 @@ exports.importExcel = (req, res) => {
       }
 
       let inserted = 0, updated = 0, skipped = 0;
+      const bcrypt = require('bcryptjs');
       for (const row of rows) {
         const nama = (row['Nama'] || row['nama'] || row['NAMA'] || row['Nama Lengkap'] || '').toString().trim();
         if (!nama) { skipped++; continue; }
@@ -310,21 +381,32 @@ exports.importExcel = (req, res) => {
         const jabatan = (row['Jabatan'] || row['jabatan'] || 'Guru').toString().trim();
         const email = (row['Email'] || row['email'] || '').toString().trim() || null;
         const telepon = (row['Telepon'] || row['telepon'] || row['No HP'] || '').toString().trim() || null;
+        const username = (row['Username'] || row['username'] || '').toString().trim() || null;
+        const passwordRaw = (row['Password'] || row['password'] || '').toString().trim();
+        const hashedPassword = passwordRaw ? await bcrypt.hash(passwordRaw, 10) : null;
 
+        // Cari guru existing by NIP atau nama
+        let existing = [];
         if (nip) {
-          const [ex] = await db.query('SELECT id FROM guru WHERE nip = ?', [nip]);
-          if (ex.length > 0) {
-            await db.query('UPDATE guru SET nama=?, mata_pelajaran=?, jabatan=?, email=?, telepon=? WHERE nip=?',
-              [nama, mata_pelajaran, jabatan, email, telepon, nip]);
-            updated++;
-          } else {
-            await db.query('INSERT INTO guru (nip, nama, mata_pelajaran, jabatan, email, telepon) VALUES (?,?,?,?,?,?)',
-              [nip, nama, mata_pelajaran, jabatan, email, telepon]);
-            inserted++;
-          }
+          [existing] = await db.query('SELECT id FROM guru WHERE nip = ?', [nip]);
+        }
+        if (!existing.length) {
+          [existing] = await db.query('SELECT id FROM guru WHERE nama = ?', [nama]);
+        }
+
+        if (existing.length > 0) {
+          const updateFields = 'nama=?, mata_pelajaran=?, jabatan=?, email=?, telepon=?';
+          const updateVals = [nama, mata_pelajaran, jabatan, email, telepon];
+          let extra = '';
+          if (username) { extra += ', guru_username=?'; updateVals.push(username); }
+          if (hashedPassword) { extra += ', guru_password=?'; updateVals.push(hashedPassword); }
+          await db.query(`UPDATE guru SET ${updateFields}${extra} WHERE id=?`, [...updateVals, existing[0].id]);
+          updated++;
         } else {
-          await db.query('INSERT INTO guru (nama, mata_pelajaran, jabatan, email, telepon) VALUES (?,?,?,?,?)',
-            [nama, mata_pelajaran, jabatan, email, telepon]);
+          await db.query(
+            'INSERT INTO guru (nip, nama, mata_pelajaran, jabatan, email, telepon, guru_username, guru_password) VALUES (?,?,?,?,?,?,?,?)',
+            [nip, nama, mata_pelajaran, jabatan, email, telepon, username, hashedPassword]
+          );
           inserted++;
         }
       }

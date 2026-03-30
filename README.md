@@ -255,3 +255,5 @@ Proyek ini dibuat khusus untuk SMK Negeri 1 Kras.
 **Version**: 1.0.0  
 **Last Updated**: 2024
 # website
+# web
+# web

@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title><%= title %> - Website Sekolah</title>
-    <link rel="icon" type="image/png" href="/uploads/logo-sekolah.png">
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -132,6 +132,33 @@
                                         <% } %>
                                     </div>
                                 </a>
+                            </div>
+                            <% }) %>
+                        </div>
+                    </div>
+                    <% } %>
+
+                    <% if (typeof pengajar !== 'undefined' && pengajar.length > 0) { %>
+                    <div style="margin-top:2.5rem;">
+                        <h3 style="font-size:1.4rem;font-weight:700;color:#1e293b;margin-bottom:1.5rem;">
+                            <i class="fas fa-chalkboard-teacher" style="color:var(--primary-blue,#0ea5e9);margin-right:0.5rem;"></i>Pengajar Program Keahlian
+                        </h3>
+                        <div class="row g-4">
+                            <% pengajar.forEach(function(g) { %>
+                            <div class="col-6 col-md-4 col-lg-3">
+                                <div style="background:white;border-radius:14px;box-shadow:0 4px 15px rgba(14,165,233,0.08);overflow:hidden;text-align:center;padding:1.5rem 1rem;transition:transform 0.2s,box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 8px 25px rgba(14,165,233,0.15)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 15px rgba(14,165,233,0.08)'">
+                                    <% if (g.foto) { %>
+                                    <img src="/uploads/<%= g.foto %>" alt="<%= g.nama %>" style="width:90px;height:90px;border-radius:50%;object-fit:cover;border:3px solid #e0f2fe;margin-bottom:0.75rem;">
+                                    <% } else { %>
+                                    <div style="width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#0369a1);display:flex;align-items:center;justify-content:center;margin:0 auto 0.75rem;">
+                                        <i class="fas fa-user" style="font-size:2rem;color:white;"></i>
+                                    </div>
+                                    <% } %>
+                                    <p style="font-weight:600;font-size:0.85rem;color:#1e293b;margin-bottom:0.25rem;line-height:1.3;"><%= g.nama %></p>
+                                    <% if (g.jabatan && g.jabatan !== 'GURU') { %>
+                                    <span style="display:inline-block;background:#e0f2fe;color:#0369a1;font-size:0.72rem;font-weight:600;padding:0.2rem 0.6rem;border-radius:20px;"><%= g.jabatan %></span>
+                                    <% } %>
+                                </div>
                             </div>
                             <% }) %>
                         </div>

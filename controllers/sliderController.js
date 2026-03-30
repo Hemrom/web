@@ -1,6 +1,7 @@
 const db = require('../config/database');
 const multer = require('multer');
 const path = require('path');
+const compressImage = require('../middleware/compressImage');
 
 const storage = multer.diskStorage({
   destination: './uploads/',
@@ -37,7 +38,7 @@ exports.create = (req, res) => {
     if (err) {
       return res.status(500).send('Error upload file');
     }
-    
+    await compressImage(req, res, () => {});
     try {
       const { judul, subjudul, deskripsi, link_url, link_text, urutan, status } = req.body;
       const gambar = req.file ? req.file.filename : null;
@@ -81,7 +82,7 @@ exports.update = (req, res) => {
     if (err) {
       return res.status(500).send('Error upload file');
     }
-    
+    await compressImage(req, res, () => {});
     try {
       const { judul, subjudul, deskripsi, link_url, link_text, urutan, status } = req.body;
       const gambar = req.file ? req.file.filename : null;
