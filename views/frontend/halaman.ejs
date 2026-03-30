@@ -148,7 +148,7 @@
                             <div class="col-6 col-md-4 col-lg-3">
                                 <div style="background:white;border-radius:14px;box-shadow:0 4px 15px rgba(14,165,233,0.08);overflow:hidden;text-align:center;padding:1.5rem 1rem;transition:transform 0.2s,box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 8px 25px rgba(14,165,233,0.15)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 15px rgba(14,165,233,0.08)'">
                                     <% if (g.foto) { %>
-                                    <img src="/uploads/<%= g.foto %>" alt="<%= g.nama %>" style="width:90px;height:90px;border-radius:50%;object-fit:cover;border:3px solid #e0f2fe;margin-bottom:0.75rem;">
+                                    <img src="/uploads/<%= g.foto %>" alt="<%= g.nama %>" style="width:90px;height:90px;border-radius:50%;object-fit:cover;object-position:top center;border:3px solid #e0f2fe;margin-bottom:0.75rem;">
                                     <% } else { %>
                                     <div style="width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#0369a1);display:flex;align-items:center;justify-content:center;margin:0 auto 0.75rem;">
                                         <i class="fas fa-user" style="font-size:2rem;color:white;"></i>
