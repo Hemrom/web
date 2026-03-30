@@ -210,5 +210,28 @@ git push
 git pull origin main
 pm2 restart 0
 ```
+## Tambahan update lebih singkat
+
+## Sekali saja (setu alias):
+```
+git config --global alias.up '!git add . && git commit -m "update" && git push'
+```
+## Setiap ada perubahan kode:
+## Git Bash (lokal):
+```
+git up
+```
+## Kalau muncul rejected, jalankan dulu:
+```
+git pull origin main --rebase
+git up
+```
+## VPS
+```
+git pull origin main
+pm2 restart 0
+```
+Itu saja. Dua tempat, masing-masing satu perintah.
+
 ---
 SMK Negeri 1 Kras — Kediri, Jawa Timur
