@@ -91,11 +91,31 @@ const validateIdParam = (req, res, next) => {
   next();
 };
 
+// Slug validation — cegah path traversal dan injection
+const validateSlugParam = (req, res, next) => {
+  const slug = req.params.slug;
+  if (slug && !/^[a-z0-9-]+$/.test(slug)) {
+    return res.status(400).send('Invalid request');
+  }
+  next();
+};
+
+// Tipe param validation (untuk profil konten)
+const ALLOWED_TIPE = new Set(['visi_misi', 'sejarah', 'sambutan']);
+const validateTipeParam = (req, res, next) => {
+  if (!ALLOWED_TIPE.has(req.params.tipe)) {
+    return res.status(400).send('Invalid request');
+  }
+  next();
+};
+
 module.exports = {
   xssSanitize,
   handleValidationErrors,
   regenerateSession,
   limitInputLength,
   secureHeaders,
-  validateIdParam
+  validateIdParam,
+  validateSlugParam,
+  validateTipeParam
 };

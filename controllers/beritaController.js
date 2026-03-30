@@ -2,17 +2,11 @@ const db = require('../config/database');
 const multer = require('multer');
 const path = require('path');
 const compressImage = require('../middleware/compressImage');
+const { createUpload } = require('../middleware/uploadSecurity');
 
-const storage = multer.diskStorage({
-  destination: './uploads/',
-  filename: (req, file, cb) => {
-    cb(null, 'berita-' + Date.now() + path.extname(file.originalname));
-  }
-});
-
-const upload = multer({ storage }).single('gambar');
-const uploadEditor = multer({ storage }).single('file');
-const uploadFields = multer({ storage }).any();
+const upload = createUpload('berita').single('gambar');
+const uploadEditor = createUpload('berita').single('file');
+const uploadFields = createUpload('berita', { maxFiles: 10 }).any();
 
 // Upload gambar dari editor Summernote
 exports.uploadGambar = (req, res) => {

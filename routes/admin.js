@@ -16,7 +16,7 @@ const menuController = require('../controllers/menuController');
 
 const { loginLimiter, uploadLimiter, formLimiter } = require('../middleware/security');
 const { csrfProtect } = require('../middleware/csrf');
-const { validateIdParam } = require('../middleware/securityHardening');
+const { validateIdParam, validateTipeParam } = require('../middleware/securityHardening');
 
 // Siswa routes
 router.use('/siswa', require('./siswa'));
@@ -96,8 +96,8 @@ router.post('/users/edit/:id', isAuthenticated, isAdmin, csrfProtect, validateId
 router.post('/users/delete/:id', isAuthenticated, isAdmin, csrfProtect, validateIdParam, userController.delete);
 
 // Profil Konten
-router.get('/profil-konten/:tipe', isAuthenticated, profilKontenController.editPage);
-router.post('/profil-konten/:tipe', isAuthenticated, csrfProtect, profilKontenController.update);
+router.get('/profil-konten/:tipe', isAuthenticated, validateTipeParam, profilKontenController.editPage);
+router.post('/profil-konten/:tipe', isAuthenticated, csrfProtect, validateTipeParam, profilKontenController.update);
 
 // Data Sekolah
 router.get('/data-sekolah', isAuthenticated, dataSekolahController.index);

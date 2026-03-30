@@ -2,16 +2,10 @@ const db = require('../config/database');
 const multer = require('multer');
 const path = require('path');
 const compressImage = require('../middleware/compressImage');
+const { createUpload } = require('../middleware/uploadSecurity');
 
-const storage = multer.diskStorage({
-  destination: './uploads/',
-  filename: (req, file, cb) => {
-    cb(null, 'galeri-' + Date.now() + '-' + Math.random().toString(36).substr(2,5) + path.extname(file.originalname));
-  }
-});
-
-const uploadMulti = multer({ storage }).array('gambar', 30);
-const uploadSingle = multer({ storage }).single('gambar');
+const uploadMulti = createUpload('galeri', { maxFiles: 30 }).array('gambar', 30);
+const uploadSingle = createUpload('galeri').single('gambar');
 
 exports.index = async (req, res) => {
   try {

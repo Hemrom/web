@@ -72,10 +72,22 @@ app.use('/admin', require('./routes/admin'));
 app.use('/guru', require('./routes/guru'));
 app.use('/', require('./routes/frontend'));
 
+// 404 handler
 app.use((req, res) => {
   res.status(404).render('frontend/404', {
     title: 'Halaman Tidak Ditemukan'
   });
+});
+
+// Global error handler — jangan bocorkan detail error ke user
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+  const isDev = process.env.NODE_ENV !== 'production';
+  res.status(err.status || 500);
+  if (req.xhr || req.headers.accept?.includes('application/json')) {
+    return res.json({ success: false, error: isDev ? err.message : 'Terjadi kesalahan server' });
+  }
+  res.send(isDev ? `<pre>${err.stack}</pre>` : 'Terjadi kesalahan. Silakan coba lagi.');
 });
 
 app.listen(PORT, HOST, () => {
