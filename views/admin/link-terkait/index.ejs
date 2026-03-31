@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Admin Panel</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <%- include('../partials/sidebar') %>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <%- include('../partials/topbar', { user }) %>
+            <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Link Terkait</h1>
+                    <a href="/admin/link-terkait/create" class="btn btn-sm btn-primary shadow-sm">
+                        <i class="fas fa-plus fa-sm text-white-50"></i> Tambah Link
+                    </a>
+                </div>
+                <% if (query && query.success) { %>
+                <div class="alert alert-success alert-dismissible fade show">
+                    <% if (query.success == '1') { %>Link berhasil disimpan!<% } else if (query.success == '3') { %>Link berhasil dihapus!<% } %>
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                </div>
+                <% } %>
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead><tr><th>#</th><th>Logo</th><th>Nama</th><th>URL</th><th>Urutan</th><th>Status</th><th>Aksi</th></tr></thead>
+                                <tbody>
+                                <% if (!links || links.length === 0) { %>
+                                <tr><td colspan="7" class="text-center">Belum ada link terkait</td></tr>
+                                <% } else { %>
+                                <% links.forEach((l, i) => { %>
+                                <tr>
+                                    <td><%= i+1 %></td>
+                                    <td>
+                                        <% if (l.logo) { %>
+                                        <img src="/uploads/<%= l.logo %>" style="height:40px;max-width:80px;object-fit:contain;">
+                                        <% } else { %><span class="text-muted">-</span><% } %>
+                                    </td>
+                                    <td><%= l.nama %></td>
+                                    <td><a href="<%= l.url %>" target="_blank" class="text-truncate d-block" style="max-width:200px;"><%= l.url %></a></td>
+                                    <td><%= l.urutan %></td>
+                                    <td><span class="badge badge-<%= l.status === 'aktif' ? 'success' : 'secondary' %>"><%= l.status %></span></td>
+                                    <td>
+                                        <a href="/admin/link-terkait/edit/<%= l.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                                        <form method="POST" action="/admin/link-terkait/delete/<%= l.id %>" style="display:inline" onsubmit="return confirm('Hapus link ini?')">
+                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                            <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                                <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%- include('../partials/footer') %>
+    </div>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="/assets/js/sb-admin-2.min.js"></script>
+</body>
+</html>

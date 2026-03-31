@@ -1,0 +1,95 @@
+<!-- Mobile Bottom Navigation -->
+<nav class="mobile-bottom-nav" aria-label="Navigasi Mobile">
+    <div class="nav-items">
+        <a href="/guru" class="nav-item-mob <%= typeof currentPage !== 'undefined' && currentPage === 'guru' ? 'active' : '' %>">
+            <div class="icon-wrap"><i class="fas fa-chalkboard-teacher"></i></div>
+            <span>Guru</span>
+        </a>
+        <a href="/galeri" class="nav-item-mob <%= typeof currentPage !== 'undefined' && currentPage === 'galeri' ? 'active' : '' %>">
+            <div class="icon-wrap"><i class="fas fa-images"></i></div>
+            <span>Galeri</span>
+        </a>
+        <a href="/" class="nav-item-mob center-btn <%= typeof currentPage !== 'undefined' && currentPage === 'home' ? 'active' : '' %>" aria-label="Beranda">
+            <i class="fas fa-home"></i>
+        </a>
+        <a href="/berita" class="nav-item-mob <%= typeof currentPage !== 'undefined' && (currentPage === 'berita' || currentPage === 'berita-detail') ? 'active' : '' %>">
+            <div class="icon-wrap"><i class="fas fa-newspaper"></i></div>
+            <span>Berita</span>
+        </a>
+        <a href="/admin/login" class="nav-item-mob">
+            <div class="icon-wrap"><i class="fas fa-sign-in-alt"></i></div>
+            <span>Login</span>
+        </a>
+    </div>
+</nav>
+
+<style>
+/* Mobile Bottom Navigation - Global */
+.mobile-bottom-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.12);
+    z-index: 1050;
+    padding: 0.5rem 0 calc(0.5rem + env(safe-area-inset-bottom));
+    border-top: 1px solid #f1f5f9;
+}
+.mobile-bottom-nav .nav-items {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.mobile-bottom-nav .nav-item-mob {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    text-decoration: none;
+    color: #94a3b8;
+    font-size: 0.65rem;
+    font-weight: 500;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    transition: all 0.2s;
+    min-width: 52px;
+}
+.mobile-bottom-nav .nav-item-mob.center-btn {
+    background: #0ea5e9;
+    color: white;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    font-size: 1.3rem;
+    padding: 0;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(14,165,233,0.4);
+    margin-top: -12px;
+}
+.mobile-bottom-nav .nav-item-mob.center-btn:hover,
+.mobile-bottom-nav .nav-item-mob.center-btn.active {
+    background: #0284c7;
+    color: white;
+}
+.mobile-bottom-nav .nav-item-mob i { font-size: 1.1rem; }
+.mobile-bottom-nav .nav-item-mob:hover,
+.mobile-bottom-nav .nav-item-mob.active { color: #0ea5e9; }
+.mobile-bottom-nav .nav-item-mob .icon-wrap {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f1f5f9;
+    transition: background 0.2s;
+}
+.mobile-bottom-nav .nav-item-mob.active .icon-wrap,
+.mobile-bottom-nav .nav-item-mob:hover .icon-wrap { background: #e0f2fe; }
+@media (max-width: 991px) {
+    .mobile-bottom-nav { display: block; }
+    body { padding-bottom: 70px; }
+}
+</style>

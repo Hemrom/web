@@ -13,6 +13,7 @@ const halamanController = require('../controllers/halamanController');
 const dataSekolahController = require('../controllers/dataSekolahController');
 const kontrolWebsiteController = require('../controllers/kontrolWebsiteController');
 const menuController = require('../controllers/menuController');
+const linkTerkaitController = require('../controllers/linkTerkaitController');
 
 const { loginLimiter, uploadLimiter, formLimiter } = require('../middleware/security');
 const { csrfProtect } = require('../middleware/csrf');
@@ -114,6 +115,14 @@ router.post('/halaman/create', isAuthenticated, csrfProtect, halamanController.c
 router.get('/halaman/edit/:id', isAuthenticated, validateIdParam, halamanController.editPage);
 router.post('/halaman/edit/:id', isAuthenticated, csrfProtect, validateIdParam, halamanController.update);
 router.post('/halaman/delete/:id', isAuthenticated, csrfProtect, validateIdParam, halamanController.delete);
+
+// Link Terkait
+router.get('/link-terkait', isAuthenticated, linkTerkaitController.index);
+router.get('/link-terkait/create', isAuthenticated, linkTerkaitController.createPage);
+router.post('/link-terkait/create', isAuthenticated, csrfProtect, linkTerkaitController.create);
+router.get('/link-terkait/edit/:id', isAuthenticated, validateIdParam, linkTerkaitController.editPage);
+router.post('/link-terkait/edit/:id', isAuthenticated, csrfProtect, validateIdParam, linkTerkaitController.update);
+router.post('/link-terkait/delete/:id', isAuthenticated, csrfProtect, validateIdParam, linkTerkaitController.destroy);
 
 // Kelola Menu Navigasi
 router.get('/menu', isAuthenticated, menuController.index);

@@ -85,18 +85,22 @@ exports.dashboard = async (req, res) => {
 
 exports.profilPage = async (req, res) => {
   try {
-    const [profil] = await db.query('SELECT * FROM profil_sekolah LIMIT 1');
-    const [slider] = await db.query('SELECT * FROM slider ORDER BY urutan ASC');
-    const [mediaSosial] = await db.query('SELECT * FROM media_sosial ORDER BY urutan ASC');
-    const [kepsekRows] = await db.query("SELECT * FROM profil_konten WHERE tipe = 'sambutan' LIMIT 1");
-    const [visiMisiRows] = await db.query("SELECT * FROM profil_konten WHERE tipe = 'visi_misi' LIMIT 1");
-    const [sejarahRows] = await db.query("SELECT * FROM profil_konten WHERE tipe = 'sejarah' LIMIT 1");
+    const [[profil], [slider], [mediaSosial], [kepsekRows], [visiMisiRows], [sejarahRows], [linkTerkait]] = await Promise.all([
+      db.query('SELECT * FROM profil_sekolah LIMIT 1'),
+      db.query('SELECT * FROM slider ORDER BY urutan ASC'),
+      db.query('SELECT * FROM media_sosial ORDER BY urutan ASC'),
+      db.query("SELECT * FROM profil_konten WHERE tipe = 'sambutan' LIMIT 1"),
+      db.query("SELECT * FROM profil_konten WHERE tipe = 'visi_misi' LIMIT 1"),
+      db.query("SELECT * FROM profil_konten WHERE tipe = 'sejarah' LIMIT 1"),
+      db.query("SELECT * FROM link_terkait ORDER BY urutan ASC, created_at DESC")
+    ]);
     res.render('admin/profil', {
       title: 'Profil Sekolah',
       user: req.session,
       profil: profil[0] || {},
       slider,
       mediaSosial,
+      linkTerkait,
       kepsek: kepsekRows[0] || null,
       visiMisiKonten: visiMisiRows[0] || null,
       sejarahKonten: sejarahRows[0] || null,
