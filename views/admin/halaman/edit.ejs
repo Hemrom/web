@@ -44,6 +44,10 @@
                                 <input type="text" class="form-control" name="judul" value="<%= halaman.judul %>" required>
                             </div>
                             <div class="form-group">
+                                <label>Subjudul / Deskripsi Singkat <small class="text-muted">(tampil di bawah judul pada halaman)</small></label>
+                                <input type="text" class="form-control" name="subtitle" value="<%= halaman.subtitle || '' %>" placeholder="Contoh: Program Keahlian Teknik Komputer dan Jaringan">
+                            </div>
+                            <div class="form-group">
                                 <label>Konten</label>
                                 <textarea class="form-control" name="konten" id="editor" rows="12"><%- halaman.konten || '' %></textarea>
                             </div>

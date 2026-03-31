@@ -55,6 +55,9 @@
     <section class="page-header">
         <div class="container">
             <h1 class="page-title"><%= halaman.judul %></h1>
+            <% if (halaman.subtitle) { %>
+            <p style="font-size:1.15rem;opacity:0.9;margin-top:0.75rem;font-weight:400;max-width:600px;margin-left:auto;margin-right:auto;"><%= halaman.subtitle %></p>
+            <% } %>
         </div>
     </section>
 

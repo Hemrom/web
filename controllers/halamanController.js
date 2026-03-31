@@ -47,7 +47,7 @@ exports.create = (req, res) => {
     if (err) return res.status(500).send('Error upload');
     await compressImage(req, res, () => {});
     try {
-      const { judul, konten, status } = req.body;
+      const { judul, subtitle, konten, status } = req.body;
       if (!judul || !judul.trim()) {
         return res.render('admin/halaman/create', {
           title: 'Buat Halaman Baru', user: req.session,
@@ -57,8 +57,8 @@ exports.create = (req, res) => {
       const slug = createSlug(judul);
       const foto = req.files && req.files['foto'] ? req.files['foto'][0].filename : null;
       const [result] = await db.query(
-        'INSERT INTO halaman (judul, slug, konten, foto, status) VALUES (?,?,?,?,?)',
-        [judul.trim(), slug, konten || '', foto, status || 'aktif']
+        'INSERT INTO halaman (judul, subtitle, slug, konten, foto, status) VALUES (?,?,?,?,?,?)',
+        [judul.trim(), subtitle || null, slug, konten || '', foto, status || 'aktif']
       );
       // Simpan foto galeri
       if (req.files && req.files['galeri_foto']) {
@@ -114,14 +114,14 @@ exports.update = (req, res) => {
     if (err) return res.status(500).send('Error upload');
     await compressImage(req, res, () => {});
     try {
-      const { judul, konten, status, hapus_galeri } = req.body;
+      const { judul, subtitle, konten, status, hapus_galeri } = req.body;
       const foto = req.files && req.files['foto'] ? req.files['foto'][0].filename : null;
       if (foto) {
-        await db.query('UPDATE halaman SET judul=?, konten=?, foto=?, status=? WHERE id=?',
-          [judul, konten, foto, status, req.params.id]);
+        await db.query('UPDATE halaman SET judul=?, subtitle=?, konten=?, foto=?, status=? WHERE id=?',
+          [judul, subtitle || null, konten, foto, status, req.params.id]);
       } else {
-        await db.query('UPDATE halaman SET judul=?, konten=?, status=? WHERE id=?',
-          [judul, konten, status, req.params.id]);
+        await db.query('UPDATE halaman SET judul=?, subtitle=?, konten=?, status=? WHERE id=?',
+          [judul, subtitle || null, konten, status, req.params.id]);
       }
       // Hapus foto galeri yang dipilih
       if (hapus_galeri) {

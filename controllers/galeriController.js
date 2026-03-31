@@ -1,8 +1,12 @@
 const db = require('../config/database');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 const compressImage = require('../middleware/compressImage');
 const { createUpload } = require('../middleware/uploadSecurity');
+
+// Pastikan folder uploads ada
+if (!fs.existsSync('./uploads')) fs.mkdirSync('./uploads', { recursive: true });
 
 const uploadMulti = createUpload('galeri', { maxFiles: 30 }).array('gambar', 30);
 const uploadSingle = createUpload('galeri').single('gambar');
@@ -33,8 +37,10 @@ exports.createPage = (req, res) => {
 
 exports.create = (req, res) => {
   uploadMulti(req, res, async (err) => {
-    if (err) return res.status(500).send('Error upload file');
-    await compressImage(req, res, () => {});
+    if (err) {
+      console.error('Upload error:', err);
+      return res.status(500).send('Error upload file: ' + err.message);
+    }
     try {
       const { judul, deskripsi, kategori } = req.body;
       if (!req.files || req.files.length === 0) return res.status(400).send('Minimal 1 gambar harus diupload');
@@ -47,7 +53,7 @@ exports.create = (req, res) => {
       res.redirect('/admin/galeri?success=1');
     } catch (error) {
       console.error(error);
-      res.status(500).send('Terjadi kesalahan');
+      res.status(500).send('Terjadi kesalahan: ' + error.message);
     }
   });
 };
