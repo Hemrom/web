@@ -4,19 +4,46 @@
             <div class="col-lg-4 col-md-6 mb-4">
                 <h3 class="footer-title"><%= profil.nama_sekolah || 'Sekolah Kita' %></h3>
                 <p style="font-size:0.9rem;color:#fff;">Memberikan pendidikan berkualitas untuk menciptakan generasi yang cerdas dan berkarakter.</p>
-                <% if (mediaSosialFooter && mediaSosialFooter.length > 0) { %>
-                <div class="mt-2">
-                    <% mediaSosialFooter.forEach(function(ms) { %>
-                        <% 
-                            const iconMap = { youtube: 'youtube', instagram: 'instagram', facebook: 'facebook-f', twitter: 'twitter', tiktok: 'tiktok', threads: 'threads' };
-                            const icon = iconMap[ms.platform] || ms.platform;
-                        %>
-                        <a href="<%= ms.embed_url %>" target="_blank" rel="noopener" class="text-white mr-3" title="<%= ms.judul %>">
-                            <i class="fab fa-<%= icon %>"></i>
+                <div class="footer-sosmed mt-3">
+                    <%
+                        const sosmedList = [
+                            { platform: 'instagram', icon: 'fa-instagram', label: 'Instagram', color: '#E1306C', bg: 'linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)' },
+                            { platform: 'youtube',   icon: 'fa-youtube',   label: 'YouTube',   color: '#FF0000', bg: '#FF0000' },
+                            { platform: 'facebook',  icon: 'fa-facebook-f',label: 'Facebook',  color: '#1877F2', bg: '#1877F2' },
+                            { platform: 'tiktok',    icon: 'fa-tiktok',    label: 'TikTok',    color: '#010101', bg: '#010101' },
+                            { platform: 'twitter',   icon: 'fa-x-twitter', label: 'X/Twitter', color: '#000000', bg: '#000000' },
+                            { platform: 'threads',   icon: 'fa-threads',   label: 'Threads',   color: '#101010', bg: '#101010' },
+                        ];
+                        const activeMap = {};
+                        if (mediaSosialFooter) {
+                            mediaSosialFooter.forEach(function(ms) { activeMap[ms.platform] = ms; });
+                        }
+                    %>
+                    <% sosmedList.forEach(function(s) { %>
+                        <% const active = activeMap[s.platform]; %>
+                        <a href="<%= active ? active.embed_url : '#' %>"
+                           target="<%= active ? '_blank' : '_self' %>"
+                           rel="noopener"
+                           title="<%= active ? active.judul : s.label %>"
+                           class="footer-sosmed-btn <%= active ? '' : 'inactive' %>"
+                           style="background:<%= s.bg %>;">
+                            <i class="fab <%= s.icon %>"></i>
                         </a>
                     <% }) %>
                 </div>
-                <% } %>
+                <style>
+                .footer-sosmed { display:flex; flex-wrap:wrap; gap:10px; margin-top:1rem; }
+                .footer-sosmed-btn {
+                    display:inline-flex; align-items:center; justify-content:center;
+                    width:44px; height:44px; border-radius:12px;
+                    color:white; font-size:1.25rem;
+                    text-decoration:none; transition:transform 0.2s, opacity 0.2s;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                }
+                .footer-sosmed-btn:hover { transform:translateY(-3px); opacity:0.9; color:white; text-decoration:none; }
+                .footer-sosmed-btn.inactive { opacity:0.35; cursor:default; }
+                .footer-sosmed-btn.inactive:hover { transform:none; opacity:0.35; }
+                </style>
             </div>
             <div class="col-lg-2 col-md-6 mb-4">
                 <h4 class="footer-title">Menu</h4>
