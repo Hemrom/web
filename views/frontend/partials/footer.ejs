@@ -71,11 +71,29 @@
                 </p>
                 <% } %>
                 <% if (profil.whatsapp) { %>
-                <p class="mb-1" style="font-size:0.9rem;">
-                    <a href="https://wa.me/<%= profil.whatsapp.replace(/[^0-9]/g, '') %>" target="_blank" rel="noopener" style="color:#25d366;">
-                        <%= profil.whatsapp %> <i class="fab fa-whatsapp ml-2"></i>
-                    </a>
-                </p>
+                <a href="https://wa.me/<%= profil.whatsapp.replace(/[^0-9]/g, '') %>" target="_blank" rel="noopener" class="wa-btn mb-2">
+                    <span class="wa-icon"><i class="fab fa-whatsapp"></i></span>
+                    <span class="wa-text">
+                        <span class="wa-label">Chat WhatsApp</span>
+                        <span class="wa-number"><%= profil.whatsapp %></span>
+                    </span>
+                </a>
+                <style>
+                .wa-btn {
+                    display:inline-flex; align-items:center; gap:10px;
+                    background:linear-gradient(135deg,#25d366,#128c7e);
+                    color:white; text-decoration:none;
+                    padding:10px 16px; border-radius:50px;
+                    box-shadow:0 4px 15px rgba(37,211,102,0.35);
+                    transition:transform 0.2s, box-shadow 0.2s;
+                    max-width:100%;
+                }
+                .wa-btn:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(37,211,102,0.5); color:white; text-decoration:none; }
+                .wa-icon { font-size:1.6rem; line-height:1; flex-shrink:0; }
+                .wa-text { display:flex; flex-direction:column; line-height:1.3; }
+                .wa-label { font-size:0.7rem; opacity:0.85; font-weight:500; }
+                .wa-number { font-size:0.9rem; font-weight:700; }
+                </style>
                 <% } %>
                 <% if (profil.email) { %>
                 <p class="mb-1" style="color:#fff;font-size:0.9rem;">
