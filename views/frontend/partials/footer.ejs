@@ -70,7 +70,7 @@
                     <%= profil.telepon %> <i class="fas fa-phone ml-2"></i>
                 </p>
                 <% } %>
-                <% if (profil.whatsapp) { %>
+                <% if (profil.whatsapp && profil.tampil_wa != 0) { %>
                 <a href="https://wa.me/<%= profil.whatsapp.replace(/[^0-9]/g, '') %>" target="_blank" rel="noopener" class="wa-btn mb-2">
                     <span class="wa-icon"><i class="fab fa-whatsapp"></i></span>
                     <span class="wa-text">

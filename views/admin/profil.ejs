@@ -210,6 +210,15 @@
                                 <% } %>
                                 <input type="file" class="form-control-file" name="logo" accept="image/*">
                             </div>
+                            <div class="form-group">
+                                <div class="custom-control custom-switch">
+                                    <input type="checkbox" class="custom-control-input" id="tampilWa" name="tampil_wa" value="1" <%= (profil.tampil_wa === undefined || profil.tampil_wa == 1) ? 'checked' : '' %>>
+                                    <label class="custom-control-label" for="tampilWa">
+                                        <i class="fab fa-whatsapp text-success mr-1"></i> Tampilkan tombol WhatsApp di frontend
+                                    </label>
+                                </div>
+                                <small class="text-muted">Jika dicentang, tombol WA akan muncul di footer website.</small>
+                            </div>
                             <button type="submit" class="btn btn-primary">Simpan Profil</button>
                         </form>
 
