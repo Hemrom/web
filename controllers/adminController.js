@@ -124,7 +124,9 @@ exports.updateProfil = async (req, res) => {
               npsn, status, jenjang, akreditasi, no_sk_akreditasi,
               sk_pendirian, tanggal_sk, sk_izin, tanggal_sk_izin, maps, website } = req.body;
       const logo = req.file ? req.file.filename : null;
-      const tampil_wa = req.body.tampil_wa ? 1 : 0;
+      // tampil_wa: hidden=0 selalu dikirim, checkbox=1 jika dicentang → ambil nilai terakhir
+      const waRaw = req.body.tampil_wa;
+      const tampil_wa = (Array.isArray(waRaw) ? waRaw[waRaw.length - 1] : waRaw) === '1' ? 1 : 0;
 
       const fields = { nama_sekolah, alamat, telepon, whatsapp: whatsapp || null, email, visi, misi,
                        npsn, status, jenjang, akreditasi, no_sk_akreditasi,
