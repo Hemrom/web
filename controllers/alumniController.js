@@ -4,70 +4,75 @@ const { createUpload } = require('../middleware/uploadSecurity');
 
 const upload = createUpload('alumni').single('foto');
 
+const getCommonData = async () => {
+  const { getMenuItems, getMediaSosialFooter } = require('./frontendController');
+  const [[profilRows], menuItems, mediaSosialFooter] = await Promise.all([
+    db.query('SELECT * FROM profil_sekolah LIMIT 1'),
+    getMenuItems(),
+    getMediaSosialFooter()
+  ]);
+  return { profil: profilRows || {}, menuItems, mediaSosialFooter };
+};
+
 // ── FRONTEND ──────────────────────────────────────────────────────────────────
 
-// Halaman daftar alumni publik
 exports.frontendIndex = async (req, res) => {
   try {
-    const { getMenuItems, getMediaSosialFooter } = require('./frontendController');
-    const [[alumni], [profil], menuItems, mediaSosialFooter] = await Promise.all([
-      db.query("SELECT id,nama,tahun_lulus,jurusan,pekerjaan,perusahaan,kota,foto,cerita,instagram,linkedin FROM alumni WHERE status='disetujui' ORDER BY tahun_lulus DESC, nama ASC"),
-      db.query('SELECT * FROM profil_sekolah LIMIT 1'),
-      getMenuItems(),
-      getMediaSosialFooter()
-    ]);
-    res.render('frontend/alumni', {
-      title: 'Alumni', currentPage: 'alumni',
-      alumni, profil: profil[0] || {}, menuItems, mediaSosialFooter
-    });
+    const common = await getCommonData();
+    const [alumni] = await db.query("SELECT id,nama,tahun_lulus,jurusan,pekerjaan,perusahaan,kota,foto,cerita,instagram,linkedin FROM alumni WHERE status='disetujui' ORDER BY tahun_lulus DESC, nama ASC");
+    res.render('frontend/alumni', { title: 'Alumni', currentPage: 'alumni', alumni, ...common });
   } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
 };
 
-// Halaman form registrasi alumni
-exports.registerPage = (req, res) => {
-  res.render('frontend/alumni-register', {
-    title: 'Daftar Alumni', currentPage: 'alumni',
-    success: false, error: null
-  });
+exports.registerPage = async (req, res) => {
+  try {
+    const common = await getCommonData();
+    res.render('frontend/alumni-register', { title: 'Daftar Alumni', currentPage: 'alumni', success: false, error: null, token: null, ...common });
+  } catch (err) { res.status(500).send('Terjadi kesalahan'); }
 };
 
-// Proses registrasi alumni
 exports.register = (req, res) => {
   upload(req, res, async (err) => {
-    if (err) return res.render('frontend/alumni-register', { title: 'Daftar Alumni', currentPage: 'alumni', success: false, error: err.message });
+    const common = await getCommonData();
+    if (err) return res.render('frontend/alumni-register', { title: 'Daftar Alumni', currentPage: 'alumni', success: false, error: err.message, token: null, ...common });
     try {
       const { nama, nis, tahun_lulus, jurusan, pekerjaan, perusahaan, kota, email, telepon, instagram, linkedin, cerita } = req.body;
-      if (!nama || !tahun_lulus) return res.render('frontend/alumni-register', { title: 'Daftar Alumni', currentPage: 'alumni', success: false, error: 'Nama dan tahun lulus wajib diisi.' });
+      if (!nama || !tahun_lulus) return res.render('frontend/alumni-register', { title: 'Daftar Alumni', currentPage: 'alumni', success: false, error: 'Nama dan tahun lulus wajib diisi.', token: null, ...common });
       const foto = req.file ? req.file.filename : null;
       const token = crypto.randomBytes(32).toString('hex');
       await db.query(
         'INSERT INTO alumni (nama,nis,tahun_lulus,jurusan,pekerjaan,perusahaan,kota,foto,email,telepon,instagram,linkedin,cerita,token,status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
         [nama, nis||null, tahun_lulus, jurusan||null, pekerjaan||null, perusahaan||null, kota||null, foto, email||null, telepon||null, instagram||null, linkedin||null, cerita||null, token, 'pending']
       );
-      res.render('frontend/alumni-register', { title: 'Daftar Alumni', currentPage: 'alumni', success: true, error: null, token });
-    } catch (err) { console.error(err); res.render('frontend/alumni-register', { title: 'Daftar Alumni', currentPage: 'alumni', success: false, error: 'Terjadi kesalahan, coba lagi.' }); }
+      res.render('frontend/alumni-register', { title: 'Daftar Alumni', currentPage: 'alumni', success: true, error: null, token, ...common });
+    } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
   });
 };
 
-// Halaman edit biodata alumni (via token)
-exports.editPage = async (req, res) => {
+exports.updatePage = async (req, res) => {
   try {
-    const [rows] = await db.query('SELECT * FROM alumni WHERE token = ?', [req.params.token]);
-    if (!rows.length) return res.status(404).send('Link tidak valid atau sudah kadaluarsa.');
-    res.render('frontend/alumni-edit', { title: 'Update Biodata Alumni', currentPage: 'alumni', alumni: rows[0], success: false, error: null });
+    if (req.query.token) return res.redirect('/alumni/edit/' + req.query.token);
+    const common = await getCommonData();
+    res.render('frontend/alumni-update', { title: 'Update Biodata Alumni', currentPage: 'alumni', error: null, ...common });
   } catch (err) { res.status(500).send('Terjadi kesalahan'); }
 };
 
-// Proses update biodata alumni
+exports.editPage = async (req, res) => {
+  try {
+    const common = await getCommonData();
+    const [rows] = await db.query('SELECT * FROM alumni WHERE token = ?', [req.params.token]);
+    if (!rows.length) return res.status(404).send('Link tidak valid atau sudah kadaluarsa.');
+    res.render('frontend/alumni-edit', { title: 'Update Biodata Alumni', currentPage: 'alumni', alumni: rows[0], success: false, error: null, ...common });
+  } catch (err) { res.status(500).send('Terjadi kesalahan'); }
+};
+
 exports.editSubmit = (req, res) => {
   upload(req, res, async (err) => {
-    if (err) {
-      const [rows] = await db.query('SELECT * FROM alumni WHERE token = ?', [req.params.token]);
-      return res.render('frontend/alumni-edit', { title: 'Update Biodata Alumni', currentPage: 'alumni', alumni: rows[0]||{}, success: false, error: err.message });
-    }
+    const common = await getCommonData();
+    const [rows] = await db.query('SELECT * FROM alumni WHERE token = ?', [req.params.token]);
+    if (!rows.length) return res.status(404).send('Link tidak valid.');
+    if (err) return res.render('frontend/alumni-edit', { title: 'Update Biodata Alumni', currentPage: 'alumni', alumni: rows[0], success: false, error: err.message, ...common });
     try {
-      const [rows] = await db.query('SELECT * FROM alumni WHERE token = ?', [req.params.token]);
-      if (!rows.length) return res.status(404).send('Link tidak valid.');
       const { nama, nis, tahun_lulus, jurusan, pekerjaan, perusahaan, kota, email, telepon, instagram, linkedin, cerita } = req.body;
       const foto = req.file ? req.file.filename : rows[0].foto;
       await db.query(
@@ -75,7 +80,7 @@ exports.editSubmit = (req, res) => {
         [nama, nis||null, tahun_lulus, jurusan||null, pekerjaan||null, perusahaan||null, kota||null, foto, email||null, telepon||null, instagram||null, linkedin||null, cerita||null, 'pending', req.params.token]
       );
       const [updated] = await db.query('SELECT * FROM alumni WHERE token = ?', [req.params.token]);
-      res.render('frontend/alumni-edit', { title: 'Update Biodata Alumni', currentPage: 'alumni', alumni: updated[0], success: true, error: null });
+      res.render('frontend/alumni-edit', { title: 'Update Biodata Alumni', currentPage: 'alumni', alumni: updated[0], success: true, error: null, ...common });
     } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
   });
 };
@@ -85,9 +90,10 @@ exports.editSubmit = (req, res) => {
 exports.adminIndex = async (req, res) => {
   try {
     const filter = req.query.status || 'semua';
-    let q = 'SELECT * FROM alumni';
-    if (filter !== 'semua') q += ` WHERE status='${db.escape(filter).replace(/'/g,"''")}'`;
-    const [alumni] = await db.query(filter === 'semua' ? 'SELECT * FROM alumni ORDER BY created_at DESC' : 'SELECT * FROM alumni WHERE status=? ORDER BY created_at DESC', filter === 'semua' ? [] : [filter]);
+    const [alumni] = await db.query(
+      filter === 'semua' ? 'SELECT * FROM alumni ORDER BY created_at DESC' : 'SELECT * FROM alumni WHERE status=? ORDER BY created_at DESC',
+      filter === 'semua' ? [] : [filter]
+    );
     const [[stats]] = await db.query('SELECT COUNT(*) as total, SUM(status="pending") as pending, SUM(status="disetujui") as disetujui, SUM(status="ditolak") as ditolak FROM alumni');
     res.render('admin/alumni/index', { title: 'Data Alumni', user: req.session, alumni, stats, filter, success: req.query.success });
   } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }

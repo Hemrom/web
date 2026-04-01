@@ -28,10 +28,7 @@ const { csrfProtect } = require('../middleware/csrf');
 router.get('/alumni', alumniController.frontendIndex);
 router.get('/alumni/daftar', alumniController.registerPage);
 router.post('/alumni/daftar', formLimiter, csrfProtect, alumniController.register);
-router.get('/alumni/update', (req, res) => {
-  if (req.query.token) return res.redirect('/alumni/edit/' + req.query.token);
-  res.render('frontend/alumni-update', { title: 'Update Biodata Alumni', currentPage: 'alumni', error: null });
-});
+router.get('/alumni/update', alumniController.updatePage);
 router.get('/alumni/edit/:token', alumniController.editPage);
 router.post('/alumni/edit/:token', formLimiter, csrfProtect, alumniController.editSubmit);
 
