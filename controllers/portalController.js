@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const { createUpload } = require('../middleware/uploadSecurity');
 const { loginLimiter } = require('../middleware/security');
+const compressImage = require('../middleware/compressImage');
 
 const uploadSingle = createUpload('portal').single('gambar');
 const uploadPortalForm = createUpload('portal', { maxFiles: 5 }).single('gambar');
@@ -602,20 +603,23 @@ exports.jurusanHalamanUpdate = async (req, res) => {
 };
 
 // ── PORTAL JURUSAN: Galeri ────────────────────────────────────────────────────
+const uploadGaleriJurusan = createUpload('jurusan-galeri', { maxFiles: 20 }).array('gambar', 20);
+
 exports.jurusanGaleriIndex = async (req, res) => {
   const jurusan = req.session.portalJurusan;
   const [galeri] = await db.query('SELECT * FROM jurusan_galeri WHERE jurusan=? ORDER BY urutan ASC, created_at DESC', [jurusan]);
-  portalRender(res, req, 'portal/jurusan/galeri', { title: `Galeri Jurusan ${jurusan}`, user: req.session, galeri, jurusan, success: req.query.success });
+  portalRender(res, req, 'portal/jurusan/galeri', { title: `Galeri Jurusan ${jurusan}`, user: req.session, galeri, jurusan, success: req.query.success, query: req.query });
 };
 
 exports.jurusanGaleriCreate = (req, res) => {
-  const uploadMulti = require('../middleware/uploadSecurity').createUpload('jurusan-galeri', { maxFiles: 20 }).array('gambar', 20);
-  uploadMulti(req, res, async (err) => {
+  uploadGaleriJurusan(req, res, async (err) => {
     if (err) return res.redirect('/jurusan-portal/galeri?error=' + encodeURIComponent(err.message));
     try {
+      if (!req.files || req.files.length === 0) return res.redirect('/jurusan-portal/galeri?error=Pilih+minimal+1+foto');
+      // Kompres semua foto
+      await compressImage(req, res, () => {});
       const jurusan = req.session.portalJurusan;
       const { judul, keterangan } = req.body;
-      if (!req.files || req.files.length === 0) return res.redirect('/jurusan-portal/galeri?error=Pilih+minimal+1+foto');
       for (let i = 0; i < req.files.length; i++) {
         await db.query('INSERT INTO jurusan_galeri (jurusan,judul,gambar,keterangan) VALUES (?,?,?,?)',
           [jurusan, judul||'Galeri', req.files[i].filename, keterangan||null]);
