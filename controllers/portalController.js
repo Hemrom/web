@@ -429,15 +429,8 @@ exports.jurusanDetailPage = async (req, res) => {
       [kode]
     );
 
-    // Ambil galeri khusus jurusan dari tabel jurusan_galeri
-    let [galeri] = await db.query(
-      "SELECT * FROM jurusan_galeri WHERE jurusan=? ORDER BY urutan ASC, created_at DESC LIMIT 8",
-      [kode]
-    );
-    // Fallback ke galeri umum jika tidak ada
-    if (!galeri.length) {
-      [galeri] = await db.query("SELECT * FROM galeri ORDER BY created_at DESC LIMIT 8");
-    }
+    // Galeri sidebar: selalu dari galeri utama agar bervariasi
+    const [galeri] = await db.query("SELECT * FROM galeri ORDER BY created_at DESC LIMIT 4");
 
     // Ambil berita/informasi jurusan
     const [jurusanBerita] = await db.query(
