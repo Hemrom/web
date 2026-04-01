@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="utf-8">
@@ -41,9 +41,9 @@
     <%- include('partials/navbar') %>
 
     <!-- Header dengan warna jurusan -->
-    <section class="page-header" style="background:<%= jurusan.warna||'linear-gradient(135deg,#0ea5e9,#0369a1)' %>;">
-        <div class="container" style="position:relative;z-index:1;">
-            <div class="page-kode"><i class="<%= jurusan.icon||'fas fa-graduation-cap' %> me-2"></i><%= jurusan.kode %></div>
+    <% var headerBg = jurusan.warna || 'linear-gradient(135deg,#0ea5e9,#0369a1)'; %>
+    <section class="page-header" style="background:<%= headerBg %>;">        <div class="container" style="position:relative;z-index:1;">
+            <div class="page-kode"><% var jIcon = jurusan.icon || 'fas fa-graduation-cap'; %><i class="<%= jIcon %> me-2"></i><%= jurusan.kode %></div>
             <h1 class="page-title"><%= jurusan.nama %></h1>
             <% if (jurusan.deskripsi) { %>
             <p style="font-size:1rem;opacity:.85;max-width:600px;margin:.75rem auto 0;position:relative;z-index:1;"><%= jurusan.deskripsi %></p>
@@ -60,7 +60,7 @@
                     <% if (jurusan.deskripsi_lengkap) { %>
                     <div class="section-card">
                         <div class="section-title">
-                            <i style="background:<%= jurusan.warna||'linear-gradient(135deg,#0ea5e9,#0369a1)' %>;"><i class="fas fa-info-circle"></i></i>
+                            <i style="background:<%= jWarna %>;"><i class="fas fa-info-circle"></i></i>
                             Tentang Program Keahlian
                         </div>
                         <div style="line-height:1.8;font-size:.95rem;"><%- jurusan.deskripsi_lengkap %></div>
@@ -71,7 +71,7 @@
                     <% if (guru && guru.length > 0) { %>
                     <div class="section-card">
                         <div class="section-title">
-                            <i style="background:<%= jurusan.warna||'linear-gradient(135deg,#0ea5e9,#0369a1)' %>;"><i class="fas fa-chalkboard-teacher"></i></i>
+                            <i style="background:<%= jWarna %>;"><i class="fas fa-chalkboard-teacher"></i></i>
                             Guru Pengajar
                         </div>
                         <div class="row g-3">
@@ -81,7 +81,7 @@
                                     <% if (g.foto) { %>
                                     <img src="/uploads/<%= g.foto %>" class="guru-foto" alt="<%= g.nama %>">
                                     <% } else { %>
-                                    <div class="guru-foto-placeholder" style="background:<%= jurusan.warna||'linear-gradient(135deg,#0ea5e9,#0369a1)' %>;"><i class="fas fa-user"></i></div>
+                                    <div class="guru-foto-placeholder" style="background:<%= jWarna %>;"><i class="fas fa-user"></i></div>
                                     <% } %>
                                     <div style="font-weight:600;font-size:.82rem;color:var(--gray-800);line-height:1.3;"><%= g.nama %></div>
                                     <% if (g.jabatan && g.jabatan !== 'GURU') { %>
@@ -98,12 +98,12 @@
                     <% if (jurusanBerita && jurusanBerita.length > 0) { %>
                     <div class="section-card">
                         <div class="section-title">
-                            <i style="background:<%= jurusan.warna||'linear-gradient(135deg,#0ea5e9,#0369a1)' %>;"><i class="fas fa-newspaper"></i></i>
+                            <% var jWarna = jurusan.warna || 'linear-gradient(135deg,#0ea5e9,#0369a1)'; %>
+                            <i style="background:<%= jWarna %>;"><i class="fas fa-newspaper"></i></i>
                             Berita & Informasi
                         </div>
-                        <% jurusanBerita.forEach(b=>{ %>
-                        <% jurusanBerita.forEach(b=>{ %>
-                        <a href="/jurusan/<%= jurusan.kode.toLowerCase() %>/berita/<%= b.slug %>" style="display:flex;gap:1rem;padding:.75rem 0;border-bottom:1px solid var(--gray-100);text-decoration:none;color:inherit;transition:background .2s;" onmouseover="this.style.background='var(--gray-50)'" onmouseout="this.style.background='transparent'">
+                        <% jurusanBerita.forEach(function(b){ %>
+                        <a href="/jurusan/<%= jurusan.kode.toLowerCase() %>/berita/<%= b.slug %>" style="display:flex;gap:1rem;padding:.75rem 0;border-bottom:1px solid var(--gray-100);text-decoration:none;color:inherit;">
                             <% if (b.gambar) { %>
                             <img src="/uploads/<%= b.gambar %>" style="width:70px;height:55px;object-fit:cover;border-radius:8px;flex-shrink:0;">
                             <% } else { %>
@@ -112,7 +112,7 @@
                             <div>
                                 <span style="background:var(--light-blue);color:var(--primary-blue-dark);padding:.1rem .5rem;border-radius:8px;font-size:.7rem;font-weight:600;"><%= b.kategori %></span>
                                 <div style="font-weight:600;font-size:.88rem;color:var(--gray-800);margin-top:.2rem;line-height:1.3;"><%= b.judul %></div>
-                                <div style="font-size:.75rem;color:var(--gray-500);margin-top:.2rem;"><%= new Date(b.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}) %></div>
+                                <div style="font-size:.75rem;color:var(--gray-500);margin-top:.2rem;"><%= new Date(b.created_at).toLocaleDateString('id-ID') %></div>
                             </div>
                         </a>
                         <% }) %>
@@ -122,7 +122,7 @@
                     <!-- Galeri -->
                     <% if (galeri && galeri.length > 0) { %>                    <div class="section-card">
                         <div class="section-title">
-                            <i style="background:<%= jurusan.warna||'linear-gradient(135deg,#0ea5e9,#0369a1)' %>;"><i class="fas fa-images"></i></i>
+                            <i style="background:<%= jWarna %>;"><i class="fas fa-images"></i></i>
                             Galeri Kegiatan
                         </div>
                         <div class="row g-2">
@@ -143,7 +143,7 @@
                     <!-- Info singkat -->
                     <div class="section-card">
                         <div class="section-title">
-                            <i style="background:<%= jurusan.warna||'linear-gradient(135deg,#0ea5e9,#0369a1)' %>;"><i class="fas fa-info"></i></i>
+                            <i style="background:<%= jWarna %>;"><i class="fas fa-info"></i></i>
                             Info Jurusan
                         </div>
                         <div style="display:flex;flex-direction:column;gap:.75rem;">
@@ -160,7 +160,7 @@
                                 <span style="font-weight:700;color:var(--gray-800);"><%= prestasi.length %> prestasi</span>
                             </div>
                         </div>
-                        <a href="/guru" style="display:block;text-align:center;margin-top:1.25rem;background:<%= jurusan.warna||'linear-gradient(135deg,#0ea5e9,#0369a1)' %>;color:white;padding:.75rem;border-radius:12px;text-decoration:none;font-weight:600;font-size:.9rem;">
+                        <a href="/guru" style="display:block;text-align:center;margin-top:1.25rem;background:<%= jWarna %>;color:white;padding:.75rem;border-radius:12px;text-decoration:none;font-weight:600;font-size:.9rem;">
                             <i class="fas fa-users me-2"></i>Lihat Semua Guru
                         </a>
                     </div>
@@ -169,12 +169,12 @@
                     <% if (prestasi && prestasi.length > 0) { %>
                     <div class="section-card">
                         <div class="section-title">
-                            <i style="background:<%= jurusan.warna||'linear-gradient(135deg,#0ea5e9,#0369a1)' %>;"><i class="fas fa-trophy"></i></i>
+                            <i style="background:<%= jWarna %>;"><i class="fas fa-trophy"></i></i>
                             Prestasi Terbaru
                         </div>
                         <% prestasi.slice(0,5).forEach(p=>{ %>
                         <div class="prestasi-item">
-                            <div class="prestasi-icon" style="background:<%= jurusan.warna||'linear-gradient(135deg,#0ea5e9,#0369a1)' %>;"><i class="fas fa-medal"></i></div>
+                            <div class="prestasi-icon" style="background:<%= jWarna %>;"><i class="fas fa-medal"></i></div>
                             <div>
                                 <div style="font-weight:600;font-size:.85rem;color:var(--gray-800);line-height:1.3;"><%= p.judul %></div>
                                 <div style="font-size:.75rem;color:var(--gray-600);margin-top:.2rem;"><%= p.tingkat %> · <%= p.tahun %></div>
@@ -207,7 +207,7 @@
                         <a href="/berita/<%= b.slug %>" style="display:flex;gap:.75rem;padding:.6rem 0;border-bottom:1px solid var(--gray-100);text-decoration:none;color:inherit;">
                             <div style="flex:1;min-width:0;">
                                 <div style="font-weight:600;font-size:.82rem;color:var(--gray-800);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;"><%= b.judul %></div>
-                                <div style="font-size:.72rem;color:var(--gray-500);margin-top:.2rem;"><%= new Date(b.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}) %></div>
+                                <div style="font-size:.72rem;color:var(--gray-500);margin-top:.2rem;"><% var bDate2 = new Date(b.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}); %><%= bDate2 %></div>
                             </div>
                         </a>
                         <% }) %>
@@ -249,11 +249,14 @@
                         <% const sosmedIcons={instagram:'fa-instagram',youtube:'fa-youtube',facebook:'fa-facebook-f',tiktok:'fa-tiktok',twitter:'fa-x-twitter',threads:'fa-threads'}; %>
                         <div style="display:flex;flex-wrap:wrap;gap:.5rem;">
                             <% mediaSosialFooter.forEach(ms=>{ %>
+                            <%
+                            var msColor = sosmedColors[ms.platform] || '#333';
+                            var msIcon = sosmedIcons[ms.platform] || 'fa-globe';
+                            %>
                             <a href="<%= ms.embed_url %>" target="_blank" rel="noopener"
-                               style="width:40px;height:40px;border-radius:10px;background:<%= sosmedColors[ms.platform]||'#333' %>;display:flex;align-items:center;justify-content:center;color:white;font-size:1.1rem;text-decoration:none;transition:transform .2s;"
-                               onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'"
+                               style="width:40px;height:40px;border-radius:10px;background:<%= msColor %>;display:flex;align-items:center;justify-content:center;color:white;font-size:1.1rem;text-decoration:none;"
                                title="<%= ms.judul %>">
-                                <i class="fab <%= sosmedIcons[ms.platform]||'fa-globe' %>"></i>
+                                <i class="fab <%= msIcon %>"></i>
                             </a>
                             <% }) %>
                         </div>
