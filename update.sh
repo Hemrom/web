@@ -89,6 +89,19 @@ async function migrate() {
     'ALTER TABLE halaman ADD COLUMN IF NOT EXISTS subtitle VARCHAR(500) DEFAULT NULL AFTER judul',
     'ALTER TABLE media_sosial ADD COLUMN IF NOT EXISTS thumbnail VARCHAR(255) DEFAULT NULL',
     'ALTER TABLE jurusan ADD COLUMN IF NOT EXISTS deskripsi_lengkap TEXT DEFAULT NULL',
+    \`CREATE TABLE IF NOT EXISTS jurusan_berita (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      jurusan VARCHAR(100) NOT NULL,
+      judul VARCHAR(255) NOT NULL,
+      slug VARCHAR(255) UNIQUE,
+      konten TEXT,
+      gambar VARCHAR(255),
+      kategori ENUM('berita','informasi','pengumuman','prestasi') DEFAULT 'berita',
+      status ENUM('draft','published') DEFAULT 'published',
+      penulis VARCHAR(100),
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4\`,
     \`CREATE TABLE IF NOT EXISTS prestasi (
       id INT AUTO_INCREMENT PRIMARY KEY,
       judul VARCHAR(255) NOT NULL,

@@ -38,5 +38,12 @@ router.post('/jurusan-portal/create', isJurusan, csrfProtect, ctrl.jurusanCreate
 router.get('/jurusan-portal/edit/:id', isJurusan, validateIdParam, ctrl.jurusanEditPage);
 router.post('/jurusan-portal/edit/:id', isJurusan, csrfProtect, validateIdParam, ctrl.jurusanUpdate);
 router.post('/jurusan-portal/delete/:id', isJurusan, csrfProtect, validateIdParam, ctrl.jurusanDelete);
+// Berita/Informasi Jurusan
+router.get('/jurusan-portal/berita', isJurusan, ctrl.jurusanBeritaIndex);
+router.get('/jurusan-portal/berita/create', isJurusan, ctrl.jurusanBeritaCreatePage);
+router.post('/jurusan-portal/berita/create', isJurusan, csrfProtect, ctrl.jurusanBeritaCreate);
+router.get('/jurusan-portal/berita/edit/:id', isJurusan, validateIdParam, ctrl.jurusanBeritaEditPage);
+router.post('/jurusan-portal/berita/edit/:id', isJurusan, csrfProtect, validateIdParam, ctrl.jurusanBeritaUpdate);
+router.post('/jurusan-portal/berita/delete/:id', isJurusan, csrfProtect, validateIdParam, ctrl.jurusanBeritaDelete);
 
 module.exports = router;

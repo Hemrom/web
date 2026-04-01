@@ -419,9 +419,113 @@ exports.jurusanDetailPage = async (req, res) => {
       [`%${kode}%`, `%${kode}%`]
     );
 
+    // Ambil berita/informasi jurusan
+    const [jurusanBerita] = await db.query(
+      "SELECT * FROM jurusan_berita WHERE jurusan=? AND status='published' ORDER BY created_at DESC LIMIT 5",
+      [kode]
+    );
+
     res.render('frontend/jurusan-detail', {
       title: jurusan.nama, currentPage: 'jurusan',
-      jurusan, guru, prestasi, galeri, ...common
+      jurusan, guru, prestasi, galeri, jurusanBerita, ...common
     });
   } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
+};
+
+// ── PORTAL JURUSAN: Berita/Informasi ─────────────────────────────────────────
+exports.jurusanBeritaIndex = async (req, res) => {
+  const jurusan = req.session.portalJurusan;
+  const [berita] = await db.query('SELECT * FROM jurusan_berita WHERE jurusan=? ORDER BY created_at DESC', [jurusan]);
+  res.render('portal/jurusan/berita', { title: `Berita Jurusan ${jurusan}`, user: req.session, berita, jurusan, success: req.query.success });
+};
+
+exports.jurusanBeritaCreatePage = (req, res) =>
+  res.render('portal/jurusan/berita-create', { title: 'Tambah Berita/Informasi', user: req.session });
+
+exports.jurusanBeritaCreate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/jurusan-portal/berita');
+    const { judul, konten, kategori, status } = req.body;
+    const gambar = req.file ? req.file.filename : null;
+    const slug = createSlug(judul);
+    const jurusan = req.session.portalJurusan;
+    await db.query('INSERT INTO jurusan_berita (jurusan,judul,slug,konten,gambar,kategori,status,penulis) VALUES (?,?,?,?,?,?,?,?)',
+      [jurusan, judul, slug, konten||null, gambar, kategori||'berita', status||'published', req.session.portalNama]);
+    res.redirect('/jurusan-portal/berita?success=1');
+  });
+};
+
+exports.jurusanBeritaEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM jurusan_berita WHERE id=? AND jurusan=?', [req.params.id, req.session.portalJurusan]);
+  if (!rows.length) return res.redirect('/jurusan-portal/berita');
+  res.render('portal/jurusan/berita-edit', { title: 'Edit Berita', user: req.session, item: rows[0] });
+};
+
+exports.jurusanBeritaUpdate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/jurusan-portal/berita');
+    const { judul, konten, kategori, status } = req.body;
+    const [rows] = await db.query('SELECT gambar FROM jurusan_berita WHERE id=?', [req.params.id]);
+    const gambar = req.file ? req.file.filename : rows[0]?.gambar;
+    await db.query('UPDATE jurusan_berita SET judul=?,konten=?,gambar=?,kategori=?,status=? WHERE id=? AND jurusan=?',
+      [judul, konten||null, gambar, kategori||'berita', status||'published', req.params.id, req.session.portalJurusan]);
+    res.redirect('/jurusan-portal/berita?success=2');
+  });
+};
+
+exports.jurusanBeritaDelete = async (req, res) => {
+  await db.query('DELETE FROM jurusan_berita WHERE id=? AND jurusan=?', [req.params.id, req.session.portalJurusan]);
+  res.redirect('/jurusan-portal/berita?success=3');
+};
+
+// ── ADMIN: Kelola Berita Jurusan ──────────────────────────────────────────────
+exports.adminJurusanBeritaIndex = async (req, res) => {
+  const jurusan = req.query.jurusan || '';
+  const [berita] = await db.query(
+    jurusan ? 'SELECT * FROM jurusan_berita WHERE jurusan=? ORDER BY created_at DESC' : 'SELECT * FROM jurusan_berita ORDER BY jurusan, created_at DESC',
+    jurusan ? [jurusan] : []
+  );
+  const [jurusanList] = await db.query("SELECT kode,nama FROM jurusan WHERE status='aktif' ORDER BY kode");
+  res.render('admin/jurusan-berita/index', { title: 'Berita Jurusan', user: req.session, berita, jurusanList, filterJurusan: jurusan, success: req.query.success });
+};
+
+exports.adminJurusanBeritaCreatePage = async (req, res) => {
+  const [jurusanList] = await db.query("SELECT kode,nama FROM jurusan WHERE status='aktif' ORDER BY kode");
+  res.render('admin/jurusan-berita/create', { title: 'Tambah Berita Jurusan', user: req.session, jurusanList });
+};
+
+exports.adminJurusanBeritaCreate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/admin/jurusan-berita');
+    const { judul, jurusan, konten, kategori, status } = req.body;
+    const gambar = req.file ? req.file.filename : null;
+    const slug = createSlug(judul);
+    await db.query('INSERT INTO jurusan_berita (jurusan,judul,slug,konten,gambar,kategori,status,penulis) VALUES (?,?,?,?,?,?,?,?)',
+      [jurusan, judul, slug, konten||null, gambar, kategori||'berita', status||'published', 'Admin']);
+    res.redirect('/admin/jurusan-berita?success=1');
+  });
+};
+
+exports.adminJurusanBeritaEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM jurusan_berita WHERE id=?', [req.params.id]);
+  if (!rows.length) return res.redirect('/admin/jurusan-berita');
+  const [jurusanList] = await db.query("SELECT kode,nama FROM jurusan WHERE status='aktif' ORDER BY kode");
+  res.render('admin/jurusan-berita/edit', { title: 'Edit Berita Jurusan', user: req.session, item: rows[0], jurusanList });
+};
+
+exports.adminJurusanBeritaUpdate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/admin/jurusan-berita');
+    const { judul, jurusan, konten, kategori, status } = req.body;
+    const [rows] = await db.query('SELECT gambar FROM jurusan_berita WHERE id=?', [req.params.id]);
+    const gambar = req.file ? req.file.filename : rows[0]?.gambar;
+    await db.query('UPDATE jurusan_berita SET judul=?,jurusan=?,konten=?,gambar=?,kategori=?,status=? WHERE id=?',
+      [judul, jurusan, konten||null, gambar, kategori||'berita', status||'published', req.params.id]);
+    res.redirect('/admin/jurusan-berita?success=2');
+  });
+};
+
+exports.adminJurusanBeritaDelete = async (req, res) => {
+  await db.query('DELETE FROM jurusan_berita WHERE id=?', [req.params.id]);
+  res.redirect('/admin/jurusan-berita?success=3');
 };

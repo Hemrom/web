@@ -142,6 +142,14 @@ router.get('/osis/edit/:id', isAuthenticated, validateIdParam, portalController.
 router.post('/osis/edit/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminOsisUpdate);
 router.post('/osis/delete/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminOsisDelete);
 
+// Admin kelola Berita Jurusan
+router.get('/jurusan-berita', isAuthenticated, portalController.adminJurusanBeritaIndex);
+router.get('/jurusan-berita/create', isAuthenticated, portalController.adminJurusanBeritaCreatePage);
+router.post('/jurusan-berita/create', isAuthenticated, csrfProtect, portalController.adminJurusanBeritaCreate);
+router.get('/jurusan-berita/edit/:id', isAuthenticated, validateIdParam, portalController.adminJurusanBeritaEditPage);
+router.post('/jurusan-berita/edit/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminJurusanBeritaUpdate);
+router.post('/jurusan-berita/delete/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminJurusanBeritaDelete);
+
 // Portal Users (BKK, OSIS, Jurusan)
 router.get('/portal-users', isAuthenticated, isAdmin, portalController.adminPortalUsers);
 router.post('/portal-users/create', isAuthenticated, isAdmin, csrfProtect, portalController.adminPortalUserCreate);
