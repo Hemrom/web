@@ -307,3 +307,79 @@ exports.adminPortalUserToggle = async (req, res) => {
   await db.query('UPDATE portal_users SET aktif = NOT aktif WHERE id=?', [req.params.id]);
   res.redirect('/admin/portal-users?success=2');
 };
+
+// ── ADMIN: Kelola BKK ─────────────────────────────────────────────────────────
+exports.adminBkkIndex = async (req, res) => {
+  const [lowongan] = await db.query('SELECT * FROM bkk_lowongan ORDER BY created_at DESC');
+  res.render('admin/bkk/index', { title: 'Kelola BKK', user: req.session, lowongan, success: req.query.success });
+};
+exports.adminBkkCreatePage = (req, res) => res.render('admin/bkk/create', { title: 'Tambah Lowongan BKK', user: req.session });
+exports.adminBkkCreate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/admin/bkk');
+    const { judul, perusahaan, lokasi, deskripsi, persyaratan, kategori, deadline, kontak, status } = req.body;
+    const gambar = req.file ? req.file.filename : null;
+    const slug = createSlug(judul);
+    await db.query('INSERT INTO bkk_lowongan (judul,slug,perusahaan,lokasi,deskripsi,persyaratan,gambar,kategori,deadline,kontak,status) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
+      [judul, slug, perusahaan, lokasi||null, deskripsi||null, persyaratan||null, gambar, kategori||'kerja', deadline||null, kontak||null, status||'aktif']);
+    res.redirect('/admin/bkk?success=1');
+  });
+};
+exports.adminBkkEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM bkk_lowongan WHERE id=?', [req.params.id]);
+  if (!rows.length) return res.redirect('/admin/bkk');
+  res.render('admin/bkk/edit', { title: 'Edit Lowongan BKK', user: req.session, item: rows[0] });
+};
+exports.adminBkkUpdate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/admin/bkk');
+    const { judul, perusahaan, lokasi, deskripsi, persyaratan, kategori, deadline, kontak, status } = req.body;
+    const [rows] = await db.query('SELECT gambar FROM bkk_lowongan WHERE id=?', [req.params.id]);
+    const gambar = req.file ? req.file.filename : rows[0]?.gambar;
+    await db.query('UPDATE bkk_lowongan SET judul=?,perusahaan=?,lokasi=?,deskripsi=?,persyaratan=?,gambar=?,kategori=?,deadline=?,kontak=?,status=? WHERE id=?',
+      [judul, perusahaan, lokasi||null, deskripsi||null, persyaratan||null, gambar, kategori||'kerja', deadline||null, kontak||null, status||'aktif', req.params.id]);
+    res.redirect('/admin/bkk?success=2');
+  });
+};
+exports.adminBkkDelete = async (req, res) => {
+  await db.query('DELETE FROM bkk_lowongan WHERE id=?', [req.params.id]);
+  res.redirect('/admin/bkk?success=3');
+};
+
+// ── ADMIN: Kelola OSIS ────────────────────────────────────────────────────────
+exports.adminOsisIndex = async (req, res) => {
+  const [kegiatan] = await db.query('SELECT * FROM osis_kegiatan ORDER BY created_at DESC');
+  res.render('admin/osis/index', { title: 'Kelola OSIS', user: req.session, kegiatan, success: req.query.success });
+};
+exports.adminOsisCreatePage = (req, res) => res.render('admin/osis/create', { title: 'Tambah Kegiatan OSIS', user: req.session });
+exports.adminOsisCreate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/admin/osis');
+    const { judul, konten, kategori, status } = req.body;
+    const gambar = req.file ? req.file.filename : null;
+    const slug = createSlug(judul);
+    await db.query('INSERT INTO osis_kegiatan (judul,slug,konten,gambar,kategori,status,penulis) VALUES (?,?,?,?,?,?,?)',
+      [judul, slug, konten||null, gambar, kategori||'kegiatan', status||'published', 'Admin']);
+    res.redirect('/admin/osis?success=1');
+  });
+};
+exports.adminOsisEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM osis_kegiatan WHERE id=?', [req.params.id]);
+  if (!rows.length) return res.redirect('/admin/osis');
+  res.render('admin/osis/edit', { title: 'Edit Kegiatan OSIS', user: req.session, item: rows[0] });
+};
+exports.adminOsisUpdate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/admin/osis');
+    const { judul, konten, kategori, status } = req.body;
+    const [rows] = await db.query('SELECT gambar FROM osis_kegiatan WHERE id=?', [req.params.id]);
+    const gambar = req.file ? req.file.filename : rows[0]?.gambar;
+    await db.query('UPDATE osis_kegiatan SET judul=?,konten=?,gambar=?,kategori=?,status=? WHERE id=?',
+      [judul, konten||null, gambar, kategori||'kegiatan', status||'published', req.params.id]);
+    res.redirect('/admin/osis?success=2');
+  });
+};
+exports.adminOsisDelete = async (req, res) => {
+  await db.query('DELETE FROM osis_kegiatan WHERE id=?', [req.params.id]);
+  res.redirect('/admin/osis?success=3');
+};

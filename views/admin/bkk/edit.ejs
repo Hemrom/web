@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Admin Panel</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <%- include('../partials/sidebar') %>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <%- include('../partials/topbar', { user }) %>
+            <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Edit Lowongan BKK</h1>
+                    <a href="/admin/bkk" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left fa-sm"></i> Kembali</a>
+                </div>
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <form method="POST" action="/admin/bkk/edit/<%= item.id %>" enctype="multipart/form-data">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group"><label>Judul *</label><input type="text" class="form-control" name="judul" value="<%= item.judul %>" required></div>
+                                    <div class="form-group"><label>Perusahaan *</label><input type="text" class="form-control" name="perusahaan" value="<%= item.perusahaan %>" required></div>
+                                    <div class="form-group"><label>Lokasi</label><input type="text" class="form-control" name="lokasi" value="<%= item.lokasi||'' %>"></div>
+                                    <div class="form-group"><label>Deskripsi</label><textarea class="form-control" name="deskripsi" rows="4"><%= item.deskripsi||'' %></textarea></div>
+                                    <div class="form-group"><label>Persyaratan</label><textarea class="form-control" name="persyaratan" rows="4"><%= item.persyaratan||'' %></textarea></div>
+                                    <div class="form-group"><label>Kontak</label><input type="text" class="form-control" name="kontak" value="<%= item.kontak||'' %>"></div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group"><label>Kategori</label>
+                                        <select class="form-control" name="kategori">
+                                            <% ['kerja','magang','beasiswa','lainnya'].forEach(k=>{ %><option value="<%= k %>" <%= item.kategori===k?'selected':'' %>><%= k %></option><% }) %>
+                                        </select>
+                                    </div>
+                                    <div class="form-group"><label>Deadline</label><input type="date" class="form-control" name="deadline" value="<%= item.deadline?item.deadline.toString().substring(0,10):'' %>"></div>
+                                    <div class="form-group"><label>Status</label>
+                                        <select class="form-control" name="status">
+                                            <option value="aktif" <%= item.status==='aktif'?'selected':'' %>>Aktif</option>
+                                            <option value="nonaktif" <%= item.status==='nonaktif'?'selected':'' %>>Nonaktif</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group"><label>Gambar</label>
+                                        <% if (item.gambar) { %><div class="mb-2"><img src="/uploads/<%= item.gambar %>" style="max-width:150px;border-radius:8px;"></div><% } %>
+                                        <input type="file" class="form-control-file" name="gambar" accept=".jpg,.jpeg,.png,.webp">
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success"><i class="fas fa-save mr-1"></i>Update</button>
+                            <a href="/admin/bkk" class="btn btn-secondary ml-2">Batal</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%- include('../partials/footer') %>
+    </div>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="/assets/js/sb-admin-2.min.js"></script>
+</body>
+</html>

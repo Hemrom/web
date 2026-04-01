@@ -126,6 +126,22 @@ router.get('/prestasi/edit/:id', isAuthenticated, validateIdParam, portalControl
 router.post('/prestasi/edit/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminPrestasiUpdate);
 router.post('/prestasi/delete/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminPrestasiDelete);
 
+// Admin kelola BKK
+router.get('/bkk', isAuthenticated, portalController.adminBkkIndex);
+router.get('/bkk/create', isAuthenticated, portalController.adminBkkCreatePage);
+router.post('/bkk/create', isAuthenticated, csrfProtect, portalController.adminBkkCreate);
+router.get('/bkk/edit/:id', isAuthenticated, validateIdParam, portalController.adminBkkEditPage);
+router.post('/bkk/edit/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminBkkUpdate);
+router.post('/bkk/delete/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminBkkDelete);
+
+// Admin kelola OSIS
+router.get('/osis', isAuthenticated, portalController.adminOsisIndex);
+router.get('/osis/create', isAuthenticated, portalController.adminOsisCreatePage);
+router.post('/osis/create', isAuthenticated, csrfProtect, portalController.adminOsisCreate);
+router.get('/osis/edit/:id', isAuthenticated, validateIdParam, portalController.adminOsisEditPage);
+router.post('/osis/edit/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminOsisUpdate);
+router.post('/osis/delete/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminOsisDelete);
+
 // Portal Users (BKK, OSIS, Jurusan)
 router.get('/portal-users', isAuthenticated, isAdmin, portalController.adminPortalUsers);
 router.post('/portal-users/create', isAuthenticated, isAdmin, csrfProtect, portalController.adminPortalUserCreate);
