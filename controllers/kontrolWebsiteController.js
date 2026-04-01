@@ -42,9 +42,9 @@ exports.index = async (req, res) => {
 
 exports.saveTampilan = async (req, res) => {
   try {
-    const { theme_mode, primary_color, secondary_color, navbar_bg, footer_bg } = req.body;
-    const updates = { theme_mode, primary_color, secondary_color, navbar_bg, footer_bg };
-    for (const [key, value] of Object.entries(updates)) {
+    const fields = ['theme_mode','primary_color','secondary_color','navbar_bg','footer_bg','font_family','border_radius','hero_style'];
+    for (const key of fields) {
+      const value = req.body[key];
       if (value) {
         await db.query(
           'INSERT INTO website_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?',
@@ -83,8 +83,10 @@ exports.themeCss = async (req, res) => {
     const secondary = settings.secondary_color || '#0369a1';
     const navbarBg = settings.navbar_bg || '#ffffff';
     const footerBg = settings.footer_bg || '#0f172a';
+    const fontFamily = settings.font_family || 'Inter';
+    const borderRadius = settings.border_radius || '16';
+    const heroStyle = settings.hero_style || 'gradient';
 
-    // Derive dark variants
     const isDark = mode === 'dark';
     const bodyBg = isDark ? '#0f172a' : '#ffffff';
     const bodyColor = isDark ? '#e2e8f0' : '#334155';
@@ -93,14 +95,19 @@ exports.themeCss = async (req, res) => {
     const gray100 = isDark ? '#334155' : '#f1f5f9';
     const navbarColor = isDark ? '#e2e8f0' : '#334155';
 
+    // Derive lighter/darker variants
+    const primaryLight = primary + '22';
+    const primaryMid = primary + '44';
+
     const css = `
+@import url('https://fonts.googleapis.com/css2?family=${fontFamily.replace(/ /g,'+')}:wght@300;400;500;600;700;800&display=swap');
 :root {
   --primary-blue: ${primary};
   --primary-blue-dark: ${secondary};
   --primary-blue-light: ${primary}cc;
   --secondary-blue: ${secondary};
   --accent-blue: ${primary}99;
-  --light-blue: ${primary}22;
+  --light-blue: ${primaryLight};
   --dark-blue: ${secondary};
   --gray-50: ${gray50};
   --gray-100: ${gray100};
@@ -109,22 +116,35 @@ exports.themeCss = async (req, res) => {
   --card-bg: ${cardBg};
   --navbar-bg: ${navbarBg};
   --footer-bg: ${footerBg};
+  --border-radius-card: ${borderRadius}px;
+  --font-main: '${fontFamily}', sans-serif;
 }
+* { font-family: var(--font-main) !important; }
 body { background-color: ${bodyBg} !important; color: ${bodyColor} !important; }
-.navbar-modern { background: ${navbarBg} !important; }
+.navbar-modern { background: ${navbarBg}f5 !important; backdrop-filter: blur(12px); }
 .footer { background: ${footerBg} !important; }
-.card-modern { background: ${cardBg} !important; }
-.content-section { background: ${gray50} !important; }
+.card-modern, .news-card, .feature-card, .stat-card, .gallery-item { background: ${cardBg} !important; border-radius: var(--border-radius-card) !important; }
+.stats-section, .news-section, .content-section { background: ${gray50} !important; }
+.features-section, .gallery-section { background: ${cardBg} !important; }
 .btn-primary { background: ${primary} !important; border-color: ${primary} !important; }
 .btn-primary:hover { background: ${secondary} !important; border-color: ${secondary} !important; }
+.btn-outline-primary { color: ${primary} !important; border-color: ${primary} !important; }
+.btn-outline-primary:hover { background: ${primary} !important; color: white !important; }
 .navbar-brand { color: ${primary} !important; }
-.nav-link:hover, .nav-link.active { color: ${primary} !important; background-color: ${primary}22 !important; }
-.page-header { background: linear-gradient(135deg, ${primary} 0%, ${secondary} 100%) !important; }
+.nav-link:hover, .nav-link.active { color: ${primary} !important; background-color: ${primaryLight} !important; }
+.page-header, .hero-default, .cta-section { background: linear-gradient(135deg, ${primary} 0%, ${secondary} 100%) !important; }
+.stat-number, .news-meta a { color: ${primary} !important; }
+.feature-icon { background: linear-gradient(135deg, ${primary}, ${secondary}) !important; }
+.news-badge { background: ${primary} !important; }
+.link-terkait-header { background: ${primary} !important; }
+.medsos-section { background: linear-gradient(135deg, ${secondary}dd 0%, ${primary}cc 100%) !important; }
 ${isDark ? `
-section { background-color: ${bodyBg} !important; }
-h1,h2,h3,h4,h5,h6,p,span,a { color: ${bodyColor}; }
+.stat-card, .feature-card, .news-card, .gallery-item { background: ${cardBg} !important; border-color: ${gray100} !important; }
+.section-title, .feature-title, .news-title, .gallery-title { color: #f1f5f9 !important; }
+.section-subtitle, .feature-desc, .news-excerpt { color: #94a3b8 !important; }
 .text-muted { color: #94a3b8 !important; }
 .nav-link { color: ${navbarColor} !important; }
+.footer-link { color: #94a3b8 !important; }
 ` : ''}
 `;
 
