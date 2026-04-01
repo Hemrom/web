@@ -88,6 +88,7 @@ async function migrate() {
     'ALTER TABLE profil_sekolah ADD COLUMN IF NOT EXISTS tampil_wa TINYINT(1) DEFAULT 1',
     'ALTER TABLE halaman ADD COLUMN IF NOT EXISTS subtitle VARCHAR(500) DEFAULT NULL AFTER judul',
     'ALTER TABLE media_sosial ADD COLUMN IF NOT EXISTS thumbnail VARCHAR(255) DEFAULT NULL',
+    'ALTER TABLE jurusan ADD COLUMN IF NOT EXISTS deskripsi_lengkap TEXT DEFAULT NULL',
     \`CREATE TABLE IF NOT EXISTS prestasi (
       id INT AUTO_INCREMENT PRIMARY KEY,
       judul VARCHAR(255) NOT NULL,

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Website Sekolah</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css">
+    <link rel="stylesheet" href="/theme.css">
+    <style>
+        :root{--primary-blue:#0ea5e9;--secondary-blue:#0369a1;--light-blue:#e0f2fe;--gray-50:#f8fafc;--gray-100:#f1f5f9;--gray-600:#475569;--gray-700:#334155;--gray-800:#1e293b;}
+        *{font-family:'Inter',sans-serif;box-sizing:border-box;margin:0;padding:0;}
+        body{color:var(--gray-700);line-height:1.6;}
+        .page-header{padding:10rem 0 5rem;color:white;text-align:center;position:relative;overflow:hidden;}
+        .page-header::before{content:'';position:absolute;top:-20%;right:-5%;width:400px;height:400px;border-radius:50%;background:rgba(255,255,255,.06);}
+        .page-header::after{content:'';position:absolute;bottom:-20%;left:-5%;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,.04);}
+        .page-title{font-size:2.8rem;font-weight:800;position:relative;z-index:1;}
+        .page-kode{background:rgba(255,255,255,.2);color:white;padding:.4rem 1.2rem;border-radius:20px;font-size:.9rem;font-weight:700;display:inline-block;margin-bottom:1rem;position:relative;z-index:1;}
+        .content-section{padding:5rem 0;background:var(--gray-50);}
+        .section-card{background:white;border-radius:20px;padding:2.5rem;box-shadow:0 4px 20px rgba(0,0,0,.06);margin-bottom:2rem;}
+        .section-title{font-size:1.4rem;font-weight:700;color:var(--gray-800);margin-bottom:1.5rem;display:flex;align-items:center;gap:.75rem;}
+        .section-title i{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:1rem;flex-shrink:0;}
+        /* Guru cards */
+        .guru-card{background:var(--gray-50);border-radius:16px;padding:1.25rem;text-align:center;border:1px solid var(--gray-100);transition:all .2s;}
+        .guru-card:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgba(0,0,0,.08);}
+        .guru-foto{width:80px;height:80px;border-radius:50%;object-fit:cover;object-position:top;border:3px solid var(--light-blue);margin:0 auto .75rem;}
+        .guru-foto-placeholder{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .75rem;color:white;font-size:1.8rem;}
+        /* Prestasi */
+        .prestasi-item{display:flex;align-items:center;gap:1rem;padding:1rem;background:var(--gray-50);border-radius:12px;border:1px solid var(--gray-100);margin-bottom:.75rem;}
+        .prestasi-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:1.1rem;flex-shrink:0;}
+        /* Galeri */
+        .galeri-item{border-radius:12px;overflow:hidden;cursor:pointer;transition:transform .2s;}
+        .galeri-item:hover{transform:scale(1.03);}
+        .galeri-item img{width:100%;height:140px;object-fit:cover;}
+    </style>
+</head>
+<body>
+    <%- include('partials/navbar') %>
+
+    <!-- Header dengan warna jurusan -->
+    <section class="page-header" style="background:<%= jurusan.warna||'linear-gradient(135deg,#0ea5e9,#0369a1)' %>;">
+        <div class="container" style="position:relative;z-index:1;">
+            <div class="page-kode"><i class="<%= jurusan.icon||'fas fa-graduation-cap' %> me-2"></i><%= jurusan.kode %></div>
+            <h1 class="page-title"><%= jurusan.nama %></h1>
+            <% if (jurusan.deskripsi) { %>
+            <p style="font-size:1rem;opacity:.85;max-width:600px;margin:.75rem auto 0;position:relative;z-index:1;"><%= jurusan.deskripsi %></p>
+            <% } %>
+        </div>
+    </section>
+
+    <section class="content-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+
+                    <!-- Deskripsi lengkap -->
+                    <% if (jurusan.deskripsi_lengkap) { %>
+                    <div class="section-card">
+                        <div class="section-title">
+                            <i style="background:<%= jurusan.warna||'linear-gradient(135deg,#0ea5e9,#0369a1)' %>;"><i class="fas fa-info-circle"></i></i>
+                            Tentang Program Keahlian
+                        </div>
+                        <div style="line-height:1.8;"><%- jurusan.deskripsi_lengkap %></div>
+                    </div>
+                    <% } %>
+
+                    <!-- Guru Pengajar -->
+                    <% if (guru && guru.length > 0) { %>
+                    <div class="section-card">
+                        <div class="section-title">
+                            <i style="background:<%= jurusan.warna||'linear-gradient(135deg,#0ea5e9,#0369a1)' %>;"><i class="fas fa-chalkboard-teacher"></i></i>
+                            Guru Pengajar
+                        </div>
+                        <div class="row g-3">
+                            <% guru.forEach(g=>{ %>
+                            <div class="col-6 col-md-4 col-lg-3">
+                                <div class="guru-card">
+                                    <% if (g.foto) { %>
+                                    <img src="/uploads/<%= g.foto %>" class="guru-foto" alt="<%= g.nama %>">
+                                    <% } else { %>
+                                    <div class="guru-foto-placeholder" style="background:<%= jurusan.warna||'linear-gradient(135deg,#0ea5e9,#0369a1)' %>;"><i class="fas fa-user"></i></div>
+                                    <% } %>
+                                    <div style="font-weight:600;font-size:.82rem;color:var(--gray-800);line-height:1.3;"><%= g.nama %></div>
+                                    <% if (g.jabatan && g.jabatan !== 'GURU') { %>
+                                    <div style="font-size:.72rem;color:var(--gray-600);margin-top:.25rem;"><%= g.jabatan %></div>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <% }) %>
+                        </div>
+                    </div>
+                    <% } %>
+
+                    <!-- Galeri -->
+                    <% if (galeri && galeri.length > 0) { %>
+                    <div class="section-card">
+                        <div class="section-title">
+                            <i style="background:<%= jurusan.warna||'linear-gradient(135deg,#0ea5e9,#0369a1)' %>;"><i class="fas fa-images"></i></i>
+                            Galeri Kegiatan
+                        </div>
+                        <div class="row g-2">
+                            <% galeri.forEach((g,idx)=>{ %>
+                            <div class="col-6 col-md-3">
+                                <a href="/uploads/<%= g.gambar %>" data-lightbox="galeri-jurusan" data-title="<%= g.judul %>" class="galeri-item d-block">
+                                    <img src="/uploads/<%= g.gambar %>" alt="<%= g.judul %>" onerror="this.parentElement.style.display='none'">
+                                </a>
+                            </div>
+                            <% }) %>
+                        </div>
+                    </div>
+                    <% } %>
+
+                </div>
+
+                <div class="col-lg-4">
+                    <!-- Info singkat -->
+                    <div class="section-card">
+                        <div class="section-title">
+                            <i style="background:<%= jurusan.warna||'linear-gradient(135deg,#0ea5e9,#0369a1)' %>;"><i class="fas fa-info"></i></i>
+                            Info Jurusan
+                        </div>
+                        <div style="display:flex;flex-direction:column;gap:.75rem;">
+                            <div style="display:flex;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--gray-100);">
+                                <span style="color:var(--gray-600);font-size:.88rem;">Kode</span>
+                                <span style="font-weight:700;color:var(--gray-800);"><%= jurusan.kode %></span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--gray-100);">
+                                <span style="color:var(--gray-600);font-size:.88rem;">Guru</span>
+                                <span style="font-weight:700;color:var(--gray-800);"><%= guru.length %> orang</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;padding:.6rem 0;">
+                                <span style="color:var(--gray-600);font-size:.88rem;">Prestasi</span>
+                                <span style="font-weight:700;color:var(--gray-800);"><%= prestasi.length %> prestasi</span>
+                            </div>
+                        </div>
+                        <a href="/guru" style="display:block;text-align:center;margin-top:1.25rem;background:<%= jurusan.warna||'linear-gradient(135deg,#0ea5e9,#0369a1)' %>;color:white;padding:.75rem;border-radius:12px;text-decoration:none;font-weight:600;font-size:.9rem;">
+                            <i class="fas fa-users me-2"></i>Lihat Semua Guru
+                        </a>
+                    </div>
+
+                    <!-- Prestasi -->
+                    <% if (prestasi && prestasi.length > 0) { %>
+                    <div class="section-card">
+                        <div class="section-title">
+                            <i style="background:<%= jurusan.warna||'linear-gradient(135deg,#0ea5e9,#0369a1)' %>;"><i class="fas fa-trophy"></i></i>
+                            Prestasi Terbaru
+                        </div>
+                        <% prestasi.slice(0,5).forEach(p=>{ %>
+                        <div class="prestasi-item">
+                            <div class="prestasi-icon" style="background:<%= jurusan.warna||'linear-gradient(135deg,#0ea5e9,#0369a1)' %>;"><i class="fas fa-medal"></i></div>
+                            <div>
+                                <div style="font-weight:600;font-size:.85rem;color:var(--gray-800);line-height:1.3;"><%= p.judul %></div>
+                                <div style="font-size:.75rem;color:var(--gray-600);margin-top:.2rem;"><%= p.tingkat %> · <%= p.tahun %></div>
+                            </div>
+                        </div>
+                        <% }) %>
+                        <a href="/prestasi?kategori=<%= jurusan.kode %>" style="display:block;text-align:center;margin-top:.75rem;color:var(--primary-blue);font-size:.85rem;font-weight:600;text-decoration:none;">Lihat Semua Prestasi →</a>
+                    </div>
+                    <% } %>
+
+                    <!-- Jurusan lain -->
+                    <div class="section-card">
+                        <div class="section-title">
+                            <i style="background:linear-gradient(135deg,#64748b,#475569);"><i class="fas fa-th-large"></i></i>
+                            Jurusan Lainnya
+                        </div>
+                        <a href="/jurusan" style="display:block;text-align:center;background:var(--gray-50);border:1px solid var(--gray-100);color:var(--gray-700);padding:.75rem;border-radius:12px;text-decoration:none;font-weight:600;font-size:.9rem;transition:all .2s;" onmouseover="this.style.background='var(--light-blue)'" onmouseout="this.style.background='var(--gray-50)'">
+                            <i class="fas fa-graduation-cap me-2"></i>Lihat Semua Program Keahlian
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
+    <%- include('partials/footer') %>
+    <script>
+        lightbox.option({resizeDuration:200,wrapAround:true});
+        $(window).scroll(function(){if($(window).scrollTop()>50)$('.navbar-modern').addClass('scrolled');else$('.navbar-modern').removeClass('scrolled');});
+    </script>
+</body>
+</html>

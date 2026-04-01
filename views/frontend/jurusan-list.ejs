@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Website Sekolah</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/theme.css">
+    <style>
+        :root{--primary-blue:#0ea5e9;--primary-blue-dark:#0284c7;--secondary-blue:#0369a1;--light-blue:#e0f2fe;--gray-50:#f8fafc;--gray-100:#f1f5f9;--gray-600:#475569;--gray-700:#334155;--gray-800:#1e293b;}
+        *{font-family:'Inter',sans-serif;box-sizing:border-box;margin:0;padding:0;}
+        body{color:var(--gray-700);line-height:1.6;}
+        .page-header{background:linear-gradient(135deg,var(--primary-blue),var(--secondary-blue));padding:10rem 0 5rem;color:white;text-align:center;}
+        .page-title{font-size:3rem;font-weight:800;}
+        .content-section{padding:5rem 0;background:var(--gray-50);}
+        .jurusan-card{border-radius:24px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.1);transition:all .3s;height:100%;text-decoration:none;display:block;color:inherit;}
+        .jurusan-card:hover{transform:translateY(-10px);box-shadow:0 20px 50px rgba(0,0,0,.15);text-decoration:none;color:inherit;}
+        .jurusan-header{padding:3rem 2rem;text-align:center;position:relative;overflow:hidden;}
+        .jurusan-header::before{content:'';position:absolute;top:-30%;right:-10%;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.1);}
+        .jurusan-icon{font-size:3.5rem;color:white;margin-bottom:1rem;position:relative;z-index:1;}
+        .jurusan-kode{background:rgba(255,255,255,.2);color:white;padding:.3rem .9rem;border-radius:20px;font-size:.8rem;font-weight:700;display:inline-block;margin-bottom:.75rem;position:relative;z-index:1;}
+        .jurusan-nama{font-size:1.2rem;font-weight:700;color:white;line-height:1.3;position:relative;z-index:1;}
+        .jurusan-body{background:white;padding:1.75rem;}
+        .jurusan-desc{font-size:.88rem;color:var(--gray-600);line-height:1.6;margin-bottom:1.25rem;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;}
+        .jurusan-link{display:inline-flex;align-items:center;gap:.5rem;font-weight:600;font-size:.9rem;text-decoration:none;transition:gap .2s;}
+        .jurusan-link:hover{gap:.75rem;}
+    </style>
+</head>
+<body>
+    <%- include('partials/navbar') %>
+    <section class="page-header">
+        <div class="container">
+            <h1 class="page-title"><i class="fas fa-graduation-cap me-3"></i>Program Keahlian</h1>
+            <p style="font-size:1.1rem;opacity:.9;margin-top:.5rem;">Pilih jurusan yang sesuai dengan minat dan bakatmu</p>
+        </div>
+    </section>
+    <section class="content-section">
+        <div class="container">
+            <div class="row g-4">
+                <% jurusan.forEach(j=>{ %>
+                <div class="col-lg-3 col-md-6">
+                    <a href="/jurusan/<%= j.kode.toLowerCase() %>" class="jurusan-card">
+                        <div class="jurusan-header" style="background:<%= j.warna||'linear-gradient(135deg,#0ea5e9,#0369a1)' %>;">
+                            <i class="<%= j.icon||'fas fa-graduation-cap' %> jurusan-icon"></i>
+                            <div class="jurusan-kode"><%= j.kode %></div>
+                            <div class="jurusan-nama"><%= j.nama %></div>
+                        </div>
+                        <div class="jurusan-body">
+                            <p class="jurusan-desc"><%= j.deskripsi||'Klik untuk melihat detail program keahlian ini.' %></p>
+                            <span class="jurusan-link" style="color:<%= j.warna?j.warna.match(/#[0-9a-f]{6}/i)?.[0]||'#0ea5e9':'#0ea5e9' %>;">
+                                Lihat Detail <i class="fas fa-arrow-right"></i>
+                            </span>
+                        </div>
+                    </a>
+                </div>
+                <% }) %>
+            </div>
+        </div>
+    </section>
+    <%- include('partials/footer') %>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>$(window).scroll(function(){if($(window).scrollTop()>50)$('.navbar-modern').addClass('scrolled');else$('.navbar-modern').removeClass('scrolled');});</script>
+</body>
+</html>

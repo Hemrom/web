@@ -41,6 +41,10 @@ router.get('/bkk/:slug', validateSlugParam, portalController.bkkDetail);
 router.get('/osis', portalController.osisIndex);
 router.get('/osis/:slug', validateSlugParam, portalController.osisDetail);
 
+// Halaman Jurusan (dinamis dari DB)
+router.get('/jurusan', portalController.jurusanListPage);
+router.get('/jurusan/:kode', portalController.jurusanDetailPage);
+
 // Halaman dinamis - harus di paling bawah
 const halamanController = require('../controllers/halamanController');
 router.get('/page/:slug', validateSlugParam, halamanController.show);

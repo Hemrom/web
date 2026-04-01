@@ -383,3 +383,45 @@ exports.adminOsisDelete = async (req, res) => {
   await db.query('DELETE FROM osis_kegiatan WHERE id=?', [req.params.id]);
   res.redirect('/admin/osis?success=3');
 };
+
+// ── FRONTEND JURUSAN ──────────────────────────────────────────────────────────
+exports.jurusanListPage = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [jurusan] = await db.query("SELECT * FROM jurusan WHERE status='aktif' ORDER BY kode ASC");
+    res.render('frontend/jurusan-list', { title: 'Program Keahlian', currentPage: 'jurusan', jurusan, ...common });
+  } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
+};
+
+exports.jurusanDetailPage = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const kode = req.params.kode.toUpperCase();
+    const [rows] = await db.query("SELECT * FROM jurusan WHERE kode=? AND status='aktif'", [kode]);
+    if (!rows.length) return res.status(404).render('frontend/404', { title: '404', menuItems: common.menuItems });
+    const jurusan = rows[0];
+
+    // Ambil guru jurusan ini
+    const [guru] = await db.query(
+      "SELECT id,nama,jabatan,foto,mata_pelajaran FROM guru WHERE mata_pelajaran LIKE ? ORDER BY jabatan DESC, nama ASC",
+      [`%${kode}%`]
+    );
+
+    // Ambil prestasi jurusan ini
+    const [prestasi] = await db.query(
+      "SELECT * FROM prestasi WHERE jurusan=? AND status='published' ORDER BY tahun DESC, created_at DESC LIMIT 6",
+      [kode]
+    );
+
+    // Ambil galeri jurusan (dari tabel galeri berdasarkan kategori/judul)
+    const [galeri] = await db.query(
+      "SELECT * FROM galeri WHERE judul LIKE ? OR kategori LIKE ? ORDER BY created_at DESC LIMIT 8",
+      [`%${kode}%`, `%${kode}%`]
+    );
+
+    res.render('frontend/jurusan-detail', {
+      title: jurusan.nama, currentPage: 'jurusan',
+      jurusan, guru, prestasi, galeri, ...common
+    });
+  } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
+};
