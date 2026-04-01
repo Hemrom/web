@@ -119,14 +119,15 @@
                     </div>
                     <% } %>
 
-                    <!-- Galeri -->
-                    <% if (galeri && galeri.length > 0) { %>                    <div class="section-card">
+                    <!-- Galeri Kegiatan Jurusan -->
+                    <% if (galeriJurusan && galeriJurusan.length > 0) { %>
+                    <div class="section-card">
                         <div class="section-title">
                             <i style="background:<%= jWarna %>;"><i class="fas fa-images"></i></i>
                             Galeri Kegiatan
                         </div>
                         <div class="row g-2">
-                            <% galeri.forEach((g,idx)=>{ %>
+                            <% galeriJurusan.forEach(function(g){ %>
                             <div class="col-6 col-md-3">
                                 <a href="/uploads/<%= g.gambar %>" data-lightbox="galeri-jurusan" data-title="<%= g.judul %>" class="galeri-item d-block">
                                     <img src="/uploads/<%= g.gambar %>" alt="<%= g.judul %>" onerror="this.parentElement.style.display='none'">

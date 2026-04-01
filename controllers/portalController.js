@@ -429,7 +429,13 @@ exports.jurusanDetailPage = async (req, res) => {
       [kode]
     );
 
-    // Galeri sidebar: selalu dari galeri utama agar bervariasi
+    // Galeri konten utama: dari jurusan_galeri (khusus jurusan ini)
+    const [galeriJurusan] = await db.query(
+      "SELECT * FROM jurusan_galeri WHERE jurusan=? ORDER BY urutan ASC, created_at DESC LIMIT 8",
+      [kode]
+    );
+
+    // Galeri sidebar: dari galeri utama (bervariasi)
     const [galeri] = await db.query("SELECT * FROM galeri ORDER BY created_at DESC LIMIT 4");
 
     // Ambil berita/informasi jurusan
@@ -445,7 +451,7 @@ exports.jurusanDetailPage = async (req, res) => {
 
     res.render('frontend/jurusan-detail', {
       title: jurusan.nama, currentPage: 'jurusan',
-      jurusan, guru, prestasi, galeri, jurusanBerita, beritaTerbaru, ...common
+      jurusan, guru, prestasi, galeri, galeriJurusan, jurusanBerita, beritaTerbaru, ...common
     });
   } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
 };
