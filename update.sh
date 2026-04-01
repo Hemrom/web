@@ -152,6 +152,25 @@ async function migrate() {
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4\`,
+    \`CREATE TABLE IF NOT EXISTS osis_berita (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      judul VARCHAR(255) NOT NULL,
+      slug VARCHAR(255) UNIQUE,
+      konten TEXT,
+      gambar VARCHAR(255),
+      kategori ENUM('berita','pengumuman','kegiatan','lainnya') DEFAULT 'berita',
+      status ENUM('draft','published') DEFAULT 'published',
+      penulis VARCHAR(100),
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4\`,
+    \`CREATE TABLE IF NOT EXISTS osis_galeri (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      judul VARCHAR(255) NOT NULL,
+      gambar VARCHAR(255) NOT NULL,
+      keterangan TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4\`,
     \`CREATE TABLE IF NOT EXISTS portal_users (
       id INT AUTO_INCREMENT PRIMARY KEY,
       username VARCHAR(50) UNIQUE NOT NULL,
@@ -170,6 +189,38 @@ async function migrate() {
   process.exit(0);
 }
 migrate();
+"
+
+# 3b. Migrasi menu navigasi
+echo -e "${YELLOW}[3b/5] Migrasi menu navigasi...${NC}"
+node -e "
+const db = require('./config/database');
+async function migrateMenu() {
+  const menus = [
+    { label: 'Beranda', url: '/', urutan: 1 },
+    { label: 'Profil', url: '/profil', urutan: 2 },
+    { label: 'Berita', url: '/berita', urutan: 3 },
+    { label: 'Program Keahlian', url: '/jurusan', urutan: 4 },
+    { label: 'Prestasi', url: '/prestasi', urutan: 5 },
+    { label: 'BKK', url: '/bkk', urutan: 6 },
+    { label: 'OSIS', url: '/osis', urutan: 7 },
+    { label: 'Galeri', url: '/galeri', urutan: 8 },
+    { label: 'Kontak', url: '/kontak', urutan: 9 },
+  ];
+  let added = 0;
+  for (const m of menus) {
+    const [ex] = await db.query('SELECT id FROM menu_navigasi WHERE url=? LIMIT 1', [m.url]);
+    if (!ex.length) {
+      await db.query('INSERT INTO menu_navigasi (label,url,urutan,status) VALUES (?,?,?,?)', [m.label, m.url, m.urutan, 'aktif']);
+      added++;
+      console.log('  + Ditambahkan:', m.label);
+    }
+  }
+  if (added === 0) console.log('  Semua menu sudah ada, tidak ada yang ditambahkan');
+  else console.log('  ' + added + ' menu berhasil ditambahkan');
+  process.exit(0);
+}
+migrateMenu().catch(e => { console.log('  Menu error:', e.message.substring(0,80)); process.exit(0); });
 "
 
 # 4. Restart aplikasi
