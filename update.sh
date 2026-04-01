@@ -29,31 +29,55 @@ echo -e "${YELLOW}[2/5] Mengambil update terbaru dari GitHub...${NC}"
 git pull origin main
 echo -e "${GREEN}  ✓ Kode berhasil diperbarui${NC}"
 
-# 3. Cek apakah ada script migrasi database baru
-echo -e "${YELLOW}[3/5] Cek migrasi database...${NC}"
+# 3. Migrasi database langsung via SQL (tidak butuh file .js)
+echo -e "${YELLOW}[3/5] Migrasi database...${NC}"
 
-run_migration() {
-    local file=$1
-    local name=$2
-    if [ -f "$file" ]; then
-        echo -e "  Menjalankan: ${name}..."
-        node "$file" && echo -e "${GREEN}  ✓ ${name} selesai${NC}" || echo -e "${RED}  ✗ ${name} gagal (mungkin sudah ada)${NC}"
-    fi
-}
-
-run_migration "create_alumni_table.js" "Tabel alumni"
-run_migration "create_link_terkait_table.js" "Tabel link_terkait"
-run_migration "add_tampil_wa_column.js" "Kolom tampil_wa"
-run_migration "add_halaman_subtitle.js" "Kolom subtitle halaman"
-
-# Tambah kolom thumbnail media_sosial jika belum ada
 node -e "
-require('./config/database').query(\"ALTER TABLE media_sosial ADD COLUMN IF NOT EXISTS thumbnail VARCHAR(255) DEFAULT NULL\")
-  .then(()=>{ console.log('  ✓ Kolom thumbnail media_sosial OK'); process.exit(0); })
-  .catch(()=>{ process.exit(0); });
-" 2>/dev/null || true
-
-echo -e "${GREEN}  ✓ Database OK${NC}"
+const db = require('./config/database');
+async function migrate() {
+  const queries = [
+    \`CREATE TABLE IF NOT EXISTS alumni (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      nama VARCHAR(100) NOT NULL,
+      nis VARCHAR(50) DEFAULT NULL,
+      tahun_lulus YEAR DEFAULT NULL,
+      jurusan VARCHAR(100) DEFAULT NULL,
+      pekerjaan VARCHAR(150) DEFAULT NULL,
+      perusahaan VARCHAR(150) DEFAULT NULL,
+      kota VARCHAR(100) DEFAULT NULL,
+      foto VARCHAR(255) DEFAULT NULL,
+      email VARCHAR(100) DEFAULT NULL,
+      telepon VARCHAR(20) DEFAULT NULL,
+      instagram VARCHAR(100) DEFAULT NULL,
+      linkedin VARCHAR(200) DEFAULT NULL,
+      cerita TEXT DEFAULT NULL,
+      token VARCHAR(64) DEFAULT NULL,
+      status ENUM('pending','disetujui','ditolak') DEFAULT 'pending',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4\`,
+    \`CREATE TABLE IF NOT EXISTS link_terkait (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      nama VARCHAR(255) NOT NULL,
+      url VARCHAR(500) NOT NULL,
+      logo VARCHAR(255) DEFAULT NULL,
+      deskripsi VARCHAR(255) DEFAULT NULL,
+      urutan INT DEFAULT 0,
+      status ENUM('aktif','nonaktif') DEFAULT 'aktif',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4\`,
+    'ALTER TABLE profil_sekolah ADD COLUMN IF NOT EXISTS tampil_wa TINYINT(1) DEFAULT 1',
+    'ALTER TABLE halaman ADD COLUMN IF NOT EXISTS subtitle VARCHAR(500) DEFAULT NULL AFTER judul',
+    'ALTER TABLE media_sosial ADD COLUMN IF NOT EXISTS thumbnail VARCHAR(255) DEFAULT NULL',
+  ];
+  for (const q of queries) {
+    try { await db.query(q); } catch(e) { if (!e.message.includes('Duplicate')) console.log('  skip:', e.message.substring(0,60)); }
+  }
+  console.log('  Migrasi selesai');
+  process.exit(0);
+}
+migrate();
+"
 
 # 4. Restart aplikasi
 echo -e "${YELLOW}[4/5] Restart aplikasi...${NC}"
