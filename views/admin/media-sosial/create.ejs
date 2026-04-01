@@ -32,7 +32,7 @@
                                     <h6 class="m-0 font-weight-bold text-primary">Form Tambah Media Sosial</h6>
                                 </div>
                                 <div class="card-body">
-                                    <form action="/admin/media-sosial/create" method="POST">
+                                    <form action="/admin/media-sosial/create" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                         <div class="form-group">
                                             <label for="judul">Judul</label>
@@ -63,6 +63,12 @@
                                             <small class="form-text text-muted" id="embedHelp">
                                                 Masukkan URL dari platform media sosial yang dipilih
                                             </small>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Thumbnail / Gambar Pratinjau</label>
+                                            <input type="file" class="form-control-file" name="thumbnail" accept=".jpg,.jpeg,.png,.webp">
+                                            <small class="text-muted">Upload screenshot/thumbnail untuk Instagram, TikTok, Facebook, dll. YouTube otomatis dari video.</small>
                                         </div>
 
                                         <div class="form-group">

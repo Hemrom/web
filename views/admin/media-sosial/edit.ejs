@@ -32,7 +32,7 @@
                                     <h6 class="m-0 font-weight-bold text-primary">Form Edit Media Sosial</h6>
                                 </div>
                                 <div class="card-body">
-                                    <form action="/admin/media-sosial/edit/<%= mediaSosial.id %>" method="POST">
+                                    <form action="/admin/media-sosial/edit/<%= mediaSosial.id %>" method="POST" enctype="multipart/form-data">
                                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                         <div class="form-group">
                                             <label for="judul">Judul</label>
@@ -63,6 +63,17 @@
                                             <small class="form-text text-muted" id="embedHelp">
                                                 Masukkan URL dari platform media sosial yang dipilih
                                             </small>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Thumbnail / Gambar Pratinjau</label>
+                                            <% if (mediaSosial.thumbnail) { %>
+                                            <div class="mb-2">
+                                                <img src="/uploads/<%= mediaSosial.thumbnail %>" style="max-width:200px;border-radius:8px;border:1px solid #eee;">
+                                            </div>
+                                            <% } %>
+                                            <input type="file" class="form-control-file" name="thumbnail" accept=".jpg,.jpeg,.png,.webp">
+                                            <small class="text-muted">Upload gambar thumbnail untuk Instagram, TikTok, Facebook, dll. Kosongkan jika tidak ingin mengubah.</small>
                                         </div>
 
                                         <div class="form-group">
