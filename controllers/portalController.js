@@ -542,3 +542,19 @@ exports.adminJurusanBeritaDelete = async (req, res) => {
   await db.query('DELETE FROM jurusan_berita WHERE id=?', [req.params.id]);
   res.redirect('/admin/jurusan-berita?success=3');
 };
+
+// ── FRONTEND: Detail Berita Jurusan ──────────────────────────────────────────
+exports.jurusanBeritaDetailPage = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const kode = req.params.kode.toUpperCase();
+    const [jurusanRows] = await db.query("SELECT * FROM jurusan WHERE kode=? AND status='aktif'", [kode]);
+    if (!jurusanRows.length) return res.status(404).render('frontend/404', { title: '404', menuItems: common.menuItems });
+    const [rows] = await db.query("SELECT * FROM jurusan_berita WHERE slug=? AND jurusan=? AND status='published'", [req.params.slug, kode]);
+    if (!rows.length) return res.status(404).render('frontend/404', { title: '404', menuItems: common.menuItems });
+    res.render('frontend/jurusan-berita-detail', {
+      title: rows[0].judul, currentPage: 'jurusan',
+      berita: rows[0], jurusan: jurusanRows[0], ...common
+    });
+  } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
+};
