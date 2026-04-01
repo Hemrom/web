@@ -961,22 +961,16 @@
                     </div>
                 <% } else { %>
                     <%
-                        // Group by judul → ambil cover per album
-                        const albumMap = {};
-                        galeri.forEach(function(g) {
-                            if (!albumMap[g.judul]) albumMap[g.judul] = { judul: g.judul, cover: g.gambar, count: 0 };
-                            albumMap[g.judul].count++;
-                        });
-                        const albums = Object.values(albumMap).slice(0, 6);
+                        const albums = galeri;
                     %>
                     <% albums.forEach(function(album) { %>
                         <div class="col-lg-4 col-md-6 mb-4">
                             <div class="gallery-item" style="cursor:pointer;" onclick="window.location='/galeri'">
                                 <div style="position:relative;overflow:hidden;">
-                                    <img src="/uploads/<%= album.cover %>" alt="<%= album.judul %>" onerror="this.src='/assets/img/undraw_posting_photo.svg'" style="width:100%;height:250px;object-fit:cover;transition:transform 0.3s;">
-                                    <% if (album.count > 1) { %>
+                                    <img src="/uploads/<%= album.gambar %>" alt="<%= album.judul %>" onerror="this.src='/assets/img/undraw_posting_photo.svg'" style="width:100%;height:250px;object-fit:cover;transition:transform 0.3s;">
+                                    <% if (album.jumlah > 1) { %>
                                     <span style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.6);color:white;border-radius:20px;padding:3px 10px;font-size:0.8rem;">
-                                        <i class="fas fa-images"></i> <%= album.count %> foto
+                                        <i class="fas fa-images"></i> <%= album.jumlah %> foto
                                     </span>
                                     <% } %>
                                 </div>
