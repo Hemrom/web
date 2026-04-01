@@ -200,7 +200,7 @@ exports.osisDelete = async (req, res) => {
 exports.jurusanDashboard = async (req, res) => {
   const jurusan = req.session.portalJurusan;
   const [prestasi] = await db.query('SELECT * FROM prestasi WHERE jurusan=? ORDER BY created_at DESC', [jurusan]);
-  res.render('portal/jurusan/dashboard', { title: `Dashboard Jurusan ${jurusan}`, user: req.session, prestasi, jurusan });
+  res.render('portal/jurusan/dashboard', { title: `Dashboard Jurusan ${jurusan}`, user: req.session, prestasi, jurusan, success: req.query.success });
 };
 
 exports.jurusanCreatePage = (req, res) => res.render('portal/jurusan/create', { title: 'Tambah Prestasi', user: req.session });
