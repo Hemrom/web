@@ -63,7 +63,7 @@
                             <i style="background:<%= jurusan.warna||'linear-gradient(135deg,#0ea5e9,#0369a1)' %>;"><i class="fas fa-info-circle"></i></i>
                             Tentang Program Keahlian
                         </div>
-                        <div style="line-height:1.8;"><%- jurusan.deskripsi_lengkap %></div>
+                        <div style="line-height:1.8;font-size:.95rem;"><%- jurusan.deskripsi_lengkap %></div>
                     </div>
                     <% } %>
 
@@ -185,7 +185,7 @@
                     <% } %>
 
                     <!-- Jurusan lain -->
-                    <div class="section-card">
+                    <div class="section-card" style="margin-bottom:0;">
                         <div class="section-title">
                             <i style="background:linear-gradient(135deg,#64748b,#475569);"><i class="fas fa-th-large"></i></i>
                             Jurusan Lainnya
@@ -194,6 +194,48 @@
                             <i class="fas fa-graduation-cap me-2"></i>Lihat Semua Program Keahlian
                         </a>
                     </div>
+
+                    <!-- Berita Terbaru Sekolah -->
+                    <% if (typeof beritaTerbaru !== 'undefined' && beritaTerbaru && beritaTerbaru.length > 0) { %>
+                    <div class="section-card" style="margin-top:1.5rem;">
+                        <div class="section-title">
+                            <i style="background:linear-gradient(135deg,#0ea5e9,#0369a1);"><i class="fas fa-newspaper"></i></i>
+                            Berita Terbaru
+                        </div>
+                        <% beritaTerbaru.slice(0,3).forEach(b=>{ %>
+                        <a href="/berita/<%= b.slug %>" style="display:flex;gap:.75rem;padding:.6rem 0;border-bottom:1px solid var(--gray-100);text-decoration:none;color:inherit;">
+                            <div style="flex:1;min-width:0;">
+                                <div style="font-weight:600;font-size:.82rem;color:var(--gray-800);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;"><%= b.judul %></div>
+                                <div style="font-size:.72rem;color:var(--gray-500);margin-top:.2rem;"><%= new Date(b.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}) %></div>
+                            </div>
+                        </a>
+                        <% }) %>
+                        <a href="/berita" style="display:block;text-align:center;margin-top:.75rem;color:var(--primary-blue);font-size:.82rem;font-weight:600;text-decoration:none;">Lihat Semua Berita →</a>
+                    </div>
+                    <% } %>
+
+                    <!-- Media Sosial -->
+                    <% if (typeof mediaSosialFooter !== 'undefined' && mediaSosialFooter && mediaSosialFooter.length > 0) { %>
+                    <div class="section-card" style="margin-top:1.5rem;">
+                        <div class="section-title">
+                            <i style="background:linear-gradient(135deg,#E1306C,#833ab4);"><i class="fas fa-share-alt"></i></i>
+                            Ikuti Kami
+                        </div>
+                        <% const sosmedColors={instagram:'#E1306C',youtube:'#FF0000',facebook:'#1877F2',tiktok:'#010101',twitter:'#000',threads:'#101010'}; %>
+                        <% const sosmedIcons={instagram:'fa-instagram',youtube:'fa-youtube',facebook:'fa-facebook-f',tiktok:'fa-tiktok',twitter:'fa-x-twitter',threads:'fa-threads'}; %>
+                        <div style="display:flex;flex-wrap:wrap;gap:.5rem;">
+                            <% mediaSosialFooter.forEach(ms=>{ %>
+                            <a href="<%= ms.embed_url %>" target="_blank" rel="noopener"
+                               style="width:40px;height:40px;border-radius:10px;background:<%= sosmedColors[ms.platform]||'#333' %>;display:flex;align-items:center;justify-content:center;color:white;font-size:1.1rem;text-decoration:none;transition:transform .2s;"
+                               onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'"
+                               title="<%= ms.judul %>">
+                                <i class="fab <%= sosmedIcons[ms.platform]||'fa-globe' %>"></i>
+                            </a>
+                            <% }) %>
+                        </div>
+                        <a href="/media-sosial" style="display:block;text-align:center;margin-top:.75rem;color:var(--primary-blue);font-size:.82rem;font-weight:600;text-decoration:none;">Lihat Semua Media Sosial →</a>
+                    </div>
+                    <% } %>
                 </div>
             </div>
         </div>

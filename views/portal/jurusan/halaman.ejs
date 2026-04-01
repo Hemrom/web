@@ -1,0 +1,43 @@
+<%- include('../_portal_header', {portalColor:'info', portalLabel:'Jurusan', dashUrl:'/jurusan-portal/dashboard', logoutUrl:'/jurusan-portal/logout'}) %>
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Edit Halaman Jurusan <%= jurusan.kode %></h1>
+    <a href="/jurusan/<%= (jurusan.kode||'').toLowerCase() %>" target="_blank" class="btn btn-sm btn-info text-white">
+        <i class="fas fa-eye fa-sm"></i> Lihat Halaman
+    </a>
+</div>
+
+<% if (success == 1) { %>
+<div class="alert alert-success alert-dismissible fade show">
+    Halaman berhasil diperbarui! <a href="/jurusan/<%= (jurusan.kode||'').toLowerCase() %>" target="_blank" class="alert-link">Lihat hasilnya</a>
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+</div>
+<% } %>
+
+<div class="alert alert-info small mb-4">
+    <i class="fas fa-info-circle mr-1"></i>
+    Konten di bawah ini akan tampil di halaman jurusan <strong><%= jurusan.nama %></strong>, tepat di atas daftar guru pengajar.
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-info">Konten Halaman Jurusan</h6>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="/jurusan-portal/halaman">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <div class="form-group">
+                <label class="font-weight-bold">Deskripsi Singkat <small class="text-muted">(tampil di header halaman & kartu beranda)</small></label>
+                <textarea class="form-control" name="deskripsi" rows="3" placeholder="Deskripsi singkat jurusan..."><%= jurusan.deskripsi||'' %></textarea>
+            </div>
+            <div class="form-group">
+                <label class="font-weight-bold">Konten Halaman Lengkap <small class="text-muted">(tampil di atas guru pengajar)</small></label>
+                <textarea class="form-control" name="deskripsi_lengkap" id="editor" rows="15"><%- jurusan.deskripsi_lengkap||'' %></textarea>
+                <small class="text-muted">Bisa berisi: visi misi jurusan, fasilitas, prospek kerja, dll.</small>
+            </div>
+            <button type="submit" class="btn btn-info text-white btn-lg">
+                <i class="fas fa-save mr-2"></i>Simpan Halaman
+            </button>
+        </form>
+    </div>
+</div>
+<%- include('../_portal_footer', {portalLabel:'Jurusan'}) %>

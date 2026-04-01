@@ -432,9 +432,14 @@ exports.jurusanDetailPage = async (req, res) => {
       [kode]
     );
 
+    // Ambil berita terbaru sekolah
+    const [beritaTerbaru] = await db.query(
+      "SELECT id,judul,slug,created_at FROM berita WHERE status='published' ORDER BY created_at DESC LIMIT 3"
+    );
+
     res.render('frontend/jurusan-detail', {
       title: jurusan.nama, currentPage: 'jurusan',
-      jurusan, guru, prestasi, galeri, jurusanBerita, ...common
+      jurusan, guru, prestasi, galeri, jurusanBerita, beritaTerbaru, ...common
     });
   } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
 };
@@ -557,4 +562,29 @@ exports.jurusanBeritaDetailPage = async (req, res) => {
       berita: rows[0], jurusan: jurusanRows[0], ...common
     });
   } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
+};
+
+// ── PORTAL JURUSAN: Edit Halaman ─────────────────────────────────────────────
+exports.jurusanHalamanPage = async (req, res) => {
+  const kode = req.session.portalJurusan;
+  const [rows] = await db.query('SELECT * FROM jurusan WHERE kode=?', [kode]);
+  portalRender(res, req, 'portal/jurusan/halaman', {
+    title: `Edit Halaman Jurusan ${kode}`,
+    user: req.session,
+    jurusan: rows[0] || {},
+    success: req.query.success
+  });
+};
+
+exports.jurusanHalamanUpdate = async (req, res) => {
+  try {
+    const kode = req.session.portalJurusan;
+    const { deskripsi, deskripsi_lengkap } = req.body;
+    await db.query('UPDATE jurusan SET deskripsi=?, deskripsi_lengkap=? WHERE kode=?',
+      [deskripsi||null, deskripsi_lengkap||null, kode]);
+    res.redirect('/jurusan-portal/halaman?success=1');
+  } catch (err) {
+    console.error(err);
+    res.redirect('/jurusan-portal/halaman?success=0');
+  }
 };
