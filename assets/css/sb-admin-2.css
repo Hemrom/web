@@ -11279,3 +11279,17 @@ footer.sticky-footer .copyright {
 body.sidebar-toggled footer.sticky-footer {
   width: 100%;
 }
+
+/* Override: gunakan system font agar tidak perlu load Google Fonts */
+body, h1, h2, h3, h4, h5, h6, .sidebar-brand-text, .nav-link, .btn, .form-control, .table, .card, .dropdown-item {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+}
+
+/* Summernote toolbar fix */
+.note-editor.note-frame { border: 1px solid #ced4da !important; border-radius: 6px !important; }
+.note-editor .note-toolbar { background: #f8f9fa !important; border-bottom: 1px solid #dee2e6 !important; padding: 6px 8px !important; flex-wrap: wrap !important; }
+.note-editor .note-editing-area .note-editable { min-height: 200px; font-size: 14px !important; line-height: 1.7 !important; padding: 12px !important; }
+.note-btn { border-radius: 4px !important; font-size: 13px !important; }
+.note-btn i { font-family: 'Font Awesome 6 Free', 'Font Awesome 5 Free', FontAwesome !important; }
+/* Pastikan icon summernote tampil dari font summernote */
+[class^="note-icon-"]:before, [class*=" note-icon-"]:before { font-family: 'summernote' !important; }

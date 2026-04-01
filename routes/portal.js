@@ -27,6 +27,17 @@ router.post('/osis/create', isOSIS, csrfProtect, ctrl.osisCreate);
 router.get('/osis/edit/:id', isOSIS, validateIdParam, ctrl.osisEditPage);
 router.post('/osis/edit/:id', isOSIS, csrfProtect, validateIdParam, ctrl.osisUpdate);
 router.post('/osis/delete/:id', isOSIS, csrfProtect, validateIdParam, ctrl.osisDelete);
+// Berita OSIS
+router.get('/osis/berita', isOSIS, ctrl.osisBeritaIndex);
+router.get('/osis/berita/create', isOSIS, ctrl.osisBeritaCreatePage);
+router.post('/osis/berita/create', isOSIS, csrfProtect, ctrl.osisBeritaCreate);
+router.get('/osis/berita/edit/:id', isOSIS, validateIdParam, ctrl.osisBeritaEditPage);
+router.post('/osis/berita/edit/:id', isOSIS, csrfProtect, validateIdParam, ctrl.osisBeritaUpdate);
+router.post('/osis/berita/delete/:id', isOSIS, csrfProtect, validateIdParam, ctrl.osisBeritaDelete);
+// Galeri OSIS
+router.get('/osis/galeri', isOSIS, ctrl.osisGaleriIndex);
+router.post('/osis/galeri/upload', isOSIS, ctrl.osisGaleriCreate);
+router.post('/osis/galeri/delete/:id', isOSIS, csrfProtect, validateIdParam, ctrl.osisGaleriDelete);
 
 // ── Jurusan Portal ────────────────────────────────────────────────────────────
 router.get('/jurusan-portal/login', ctrl.portalLoginPage('jurusan', 'Login Portal Jurusan'));

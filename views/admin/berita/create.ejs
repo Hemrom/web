@@ -5,10 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title><%= title %> - Admin Panel</title>
     <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
-    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
-    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="/assets/vendor/summernote/summernote-bs4.min.css" rel="stylesheet">
 </head>
 <body id="page-top">
 <div id="wrapper">
@@ -93,7 +91,7 @@
 <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
 <script src="/assets/js/sb-admin-2.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
+<script src="/assets/vendor/summernote/summernote-bs4.min.js"></script>
 <script>
 $.extend($.summernote.plugins, {
     'floatCenter': function(context) {
@@ -115,8 +113,7 @@ $.extend($.summernote.plugins, {
 
 $('#konten').summernote({
     height: 450,
-    lang: 'id-ID',
-    toolbar: [
+        toolbar: [
         ['style', ['style']],
         ['font', ['bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'clear']],
         ['fontname', ['fontname']],

@@ -5,10 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title><%= title %> - Website Sekolah</title>
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css">
+    <link href="/assets/vendor/bootstrap5/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/vendor/fontawesome6/all.min.css" rel="stylesheet">    <link rel="stylesheet" href="/assets/vendor/lightbox2/lightbox.min.css">
     <link rel="stylesheet" href="/theme.css">
     <style>
         :root{--primary-blue:#0ea5e9;--secondary-blue:#0369a1;--light-blue:#e0f2fe;--gray-50:#f8fafc;--gray-100:#f1f5f9;--gray-600:#475569;--gray-700:#334155;--gray-800:#1e293b;}
@@ -27,7 +25,7 @@
         .guru-card{background:var(--gray-50);border-radius:16px;padding:1.25rem;text-align:center;border:1px solid var(--gray-100);transition:all .2s;}
         .guru-card:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgba(0,0,0,.08);}
         .guru-foto{width:80px;height:80px;border-radius:50%;object-fit:cover;object-position:top;border:3px solid var(--light-blue);margin:0 auto .75rem;}
-        .guru-foto-placeholder{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .75rem;color:white;font-size:1.8rem;}
+        .guru-foto-placeholder{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .75rem;color:white;font-size:1.8rem;background:linear-gradient(135deg,#0ea5e9,#0369a1);}
         /* Prestasi */
         .prestasi-item{display:flex;align-items:center;gap:1rem;padding:1rem;background:var(--gray-50);border-radius:12px;border:1px solid var(--gray-100);margin-bottom:.75rem;}
         .prestasi-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:1.1rem;flex-shrink:0;}
@@ -51,6 +49,7 @@
         </div>
     </section>
 
+    <% var jWarna = jurusan.warna || 'linear-gradient(135deg,#0ea5e9,#0369a1)'; %>
     <section class="content-section">
         <div class="container">
             <div class="row">
@@ -98,7 +97,6 @@
                     <% if (jurusanBerita && jurusanBerita.length > 0) { %>
                     <div class="section-card">
                         <div class="section-title">
-                            <% var jWarna = jurusan.warna || 'linear-gradient(135deg,#0ea5e9,#0369a1)'; %>
                             <i style="background:<%= jWarna %>;"><i class="fas fa-newspaper"></i></i>
                             Berita & Informasi
                         </div>
@@ -269,9 +267,9 @@
         </div>
     </section>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
+    <script src="/assets/vendor/bootstrap5/bootstrap.bundle.min.js"></script>
+    <script src="/assets/vendor/jquery3/jquery.min.js"></script>
+    <script src="/assets/vendor/lightbox2/lightbox.min.js"></script>
     <%- include('partials/footer') %>
     <script>
         lightbox.option({resizeDuration:200,wrapAround:true});

@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title><%= title %> - Admin Panel</title>
     <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
-    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
-    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
     <style>
         .nav-tabs .nav-link { color: #6c757d; font-weight: 500; }
         .nav-tabs .nav-link.active { color: #4e73df; font-weight: 600; border-bottom: 2px solid #4e73df; }
@@ -94,7 +92,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>Status Sekolah <small class="text-muted">Status Sekolah Negeri/Swasta · Name: status</small></label>
+                                        <label>Status Sekolah <small class="text-muted">Status Sekolah Negeri/Swasta � Name: status</small></label>
                                         <select class="form-control" name="status">
                                             <option value="">-- Pilih Status --</option>
                                             <option value="Negeri" <%= profil.status === 'Negeri' ? 'selected' : '' %>>Negeri</option>
@@ -104,7 +102,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>Jenjang Pendidikan <small class="text-muted">Status Sekolah Negeri/Swasta · Name: jenjang-pend</small></label>
+                                        <label>Jenjang Pendidikan <small class="text-muted">Status Sekolah Negeri/Swasta � Name: jenjang-pend</small></label>
                                         <select class="form-control" name="jenjang">
                                             <option value="">-- Pilih Jenjang --</option>
                                             <option value="SD" <%= profil.jenjang === 'SD' ? 'selected' : '' %>>SD</option>
@@ -169,7 +167,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>Google Maps <small class="text-muted">Paste embed src URL dari Google Maps · Name: maps</small></label>
+                                        <label>Google Maps <small class="text-muted">Paste embed src URL dari Google Maps � Name: maps</small></label>
                                         <input type="text" class="form-control" name="maps" value="<%= profil.maps || '' %>" placeholder="https://www.google.com/maps/embed?pb=...">
                                     </div>
                                 </div>
@@ -417,14 +415,12 @@
 <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
 <script src="/assets/js/sb-admin-2.min.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/lang/summernote-id-ID.min.js"></script>
+<link href="/assets/vendor/summernote/summernote-bs4.min.css" rel="stylesheet">
+<script src="/assets/vendor/summernote/summernote-bs4.min.js"></script>
 <script>
     const summernoteConfig = {
         height: 450,
-        lang: 'id-ID',
-        toolbar: [
+                toolbar: [
             ['style', ['style']],
             ['font', ['bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'clear']],
             ['fontname', ['fontname']],

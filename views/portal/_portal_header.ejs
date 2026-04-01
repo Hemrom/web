@@ -6,10 +6,18 @@
     <title><%= title %></title>
     <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
     <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+    <style>body,h1,h2,h3,h4,h5,h6,.sidebar-brand-text,.nav-link{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif!important;}</style>
     <link href="/assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
+    <link href="/assets/vendor/summernote/summernote-bs4.min.css" rel="stylesheet">
+    <style>
+        /* Fix summernote toolbar icon boxes */
+        .note-icon-caret:before { font-family: inherit !important; }
+        .note-editor .note-toolbar { background: #f8f9fa; border-bottom: 1px solid #dee2e6; padding: 4px; }
+        .note-editor .note-editing-area .note-editable { min-height: 250px; font-size: 14px; line-height: 1.7; }
+        .note-editor.note-frame { border: 1px solid #ced4da; border-radius: 6px; }
+        .note-btn { border-radius: 4px !important; }
+    </style>
 </head>
 <body id="page-top">
 <div id="wrapper">
@@ -19,10 +27,18 @@
             <div class="sidebar-brand-text mx-3">Portal <%= portalLabel %></div>
         </a>
         <hr class="sidebar-divider my-0">
+        <% if (portalLabel === 'BKK') { %>
+        <li class="nav-item"><a class="nav-link" href="<%= dashUrl %>"><i class="fas fa-fw fa-briefcase"></i><span>Dashboard (Lowongan)</span></a></li>
+        <% } else if (portalLabel === 'OSIS') { %>
+        <li class="nav-item"><a class="nav-link" href="<%= dashUrl %>"><i class="fas fa-fw fa-users"></i><span>Dashboard (Kegiatan)</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/osis/berita"><i class="fas fa-fw fa-newspaper"></i><span>Berita & Informasi</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/osis/galeri"><i class="fas fa-fw fa-images"></i><span>Galeri OSIS</span></a></li>
+        <% } else { %>
         <li class="nav-item"><a class="nav-link" href="<%= dashUrl %>"><i class="fas fa-fw fa-tachometer-alt"></i><span>Dashboard (Prestasi)</span></a></li>
         <li class="nav-item"><a class="nav-link" href="/jurusan-portal/halaman"><i class="fas fa-fw fa-edit"></i><span>Edit Halaman Jurusan</span></a></li>
         <li class="nav-item"><a class="nav-link" href="/jurusan-portal/berita"><i class="fas fa-fw fa-newspaper"></i><span>Berita & Informasi</span></a></li>
         <li class="nav-item"><a class="nav-link" href="/jurusan-portal/galeri"><i class="fas fa-fw fa-images"></i><span>Galeri Jurusan</span></a></li>
+        <% } %>
         <hr class="sidebar-divider">
         <li class="nav-item"><a class="nav-link" href="/"><i class="fas fa-fw fa-globe"></i><span>Lihat Website</span></a></li>
         <li class="nav-item"><a class="nav-link" href="<%= logoutUrl %>"><i class="fas fa-fw fa-sign-out-alt"></i><span>Logout</span></a></li>

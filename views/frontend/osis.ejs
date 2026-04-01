@@ -1,59 +1,334 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title><%= title %> - Website Sekolah</title>
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="/assets/vendor/bootstrap5/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/vendor/fontawesome6/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/vendor/lightbox2/lightbox.min.css">
     <link rel="stylesheet" href="/theme.css">
     <style>
-        :root{--primary:#f59e0b;--primary-dark:#d97706;--gray-50:#f8fafc;--gray-100:#f1f5f9;--gray-600:#475569;--gray-700:#334155;--gray-800:#1e293b;}
-        *{font-family:'Inter',sans-serif;box-sizing:border-box;margin:0;padding:0;}
-        body{color:var(--gray-700);line-height:1.6;}
-        .page-header{background:linear-gradient(135deg,#1e1b4b,#f59e0b);padding:10rem 0 5rem;color:white;text-align:center;}
-        .page-title{font-size:3rem;font-weight:800;}
-        .content-section{padding:5rem 0;background:var(--gray-50);}
-        .osis-card{background:white;border-radius:20px;overflow:hidden;box-shadow:0 4px 20px rgba(245,158,11,.08);border:1px solid var(--gray-100);transition:all .3s;height:100%;}
-        .osis-card:hover{transform:translateY(-8px);box-shadow:0 16px 40px rgba(245,158,11,.15);}
-        .osis-img{height:200px;object-fit:cover;width:100%;}
-        .osis-img-placeholder{height:200px;background:linear-gradient(135deg,#1e1b4b,#f59e0b);display:flex;align-items:center;justify-content:center;color:white;font-size:3rem;}
+        :root {
+            --gold: #f59e0b;
+            --gold-dark: #d97706;
+            --gold-light: #fef3c7;
+            --navy: #1e1b4b;
+            --navy-mid: #312e81;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+        }
+        body { color: var(--gray-700); line-height: 1.6; background: #fff; }
+
+        /* ── HERO ── */
+        .hero {
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 50%, #4c1d95 100%);
+            padding: 9rem 0 6rem;
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -100px; right: -100px;
+            width: 500px; height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(245,158,11,.25) 0%, transparent 70%);
+        }
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -80px; left: -80px;
+            width: 350px; height: 350px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(245,158,11,.15) 0%, transparent 70%);
+        }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: .5rem;
+            background: rgba(245,158,11,.2);
+            border: 1px solid rgba(245,158,11,.4);
+            color: #fcd34d;
+            padding: .4rem 1.2rem;
+            border-radius: 50px;
+            font-size: .85rem; font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+        .hero-title {
+            font-size: clamp(2.2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            position: relative; z-index: 1;
+        }
+        .hero-title span { color: var(--gold); }
+        .hero-sub {
+            font-size: 1.05rem;
+            opacity: .8;
+            margin-top: .75rem;
+            position: relative; z-index: 1;
+        }
+        .hero-stats {
+            display: flex; justify-content: center; gap: 3rem;
+            margin-top: 3rem;
+            position: relative; z-index: 1;
+        }
+        .hero-stat { text-align: center; }
+        .hero-stat-num { font-size: 2rem; font-weight: 900; color: var(--gold); line-height: 1; }
+        .hero-stat-label { font-size: .78rem; opacity: .7; margin-top: .2rem; }
+
+        /* ── SECTION COMMON ── */
+        .section { padding: 5rem 0; }
+        .section-alt { background: var(--gray-50); }
+        .section-label {
+            display: inline-flex; align-items: center; gap: .5rem;
+            background: var(--gold-light);
+            color: var(--gold-dark);
+            padding: .3rem .9rem;
+            border-radius: 50px;
+            font-size: .78rem; font-weight: 700;
+            margin-bottom: .75rem;
+        }
+        .section-title {
+            font-size: 1.9rem; font-weight: 800;
+            color: var(--gray-800);
+            margin-bottom: .5rem;
+        }
+        .section-title span { color: var(--gold); }
+        .section-desc { color: var(--gray-600); font-size: .95rem; margin-bottom: 2.5rem; }
+        .divider {
+            width: 60px; height: 4px;
+            background: linear-gradient(to right, var(--gold), var(--gold-dark));
+            border-radius: 2px;
+            margin: .75rem 0 1.5rem;
+        }
+
+        /* ── KEGIATAN CARDS ── */
+        .kegiatan-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,.06);
+            border: 1px solid var(--gray-100);
+            transition: all .3s;
+            height: 100%;
+            text-decoration: none;
+            display: block;
+            color: inherit;
+        }
+        .kegiatan-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(245,158,11,.18);
+            color: inherit;
+            text-decoration: none;
+        }
+        .kegiatan-img { height: 200px; object-fit: cover; width: 100%; }
+        .kegiatan-placeholder {
+            height: 200px;
+            background: linear-gradient(135deg, var(--navy), var(--gold));
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 2.5rem;
+        }
+        .kegiatan-body { padding: 1.5rem; }
+        .tag {
+            display: inline-block;
+            background: var(--gold-light);
+            color: var(--gold-dark);
+            padding: .2rem .7rem;
+            border-radius: 8px;
+            font-size: .72rem; font-weight: 700;
+            text-transform: uppercase;
+        }
+        .kegiatan-title {
+            font-size: 1rem; font-weight: 700;
+            color: var(--gray-800);
+            margin: .6rem 0 .4rem;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .kegiatan-meta { font-size: .75rem; color: var(--gray-600); }
+        .kegiatan-excerpt {
+            font-size: .84rem; color: var(--gray-600);
+            line-height: 1.6; margin-top: .5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* ── BERITA LIST ── */
+        .berita-item {
+            display: flex; gap: 1.25rem;
+            background: white;
+            border-radius: 16px;
+            padding: 1.25rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,.05);
+            border: 1px solid var(--gray-100);
+            transition: all .25s;
+            margin-bottom: 1rem;
+        }
+        .berita-item:hover {
+            box-shadow: 0 8px 25px rgba(245,158,11,.12);
+            transform: translateX(4px);
+        }
+        .berita-thumb {
+            width: 100px; height: 80px;
+            border-radius: 10px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        .berita-thumb-placeholder {
+            width: 100px; height: 80px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        .berita-content { flex: 1; min-width: 0; }
+        .berita-title {
+            font-weight: 700; font-size: .95rem;
+            color: var(--gray-800);
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: .3rem;
+        }
+        .berita-excerpt {
+            font-size: .8rem; color: var(--gray-600);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* ── GALERI MASONRY-LIKE ── */
+        .galeri-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+        .galeri-grid .g-tall { grid-row: span 2; }
+        .galeri-grid .g-wide { grid-column: span 2; }
+        @media (max-width: 768px) {
+            .galeri-grid { grid-template-columns: repeat(2, 1fr); }
+            .galeri-grid .g-tall, .galeri-grid .g-wide { grid-row: span 1; grid-column: span 1; }
+        }
+        .galeri-item {
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+        .galeri-item img {
+            width: 100%; height: 100%;
+            min-height: 140px;
+            object-fit: cover;
+            transition: transform .4s;
+            display: block;
+        }
+        .galeri-item:hover img { transform: scale(1.07); }
+        .galeri-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(30,27,75,.7) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity .3s;
+            display: flex; align-items: flex-end;
+            padding: .75rem;
+        }
+        .galeri-item:hover .galeri-overlay { opacity: 1; }
+        .galeri-caption { color: white; font-size: .78rem; font-weight: 600; }
+
+        /* ── EMPTY STATE ── */
+        .empty-box {
+            text-align: center;
+            padding: 3rem;
+            background: var(--gray-50);
+            border-radius: 16px;
+            border: 2px dashed var(--gray-100);
+            color: var(--gray-600);
+        }
+        .empty-box i { font-size: 2.5rem; color: #fcd34d; margin-bottom: .75rem; display: block; }
+
+        /* ── CTA STRIP ── */
+        .cta-strip {
+            background: linear-gradient(135deg, var(--navy), var(--navy-mid));
+            padding: 3rem 0;
+            text-align: center;
+            color: white;
+        }
     </style>
 </head>
 <body>
     <%- include('partials/navbar') %>
-    <section class="page-header">
+
+    <!-- HERO -->
+    <section class="hero">
         <div class="container">
-            <h1 class="page-title"><i class="fas fa-users me-3"></i>OSIS</h1>
-            <p style="font-size:1.1rem;opacity:.9;margin-top:.5rem;">Organisasi Siswa Intra Sekolah — Kegiatan & Pengumuman</p>
+            <div class="hero-badge"><i class="fas fa-star"></i> OSIS SMKN 1 KRAS</div>
+            <h1 class="hero-title" style="position:relative;z-index:1;">
+                Organisasi Siswa<br><span>Intra Sekolah</span>
+            </h1>
+            <p class="hero-sub">Wadah kreativitas, kepemimpinan, dan pengembangan diri siswa</p>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="hero-stat-num"><%= kegiatan.length %></div>
+                    <div class="hero-stat-label">Kegiatan</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-num"><%= berita.length %></div>
+                    <div class="hero-stat-label">Berita</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-num"><%= galeri.length %></div>
+                    <div class="hero-stat-label">Foto Galeri</div>
+                </div>
+            </div>
         </div>
     </section>
-    <section class="content-section">
+
+    <!-- KEGIATAN -->
+    <section class="section">
         <div class="container">
-            <% if (!kegiatan||kegiatan.length===0) { %>
-            <div class="text-center py-5">
-                <i class="fas fa-users fa-4x text-muted mb-3 d-block"></i>
-                <h4 class="text-muted">Belum ada kegiatan OSIS</h4>
+            <div class="section-label"><i class="fas fa-calendar-alt"></i> Program Kerja</div>
+            <h2 class="section-title">Kegiatan <span>OSIS</span></h2>
+            <div class="divider"></div>
+            <p class="section-desc">Berbagai kegiatan dan program kerja yang diselenggarakan OSIS</p>
+
+            <% if (!kegiatan || kegiatan.length === 0) { %>
+            <div class="empty-box">
+                <i class="fas fa-calendar-alt"></i>
+                <p>Belum ada kegiatan yang dipublikasikan</p>
             </div>
             <% } else { %>
             <div class="row g-4">
-                <% kegiatan.forEach(k=>{ %>
+                <% kegiatan.forEach((k, i) => { %>
                 <div class="col-lg-4 col-md-6">
-                    <a href="/osis/<%= k.slug %>" style="text-decoration:none;">
-                        <div class="osis-card">
-                            <% if (k.gambar) { %>
-                            <img src="/uploads/<%= k.gambar %>" class="osis-img" alt="<%= k.judul %>">
-                            <% } else { %>
-                            <div class="osis-img-placeholder"><i class="fas fa-users"></i></div>
-                            <% } %>
-                            <div class="p-4">
-                                <span style="background:#fef3c7;color:#92400e;padding:.2rem .6rem;border-radius:10px;font-size:.75rem;font-weight:600;"><%= k.kategori %></span>
-                                <h5 style="font-weight:700;color:var(--gray-800);margin:0.5rem 0;line-height:1.4;"><%= k.judul %></h5>
-                                <p style="font-size:.8rem;color:var(--gray-600);"><i class="fas fa-calendar me-1"></i><%= new Date(k.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}) %></p>
-                                <% if (k.konten) { %><p style="font-size:.85rem;color:var(--gray-600);line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;"><%- (k.konten||'').replace(/<[^>]*>/g,'').substring(0,150) %>...</p><% } %>
+                    <a href="/osis/<%= k.slug %>" class="kegiatan-card">
+                        <% if (k.gambar) { %>
+                        <img src="/uploads/<%= k.gambar %>" class="kegiatan-img" alt="<%= k.judul %>" onerror="this.style.display='none'">
+                        <% } else { %>
+                        <div class="kegiatan-placeholder"><i class="fas fa-calendar-check"></i></div>
+                        <% } %>
+                        <div class="kegiatan-body">
+                            <span class="tag"><%= k.kategori %></span>
+                            <div class="kegiatan-title"><%= k.judul %></div>
+                            <div class="kegiatan-meta">
+                                <i class="fas fa-clock me-1"></i>
+                                <%= new Date(k.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}) %>
                             </div>
+                            <% if (k.konten) { %>
+                            <div class="kegiatan-excerpt"><%- (k.konten||'').replace(/<[^>]*>/g,'').substring(0,120) %></div>
+                            <% } %>
                         </div>
                     </a>
                 </div>
@@ -62,9 +337,100 @@
             <% } %>
         </div>
     </section>
+
+    <!-- BERITA -->
+    <section class="section section-alt">
+        <div class="container">
+            <div class="row align-items-start">
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <div class="section-label"><i class="fas fa-newspaper"></i> Informasi Terkini</div>
+                    <h2 class="section-title">Berita & <span>Pengumuman</span></h2>
+                    <div class="divider"></div>
+                    <p class="section-desc">Update terbaru dari OSIS — kegiatan, pengumuman, dan informasi penting untuk seluruh siswa.</p>
+                    <div style="background:linear-gradient(135deg,var(--navy),var(--navy-mid));border-radius:16px;padding:1.5rem;color:white;margin-top:1.5rem;">
+                        <i class="fas fa-bullhorn fa-2x mb-2" style="color:var(--gold);"></i>
+                        <p style="font-size:.9rem;opacity:.85;margin:0;">Pantau terus informasi terbaru dari OSIS untuk tidak ketinggalan kegiatan sekolah.</p>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <% if (!berita || berita.length === 0) { %>
+                    <div class="empty-box">
+                        <i class="fas fa-newspaper"></i>
+                        <p>Belum ada berita yang dipublikasikan</p>
+                    </div>
+                    <% } else { %>
+                    <% berita.forEach(b => { %>
+                    <div class="berita-item">
+                        <% if (b.gambar) { %>
+                        <img src="/uploads/<%= b.gambar %>" class="berita-thumb" alt="<%= b.judul %>" onerror="this.style.display='none'">
+                        <% } else { %>
+                        <div class="berita-thumb-placeholder"><i class="fas fa-newspaper"></i></div>
+                        <% } %>
+                        <div class="berita-content">
+                            <span class="tag" style="margin-bottom:.4rem;display:inline-block;"><%= b.kategori %></span>
+                            <div class="berita-title"><%= b.judul %></div>
+                            <% if (b.konten) { %>
+                            <div class="berita-excerpt"><%- (b.konten||'').replace(/<[^>]*>/g,'').substring(0,100) %></div>
+                            <% } %>
+                            <div class="kegiatan-meta mt-1">
+                                <i class="fas fa-calendar me-1"></i>
+                                <%= new Date(b.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}) %>
+                                <% if (b.penulis) { %> &nbsp;·&nbsp; <i class="fas fa-user me-1"></i><%= b.penulis %><% } %>
+                            </div>
+                        </div>
+                    </div>
+                    <% }) %>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- GALERI -->
+    <% if (galeri && galeri.length > 0) { %>
+    <section class="section">
+        <div class="container">
+            <div class="text-center mb-4">
+                <div class="section-label" style="justify-content:center;"><i class="fas fa-images"></i> Dokumentasi</div>
+                <h2 class="section-title">Galeri <span>Foto OSIS</span></h2>
+                <div class="divider mx-auto"></div>
+                <p class="section-desc">Momen-momen berharga dari berbagai kegiatan OSIS</p>
+            </div>
+            <div class="galeri-grid">
+                <% galeri.forEach((g, i) => { %>
+                <div class="galeri-item<% if(i===0){%> g-tall g-wide<%}else if(i===3){%> g-wide<%}%>">
+                    <a href="/uploads/<%= g.gambar %>" data-lightbox="osis-galeri" data-title="<%= g.judul %>">
+                        <img src="/uploads/<%= g.gambar %>" alt="<%= g.judul %>" onerror="this.parentElement.parentElement.style.display='none'">
+                        <div class="galeri-overlay">
+                            <span class="galeri-caption"><i class="fas fa-search-plus me-1"></i><%= g.judul %></span>
+                        </div>
+                    </a>
+                </div>
+                <% }) %>
+            </div>
+        </div>
+    </section>
+    <% } %>
+
+    <!-- CTA -->
+    <div class="cta-strip">
+        <div class="container">
+            <i class="fas fa-users fa-2x mb-2" style="color:var(--gold);display:block;"></i>
+            <h3 style="font-weight:800;margin-bottom:.5rem;">Bergabung & Berkontribusi</h3>
+            <p style="opacity:.75;font-size:.95rem;margin:0;">Jadilah bagian dari OSIS dan wujudkan ide-ide terbaikmu untuk sekolah</p>
+        </div>
+    </div>
+
     <%- include('partials/footer') %>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>$(window).scroll(function(){if($(window).scrollTop()>50)$('.navbar-modern').addClass('scrolled');else$('.navbar-modern').removeClass('scrolled');});</script>
+    <script src="/assets/vendor/bootstrap5/bootstrap.bundle.min.js"></script>
+    <script src="/assets/vendor/jquery3/jquery.min.js"></script>
+    <script src="/assets/vendor/lightbox2/lightbox.min.js"></script>
+    <script>
+        lightbox.option({ resizeDuration: 200, wrapAround: true });
+        $(window).scroll(function(){
+            if($(window).scrollTop()>50) $('.navbar-modern').addClass('scrolled');
+            else $('.navbar-modern').removeClass('scrolled');
+        });
+    </script>
 </body>
 </html>

@@ -74,9 +74,13 @@ exports.bkkDetail = async (req, res) => {
 exports.osisIndex = async (req, res) => {
   try {
     const common = await getCommon();
-    const [kegiatan] = await db.query("SELECT * FROM osis_kegiatan WHERE status='published' ORDER BY created_at DESC");
-    res.render('frontend/osis', { title: 'OSIS', currentPage: 'osis', kegiatan, ...common });
-  } catch (err) { res.status(500).send('Terjadi kesalahan'); }
+    const [[kegiatan], [berita], [galeri]] = await Promise.all([
+      db.query("SELECT * FROM osis_kegiatan WHERE status='published' ORDER BY created_at DESC"),
+      db.query("SELECT * FROM osis_berita WHERE status='published' ORDER BY created_at DESC"),
+      db.query("SELECT * FROM osis_galeri ORDER BY created_at DESC")
+    ]);
+    res.render('frontend/osis', { title: 'OSIS', currentPage: 'osis', kegiatan, berita, galeri, ...common });
+  } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
 };
 
 exports.osisDetail = async (req, res) => {
@@ -202,6 +206,81 @@ exports.osisUpdate = (req, res) => {
 exports.osisDelete = async (req, res) => {
   await db.query('DELETE FROM osis_kegiatan WHERE id=?', [req.params.id]);
   res.redirect('/osis/dashboard?success=3');
+};
+
+// ── PORTAL OSIS: Berita ───────────────────────────────────────────────────────
+exports.osisBeritaIndex = async (req, res) => {
+  const [berita] = await db.query('SELECT * FROM osis_berita ORDER BY created_at DESC');
+  portalRender(res, req, 'portal/osis/berita', { title: 'Berita & Informasi OSIS', user: req.session, berita, success: req.query.success });
+};
+
+exports.osisBeritaCreatePage = (req, res) =>
+  portalRender(res, req, 'portal/osis/berita-create', { title: 'Tambah Berita OSIS', user: req.session });
+
+exports.osisBeritaCreate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return portalRender(res, req, 'portal/osis/berita-create', { title: 'Tambah Berita OSIS', user: req.session, error: err.message });
+    try {
+      const { judul, konten, kategori, status } = req.body;
+      if (!judul) return portalRender(res, req, 'portal/osis/berita-create', { title: 'Tambah Berita OSIS', user: req.session, error: 'Judul wajib diisi' });
+      const gambar = req.file ? req.file.filename : null;
+      const slug = createSlug(judul);
+      await db.query('INSERT INTO osis_berita (judul,slug,konten,gambar,kategori,status,penulis) VALUES (?,?,?,?,?,?,?)',
+        [judul, slug, konten||null, gambar, kategori||'berita', status||'published', req.session.portalNama]);
+      res.redirect('/osis/berita?success=1');
+    } catch (e) { console.error(e); portalRender(res, req, 'portal/osis/berita-create', { title: 'Tambah Berita OSIS', user: req.session, error: e.message }); }
+  });
+};
+
+exports.osisBeritaEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM osis_berita WHERE id=?', [req.params.id]);
+  if (!rows.length) return res.redirect('/osis/berita');
+  portalRender(res, req, 'portal/osis/berita-edit', { title: 'Edit Berita OSIS', user: req.session, item: rows[0] });
+};
+
+exports.osisBeritaUpdate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/osis/berita');
+    const { judul, konten, kategori, status } = req.body;
+    const [rows] = await db.query('SELECT gambar FROM osis_berita WHERE id=?', [req.params.id]);
+    const gambar = req.file ? req.file.filename : rows[0]?.gambar;
+    await db.query('UPDATE osis_berita SET judul=?,konten=?,gambar=?,kategori=?,status=? WHERE id=?',
+      [judul, konten||null, gambar, kategori||'berita', status||'published', req.params.id]);
+    res.redirect('/osis/berita?success=2');
+  });
+};
+
+exports.osisBeritaDelete = async (req, res) => {
+  await db.query('DELETE FROM osis_berita WHERE id=?', [req.params.id]);
+  res.redirect('/osis/berita?success=3');
+};
+
+// ── PORTAL OSIS: Galeri ───────────────────────────────────────────────────────
+const uploadGaleriOsis = createUpload('osis-galeri', { maxFiles: 20 }).array('gambar', 20);
+
+exports.osisGaleriIndex = async (req, res) => {
+  const [galeri] = await db.query('SELECT * FROM osis_galeri ORDER BY created_at DESC');
+  portalRender(res, req, 'portal/osis/galeri', { title: 'Galeri OSIS', user: req.session, galeri, success: req.query.success, query: req.query });
+};
+
+exports.osisGaleriCreate = (req, res) => {
+  uploadGaleriOsis(req, res, async (err) => {
+    if (err) return res.redirect('/osis/galeri?error=' + encodeURIComponent(err.message));
+    try {
+      if (!req.files || req.files.length === 0) return res.redirect('/osis/galeri?error=Pilih+minimal+1+foto');
+      const { judul, keterangan } = req.body;
+      for (const file of req.files) {
+        await db.query('INSERT INTO osis_galeri (judul,gambar,keterangan) VALUES (?,?,?)',
+          [judul||'Galeri OSIS', file.filename, keterangan||null]);
+      }
+      res.redirect('/osis/galeri?success=1');
+    } catch (e) { console.error(e); res.redirect('/osis/galeri?error=' + encodeURIComponent(e.message)); }
+  });
+};
+
+exports.osisGaleriDelete = async (req, res) => {
+  await db.query('DELETE FROM osis_galeri WHERE id=?', [req.params.id]);
+  res.redirect('/osis/galeri?success=3');
 };
 
 // ── PORTAL JURUSAN DASHBOARD ──────────────────────────────────────────────────
