@@ -1100,41 +1100,6 @@
         </div>
     </section>
 
-    <!-- Link Terkait Section -->
-    <% if (linkTerkait && linkTerkait.length > 0) { %>
-    <section class="link-terkait-section">
-            <div class="link-terkait-wrapper">
-                <div class="link-terkait-header">
-                    <i class="fas fa-link me-2"></i> Link Terkait
-                </div>
-                <div class="link-terkait-track-container">
-                    <div class="link-terkait-track" id="linkTrack">
-                        <% linkTerkait.forEach(function(l) { %>
-                        <a href="<%= l.url %>" target="_blank" rel="noopener noreferrer" class="link-terkait-item" title="<%= l.nama %>">
-                            <% if (l.logo) { %>
-                            <img src="/uploads/<%= l.logo %>" alt="<%= l.nama %>">
-                            <% } else { %>
-                            <span class="link-terkait-text"><%= l.nama %></span>
-                            <% } %>
-                        </a>
-                        <% }) %>
-                        <!-- Duplikat untuk infinite scroll -->
-                        <% linkTerkait.forEach(function(l) { %>
-                        <a href="<%= l.url %>" target="_blank" rel="noopener noreferrer" class="link-terkait-item" title="<%= l.nama %>" aria-hidden="true">
-                            <% if (l.logo) { %>
-                            <img src="/uploads/<%= l.logo %>" alt="<%= l.nama %>">
-                            <% } else { %>
-                            <span class="link-terkait-text"><%= l.nama %></span>
-                            <% } %>
-                        </a>
-                        <% }) %>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <% } %>
-
     <!-- Media Sosial Section -->
     <% if (mediaSosialFooter && mediaSosialFooter.length > 0) { %>
     <section class="medsos-section">
@@ -1310,6 +1275,35 @@
             </div>
         </div>
     </section>
+
+    <!-- Link Terkait Section -->
+    <% if (linkTerkait && linkTerkait.length > 0) { %>
+    <section class="link-terkait-section">
+        <div class="container-fluid px-0">
+            <div class="link-terkait-wrapper">
+                <div class="link-terkait-header">
+                    <i class="fas fa-link me-2"></i> Link Terkait
+                </div>
+                <div class="link-terkait-track-container">
+                    <div class="link-terkait-track" id="linkTrack">
+                        <% linkTerkait.forEach(function(l) { %>
+                        <a href="<%= l.url %>" target="_blank" rel="noopener noreferrer" class="link-terkait-item" title="<%= l.nama %>">
+                            <% if (l.logo) { %><img src="/uploads/<%= l.logo %>" alt="<%= l.nama %>">
+                            <% } else { %><span class="link-terkait-text"><%= l.nama %></span><% } %>
+                        </a>
+                        <% }) %>
+                        <% linkTerkait.forEach(function(l) { %>
+                        <a href="<%= l.url %>" target="_blank" rel="noopener noreferrer" class="link-terkait-item" title="<%= l.nama %>" aria-hidden="true">
+                            <% if (l.logo) { %><img src="/uploads/<%= l.logo %>" alt="<%= l.nama %>">
+                            <% } else { %><span class="link-terkait-text"><%= l.nama %></span><% } %>
+                        </a>
+                        <% }) %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <% } %>
 
     <!-- CTA Section -->
     <section class="cta-section">

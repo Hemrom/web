@@ -119,12 +119,15 @@ exports.themeCss = async (req, res) => {
   --border-radius-card: ${borderRadius}px;
   --font-main: '${fontFamily}', sans-serif;
 }
-* { font-family: var(--font-main) !important; }
+/* Hanya override font untuk elemen teks, BUKAN icon font */
+body, p, h1, h2, h3, h4, h5, h6, span:not(.fa):not(.fas):not(.far):not(.fab):not(.fal), a, div, li, td, th, label, input, textarea, select, button {
+  font-family: var(--font-main) !important;
+}
 body { background-color: ${bodyBg} !important; color: ${bodyColor} !important; }
 .navbar-modern { background: ${navbarBg}f5 !important; backdrop-filter: blur(12px); }
 .footer { background: ${footerBg} !important; }
-.card-modern, .news-card, .feature-card, .stat-card, .gallery-item { background: ${cardBg} !important; border-radius: var(--border-radius-card) !important; }
-.stats-section, .news-section, .content-section { background: ${gray50} !important; }
+.news-card, .feature-card, .stat-card { background: ${cardBg} !important; border-radius: var(--border-radius-card) !important; }
+.stats-section, .news-section { background: ${gray50} !important; }
 .features-section, .gallery-section { background: ${cardBg} !important; }
 .btn-primary { background: ${primary} !important; border-color: ${primary} !important; }
 .btn-primary:hover { background: ${secondary} !important; border-color: ${secondary} !important; }
@@ -139,12 +142,11 @@ body { background-color: ${bodyBg} !important; color: ${bodyColor} !important; }
 .link-terkait-header { background: ${primary} !important; }
 .medsos-section { background: linear-gradient(135deg, ${secondary}dd 0%, ${primary}cc 100%) !important; }
 ${isDark ? `
-.stat-card, .feature-card, .news-card, .gallery-item { background: ${cardBg} !important; border-color: ${gray100} !important; }
-.section-title, .feature-title, .news-title, .gallery-title { color: #f1f5f9 !important; }
+.stat-card, .feature-card, .news-card { background: ${cardBg} !important; border-color: ${gray100} !important; }
+.section-title, .feature-title, .news-title { color: #f1f5f9 !important; }
 .section-subtitle, .feature-desc, .news-excerpt { color: #94a3b8 !important; }
 .text-muted { color: #94a3b8 !important; }
 .nav-link { color: ${navbarColor} !important; }
-.footer-link { color: #94a3b8 !important; }
 ` : ''}
 `;
 
