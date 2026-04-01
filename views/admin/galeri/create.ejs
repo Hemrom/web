@@ -51,8 +51,8 @@
                             <div class="form-group">
                                 <label class="font-weight-bold">Upload Foto <span class="text-danger">*</span></label>
                                 <div class="border rounded p-3" style="background:#f8fafc;">
-                                    <input type="file" class="form-control-file" name="gambar" accept="image/*" multiple required id="fotoInput">
-                                    <small class="text-muted">Bisa pilih beberapa foto sekaligus. Format: JPG, PNG, GIF.</small>
+                                    <input type="file" class="form-control-file" name="gambar" accept=".jpg,.jpeg,.png,.gif,.webp" multiple required id="fotoInput">
+                                    <small class="text-muted">Format: <strong>JPG, PNG, WebP</strong>. <span class="text-warning font-weight-bold">HEIC tidak didukung.</span> iPhone: Settings → Camera → Formats → <strong>Most Compatible</strong></small>
                                     <div id="preview-grid" class="row mt-3"></div>
                                 </div>
                             </div>
