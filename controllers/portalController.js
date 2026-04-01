@@ -618,31 +618,15 @@ exports.jurusanGaleriCreate = (req, res) => {
       if (!req.files || req.files.length === 0) return res.redirect('/jurusan-portal/galeri?error=Pilih+minimal+1+foto');
       const jurusan = req.session.portalJurusan;
       const { judul, keterangan } = req.body;
-      // Kompres setiap foto
-      const sharp = require('sharp');
-      const fs = require('fs');
-      const path = require('path');
       for (let i = 0; i < req.files.length; i++) {
-        const file = req.files[i];
-        const ext = path.extname(file.originalname).toLowerCase();
-        if (ext !== '.svg' && ext !== '.gif') {
-          const tmpPath = file.path + '.tmp';
-          try {
-            await sharp(file.path).rotate()
-              .resize({ width: 1280, height: 960, fit: 'inside', withoutEnlargement: true })
-              .jpeg({ quality: 75, progressive: true })
-              .toFile(tmpPath);
-            fs.renameSync(tmpPath, file.path);
-          } catch (compErr) {
-            if (fs.existsSync(tmpPath)) fs.unlinkSync(tmpPath);
-            // Lanjut meski gagal kompres
-          }
-        }
         await db.query('INSERT INTO jurusan_galeri (jurusan,judul,gambar,keterangan) VALUES (?,?,?,?)',
-          [jurusan, judul||'Galeri', file.filename, keterangan||null]);
+          [jurusan, judul||'Galeri', req.files[i].filename, keterangan||null]);
       }
       res.redirect('/jurusan-portal/galeri?success=1');
-    } catch (e) { console.error(e); res.redirect('/jurusan-portal/galeri?error=Terjadi+kesalahan'); }
+    } catch (e) {
+      console.error('galeri upload error:', e);
+      res.redirect('/jurusan-portal/galeri?error=' + encodeURIComponent(e.message));
+    }
   });
 };
 
