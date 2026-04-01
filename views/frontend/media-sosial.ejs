@@ -333,68 +333,34 @@
                             <div class="social-embed">
                                 <% if (item.platform === 'youtube') { %>
                                     <% 
-                                        let embedUrl = item.embed_url;
-                                        const youtubeMatch = embedUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/);
-                                        if (youtubeMatch) {
-                                            embedUrl = `https://www.youtube.com/embed/${youtubeMatch[1]}`;
-                                        }
+                                        const ytMatch2 = item.embed_url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/);
+                                        const ytEmbedId = ytMatch2 ? ytMatch2[1] : null;
                                     %>
-                                    <iframe src="<%= embedUrl %>" allowfullscreen></iframe>
-                                <% } else if (item.platform === 'tiktok') { %>
-                                    <blockquote class="tiktok-embed" cite="<%= item.embed_url %>" data-video-id="<%= item.embed_url.split('/').pop() %>" style="max-width: 605px;min-width: 325px;">
-                                        <section>
-                                            <a target="_blank" title="<%= item.judul %>" href="<%= item.embed_url %>">
-                                                Lihat di TikTok
-                                            </a>
-                                        </section>
-                                    </blockquote>
-                                <% } else if (item.platform === 'instagram') { %>
-                                    <% 
-                                        let instagramEmbedUrl = item.embed_url;
-                                        const instagramMatch = instagramEmbedUrl.match(/instagram\.com\/p\/([^\/]+)/);
-                                        if (instagramMatch) {
-                                            instagramEmbedUrl = `https://www.instagram.com/p/${instagramMatch[1]}/embed/`;
-                                        }
-                                    %>
-                                    <iframe src="<%= instagramEmbedUrl %>" allowtransparency="true" allowfullscreen="true"></iframe>
-                                <% } else if (item.platform === 'facebook') { %>
-                                    <iframe src="https://www.facebook.com/plugins/video.php?href=<%= encodeURIComponent(item.embed_url) %>&show_text=false&width=560" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
-                                <% } else if (item.platform === 'twitter') { %>
-                                    <% 
-                                        const twitterMatch = item.embed_url.match(/twitter\.com\/[^\/]+\/status\/(\d+)/);
-                                        const tweetId = twitterMatch ? twitterMatch[1] : '';
-                                    %>
-                                    <% if (tweetId) { %>
-                                        <blockquote class="twitter-tweet" data-theme="light">
-                                            <a href="<%= item.embed_url %>">Lihat Tweet</a>
-                                        </blockquote>
+                                    <% if (ytEmbedId) { %>
+                                    <iframe src="https://www.youtube.com/embed/<%= ytEmbedId %>?rel=0&modestbranding=1" allowfullscreen style="width:100%;height:100%;border:0;"></iframe>
                                     <% } else { %>
-                                        <div class="text-center p-4">
-                                            <i class="fab fa-twitter fa-3x text-muted"></i>
-                                            <p class="mt-2">
-                                                <a href="<%= item.embed_url %>" target="_blank" class="btn btn-primary">
-                                                    Lihat di Twitter
-                                                </a>
-                                            </p>
-                                        </div>
+                                    <%- include('partials/_medsos_card', {url: item.embed_url, platform: item.platform, judul: item.judul}) %>
                                     <% } %>
-                                <% } else if (item.platform === 'threads') { %>
-                                    <div class="text-center p-4" style="background:#f5f5f5;border-radius:12px;">
-                                        <i class="fab fa-threads fa-3x mb-3" style="color:#000;"></i>
-                                        <p class="mb-2 text-muted small"><%= item.judul %></p>
-                                        <a href="<%= item.embed_url %>" target="_blank" rel="noopener" class="btn btn-dark btn-sm">
-                                            <i class="fab fa-threads mr-1"></i>Lihat di Threads
-                                        </a>
-                                    </div>
                                 <% } else { %>
-                                    <div class="text-center p-4">
-                                        <i class="fab fa-<%= item.platform %> fa-3x text-muted"></i>
-                                        <p class="mt-2">
-                                            <a href="<%= item.embed_url %>" target="_blank" class="btn btn-primary">
-                                                Lihat Konten
-                                            </a>
-                                        </p>
-                                    </div>
+                                    <%
+                                    const bgMap2 = {instagram:'linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045)',facebook:'linear-gradient(135deg,#1877F2,#0d5dbf)',tiktok:'linear-gradient(135deg,#010101,#69C9D0)',twitter:'linear-gradient(135deg,#000,#333)',threads:'linear-gradient(135deg,#101010,#444)'};
+                                    const iconMap2 = {instagram:'fa-instagram',facebook:'fa-facebook-f',tiktok:'fa-tiktok',twitter:'fa-x-twitter',threads:'fa-threads'};
+                                    const labelMap2 = {instagram:'Lihat di Instagram',facebook:'Lihat di Facebook',tiktok:'Lihat di TikTok',twitter:'Lihat di X/Twitter',threads:'Lihat di Threads'};
+                                    const bg2 = bgMap2[item.platform] || 'linear-gradient(135deg,#334155,#1e293b)';
+                                    const icon2 = iconMap2[item.platform] || 'fa-globe';
+                                    const label2 = labelMap2[item.platform] || 'Lihat Postingan';
+                                    %>
+                                    <a href="<%= item.embed_url %>" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;height:100%;text-decoration:none;background:<%= bg2 %>;">
+                                        <div style="text-align:center;padding:2rem;">
+                                            <div style="width:80px;height:80px;background:rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;backdrop-filter:blur(5px);">
+                                                <i class="fab <%= icon2 %>" style="font-size:2.5rem;color:white;"></i>
+                                            </div>
+                                            <div style="color:white;font-weight:700;font-size:1rem;margin-bottom:1rem;"><%= item.judul %></div>
+                                            <div style="background:rgba(255,255,255,.2);color:white;padding:.6rem 1.5rem;border-radius:50px;font-weight:600;font-size:.9rem;border:1px solid rgba(255,255,255,.3);display:inline-block;">
+                                                <i class="fas fa-external-link-alt me-2"></i><%= label2 %>
+                                            </div>
+                                        </div>
+                                    </a>
                                 <% } %>
                             </div>
                         </div>
