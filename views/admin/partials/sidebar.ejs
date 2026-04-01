@@ -1,95 +1,86 @@
 ﻿<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/admin">
         <div class="sidebar-brand-icon">
-            <img src="/uploads/logo-sekolah.png" alt="Logo SMK Negeri 1 Kras" 
-                 style="width: 40px; height: 40px; object-fit: contain; border-radius: 8px;"
-                 onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
-            <i class="fas fa-school" style="display: none; font-size: 2rem;"></i>
+            <img src="/uploads/logo-sekolah.png" alt="Logo"
+                 style="width:40px;height:40px;object-fit:contain;border-radius:8px;"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block';">
+            <i class="fas fa-school" style="display:none;font-size:2rem;"></i>
         </div>
         <div class="sidebar-brand-text mx-3" style="white-space:nowrap;">SMK N 1 Kras</div>
     </a>
     <hr class="sidebar-divider my-0">
+
+    <!-- Dashboard -->
     <li class="nav-item">
         <a class="nav-link" href="/admin/dashboard">
-            <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>Dashboard</span>
+            <i class="fas fa-fw fa-tachometer-alt"></i><span>Dashboard</span>
         </a>
     </li>
     <hr class="sidebar-divider">
-    <div class="sidebar-heading">Konten</div>
+
+    <!-- Profil & Data Sekolah -->
+    <div class="sidebar-heading">Sekolah</div>
     <li class="nav-item">
         <a class="nav-link" href="/admin/profil">
-            <i class="fas fa-fw fa-building"></i>
-            <span>Profil Sekolah</span>
+            <i class="fas fa-fw fa-building"></i><span>Profil Sekolah</span>
         </a>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="/admin/data-sekolah">
-            <i class="fas fa-fw fa-database"></i>
-            <span>Data Sekolah</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="/admin/berita">
-            <i class="fas fa-fw fa-newspaper"></i>
-            <span>Berita</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="/admin/galeri">
-            <i class="fas fa-fw fa-images"></i>
-            <span>Galeri</span>
+            <i class="fas fa-fw fa-database"></i><span>Data Sekolah & Alumni</span>
         </a>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="/admin/kontak">
-            <i class="fas fa-fw fa-envelope"></i>
-            <span>Kontak Masuk</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="/admin/alumni">
-            <i class="fas fa-fw fa-user-graduate"></i>
-            <span>Data Alumni</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="/admin/prestasi">
-            <i class="fas fa-fw fa-trophy"></i>
-            <span>Prestasi</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="/admin/bkk">
-            <i class="fas fa-fw fa-briefcase"></i>
-            <span>BKK</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="/admin/osis">
-            <i class="fas fa-fw fa-users"></i>
-            <span>OSIS</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="/admin/jurusan-berita">
-            <i class="fas fa-fw fa-newspaper"></i>
-            <span>Berita Jurusan</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="/admin/portal-users">
-            <i class="fas fa-fw fa-key"></i>
-            <span>Akun Portal</span>
+            <i class="fas fa-fw fa-envelope"></i><span>Kontak Masuk</span>
         </a>
     </li>
     <hr class="sidebar-divider">
+
+    <!-- Informasi (accordion) -->
+    <div class="sidebar-heading">Informasi</div>
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#collapseInformasi" data-toggle="collapse"
+           aria-expanded="false" aria-controls="collapseInformasi">
+            <i class="fas fa-fw fa-info-circle"></i>
+            <span>Kelola Informasi</span>
+        </a>
+        <div id="collapseInformasi" class="collapse" aria-labelledby="headingInformasi" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item" href="/admin/berita">
+                    <i class="fas fa-newspaper fa-fw mr-2 text-primary"></i>Berita
+                </a>
+                <a class="collapse-item" href="/admin/galeri">
+                    <i class="fas fa-images fa-fw mr-2 text-success"></i>Galeri
+                </a>
+                <a class="collapse-item" href="/admin/prestasi">
+                    <i class="fas fa-trophy fa-fw mr-2 text-warning"></i>Prestasi
+                </a>
+                <a class="collapse-item" href="/admin/bkk">
+                    <i class="fas fa-briefcase fa-fw mr-2 text-success"></i>BKK
+                </a>
+                <a class="collapse-item" href="/admin/osis">
+                    <i class="fas fa-users fa-fw mr-2 text-warning"></i>OSIS
+                </a>
+                <a class="collapse-item" href="/admin/jurusan-berita">
+                    <i class="fas fa-graduation-cap fa-fw mr-2 text-info"></i>Berita Jurusan
+                </a>
+            </div>
+        </div>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/admin/portal-users">
+            <i class="fas fa-fw fa-key"></i><span>Akun Portal</span>
+        </a>
+    </li>
+    <hr class="sidebar-divider">
+
+    <!-- Pengaturan -->
     <div class="sidebar-heading">Pengaturan</div>
     <% if (typeof user !== 'undefined' && user.role === 'admin') { %>
     <li class="nav-item">
         <a class="nav-link" href="/admin/kontrol-website">
-            <i class="fas fa-fw fa-cogs"></i>
-            <span>Kontrol Website</span>
+            <i class="fas fa-fw fa-cogs"></i><span>Kontrol Website</span>
         </a>
     </li>
     <% } %>

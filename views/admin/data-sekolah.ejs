@@ -47,6 +47,14 @@
                                     <i class="fas fa-graduation-cap mr-1"></i> Data Jurusan
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link <%= activeTab === 'alumni' ? 'active' : '' %>" href="?tab=alumni">
+                                    <i class="fas fa-user-graduate mr-1"></i> Data Alumni
+                                    <% if (typeof alumniStats !== 'undefined' && alumniStats && alumniStats.pending > 0) { %>
+                                    <span class="badge badge-warning ml-1"><%= alumniStats.pending %></span>
+                                    <% } %>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                     <div class="card-body">
@@ -221,6 +229,65 @@
                             </table>
                         </div>
                         <small class="text-muted"><i class="fas fa-info-circle"></i> Data jurusan akan tampil otomatis di section "Program Keahlian" pada halaman beranda website.</small>
+                        <% } %>
+
+                        <!-- Tab: Alumni -->
+                        <% } else if (activeTab === 'alumni') { %>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">Data Alumni</h5>
+                            <div>
+                                <% if (typeof alumniStats !== 'undefined' && alumniStats) { %>
+                                <span class="badge badge-warning mr-2">Pending: <%= alumniStats.pending %></span>
+                                <span class="badge badge-success mr-2">Disetujui: <%= alumniStats.disetujui %></span>
+                                <% } %>
+                                <a href="/admin/alumni" class="btn btn-primary btn-sm"><i class="fas fa-external-link-alt mr-1"></i>Kelola Alumni Lengkap</a>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead class="thead-light">
+                                    <tr><th>Foto</th><th>Nama</th><th>Lulus</th><th>Jurusan</th><th>Pekerjaan</th><th>Status</th><th>Aksi</th></tr>
+                                </thead>
+                                <tbody>
+                                <% if (!alumni || alumni.length === 0) { %>
+                                <tr><td colspan="7" class="text-center text-muted py-3">Belum ada data alumni</td></tr>
+                                <% } else { alumni.slice(0,20).forEach(a=>{ %>
+                                <tr>
+                                    <td style="width:50px;">
+                                        <% if (a.foto) { %>
+                                        <img src="/uploads/<%= a.foto %>" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
+                                        <% } else { %>
+                                        <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#4e73df,#224abe);display:flex;align-items:center;justify-content:center;"><i class="fas fa-user text-white small"></i></div>
+                                        <% } %>
+                                    </td>
+                                    <td><strong><%= a.nama %></strong><% if(a.email){%><br><small class="text-muted"><%= a.email %></small><% } %></td>
+                                    <td><%= a.tahun_lulus||'-' %></td>
+                                    <td><%= a.jurusan||'-' %></td>
+                                    <td><%= a.pekerjaan||'-' %><% if(a.perusahaan){%><br><small class="text-muted"><%= a.perusahaan %></small><% } %></td>
+                                    <td>
+                                        <% if (a.status==='disetujui') { %><span class="badge badge-success">Disetujui</span>
+                                        <% } else if (a.status==='pending') { %><span class="badge badge-warning">Pending</span>
+                                        <% } else { %><span class="badge badge-danger">Ditolak</span><% } %>
+                                    </td>
+                                    <td>
+                                        <% if (a.status==='pending') { %>
+                                        <form method="POST" action="/admin/alumni/setujui/<%= a.id %>" style="display:inline">
+                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                            <button class="btn btn-success btn-sm" title="Setujui"><i class="fas fa-check"></i></button>
+                                        </form>
+                                        <% } %>
+                                        <a href="/admin/alumni/edit/<%= a.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                                    </td>
+                                </tr>
+                                <% }) } %>
+                                </tbody>
+                            </table>
+                        </div>
+                        <% if (alumni && alumni.length > 20) { %>
+                        <div class="text-center mt-2">
+                            <a href="/admin/alumni" class="btn btn-outline-primary btn-sm">Lihat Semua <%= alumni.length %> Alumni</a>
+                        </div>
+                        <% } %>
                         <% } %>
 
                     </div>

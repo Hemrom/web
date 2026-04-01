@@ -6,14 +6,14 @@ exports.index = async (req, res) => {
     const [guru] = await db.query('SELECT * FROM guru ORDER BY nama ASC');
     const [siswa] = await db.query('SELECT * FROM siswa ORDER BY nama ASC');
     const [jurusan] = await db.query('SELECT * FROM jurusan ORDER BY kode ASC');
+    const [alumni] = await db.query('SELECT * FROM alumni ORDER BY created_at DESC');
+    const [[alumniStats]] = await db.query('SELECT COUNT(*) as total, SUM(status="pending") as pending, SUM(status="disetujui") as disetujui FROM alumni');
 
     res.render('admin/data-sekolah', {
       title: 'Data Sekolah',
       user: req.session,
       activeTab,
-      guru,
-      siswa,
-      jurusan,
+      guru, siswa, jurusan, alumni, alumniStats,
       success: req.query.success,
       error: req.query.error || null,
       message: req.session.message || null
