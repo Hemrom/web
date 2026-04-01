@@ -12,12 +12,13 @@ const createSlug = (text) => text.toLowerCase()
 
 const getCommon = async () => {
   const { getMenuItems } = require('./frontendController');
-  const [[profil], menuItems] = await Promise.all([
+  const [[profilRows], menuItems] = await Promise.all([
     db.query('SELECT * FROM profil_sekolah LIMIT 1'),
     getMenuItems()
   ]);
+  const profil = profilRows || {};
   const [mediaSosialFooter] = await db.query("SELECT id,judul,platform,embed_url FROM media_sosial WHERE status='aktif' ORDER BY urutan ASC");
-  return { profil: profil || {}, menuItems, mediaSosialFooter };
+  return { profil, menuItems, mediaSosialFooter };
 };
 
 // ── FRONTEND PRESTASI ─────────────────────────────────────────────────────────
