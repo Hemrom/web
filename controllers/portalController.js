@@ -450,14 +450,20 @@ exports.jurusanBeritaCreatePage = (req, res) =>
 
 exports.jurusanBeritaCreate = (req, res) => {
   uploadSingle(req, res, async (err) => {
-    if (err) return res.render('portal/jurusan/berita-create', { title: 'Tambah Berita/Informasi', user: req.session, csrfToken: req.session.csrfToken, error: err.message });
-    const { judul, konten, kategori, status } = req.body;
-    const gambar = req.file ? req.file.filename : null;
-    const slug = createSlug(judul);
-    const jurusan = req.session.portalJurusan;
-    await db.query('INSERT INTO jurusan_berita (jurusan,judul,slug,konten,gambar,kategori,status,penulis) VALUES (?,?,?,?,?,?,?,?)',
-      [jurusan, judul, slug, konten||null, gambar, kategori||'berita', status||'published', req.session.portalNama]);
-    res.redirect('/jurusan-portal/berita?success=1');
+    if (err) return portalRender(res, req, 'portal/jurusan/berita-create', { title: 'Tambah Berita/Informasi', user: req.session, error: err.message });
+    try {
+      const { judul, konten, kategori, status } = req.body;
+      if (!judul) return portalRender(res, req, 'portal/jurusan/berita-create', { title: 'Tambah Berita/Informasi', user: req.session, error: 'Judul wajib diisi' });
+      const gambar = req.file ? req.file.filename : null;
+      const slug = createSlug(judul);
+      const jurusan = req.session.portalJurusan;
+      await db.query('INSERT INTO jurusan_berita (jurusan,judul,slug,konten,gambar,kategori,status,penulis) VALUES (?,?,?,?,?,?,?,?)',
+        [jurusan, judul, slug, konten||null, gambar, kategori||'berita', status||'published', req.session.portalNama]);
+      res.redirect('/jurusan-portal/berita?success=1');
+    } catch (e) {
+      console.error('jurusanBeritaCreate error:', e);
+      portalRender(res, req, 'portal/jurusan/berita-create', { title: 'Tambah Berita/Informasi', user: req.session, error: 'Terjadi kesalahan: ' + e.message });
+    }
   });
 };
 
