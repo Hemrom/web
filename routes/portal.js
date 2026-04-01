@@ -48,5 +48,9 @@ router.post('/jurusan-portal/berita/delete/:id', isJurusan, csrfProtect, validat
 // Edit Halaman Jurusan (deskripsi lengkap)
 router.get('/jurusan-portal/halaman', isJurusan, ctrl.jurusanHalamanPage);
 router.post('/jurusan-portal/halaman', isJurusan, csrfProtect, ctrl.jurusanHalamanUpdate);
+// Galeri Jurusan
+router.get('/jurusan-portal/galeri', isJurusan, ctrl.jurusanGaleriIndex);
+router.post('/jurusan-portal/galeri/upload', isJurusan, ctrl.jurusanGaleriCreate);
+router.post('/jurusan-portal/galeri/delete/:id', isJurusan, csrfProtect, validateIdParam, ctrl.jurusanGaleriDelete);
 
 module.exports = router;

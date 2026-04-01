@@ -294,15 +294,23 @@ exports.adminPrestasiDelete = async (req, res) => {
 // ── ADMIN: Kelola Portal Users ────────────────────────────────────────────────
 exports.adminPortalUsers = async (req, res) => {
   const [users] = await db.query('SELECT id,username,nama,role,jurusan,aktif,created_at FROM portal_users ORDER BY role,nama');
-  res.render('admin/portal-users', { title: 'Kelola Akun Portal', user: req.session, portalUsers: users, success: req.query.success });
+  res.render('admin/portal-users', { title: 'Kelola Akun Portal', user: req.session, portalUsers: users, success: req.query.success, query: req.query });
 };
 
 exports.adminPortalUserCreate = async (req, res) => {
-  const { username, password, nama, role, jurusan } = req.body;
-  const hash = await bcrypt.hash(password, 10);
-  await db.query('INSERT INTO portal_users (username,password,nama,role,jurusan) VALUES (?,?,?,?,?)',
-    [username, hash, nama, role, jurusan||null]);
-  res.redirect('/admin/portal-users?success=1');
+  try {
+    const { username, password, nama, role, jurusan } = req.body;
+    const hash = await bcrypt.hash(password, 10);
+    await db.query('INSERT INTO portal_users (username,password,nama,role,jurusan) VALUES (?,?,?,?,?)',
+      [username, hash, nama, role, jurusan||null]);
+    res.redirect('/admin/portal-users?success=1');
+  } catch (err) {
+    if (err.code === 'ER_DUP_ENTRY') {
+      return res.redirect('/admin/portal-users?error=Username+sudah+digunakan');
+    }
+    console.error(err);
+    res.redirect('/admin/portal-users?error=Terjadi+kesalahan');
+  }
 };
 
 exports.adminPortalUserDelete = async (req, res) => {
@@ -420,12 +428,12 @@ exports.jurusanDetailPage = async (req, res) => {
       [kode]
     );
 
-    // Ambil galeri jurusan (dari tabel galeri berdasarkan kategori/judul)
-    // Jika tidak ada galeri spesifik jurusan, ambil galeri terbaru umum
+    // Ambil galeri khusus jurusan dari tabel jurusan_galeri
     let [galeri] = await db.query(
-      "SELECT * FROM galeri WHERE judul LIKE ? OR kategori LIKE ? ORDER BY created_at DESC LIMIT 8",
-      [`%${kode}%`, `%${kode}%`]
+      "SELECT * FROM jurusan_galeri WHERE jurusan=? ORDER BY urutan ASC, created_at DESC LIMIT 8",
+      [kode]
     );
+    // Fallback ke galeri umum jika tidak ada
     if (!galeri.length) {
       [galeri] = await db.query("SELECT * FROM galeri ORDER BY created_at DESC LIMIT 8");
     }
@@ -591,4 +599,33 @@ exports.jurusanHalamanUpdate = async (req, res) => {
     console.error(err);
     res.redirect('/jurusan-portal/halaman?success=0');
   }
+};
+
+// ── PORTAL JURUSAN: Galeri ────────────────────────────────────────────────────
+exports.jurusanGaleriIndex = async (req, res) => {
+  const jurusan = req.session.portalJurusan;
+  const [galeri] = await db.query('SELECT * FROM jurusan_galeri WHERE jurusan=? ORDER BY urutan ASC, created_at DESC', [jurusan]);
+  portalRender(res, req, 'portal/jurusan/galeri', { title: `Galeri Jurusan ${jurusan}`, user: req.session, galeri, jurusan, success: req.query.success });
+};
+
+exports.jurusanGaleriCreate = (req, res) => {
+  const uploadMulti = require('../middleware/uploadSecurity').createUpload('jurusan-galeri', { maxFiles: 20 }).array('gambar', 20);
+  uploadMulti(req, res, async (err) => {
+    if (err) return res.redirect('/jurusan-portal/galeri?error=' + encodeURIComponent(err.message));
+    try {
+      const jurusan = req.session.portalJurusan;
+      const { judul, keterangan } = req.body;
+      if (!req.files || req.files.length === 0) return res.redirect('/jurusan-portal/galeri?error=Pilih+minimal+1+foto');
+      for (let i = 0; i < req.files.length; i++) {
+        await db.query('INSERT INTO jurusan_galeri (jurusan,judul,gambar,keterangan) VALUES (?,?,?,?)',
+          [jurusan, judul||'Galeri', req.files[i].filename, keterangan||null]);
+      }
+      res.redirect('/jurusan-portal/galeri?success=1');
+    } catch (e) { console.error(e); res.redirect('/jurusan-portal/galeri?error=Terjadi+kesalahan'); }
+  });
+};
+
+exports.jurusanGaleriDelete = async (req, res) => {
+  await db.query('DELETE FROM jurusan_galeri WHERE id=? AND jurusan=?', [req.params.id, req.session.portalJurusan]);
+  res.redirect('/jurusan-portal/galeri?success=3');
 };

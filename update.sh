@@ -89,6 +89,15 @@ async function migrate() {
     'ALTER TABLE halaman ADD COLUMN IF NOT EXISTS subtitle VARCHAR(500) DEFAULT NULL AFTER judul',
     'ALTER TABLE media_sosial ADD COLUMN IF NOT EXISTS thumbnail VARCHAR(255) DEFAULT NULL',
     'ALTER TABLE jurusan ADD COLUMN IF NOT EXISTS deskripsi_lengkap TEXT DEFAULT NULL',
+    \`CREATE TABLE IF NOT EXISTS jurusan_galeri (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      jurusan VARCHAR(100) NOT NULL,
+      judul VARCHAR(255) NOT NULL,
+      gambar VARCHAR(255) NOT NULL,
+      keterangan VARCHAR(255) DEFAULT NULL,
+      urutan INT DEFAULT 0,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4\`,
     \`CREATE TABLE IF NOT EXISTS jurusan_berita (
       id INT AUTO_INCREMENT PRIMARY KEY,
       jurusan VARCHAR(100) NOT NULL,
