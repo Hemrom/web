@@ -27,10 +27,14 @@ const strictImageFilter = (req, file, cb) => {
     return cb(new Error('Hanya file gambar yang diizinkan (jpg, png, gif, webp)'));
   }
 
+  // Cegah double extension berbahaya: file.php.jpg — hanya tolak jika ext kedua adalah script
+  const DANGEROUS_EXT = new Set(['.php', '.js', '.exe', '.sh', '.py', '.rb', '.asp', '.aspx', '.jsp']);
   const basename = path.basename(file.originalname, ext);
-  if (path.extname(basename)) {
+  const secondExt = path.extname(basename).toLowerCase();
+  if (secondExt && DANGEROUS_EXT.has(secondExt)) {
     return cb(new Error('Nama file tidak valid'));
   }
+
   cb(null, true);
 };
 
