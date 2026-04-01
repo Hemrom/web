@@ -8,53 +8,102 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%); min-height: 100vh; display: flex; align-items: center; }
-        .login-card { background: white; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); padding: 2.5rem; max-width: 420px; width: 100%; }
-        .login-logo { width: 72px; height: 72px; object-fit: contain; border-radius: 12px; }
-        .btn-login { background: linear-gradient(135deg, #0ea5e9, #0369a1); border: none; padding: 0.75rem; font-weight: 600; }
-        .btn-login:hover { background: linear-gradient(135deg, #0284c7, #075985); }
-        .form-control:focus { border-color: #0ea5e9; box-shadow: 0 0 0 0.2rem rgba(14,165,233,.2); }
+        body { background: linear-gradient(135deg, #0f172a 0%, #0c4a6e 100%); min-height: 100vh; display: flex; align-items: center; }
+        .login-card { border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.35); border: none; }
+        .logo-side {
+            background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);
+            display: flex; align-items: center; justify-content: center;
+            padding: 3rem 2rem; min-height: 300px;
+        }
+        .logo-box {
+            background: rgba(255,255,255,.12); border-radius: 20px; padding: 2rem 1.5rem;
+            text-align: center; width: 100%; backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,.2);
+        }
+        .logo-box img { width: 90px; height: 90px; object-fit: contain; border-radius: 12px; margin-bottom: 1rem; background: white; padding: 6px; }
+        .logo-fallback { width: 90px; height: 90px; background: rgba(255,255,255,.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: white; font-size: 2.5rem; }
+        .school-name { font-size: 1.1rem; font-weight: 700; color: white; margin-bottom: .25rem; }
+        .school-sub { font-size: .8rem; color: rgba(255,255,255,.75); margin-bottom: .75rem; }
+        .guru-badge { background: rgba(255,255,255,.2); color: white; padding: .35rem .9rem; border-radius: 20px; font-size: .75rem; font-weight: 600; border: 1px solid rgba(255,255,255,.3); }
+
+        /* Mobile logo */
+        .mobile-logo { display: none; background: linear-gradient(135deg,#0ea5e9,#0369a1); padding: 1.5rem; text-align: center; }
+        .mobile-logo img { width: 60px; height: 60px; object-fit: contain; border-radius: 10px; background: white; padding: 4px; margin-bottom: .5rem; }
+        @media (max-width: 991px) {
+            .logo-side { display: none !important; }
+            .mobile-logo { display: block; }
+        }
+
+        .form-control:focus { border-color: #0ea5e9; box-shadow: 0 0 0 .2rem rgba(14,165,233,.2); }
+        .btn-login { background: linear-gradient(135deg,#0ea5e9,#0369a1); border: none; font-weight: 600; padding: .75rem; }
+        .btn-login:hover { background: linear-gradient(135deg,#0284c7,#075985); }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-12">
-            <div class="login-card mx-auto">
-                <div class="text-center mb-4">
-                    <img src="/uploads/logo-sekolah.png" class="login-logo mb-3" alt="Logo" onerror="this.style.display='none'">
-                    <h4 class="fw-bold text-dark mb-1">Portal Guru</h4>
-                    <p class="text-muted small">SMKN 1 Kras — Masuk dengan akun guru Anda</p>
+<div class="container py-4">
+    <div class="row justify-content-center align-items-center" style="min-height:calc(100vh - 2rem);">
+        <div class="col-xl-9 col-lg-11 col-md-10 col-sm-12">
+            <div class="card login-card">
+                <!-- Mobile logo -->
+                <div class="mobile-logo">
+                    <img src="/uploads/logo-sekolah.png" alt="Logo" onerror="this.style.display='none'">
+                    <div style="color:white;font-weight:700;font-size:1rem;">SMK Negeri 1 Kras</div>
+                    <div style="color:rgba(255,255,255,.75);font-size:.75rem;">Portal Guru</div>
                 </div>
-                <% if (error) { %>
-                <div class="alert alert-danger py-2 small"><i class="fas fa-exclamation-circle me-1"></i><%= error %></div>
-                <% } %>
-                <form method="POST" action="/guru/login">
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold small">Username</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-user text-muted"></i></span>
-                            <input type="text" name="username" class="form-control" placeholder="Username guru" required autofocus>
+                <div class="card-body p-0">
+                    <div class="row g-0">
+                        <!-- Kiri: Logo (desktop) -->
+                        <div class="col-lg-5 logo-side">
+                            <div class="logo-box">
+                                <img src="/uploads/logo-sekolah.png" alt="Logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                                <div class="logo-fallback" style="display:none;"><i class="fas fa-chalkboard-teacher"></i></div>
+                                <div class="school-name">SMK Negeri 1 Kras</div>
+                                <div class="school-sub">Kediri, Jawa Timur</div>
+                                <span class="guru-badge"><i class="fas fa-chalkboard-teacher me-1"></i>PORTAL GURU</span>
+                            </div>
+                        </div>
+                        <!-- Kanan: Form -->
+                        <div class="col-lg-7 bg-white">
+                            <div class="p-5">
+                                <div class="text-center mb-4">
+                                    <h4 class="fw-bold text-dark mb-1">Login Guru</h4>
+                                    <p class="text-muted small">Masuk dengan akun guru Anda</p>
+                                </div>
+                                <% if (error) { %>
+                                <div class="alert alert-danger py-2 small"><i class="fas fa-exclamation-circle me-1"></i><%= error %></div>
+                                <% } %>
+                                <form method="POST" action="/guru/login">
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold small">Username</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light"><i class="fas fa-user text-muted"></i></span>
+                                            <input type="text" name="username" class="form-control" placeholder="Username guru" required autofocus>
+                                        </div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label fw-semibold small">Password</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light"><i class="fas fa-lock text-muted"></i></span>
+                                            <input type="password" name="password" class="form-control" placeholder="Password" required>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-login btn-primary w-100 text-white">
+                                        <i class="fas fa-sign-in-alt me-2"></i>Masuk
+                                    </button>
+                                </form>
+                                <hr class="my-4">
+                                <div class="text-center">
+                                    <a href="/" class="text-muted small"><i class="fas fa-arrow-left me-1"></i>Kembali ke Website</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="mb-4">
-                        <label class="form-label fw-semibold small">Password</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-lock text-muted"></i></span>
-                            <input type="password" name="password" class="form-control" placeholder="Password" required>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-login btn-primary w-100 text-white">
-                        <i class="fas fa-sign-in-alt me-2"></i>Masuk
-                    </button>
-                </form>
-                <div class="text-center mt-3">
-                    <a href="/" class="text-muted small"><i class="fas fa-arrow-left me-1"></i>Kembali ke Website</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
