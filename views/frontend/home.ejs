@@ -990,12 +990,13 @@
     </section>
 
     <!-- Alumni Section -->
-    <% if (alumniHome && alumniHome.length > 0) { %>
     <section style="padding:5rem 0;background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%);">
         <div class="container">
             <h2 style="font-size:2rem;font-weight:800;text-align:center;color:white;margin-bottom:.5rem;">Cerita Alumni</h2>
             <p style="text-align:center;color:rgba(255,255,255,.85);margin-bottom:3rem;">Pengalaman beberapa alumni terbaik kami</p>
-            <div class="row g-4 justify-content-center">
+
+            <% if (alumniHome && alumniHome.length > 0) { %>
+            <div class="row g-4 justify-content-center mb-4">
                 <% alumniHome.forEach(function(a) { %>
                 <div class="col-lg-4 col-md-6">
                     <div style="background:white;border-radius:20px;padding:1.5rem;box-shadow:0 4px 20px rgba(0,0,0,.1);height:100%;display:flex;flex-direction:column;">
@@ -1027,17 +1028,29 @@
                 </div>
                 <% }) %>
             </div>
-            <div style="text-align:center;margin-top:2.5rem;">
-                <a href="/alumni" style="background:white;color:#d97706;font-weight:700;padding:.9rem 2.5rem;border-radius:50px;text-decoration:none;display:inline-block;box-shadow:0 4px 15px rgba(0,0,0,.15);transition:all .3s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+            <% } else { %>
+            <!-- Belum ada alumni — tampilkan ajakan daftar -->
+            <div style="text-align:center;margin-bottom:2.5rem;">
+                <div style="background:rgba(255,255,255,.15);border-radius:20px;padding:2.5rem;max-width:500px;margin:0 auto;">
+                    <i class="fas fa-user-graduate" style="font-size:3rem;color:white;opacity:.8;margin-bottom:1rem;display:block;"></i>
+                    <p style="color:white;font-size:1.1rem;font-weight:500;margin-bottom:0;">Jadilah alumni pertama yang berbagi cerita sukses!</p>
+                </div>
+            </div>
+            <% } %>
+
+            <div style="text-align:center;">
+                <a href="/alumni" style="background:white;color:#d97706;font-weight:700;padding:.9rem 2rem;border-radius:50px;text-decoration:none;display:inline-block;box-shadow:0 4px 15px rgba(0,0,0,.15);margin:.3rem;transition:all .3s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
                     <i class="fas fa-users me-2"></i>Lihat Semua Alumni
                 </a>
-                <a href="/alumni/daftar" style="background:rgba(255,255,255,.2);color:white;font-weight:700;padding:.9rem 2.5rem;border-radius:50px;text-decoration:none;display:inline-block;margin-left:1rem;border:2px solid rgba(255,255,255,.5);transition:all .3s;" onmouseover="this.style.background='rgba(255,255,255,.3)'" onmouseout="this.style.background='rgba(255,255,255,.2)'">
+                <a href="/alumni/daftar" style="background:rgba(255,255,255,.2);color:white;font-weight:700;padding:.9rem 2rem;border-radius:50px;text-decoration:none;display:inline-block;border:2px solid rgba(255,255,255,.6);margin:.3rem;transition:all .3s;" onmouseover="this.style.background='rgba(255,255,255,.35)'" onmouseout="this.style.background='rgba(255,255,255,.2)'">
                     <i class="fas fa-user-plus me-2"></i>Daftar Alumni
+                </a>
+                <a href="/alumni/update" style="background:rgba(255,255,255,.1);color:white;font-weight:600;padding:.9rem 2rem;border-radius:50px;text-decoration:none;display:inline-block;border:2px solid rgba(255,255,255,.3);margin:.3rem;font-size:.9rem;transition:all .3s;" onmouseover="this.style.background='rgba(255,255,255,.2)'" onmouseout="this.style.background='rgba(255,255,255,.1)'">
+                    <i class="fas fa-edit me-2"></i>Update Biodata
                 </a>
             </div>
         </div>
     </section>
-    <% } %>
 
     <!-- Link Terkait Section -->
     <% if (linkTerkait && linkTerkait.length > 0) { %>
