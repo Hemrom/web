@@ -77,11 +77,13 @@ exports.home = async (req, res) => {
       [jurusan],
       menuItems,
       mediaSosialFooter,
-      [linkTerkait]
+      [linkTerkait],
+      [alumniHome]
     ] = await Promise.all([
       getProfilSekolah(),
       db.query('SELECT id, judul, slug, gambar, konten, kategori, created_at FROM berita WHERE status = "published" ORDER BY created_at DESC LIMIT 6'),
       db.query('SELECT judul, MIN(gambar) as gambar, COUNT(*) as jumlah FROM galeri GROUP BY judul ORDER BY MAX(created_at) DESC LIMIT 6'),
+      db.query("SELECT id,nama,tahun_lulus,jurusan,pekerjaan,perusahaan,foto,cerita FROM alumni WHERE status='disetujui' ORDER BY RAND() LIMIT 6"),
       db.query('SELECT * FROM slider WHERE status = "aktif" ORDER BY urutan ASC, created_at DESC'),
       db.query("SELECT id, kode, nama, deskripsi, icon, warna, warna_badge, warna_teks_badge FROM jurusan WHERE status = 'aktif' ORDER BY kode ASC"),
       getMenuItems(),
@@ -91,7 +93,7 @@ exports.home = async (req, res) => {
 
     res.render('frontend/home', {
       title: 'Beranda', currentPage: 'home',
-      profil, berita: beritaTerbaru, galeri, slider, jurusan, menuItems, mediaSosialFooter, linkTerkait
+      profil, berita: beritaTerbaru, galeri, slider, jurusan, menuItems, mediaSosialFooter, linkTerkait, alumniHome
     });
   } catch (error) {
     console.error(error);

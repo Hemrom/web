@@ -14,6 +14,7 @@ const dataSekolahController = require('../controllers/dataSekolahController');
 const kontrolWebsiteController = require('../controllers/kontrolWebsiteController');
 const menuController = require('../controllers/menuController');
 const linkTerkaitController = require('../controllers/linkTerkaitController');
+const alumniController = require('../controllers/alumniController');
 
 const { loginLimiter, uploadLimiter, formLimiter } = require('../middleware/security');
 const { csrfProtect } = require('../middleware/csrf');
@@ -115,6 +116,14 @@ router.post('/halaman/create', isAuthenticated, csrfProtect, halamanController.c
 router.get('/halaman/edit/:id', isAuthenticated, validateIdParam, halamanController.editPage);
 router.post('/halaman/edit/:id', isAuthenticated, csrfProtect, validateIdParam, halamanController.update);
 router.post('/halaman/delete/:id', isAuthenticated, csrfProtect, validateIdParam, halamanController.delete);
+
+// Alumni
+router.get('/alumni', isAuthenticated, alumniController.adminIndex);
+router.get('/alumni/edit/:id', isAuthenticated, validateIdParam, alumniController.adminEditPage);
+router.post('/alumni/edit/:id', isAuthenticated, csrfProtect, validateIdParam, alumniController.adminUpdate);
+router.post('/alumni/setujui/:id', isAuthenticated, csrfProtect, validateIdParam, alumniController.adminSetujui);
+router.post('/alumni/tolak/:id', isAuthenticated, csrfProtect, validateIdParam, alumniController.adminTolak);
+router.post('/alumni/delete/:id', isAuthenticated, csrfProtect, validateIdParam, alumniController.adminDelete);
 
 // Link Terkait
 router.get('/link-terkait', isAuthenticated, linkTerkaitController.index);

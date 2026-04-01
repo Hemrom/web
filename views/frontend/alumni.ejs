@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Website Sekolah</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/theme.css">
+    <style>
+        :root { --primary:#0ea5e9; --primary-dark:#0284c7; --secondary:#0369a1; --gray-50:#f8fafc; --gray-100:#f1f5f9; --gray-600:#475569; --gray-700:#334155; --gray-800:#1e293b; --gray-900:#0f172a; }
+        * { font-family:'Inter',sans-serif; box-sizing:border-box; margin:0; padding:0; }
+        body { color:var(--gray-700); line-height:1.6; }
+        .page-header { background:linear-gradient(135deg,var(--primary) 0%,var(--secondary) 100%); padding:10rem 0 5rem; color:white; text-align:center; }
+        .page-title { font-size:3rem; font-weight:800; }
+        .page-subtitle { font-size:1.2rem; opacity:.9; margin-top:.5rem; }
+        .content-section { padding:5rem 0; background:var(--gray-50); }
+
+        /* Alumni Card */
+        .alumni-card {
+            background:white; border-radius:20px; padding:2rem 1.5rem;
+            box-shadow:0 4px 20px rgba(14,165,233,.08); border:1px solid var(--gray-100);
+            transition:all .3s; text-align:center; height:100%;
+        }
+        .alumni-card:hover { transform:translateY(-8px); box-shadow:0 16px 40px rgba(14,165,233,.15); }
+        .alumni-foto {
+            width:90px; height:90px; border-radius:50%; object-fit:cover; object-position:top;
+            border:3px solid #e0f2fe; margin:0 auto 1rem; display:block;
+        }
+        .alumni-foto-placeholder {
+            width:90px; height:90px; border-radius:50%;
+            background:linear-gradient(135deg,var(--primary),var(--secondary));
+            display:flex; align-items:center; justify-content:center;
+            margin:0 auto 1rem; color:white; font-size:2rem;
+        }
+        .alumni-nama { font-size:1rem; font-weight:700; color:var(--gray-800); margin-bottom:.25rem; }
+        .alumni-tahun { font-size:.8rem; background:#e0f2fe; color:var(--primary-dark); padding:.2rem .7rem; border-radius:20px; font-weight:600; display:inline-block; margin-bottom:.5rem; }
+        .alumni-jurusan { font-size:.8rem; color:var(--gray-600); margin-bottom:.5rem; }
+        .alumni-pekerjaan { font-size:.85rem; color:var(--gray-700); font-weight:500; }
+        .alumni-perusahaan { font-size:.8rem; color:var(--gray-600); }
+        .alumni-kota { font-size:.78rem; color:var(--gray-600); }
+        .alumni-cerita { font-size:.82rem; color:var(--gray-600); font-style:italic; margin-top:.75rem; line-height:1.5; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+        .alumni-sosmed a { color:var(--gray-600); margin:0 .3rem; font-size:1rem; transition:color .2s; }
+        .alumni-sosmed a:hover { color:var(--primary); }
+
+        /* Filter */
+        .filter-bar { background:white; border-radius:16px; padding:1.5rem; box-shadow:0 4px 20px rgba(14,165,233,.06); margin-bottom:2rem; }
+        .filter-bar select, .filter-bar input { border-radius:10px; border:1px solid #e2e8f0; padding:.6rem 1rem; }
+
+        /* CTA Banner */
+        .cta-alumni { background:linear-gradient(135deg,#f59e0b,#d97706); border-radius:20px; padding:3rem 2rem; color:white; text-align:center; margin-bottom:3rem; }
+        .cta-alumni h3 { font-size:1.8rem; font-weight:700; margin-bottom:.75rem; }
+        .btn-cta { background:white; color:#d97706; font-weight:700; padding:.75rem 2rem; border-radius:50px; text-decoration:none; display:inline-block; transition:all .3s; }
+        .btn-cta:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(0,0,0,.2); color:#d97706; text-decoration:none; }
+
+        /* Stats */
+        .stat-pill { background:white; border-radius:50px; padding:.5rem 1.5rem; display:inline-flex; align-items:center; gap:.5rem; font-weight:600; color:var(--gray-700); box-shadow:0 2px 10px rgba(0,0,0,.08); margin:.25rem; }
+        .stat-pill i { color:var(--primary); }
+    </style>
+</head>
+<body>
+    <%- include('partials/navbar') %>
+
+    <section class="page-header">
+        <div class="container">
+            <h1 class="page-title"><i class="fas fa-user-graduate me-3"></i>Alumni</h1>
+            <p class="page-subtitle">Kebanggaan kami yang telah meraih kesuksesan</p>
+            <div class="mt-3">
+                <span class="stat-pill"><i class="fas fa-users"></i> <%= alumni.length %> Alumni Terdaftar</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="content-section">
+        <div class="container">
+
+            <!-- CTA Daftar -->
+            <div class="cta-alumni">
+                <h3><i class="fas fa-star me-2"></i>Kamu Alumni Kami?</h3>
+                <p style="opacity:.9;margin-bottom:1.5rem;">Daftarkan dirimu dan bagikan cerita suksesmu untuk menginspirasi adik-adik kelas!</p>
+                <a href="/alumni/daftar" class="btn-cta"><i class="fas fa-user-plus me-2"></i>Daftar Sekarang</a>
+                <a href="/alumni/update" class="btn-cta ms-2" style="margin-left:.5rem;"><i class="fas fa-edit me-2"></i>Update Biodata</a>
+            </div>
+
+            <!-- Filter -->
+            <div class="filter-bar">
+                <div class="row g-3 align-items-center">
+                    <div class="col-md-4">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Cari nama alumni...">
+                    </div>
+                    <div class="col-md-3">
+                        <select id="filterTahun" class="form-select">
+                            <option value="">Semua Angkatan</option>
+                            <% const tahunList = [...new Set(alumni.map(a=>a.tahun_lulus).filter(Boolean))].sort((a,b)=>b-a); %>
+                            <% tahunList.forEach(t => { %><option value="<%= t %>">Angkatan <%= t %></option><% }) %>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select id="filterJurusan" class="form-select">
+                            <option value="">Semua Jurusan</option>
+                            <% const jurusanList = [...new Set(alumni.map(a=>a.jurusan).filter(Boolean))]; %>
+                            <% jurusanList.forEach(j => { %><option value="<%= j %>"><%= j %></option><% }) %>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <span id="countLabel" class="text-muted small"><%= alumni.length %> alumni</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grid Alumni -->
+            <div class="row g-4" id="alumniGrid">
+                <% if (alumni.length === 0) { %>
+                <div class="col-12 text-center py-5">
+                    <i class="fas fa-user-graduate fa-4x text-muted mb-3 d-block"></i>
+                    <h4 class="text-muted">Belum ada alumni yang terdaftar</h4>
+                    <a href="/alumni/daftar" class="btn btn-primary mt-3">Jadilah yang Pertama</a>
+                </div>
+                <% } else { %>
+                <% alumni.forEach(function(a) { %>
+                <div class="col-lg-3 col-md-4 col-sm-6 alumni-item"
+                     data-nama="<%= (a.nama||'').toLowerCase() %>"
+                     data-tahun="<%= a.tahun_lulus||'' %>"
+                     data-jurusan="<%= (a.jurusan||'').toLowerCase() %>">
+                    <div class="alumni-card">
+                        <% if (a.foto) { %>
+                        <img src="/uploads/<%= a.foto %>" class="alumni-foto" alt="<%= a.nama %>">
+                        <% } else { %>
+                        <div class="alumni-foto-placeholder"><i class="fas fa-user"></i></div>
+                        <% } %>
+                        <div class="alumni-nama"><%= a.nama %></div>
+                        <% if (a.tahun_lulus) { %><span class="alumni-tahun">Angkatan <%= a.tahun_lulus %></span><% } %>
+                        <% if (a.jurusan) { %><div class="alumni-jurusan"><i class="fas fa-graduation-cap me-1"></i><%= a.jurusan %></div><% } %>
+                        <% if (a.pekerjaan) { %><div class="alumni-pekerjaan"><i class="fas fa-briefcase me-1" style="color:var(--primary)"></i><%= a.pekerjaan %></div><% } %>
+                        <% if (a.perusahaan) { %><div class="alumni-perusahaan"><%= a.perusahaan %></div><% } %>
+                        <% if (a.kota) { %><div class="alumni-kota"><i class="fas fa-map-marker-alt me-1"></i><%= a.kota %></div><% } %>
+                        <% if (a.cerita) { %><div class="alumni-cerita">"<%= a.cerita %>"</div><% } %>
+                        <% if (a.instagram || a.linkedin) { %>
+                        <div class="alumni-sosmed mt-2">
+                            <% if (a.instagram) { %><a href="https://instagram.com/<%= a.instagram.replace('@','') %>" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a><% } %>
+                            <% if (a.linkedin) { %><a href="<%= a.linkedin %>" target="_blank" rel="noopener"><i class="fab fa-linkedin"></i></a><% } %>
+                        </div>
+                        <% } %>
+                    </div>
+                </div>
+                <% }) %>
+                <% } %>
+            </div>
+        </div>
+    </section>
+
+    <%- include('partials/footer') %>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    function filterAlumni() {
+        const q = document.getElementById('searchInput').value.toLowerCase();
+        const tahun = document.getElementById('filterTahun').value;
+        const jurusan = document.getElementById('filterJurusan').value.toLowerCase();
+        let count = 0;
+        document.querySelectorAll('.alumni-item').forEach(el => {
+            const nama = el.dataset.nama || '';
+            const t = el.dataset.tahun || '';
+            const j = el.dataset.jurusan || '';
+            const show = (!q || nama.includes(q)) && (!tahun || t === tahun) && (!jurusan || j.includes(jurusan));
+            el.style.display = show ? '' : 'none';
+            if (show) count++;
+        });
+        document.getElementById('countLabel').textContent = count + ' alumni';
+    }
+    document.getElementById('searchInput').addEventListener('input', filterAlumni);
+    document.getElementById('filterTahun').addEventListener('change', filterAlumni);
+    document.getElementById('filterJurusan').addEventListener('change', filterAlumni);
+    $(window).scroll(function() { if($(window).scrollTop()>50) $('.navbar-modern').addClass('scrolled'); else $('.navbar-modern').removeClass('scrolled'); });
+    </script>
+</body>
+</html>

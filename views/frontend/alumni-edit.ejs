@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Website Sekolah</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/theme.css">
+    <style>
+        * { font-family:'Inter',sans-serif; box-sizing:border-box; }
+        body { background:#f8fafc; }
+        .reg-wrapper { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:6rem 1rem 3rem; }
+        .reg-card { background:white; border-radius:24px; box-shadow:0 8px 40px rgba(14,165,233,.12); padding:3rem; max-width:700px; width:100%; }
+        .reg-header { text-align:center; margin-bottom:2rem; }
+        .reg-header .icon { width:80px; height:80px; background:linear-gradient(135deg,#0ea5e9,#0369a1); border-radius:20px; display:flex; align-items:center; justify-content:center; margin:0 auto 1rem; color:white; font-size:2rem; }
+        .form-label { font-weight:600; color:#334155; font-size:.9rem; }
+        .form-control, .form-select { border-radius:10px; border:1px solid #e2e8f0; padding:.7rem 1rem; }
+        .form-control:focus { border-color:#0ea5e9; box-shadow:0 0 0 3px rgba(14,165,233,.15); }
+        .btn-submit { background:linear-gradient(135deg,#0ea5e9,#0369a1); color:white; border:none; border-radius:50px; padding:.9rem 3rem; font-weight:700; font-size:1rem; width:100%; transition:all .3s; }
+        .btn-submit:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(14,165,233,.4); color:white; }
+        .section-divider { font-size:.8rem; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:.1em; margin:1.5rem 0 1rem; padding-bottom:.5rem; border-bottom:2px solid #f1f5f9; }
+        .foto-current { width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid #e0f2fe; }
+    </style>
+</head>
+<body>
+    <%- include('partials/navbar') %>
+
+    <div class="reg-wrapper">
+        <div class="reg-card">
+            <div class="reg-header">
+                <div class="icon"><i class="fas fa-edit"></i></div>
+                <h2 class="fw-bold" style="color:#1e293b;">Update Biodata</h2>
+                <p class="text-muted">Perbarui informasi profil alumni kamu</p>
+            </div>
+
+            <% if (success) { %>
+            <div class="alert alert-success rounded-3 text-center">
+                <i class="fas fa-check-circle fa-2x d-block mb-2"></i>
+                <strong>Biodata berhasil diperbarui!</strong><br>
+                <small>Data kamu sedang menunggu verifikasi ulang dari admin.</small>
+                <div class="mt-2"><a href="/alumni" class="btn btn-sm btn-success">Lihat Halaman Alumni</a></div>
+            </div>
+            <% } %>
+
+            <% if (error) { %>
+            <div class="alert alert-danger rounded-3"><i class="fas fa-exclamation-circle me-2"></i><%= error %></div>
+            <% } %>
+
+            <form method="POST" action="/alumni/edit/<%= alumni.token %>" enctype="multipart/form-data">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+                <div class="text-center mb-3">
+                    <% if (alumni.foto) { %>
+                    <img src="/uploads/<%= alumni.foto %>" class="foto-current" id="fotoPreview" alt="Foto">
+                    <% } else { %>
+                    <div style="width:100px;height:100px;border-radius:50%;background:#f1f5f9;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:2rem;margin:0 auto;" id="fotoPreview">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <% } %>
+                    <div class="mt-2">
+                        <label for="fotoInput" class="btn btn-sm btn-outline-secondary rounded-pill">
+                            <i class="fas fa-camera me-1"></i>Ganti Foto
+                        </label>
+                        <input type="file" id="fotoInput" name="foto" accept=".jpg,.jpeg,.png,.webp" class="d-none">
+                    </div>
+                </div>
+
+                <div class="section-divider">Data Diri</div>
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label class="form-label">Nama Lengkap *</label>
+                        <input type="text" class="form-control" name="nama" value="<%= alumni.nama %>" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">NIS</label>
+                        <input type="text" class="form-control" name="nis" value="<%= alumni.nis||'' %>">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Tahun Lulus *</label>
+                        <input type="number" class="form-control" name="tahun_lulus" value="<%= alumni.tahun_lulus||'' %>" required min="1990" max="2099">
+                    </div>
+                    <div class="col-md-8">
+                        <label class="form-label">Jurusan</label>
+                        <input type="text" class="form-control" name="jurusan" value="<%= alumni.jurusan||'' %>">
+                    </div>
+                </div>
+
+                <div class="section-divider">Pekerjaan & Domisili</div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Pekerjaan / Profesi</label>
+                        <input type="text" class="form-control" name="pekerjaan" value="<%= alumni.pekerjaan||'' %>">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Perusahaan / Instansi</label>
+                        <input type="text" class="form-control" name="perusahaan" value="<%= alumni.perusahaan||'' %>">
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Kota Domisili</label>
+                        <input type="text" class="form-control" name="kota" value="<%= alumni.kota||'' %>">
+                    </div>
+                </div>
+
+                <div class="section-divider">Kontak & Media Sosial</div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" name="email" value="<%= alumni.email||'' %>">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Telepon / WhatsApp</label>
+                        <input type="text" class="form-control" name="telepon" value="<%= alumni.telepon||'' %>">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Instagram</label>
+                        <div class="input-group">
+                            <span class="input-group-text">@</span>
+                            <input type="text" class="form-control" name="instagram" value="<%= alumni.instagram||'' %>">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">LinkedIn</label>
+                        <input type="url" class="form-control" name="linkedin" value="<%= alumni.linkedin||'' %>">
+                    </div>
+                </div>
+
+                <div class="section-divider">Cerita Alumni</div>
+                <div class="mb-4">
+                    <label class="form-label">Pengalaman / Cerita Terbaik</label>
+                    <textarea class="form-control" name="cerita" rows="4"><%= alumni.cerita||'' %></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit"><i class="fas fa-save me-2"></i>Simpan Perubahan</button>
+                <div class="text-center mt-3">
+                    <a href="/alumni" class="text-muted small">← Kembali ke halaman alumni</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    document.getElementById('fotoInput').addEventListener('change', function() {
+        const file = this.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = e => {
+            const prev = document.getElementById('fotoPreview');
+            prev.outerHTML = `<img src="${e.target.result}" class="foto-current" id="fotoPreview" alt="Foto">`;
+        };
+        reader.readAsDataURL(file);
+    });
+    </script>
+</body>
+</html>

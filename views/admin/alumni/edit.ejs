@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Admin Panel</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <%- include('../partials/sidebar') %>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <%- include('../partials/topbar', { user }) %>
+            <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Edit Data Alumni</h1>
+                    <a href="/admin/alumni" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left fa-sm"></i> Kembali</a>
+                </div>
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <form method="POST" action="/admin/alumni/edit/<%= alumni.id %>" enctype="multipart/form-data">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <div class="row">
+                                <div class="col-md-3 text-center mb-4">
+                                    <% if (alumni.foto) { %>
+                                    <img src="/uploads/<%= alumni.foto %>" id="fotoPreview" style="width:120px;height:120px;border-radius:50%;object-fit:cover;object-position:top;border:3px solid #4e73df;margin-bottom:1rem;">
+                                    <% } else { %>
+                                    <div id="fotoPreview" style="width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,#4e73df,#224abe);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">
+                                        <i class="fas fa-user fa-3x text-white"></i>
+                                    </div>
+                                    <% } %>
+                                    <input type="file" class="form-control-file" name="foto" accept=".jpg,.jpeg,.png,.webp" id="fotoInput">
+                                    <small class="text-muted">Foto profil alumni</small>
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Nama Lengkap *</label>
+                                                <input type="text" class="form-control" name="nama" value="<%= alumni.nama %>" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>NIS</label>
+                                                <input type="text" class="form-control" name="nis" value="<%= alumni.nis || '' %>">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>Tahun Lulus *</label>
+                                                <input type="number" class="form-control" name="tahun_lulus" value="<%= alumni.tahun_lulus || '' %>" min="1990" max="2099" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Jurusan</label>
+                                                <input type="text" class="form-control" name="jurusan" value="<%= alumni.jurusan || '' %>">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Pekerjaan / Profesi</label>
+                                                <input type="text" class="form-control" name="pekerjaan" value="<%= alumni.pekerjaan || '' %>">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Perusahaan / Instansi</label>
+                                                <input type="text" class="form-control" name="perusahaan" value="<%= alumni.perusahaan || '' %>">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Kota Domisili</label>
+                                                <input type="text" class="form-control" name="kota" value="<%= alumni.kota || '' %>">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Email</label>
+                                                <input type="email" class="form-control" name="email" value="<%= alumni.email || '' %>">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Telepon</label>
+                                                <input type="text" class="form-control" name="telepon" value="<%= alumni.telepon || '' %>">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Instagram</label>
+                                                <input type="text" class="form-control" name="instagram" value="<%= alumni.instagram || '' %>" placeholder="@username">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label>LinkedIn URL</label>
+                                                <input type="url" class="form-control" name="linkedin" value="<%= alumni.linkedin || '' %>" placeholder="https://linkedin.com/in/...">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label>Cerita / Pengalaman Terbaik</label>
+                                                <textarea class="form-control" name="cerita" rows="4" placeholder="Ceritakan pengalaman terbaik selama di sekolah atau setelah lulus..."><%= alumni.cerita || '' %></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Status</label>
+                                                <select class="form-control" name="status">
+                                                    <option value="pending" <%= alumni.status==='pending'?'selected':'' %>>Pending</option>
+                                                    <option value="disetujui" <%= alumni.status==='disetujui'?'selected':'' %>>Disetujui</option>
+                                                    <option value="ditolak" <%= alumni.status==='ditolak'?'selected':'' %>>Ditolak</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i>Simpan Perubahan</button>
+                            <a href="/admin/alumni" class="btn btn-secondary ml-2">Batal</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%- include('../partials/footer') %>
+    </div>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="/assets/js/sb-admin-2.min.js"></script>
+<script>
+document.getElementById('fotoInput').addEventListener('change', function() {
+    const file = this.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+        const prev = document.getElementById('fotoPreview');
+        prev.outerHTML = `<img src="${e.target.result}" id="fotoPreview" style="width:120px;height:120px;border-radius:50%;object-fit:cover;border:3px solid #4e73df;margin-bottom:1rem;">`;
+    };
+    reader.readAsDataURL(file);
+});
+</script>
+</body>
+</html>
