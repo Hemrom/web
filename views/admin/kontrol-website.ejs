@@ -317,6 +317,7 @@ document.querySelectorAll('.preset-card').forEach(function(card){
     tx.addEventListener('input',function(){cp.value=tx.value;});
 });
 document.getElementById('br_range').addEventListener('input',function(){document.getElementById('br_val').textContent=this.value;});
+document.querySelectorAll('.preset-card').forEach(function(c){c.addEventListener('click',function(){setTimeout(function(){document.querySelector('form[action="/admin/kontrol-website/tampilan"]').submit();},100);});});
 </script>
 </body>
 </html>
