@@ -5,6 +5,7 @@ const { createUpload } = require('../middleware/uploadSecurity');
 const { loginLimiter } = require('../middleware/security');
 
 const uploadSingle = createUpload('portal').single('gambar');
+const uploadPortalForm = createUpload('portal', { maxFiles: 5 }).single('gambar');
 
 // Helper: render portal view dengan csrfToken otomatis
 const portalRender = (res, req, view, data) => {

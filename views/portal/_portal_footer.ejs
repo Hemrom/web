@@ -19,7 +19,21 @@
 <script>
 $(document).ready(function(){
     if($('#dataTable').length) $('#dataTable').DataTable();
-    if($('#editor').length) $('#editor').summernote({height:300,lang:'id-ID'});
+    if($('#editor').length) $('#editor').summernote({
+        height: 350,
+        lang: 'id-ID',
+        toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+            ['fontname', ['fontname']],
+            ['fontsize', ['fontsize']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'hr']],
+            ['view', ['fullscreen', 'codeview', 'help']]
+        ]
+    });
 });
 </script>
 </body>
