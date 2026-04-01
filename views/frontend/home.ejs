@@ -1239,6 +1239,30 @@
                                 <div class="ratio ratio-16x9" style="border-radius:16px;overflow:hidden;">
                                     <iframe src="https://www.youtube.com/embed/<%= ytId %>?rel=0&modestbranding=1" allowfullscreen style="border:0;"></iframe>
                                 </div>
+                            <% } else if (featured.platform === 'instagram') { %>
+                                <!-- Instagram post: coba embed, reel pakai card -->
+                                <% const igPostId = (featured.embed_url.match(/instagram\.com\/(?:p|reel)\/([^\/\?]+)/)||[])[1]; %>
+                                <% const isReel = featured.embed_url.includes('/reel/'); %>
+                                <% if (igPostId && !isReel) { %>
+                                <div style="border-radius:16px;overflow:hidden;background:#fafafa;">
+                                    <iframe src="https://www.instagram.com/p/<%= igPostId %>/embed/" style="width:100%;min-height:420px;border:0;" scrolling="no" allowfullscreen></iframe>
+                                </div>
+                                <% } else { %>
+                                <!-- Reel atau tidak bisa embed: card dengan thumbnail -->
+                                <a href="<%= featured.embed_url %>" target="_blank" rel="noopener" style="display:block;text-decoration:none;">
+                                    <div style="background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);border-radius:16px;min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;">
+                                        <% if (featured.thumbnail) { %>
+                                        <img src="/uploads/<%= featured.thumbnail %>" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">
+                                        <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.4);"></div>
+                                        <% } %>
+                                        <div style="position:relative;z-index:1;text-align:center;padding:2rem;">
+                                            <div style="width:72px;height:72px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .75rem;"><i class="fab fa-instagram" style="font-size:2.2rem;color:white;"></i></div>
+                                            <div style="color:white;font-weight:700;margin-bottom:.75rem;text-shadow:0 1px 4px rgba(0,0,0,.5);"><%= featured.judul %></div>
+                                            <div style="background:rgba(255,255,255,.2);color:white;padding:.5rem 1.25rem;border-radius:50px;font-weight:600;font-size:.85rem;border:1px solid rgba(255,255,255,.35);display:inline-block;"><i class="fas fa-external-link-alt me-2"></i>Lihat di Instagram</div>
+                                        </div>
+                                    </div>
+                                </a>
+                                <% } %>
                             <% } else { %>
                                 <!-- Non-YouTube: card dengan thumbnail otomatis atau foto alternatif -->
                                 <%

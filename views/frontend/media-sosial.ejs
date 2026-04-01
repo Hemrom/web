@@ -346,6 +346,24 @@
                                         </a>
                                     </div>
                                     <% } %>
+                                <% } else if (item.platform === 'instagram') { %>
+                                    <% const igId2 = (item.embed_url.match(/instagram\.com\/(?:p|reel)\/([^\/\?]+)/)||[])[1]; %>
+                                    <% const isReel2 = item.embed_url.includes('/reel/'); %>
+                                    <% if (igId2 && !isReel2) { %>
+                                    <iframe src="https://www.instagram.com/p/<%= igId2 %>/embed/" style="width:100%;height:100%;border:0;" scrolling="no" allowfullscreen></iframe>
+                                    <% } else { %>
+                                    <a href="<%= item.embed_url %>" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;height:100%;text-decoration:none;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);position:relative;overflow:hidden;">
+                                        <% if (item.thumbnail) { %>
+                                        <img src="/uploads/<%= item.thumbnail %>" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">
+                                        <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.4);"></div>
+                                        <% } %>
+                                        <div style="text-align:center;padding:2rem;position:relative;z-index:1;">
+                                            <div style="width:64px;height:64px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .75rem;"><i class="fab fa-instagram" style="font-size:2rem;color:white;"></i></div>
+                                            <div style="color:white;font-weight:700;margin-bottom:.75rem;text-shadow:0 1px 4px rgba(0,0,0,.5);"><%= item.judul %></div>
+                                            <div style="background:rgba(255,255,255,.2);color:white;padding:.5rem 1.25rem;border-radius:50px;font-weight:600;font-size:.85rem;border:1px solid rgba(255,255,255,.35);display:inline-block;"><i class="fas fa-external-link-alt me-2"></i>Lihat di Instagram</div>
+                                        </div>
+                                    </a>
+                                    <% } %>
                                 <% } else { %>
                                     <%
                                     const bgMap2 = {instagram:'linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045)',facebook:'linear-gradient(135deg,#1877F2,#0d5dbf)',tiktok:'linear-gradient(135deg,#010101,#69C9D0)',twitter:'linear-gradient(135deg,#000,#333)',threads:'linear-gradient(135deg,#101010,#444)'};
