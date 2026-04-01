@@ -15,6 +15,7 @@ const kontrolWebsiteController = require('../controllers/kontrolWebsiteControlle
 const menuController = require('../controllers/menuController');
 const linkTerkaitController = require('../controllers/linkTerkaitController');
 const alumniController = require('../controllers/alumniController');
+const portalController = require('../controllers/portalController');
 
 const { loginLimiter, uploadLimiter, formLimiter } = require('../middleware/security');
 const { csrfProtect } = require('../middleware/csrf');
@@ -116,6 +117,20 @@ router.post('/halaman/create', isAuthenticated, csrfProtect, halamanController.c
 router.get('/halaman/edit/:id', isAuthenticated, validateIdParam, halamanController.editPage);
 router.post('/halaman/edit/:id', isAuthenticated, csrfProtect, validateIdParam, halamanController.update);
 router.post('/halaman/delete/:id', isAuthenticated, csrfProtect, validateIdParam, halamanController.delete);
+
+// Prestasi
+router.get('/prestasi', isAuthenticated, portalController.adminPrestasiIndex);
+router.get('/prestasi/create', isAuthenticated, portalController.adminPrestasiCreatePage);
+router.post('/prestasi/create', isAuthenticated, csrfProtect, portalController.adminPrestasiCreate);
+router.get('/prestasi/edit/:id', isAuthenticated, validateIdParam, portalController.adminPrestasiEditPage);
+router.post('/prestasi/edit/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminPrestasiUpdate);
+router.post('/prestasi/delete/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminPrestasiDelete);
+
+// Portal Users (BKK, OSIS, Jurusan)
+router.get('/portal-users', isAuthenticated, isAdmin, portalController.adminPortalUsers);
+router.post('/portal-users/create', isAuthenticated, isAdmin, csrfProtect, portalController.adminPortalUserCreate);
+router.post('/portal-users/delete/:id', isAuthenticated, isAdmin, csrfProtect, validateIdParam, portalController.adminPortalUserDelete);
+router.post('/portal-users/toggle/:id', isAuthenticated, isAdmin, csrfProtect, validateIdParam, portalController.adminPortalUserToggle);
 
 // Alumni
 router.get('/alumni', isAuthenticated, alumniController.adminIndex);

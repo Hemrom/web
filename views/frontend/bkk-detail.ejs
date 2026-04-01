@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Website Sekolah</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/theme.css">
+    <style>
+        *{font-family:'Inter',sans-serif;box-sizing:border-box;margin:0;padding:0;}
+        body{color:#334155;line-height:1.6;background:#f8fafc;}
+        .page-header{background:linear-gradient(135deg,#064e3b,#10b981);padding:10rem 0 4rem;color:white;text-align:center;}
+        .content-section{padding:5rem 0;}
+        .content-card{background:white;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.06);padding:3rem;}
+        .info-row{display:flex;align-items:center;gap:.75rem;padding:.75rem 0;border-bottom:1px solid #f1f5f9;}
+        .info-icon{width:36px;height:36px;background:#d1fae5;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#065f46;flex-shrink:0;}
+    </style>
+</head>
+<body>
+    <%- include('partials/navbar') %>
+    <section class="page-header">
+        <div class="container">
+            <h1 style="font-size:2.5rem;font-weight:800;"><%= lowongan.judul %></h1>
+            <p style="opacity:.85;margin-top:.5rem;font-size:1.1rem;"><%= lowongan.perusahaan %></p>
+        </div>
+    </section>
+    <section class="content-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-9">
+                    <div class="content-card">
+                        <% if (lowongan.gambar) { %><img src="/uploads/<%= lowongan.gambar %>" style="width:100%;border-radius:12px;margin-bottom:2rem;" alt="<%= lowongan.judul %>"><% } %>
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="info-row"><div class="info-icon"><i class="fas fa-building"></i></div><div><small style="color:#94a3b8;">Perusahaan</small><div style="font-weight:600;"><%= lowongan.perusahaan %></div></div></div>
+                                <% if (lowongan.lokasi) { %><div class="info-row"><div class="info-icon"><i class="fas fa-map-marker-alt"></i></div><div><small style="color:#94a3b8;">Lokasi</small><div style="font-weight:600;"><%= lowongan.lokasi %></div></div></div><% } %>
+                                <div class="info-row"><div class="info-icon"><i class="fas fa-tag"></i></div><div><small style="color:#94a3b8;">Kategori</small><div style="font-weight:600;"><%= lowongan.kategori %></div></div></div>
+                            </div>
+                            <div class="col-md-6">
+                                <% if (lowongan.deadline) { %><div class="info-row"><div class="info-icon"><i class="fas fa-clock"></i></div><div><small style="color:#94a3b8;">Deadline</small><div style="font-weight:600;color:#dc2626;"><%= new Date(lowongan.deadline).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}) %></div></div></div><% } %>
+                                <% if (lowongan.kontak) { %><div class="info-row"><div class="info-icon"><i class="fas fa-phone"></i></div><div><small style="color:#94a3b8;">Kontak</small><div style="font-weight:600;"><%= lowongan.kontak %></div></div></div><% } %>
+                            </div>
+                        </div>
+                        <% if (lowongan.deskripsi) { %><h5 style="font-weight:700;margin-bottom:1rem;">Deskripsi</h5><p style="line-height:1.8;margin-bottom:1.5rem;"><%= lowongan.deskripsi %></p><% } %>
+                        <% if (lowongan.persyaratan) { %><h5 style="font-weight:700;margin-bottom:1rem;">Persyaratan</h5><p style="line-height:1.8;white-space:pre-line;margin-bottom:1.5rem;"><%= lowongan.persyaratan %></p><% } %>
+                        <% if (lowongan.kontak) { %>
+                        <a href="<%= lowongan.kontak.startsWith('http')?lowongan.kontak:'https://wa.me/'+lowongan.kontak.replace(/[^0-9]/g,'') %>" target="_blank" rel="noopener" style="background:#10b981;color:white;padding:.9rem 2.5rem;border-radius:50px;text-decoration:none;font-weight:700;display:inline-block;margin-bottom:1.5rem;">
+                            <i class="fas fa-paper-plane me-2"></i>Daftar Sekarang
+                        </a>
+                        <% } %>
+                        <div class="mt-2 pt-3" style="border-top:1px solid #f1f5f9;">
+                            <a href="/bkk" style="color:#10b981;font-weight:600;text-decoration:none;"><i class="fas fa-arrow-left me-2"></i>Kembali ke BKK</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <%- include('partials/footer') %>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>$(window).scroll(function(){if($(window).scrollTop()>50)$('.navbar-modern').addClass('scrolled');else$('.navbar-modern').removeClass('scrolled');});</script>
+</body>
+</html>

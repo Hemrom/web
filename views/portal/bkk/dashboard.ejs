@@ -1,0 +1,106 @@
+<%
+const body = `
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Dashboard BKK</h1>
+    <a href="/bkk/create" class="btn btn-sm btn-success shadow-sm"><i class="fas fa-plus fa-sm text-white-50"></i> Tambah Lowongan</a>
+</div>
+${success == 1 ? '<div class="alert alert-success alert-dismissible fade show">Lowongan berhasil ditambahkan.<button type="button" class="close" data-dismiss="alert">&times;</button></div>' : ''}
+${success == 2 ? '<div class="alert alert-success alert-dismissible fade show">Lowongan berhasil diperbarui.<button type="button" class="close" data-dismiss="alert">&times;</button></div>' : ''}
+${success == 3 ? '<div class="alert alert-danger alert-dismissible fade show">Lowongan berhasil dihapus.<button type="button" class="close" data-dismiss="alert">&times;</button></div>' : ''}
+<div class="card shadow mb-4">
+    <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-success">Daftar Lowongan / Info BKK</h6></div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable">
+                <thead><tr><th>#</th><th>Judul</th><th>Perusahaan</th><th>Kategori</th><th>Deadline</th><th>Status</th><th>Aksi</th></tr></thead>
+                <tbody>
+`;
+%>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %></title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="/assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <style>.sidebar{background:linear-gradient(180deg,#10b981,#059669)!important;}</style>
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <ul class="navbar-nav bg-gradient-success sidebar sidebar-dark accordion" id="accordionSidebar">
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/bkk/dashboard">
+            <div class="sidebar-brand-icon"><img src="/uploads/logo-sekolah.png" style="width:36px;height:36px;object-fit:contain;border-radius:6px;" onerror="this.style.display='none'"></div>
+            <div class="sidebar-brand-text mx-3">Portal BKK</div>
+        </a>
+        <hr class="sidebar-divider my-0">
+        <li class="nav-item"><a class="nav-link" href="/bkk/dashboard"><i class="fas fa-fw fa-tachometer-alt"></i><span>Dashboard</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/bkk/create"><i class="fas fa-fw fa-plus-circle"></i><span>Tambah Lowongan</span></a></li>
+        <hr class="sidebar-divider">
+        <li class="nav-item"><a class="nav-link" href="/bkk"><i class="fas fa-fw fa-globe"></i><span>Lihat Halaman BKK</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/bkk/logout"><i class="fas fa-fw fa-sign-out-alt"></i><span>Logout</span></a></li>
+    </ul>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3"><i class="fa fa-bars"></i></button>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item"><span class="nav-link text-gray-600 small"><i class="fas fa-user mr-1"></i><%= user.portalNama %></span></li>
+                    <li class="nav-item"><a class="nav-link" href="/bkk/logout"><i class="fas fa-sign-out-alt"></i></a></li>
+                </ul>
+            </nav>
+            <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Dashboard BKK</h1>
+                    <a href="/bkk/create" class="btn btn-sm btn-success shadow-sm"><i class="fas fa-plus fa-sm text-white-50"></i> Tambah Lowongan</a>
+                </div>
+                <% if (success == 1) { %><div class="alert alert-success alert-dismissible fade show">Berhasil ditambahkan.<button type="button" class="close" data-dismiss="alert">&times;</button></div><% } %>
+                <% if (success == 3) { %><div class="alert alert-danger alert-dismissible fade show">Berhasil dihapus.<button type="button" class="close" data-dismiss="alert">&times;</button></div><% } %>
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-success">Daftar Lowongan / Info BKK</h6></div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable">
+                                <thead><tr><th>#</th><th>Judul</th><th>Perusahaan</th><th>Kategori</th><th>Deadline</th><th>Status</th><th>Aksi</th></tr></thead>
+                                <tbody>
+                                <% if (!lowongan||lowongan.length===0) { %>
+                                <tr><td colspan="7" class="text-center">Belum ada data</td></tr>
+                                <% } else { lowongan.forEach((l,i)=>{ %>
+                                <tr>
+                                    <td><%= i+1 %></td>
+                                    <td><%= l.judul %></td>
+                                    <td><%= l.perusahaan %></td>
+                                    <td><span class="badge badge-info"><%= l.kategori %></span></td>
+                                    <td><%= l.deadline ? new Date(l.deadline).toLocaleDateString('id-ID') : '-' %></td>
+                                    <td><span class="badge badge-<%= l.status==='aktif'?'success':'secondary' %>"><%= l.status %></span></td>
+                                    <td>
+                                        <a href="/bkk/edit/<%= l.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                                        <form method="POST" action="/bkk/delete/<%= l.id %>" style="display:inline" onsubmit="return confirm('Hapus?')">
+                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                            <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <% }) } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="sticky-footer bg-white"><div class="container my-auto"><div class="copyright text-center my-auto"><span>Portal BKK &copy; <%= new Date().getFullYear() %></span></div></div></footer>
+    </div>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="/assets/js/sb-admin-2.min.js"></script>
+<script src="/assets/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="/assets/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+<script>$(document).ready(function(){$('#dataTable').DataTable();});</script>
+</body>
+</html>

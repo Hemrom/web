@@ -1,0 +1,38 @@
+<%- include('../_portal_header', {portalColor:'info', portalLabel:'Jurusan', dashUrl:'/jurusan-portal/dashboard', logoutUrl:'/jurusan-portal/logout'}) %>
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Dashboard Jurusan <%= jurusan %></h1>
+    <a href="/jurusan-portal/create" class="btn btn-sm btn-info shadow-sm"><i class="fas fa-plus fa-sm text-white-50"></i> Tambah Prestasi</a>
+</div>
+<% if (success == 1) { %><div class="alert alert-success alert-dismissible fade show">Berhasil ditambahkan.<button type="button" class="close" data-dismiss="alert">&times;</button></div><% } %>
+<% if (success == 3) { %><div class="alert alert-danger alert-dismissible fade show">Berhasil dihapus.<button type="button" class="close" data-dismiss="alert">&times;</button></div><% } %>
+<div class="card shadow mb-4">
+    <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-info">Prestasi Jurusan <%= jurusan %></h6></div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable">
+                <thead><tr><th>#</th><th>Judul</th><th>Kategori</th><th>Tingkat</th><th>Tahun</th><th>Status</th><th>Aksi</th></tr></thead>
+                <tbody>
+                <% if (!prestasi||prestasi.length===0) { %><tr><td colspan="7" class="text-center">Belum ada data prestasi</td></tr>
+                <% } else { prestasi.forEach((p,i)=>{ %>
+                <tr>
+                    <td><%= i+1 %></td>
+                    <td><%= p.judul %></td>
+                    <td><span class="badge badge-primary"><%= p.kategori %></span></td>
+                    <td><span class="badge badge-info"><%= p.tingkat %></span></td>
+                    <td><%= p.tahun %></td>
+                    <td><span class="badge badge-<%= p.status==='published'?'success':'secondary' %>"><%= p.status %></span></td>
+                    <td>
+                        <a href="/jurusan-portal/edit/<%= p.id %>" class="btn btn-info btn-sm"><i class="fas fa-edit"></i></a>
+                        <form method="POST" action="/jurusan-portal/delete/<%= p.id %>" style="display:inline" onsubmit="return confirm('Hapus?')">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                <% }) } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<%- include('../_portal_footer', {portalLabel:'Jurusan'}) %>

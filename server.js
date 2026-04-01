@@ -70,6 +70,7 @@ app.use((req, res, next) => {
 
 app.use('/admin', require('./routes/admin'));
 app.use('/guru', require('./routes/guru'));
+app.use('/', require('./routes/portal'));
 app.use('/', require('./routes/frontend'));
 
 // 404 handler

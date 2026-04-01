@@ -1,0 +1,44 @@
+<%- include('../_portal_header', {portalColor:'info', portalLabel:'Jurusan', dashUrl:'/jurusan-portal/dashboard', logoutUrl:'/jurusan-portal/logout'}) %>
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Edit Prestasi</h1>
+    <a href="/jurusan-portal/dashboard" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left fa-sm"></i> Kembali</a>
+</div>
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <form method="POST" action="/jurusan-portal/edit/<%= item.id %>" enctype="multipart/form-data">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="form-group"><label>Judul *</label><input type="text" class="form-control" name="judul" value="<%= item.judul %>" required></div>
+                    <div class="form-group"><label>Deskripsi</label><textarea class="form-control" name="deskripsi" rows="5"><%= item.deskripsi||'' %></textarea></div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group"><label>Kategori</label>
+                        <select class="form-control" name="kategori">
+                            <% ['akademik','non-akademik','olahraga','seni','teknologi','lainnya'].forEach(k=>{ %><option value="<%= k %>" <%= item.kategori===k?'selected':'' %>><%= k %></option><% }) %>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Tingkat</label>
+                        <select class="form-control" name="tingkat">
+                            <% ['sekolah','kecamatan','kabupaten','provinsi','nasional','internasional'].forEach(t=>{ %><option value="<%= t %>" <%= item.tingkat===t?'selected':'' %>><%= t %></option><% }) %>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Tahun</label><input type="number" class="form-control" name="tahun" value="<%= item.tahun %>" min="2000" max="2099"></div>
+                    <div class="form-group"><label>Status</label>
+                        <select class="form-control" name="status">
+                            <option value="published" <%= item.status==='published'?'selected':'' %>>Published</option>
+                            <option value="draft" <%= item.status==='draft'?'selected':'' %>>Draft</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Foto</label>
+                        <% if (item.gambar) { %><div class="mb-2"><img src="/uploads/<%= item.gambar %>" style="max-width:150px;border-radius:8px;"></div><% } %>
+                        <input type="file" class="form-control-file" name="gambar" accept=".jpg,.jpeg,.png,.webp">
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-info text-white"><i class="fas fa-save mr-1"></i>Update</button>
+            <a href="/jurusan-portal/dashboard" class="btn btn-secondary ml-2">Batal</a>
+        </form>
+    </div>
+</div>
+<%- include('../_portal_footer', {portalLabel:'Jurusan'}) %>

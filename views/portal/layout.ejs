@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Portal <%= portalLabel %></title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="/assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <style>
+        .sidebar { background: linear-gradient(180deg, <%= accentColor %> 0%, <%= accentDark %> 100%) !important; }
+        .sidebar .nav-link { color: rgba(255,255,255,.8) !important; }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active { color: white !important; background: rgba(255,255,255,.15) !important; }
+        .sidebar-brand { background: rgba(0,0,0,.1) !important; }
+    </style>
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <!-- Sidebar -->
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="<%= dashboardUrl %>">
+            <div class="sidebar-brand-icon">
+                <img src="/uploads/logo-sekolah.png" style="width:36px;height:36px;object-fit:contain;border-radius:6px;" onerror="this.style.display='none'">
+            </div>
+            <div class="sidebar-brand-text mx-3"><%= portalLabel %></div>
+        </a>
+        <hr class="sidebar-divider my-0">
+        <li class="nav-item">
+            <a class="nav-link" href="<%= dashboardUrl %>">
+                <i class="fas fa-fw fa-tachometer-alt"></i><span>Dashboard</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="<%= createUrl %>">
+                <i class="fas fa-fw fa-plus-circle"></i><span>Tambah <%= itemLabel %></span>
+            </a>
+        </li>
+        <hr class="sidebar-divider">
+        <li class="nav-item">
+            <a class="nav-link" href="/">
+                <i class="fas fa-fw fa-globe"></i><span>Lihat Website</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="<%= logoutUrl %>">
+                <i class="fas fa-fw fa-sign-out-alt"></i><span>Logout</span>
+            </a>
+        </li>
+    </ul>
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <!-- Topbar -->
+            <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item dropdown no-arrow">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown">
+                            <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%= user.portalNama %></span>
+                            <i class="fas fa-user-circle fa-fw text-gray-400" style="font-size:1.5rem;"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in">
+                            <a class="dropdown-item" href="<%= logoutUrl %>">
+                                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>Logout
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+            <!-- Page Content -->
+            <div class="container-fluid">
+                <%- body %>
+            </div>
+        </div>
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+                    <span>Portal <%= portalLabel %> &copy; <%= new Date().getFullYear() %></span>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="/assets/js/sb-admin-2.min.js"></script>
+<script src="/assets/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="/assets/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+<script>$(document).ready(function(){if($('#dataTable').length)$('#dataTable').DataTable();});</script>
+</body>
+</html>

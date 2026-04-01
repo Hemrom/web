@@ -56,6 +56,25 @@ async function migrate() {
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4\`,
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      nama VARCHAR(100) NOT NULL,
+      nis VARCHAR(50) DEFAULT NULL,
+      tahun_lulus YEAR DEFAULT NULL,
+      jurusan VARCHAR(100) DEFAULT NULL,
+      pekerjaan VARCHAR(150) DEFAULT NULL,
+      perusahaan VARCHAR(150) DEFAULT NULL,
+      kota VARCHAR(100) DEFAULT NULL,
+      foto VARCHAR(255) DEFAULT NULL,
+      email VARCHAR(100) DEFAULT NULL,
+      telepon VARCHAR(20) DEFAULT NULL,
+      instagram VARCHAR(100) DEFAULT NULL,
+      linkedin VARCHAR(200) DEFAULT NULL,
+      cerita TEXT DEFAULT NULL,
+      token VARCHAR(64) DEFAULT NULL,
+      status ENUM('pending','disetujui','ditolak') DEFAULT 'pending',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4\`,
     \`CREATE TABLE IF NOT EXISTS link_terkait (
       id INT AUTO_INCREMENT PRIMARY KEY,
       nama VARCHAR(255) NOT NULL,
@@ -69,6 +88,57 @@ async function migrate() {
     'ALTER TABLE profil_sekolah ADD COLUMN IF NOT EXISTS tampil_wa TINYINT(1) DEFAULT 1',
     'ALTER TABLE halaman ADD COLUMN IF NOT EXISTS subtitle VARCHAR(500) DEFAULT NULL AFTER judul',
     'ALTER TABLE media_sosial ADD COLUMN IF NOT EXISTS thumbnail VARCHAR(255) DEFAULT NULL',
+    \`CREATE TABLE IF NOT EXISTS prestasi (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      judul VARCHAR(255) NOT NULL,
+      slug VARCHAR(255) UNIQUE,
+      deskripsi TEXT,
+      gambar VARCHAR(255),
+      kategori ENUM('akademik','non-akademik','olahraga','seni','teknologi','lainnya') DEFAULT 'lainnya',
+      tingkat ENUM('sekolah','kecamatan','kabupaten','provinsi','nasional','internasional') DEFAULT 'sekolah',
+      tahun YEAR,
+      jurusan VARCHAR(100),
+      status ENUM('draft','published') DEFAULT 'published',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4\`,
+    \`CREATE TABLE IF NOT EXISTS bkk_lowongan (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      judul VARCHAR(255) NOT NULL,
+      slug VARCHAR(255) UNIQUE,
+      perusahaan VARCHAR(150) NOT NULL,
+      lokasi VARCHAR(150),
+      deskripsi TEXT,
+      persyaratan TEXT,
+      gambar VARCHAR(255),
+      kategori ENUM('magang','kerja','beasiswa','lainnya') DEFAULT 'kerja',
+      deadline DATE,
+      kontak VARCHAR(255),
+      status ENUM('aktif','nonaktif') DEFAULT 'aktif',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4\`,
+    \`CREATE TABLE IF NOT EXISTS osis_kegiatan (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      judul VARCHAR(255) NOT NULL,
+      slug VARCHAR(255) UNIQUE,
+      konten TEXT,
+      gambar VARCHAR(255),
+      kategori ENUM('kegiatan','pengumuman','prestasi','lainnya') DEFAULT 'kegiatan',
+      status ENUM('draft','published') DEFAULT 'published',
+      penulis VARCHAR(100),
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4\`,
+    \`CREATE TABLE IF NOT EXISTS portal_users (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      username VARCHAR(50) UNIQUE NOT NULL,
+      password VARCHAR(255) NOT NULL,
+      nama VARCHAR(100) NOT NULL,
+      role ENUM('bkk','osis','jurusan') NOT NULL,
+      jurusan VARCHAR(100) DEFAULT NULL,
+      aktif TINYINT(1) DEFAULT 1,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4\`,
   ];
   for (const q of queries) {
     try { await db.query(q); } catch(e) { if (!e.message.includes('Duplicate')) console.log('  skip:', e.message.substring(0,60)); }

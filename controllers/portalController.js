@@ -1,0 +1,309 @@
+const db = require('../config/database');
+const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
+const { createUpload } = require('../middleware/uploadSecurity');
+const { loginLimiter } = require('../middleware/security');
+
+const uploadSingle = createUpload('portal').single('gambar');
+
+const createSlug = (text) => text.toLowerCase()
+  .replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').trim()
+  + '-' + Date.now().toString(36);
+
+const getCommon = async () => {
+  const { getMenuItems } = require('./frontendController');
+  const [[profil], menuItems] = await Promise.all([
+    db.query('SELECT * FROM profil_sekolah LIMIT 1'),
+    getMenuItems()
+  ]);
+  const [mediaSosialFooter] = await db.query("SELECT id,judul,platform,embed_url FROM media_sosial WHERE status='aktif' ORDER BY urutan ASC");
+  return { profil: profil || {}, menuItems, mediaSosialFooter };
+};
+
+// ── FRONTEND PRESTASI ─────────────────────────────────────────────────────────
+exports.prestasiIndex = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const kategori = req.query.kategori || '';
+    const [prestasi] = await db.query(
+      kategori
+        ? "SELECT * FROM prestasi WHERE status='published' AND kategori=? ORDER BY tahun DESC, created_at DESC"
+        : "SELECT * FROM prestasi WHERE status='published' ORDER BY tahun DESC, created_at DESC",
+      kategori ? [kategori] : []
+    );
+    res.render('frontend/prestasi', { title: 'Prestasi', currentPage: 'prestasi', prestasi, kategori, ...common });
+  } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
+};
+
+exports.prestasiDetail = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [rows] = await db.query("SELECT * FROM prestasi WHERE slug=? AND status='published'", [req.params.slug]);
+    if (!rows.length) return res.status(404).render('frontend/404', { title: '404', menuItems: common.menuItems });
+    res.render('frontend/prestasi-detail', { title: rows[0].judul, prestasi: rows[0], ...common });
+  } catch (err) { res.status(500).send('Terjadi kesalahan'); }
+};
+
+// ── FRONTEND BKK ──────────────────────────────────────────────────────────────
+exports.bkkIndex = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [lowongan] = await db.query("SELECT * FROM bkk_lowongan WHERE status='aktif' ORDER BY created_at DESC");
+    res.render('frontend/bkk', { title: 'BKK - Bursa Kerja Khusus', currentPage: 'bkk', lowongan, ...common });
+  } catch (err) { res.status(500).send('Terjadi kesalahan'); }
+};
+
+exports.bkkDetail = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [rows] = await db.query("SELECT * FROM bkk_lowongan WHERE slug=? AND status='aktif'", [req.params.slug]);
+    if (!rows.length) return res.status(404).render('frontend/404', { title: '404', menuItems: common.menuItems });
+    res.render('frontend/bkk-detail', { title: rows[0].judul, lowongan: rows[0], ...common });
+  } catch (err) { res.status(500).send('Terjadi kesalahan'); }
+};
+
+// ── FRONTEND OSIS ─────────────────────────────────────────────────────────────
+exports.osisIndex = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [kegiatan] = await db.query("SELECT * FROM osis_kegiatan WHERE status='published' ORDER BY created_at DESC");
+    res.render('frontend/osis', { title: 'OSIS', currentPage: 'osis', kegiatan, ...common });
+  } catch (err) { res.status(500).send('Terjadi kesalahan'); }
+};
+
+exports.osisDetail = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [rows] = await db.query("SELECT * FROM osis_kegiatan WHERE slug=? AND status='published'", [req.params.slug]);
+    if (!rows.length) return res.status(404).render('frontend/404', { title: '404', menuItems: common.menuItems });
+    res.render('frontend/osis-detail', { title: rows[0].judul, kegiatan: rows[0], ...common });
+  } catch (err) { res.status(500).send('Terjadi kesalahan'); }
+};
+
+// ── PORTAL LOGIN (shared) ─────────────────────────────────────────────────────
+exports.portalLoginPage = (role, title) => (req, res) => {
+  if (req.session.portalId && req.session.portalRole === role) return res.redirect(`/${role === 'jurusan' ? 'jurusan-portal' : role}/dashboard`);
+  res.render('portal/login', { title, role, error: null });
+};
+
+exports.portalLogin = (role) => async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const [rows] = await db.query('SELECT * FROM portal_users WHERE username=? AND role=? AND aktif=1', [username, role]);
+    if (!rows.length) return res.render('portal/login', { title: `Login ${role.toUpperCase()}`, role, error: 'Username atau password salah' });
+    const valid = await bcrypt.compare(password, rows[0].password);
+    if (!valid) return res.render('portal/login', { title: `Login ${role.toUpperCase()}`, role, error: 'Username atau password salah' });
+    req.session.portalId = rows[0].id;
+    req.session.portalRole = rows[0].role;
+    req.session.portalNama = rows[0].nama;
+    req.session.portalJurusan = rows[0].jurusan;
+    const redirect = role === 'jurusan' ? '/jurusan-portal/dashboard' : `/${role}/dashboard`;
+    res.redirect(redirect);
+  } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
+};
+
+exports.portalLogout = (role) => (req, res) => {
+  req.session.portalId = null;
+  req.session.portalRole = null;
+  req.session.portalNama = null;
+  const redirect = role === 'jurusan' ? '/jurusan-portal/login' : `/${role}/login`;
+  res.redirect(redirect);
+};
+
+// ── PORTAL BKK DASHBOARD ──────────────────────────────────────────────────────
+exports.bkkDashboard = async (req, res) => {
+  const [lowongan] = await db.query('SELECT * FROM bkk_lowongan ORDER BY created_at DESC');
+  res.render('portal/bkk/dashboard', { title: 'Dashboard BKK', user: req.session, lowongan });
+};
+
+exports.bkkCreatePage = (req, res) => res.render('portal/bkk/create', { title: 'Tambah Lowongan', user: req.session });
+
+exports.bkkCreate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.render('portal/bkk/create', { title: 'Tambah Lowongan', user: req.session, error: err.message });
+    const { judul, perusahaan, lokasi, deskripsi, persyaratan, kategori, deadline, kontak, status } = req.body;
+    const gambar = req.file ? req.file.filename : null;
+    const slug = createSlug(judul);
+    await db.query('INSERT INTO bkk_lowongan (judul,slug,perusahaan,lokasi,deskripsi,persyaratan,gambar,kategori,deadline,kontak,status) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
+      [judul, slug, perusahaan, lokasi||null, deskripsi||null, persyaratan||null, gambar, kategori||'kerja', deadline||null, kontak||null, status||'aktif']);
+    res.redirect('/bkk/dashboard?success=1');
+  });
+};
+
+exports.bkkEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM bkk_lowongan WHERE id=?', [req.params.id]);
+  if (!rows.length) return res.redirect('/bkk/dashboard');
+  res.render('portal/bkk/edit', { title: 'Edit Lowongan', user: req.session, item: rows[0] });
+};
+
+exports.bkkUpdate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/bkk/dashboard');
+    const { judul, perusahaan, lokasi, deskripsi, persyaratan, kategori, deadline, kontak, status } = req.body;
+    const [rows] = await db.query('SELECT gambar FROM bkk_lowongan WHERE id=?', [req.params.id]);
+    const gambar = req.file ? req.file.filename : rows[0]?.gambar;
+    await db.query('UPDATE bkk_lowongan SET judul=?,perusahaan=?,lokasi=?,deskripsi=?,persyaratan=?,gambar=?,kategori=?,deadline=?,kontak=?,status=? WHERE id=?',
+      [judul, perusahaan, lokasi||null, deskripsi||null, persyaratan||null, gambar, kategori||'kerja', deadline||null, kontak||null, status||'aktif', req.params.id]);
+    res.redirect('/bkk/dashboard?success=2');
+  });
+};
+
+exports.bkkDelete = async (req, res) => {
+  await db.query('DELETE FROM bkk_lowongan WHERE id=?', [req.params.id]);
+  res.redirect('/bkk/dashboard?success=3');
+};
+
+// ── PORTAL OSIS DASHBOARD ─────────────────────────────────────────────────────
+exports.osisDashboard = async (req, res) => {
+  const [kegiatan] = await db.query('SELECT * FROM osis_kegiatan ORDER BY created_at DESC');
+  res.render('portal/osis/dashboard', { title: 'Dashboard OSIS', user: req.session, kegiatan });
+};
+
+exports.osisCreatePage = (req, res) => res.render('portal/osis/create', { title: 'Tambah Kegiatan', user: req.session });
+
+exports.osisCreate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.render('portal/osis/create', { title: 'Tambah Kegiatan', user: req.session, error: err.message });
+    const { judul, konten, kategori, status } = req.body;
+    const gambar = req.file ? req.file.filename : null;
+    const slug = createSlug(judul);
+    await db.query('INSERT INTO osis_kegiatan (judul,slug,konten,gambar,kategori,status,penulis) VALUES (?,?,?,?,?,?,?)',
+      [judul, slug, konten||null, gambar, kategori||'kegiatan', status||'published', req.session.portalNama]);
+    res.redirect('/osis/dashboard?success=1');
+  });
+};
+
+exports.osisEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM osis_kegiatan WHERE id=?', [req.params.id]);
+  if (!rows.length) return res.redirect('/osis/dashboard');
+  res.render('portal/osis/edit', { title: 'Edit Kegiatan', user: req.session, item: rows[0] });
+};
+
+exports.osisUpdate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/osis/dashboard');
+    const { judul, konten, kategori, status } = req.body;
+    const [rows] = await db.query('SELECT gambar FROM osis_kegiatan WHERE id=?', [req.params.id]);
+    const gambar = req.file ? req.file.filename : rows[0]?.gambar;
+    await db.query('UPDATE osis_kegiatan SET judul=?,konten=?,gambar=?,kategori=?,status=? WHERE id=?',
+      [judul, konten||null, gambar, kategori||'kegiatan', status||'published', req.params.id]);
+    res.redirect('/osis/dashboard?success=2');
+  });
+};
+
+exports.osisDelete = async (req, res) => {
+  await db.query('DELETE FROM osis_kegiatan WHERE id=?', [req.params.id]);
+  res.redirect('/osis/dashboard?success=3');
+};
+
+// ── PORTAL JURUSAN DASHBOARD ──────────────────────────────────────────────────
+exports.jurusanDashboard = async (req, res) => {
+  const jurusan = req.session.portalJurusan;
+  const [prestasi] = await db.query('SELECT * FROM prestasi WHERE jurusan=? ORDER BY created_at DESC', [jurusan]);
+  res.render('portal/jurusan/dashboard', { title: `Dashboard Jurusan ${jurusan}`, user: req.session, prestasi, jurusan });
+};
+
+exports.jurusanCreatePage = (req, res) => res.render('portal/jurusan/create', { title: 'Tambah Prestasi', user: req.session });
+
+exports.jurusanCreate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.render('portal/jurusan/create', { title: 'Tambah Prestasi', user: req.session, error: err.message });
+    const { judul, deskripsi, kategori, tingkat, tahun, status } = req.body;
+    const gambar = req.file ? req.file.filename : null;
+    const slug = createSlug(judul);
+    const jurusan = req.session.portalJurusan;
+    await db.query('INSERT INTO prestasi (judul,slug,deskripsi,gambar,kategori,tingkat,tahun,jurusan,status) VALUES (?,?,?,?,?,?,?,?,?)',
+      [judul, slug, deskripsi||null, gambar, kategori||'lainnya', tingkat||'sekolah', tahun||new Date().getFullYear(), jurusan, status||'published']);
+    res.redirect('/jurusan-portal/dashboard?success=1');
+  });
+};
+
+exports.jurusanEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM prestasi WHERE id=? AND jurusan=?', [req.params.id, req.session.portalJurusan]);
+  if (!rows.length) return res.redirect('/jurusan-portal/dashboard');
+  res.render('portal/jurusan/edit', { title: 'Edit Prestasi', user: req.session, item: rows[0] });
+};
+
+exports.jurusanUpdate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/jurusan-portal/dashboard');
+    const { judul, deskripsi, kategori, tingkat, tahun, status } = req.body;
+    const [rows] = await db.query('SELECT gambar FROM prestasi WHERE id=?', [req.params.id]);
+    const gambar = req.file ? req.file.filename : rows[0]?.gambar;
+    await db.query('UPDATE prestasi SET judul=?,deskripsi=?,gambar=?,kategori=?,tingkat=?,tahun=?,status=? WHERE id=? AND jurusan=?',
+      [judul, deskripsi||null, gambar, kategori||'lainnya', tingkat||'sekolah', tahun, status||'published', req.params.id, req.session.portalJurusan]);
+    res.redirect('/jurusan-portal/dashboard?success=2');
+  });
+};
+
+exports.jurusanDelete = async (req, res) => {
+  await db.query('DELETE FROM prestasi WHERE id=? AND jurusan=?', [req.params.id, req.session.portalJurusan]);
+  res.redirect('/jurusan-portal/dashboard?success=3');
+};
+
+// ── ADMIN: Kelola Prestasi ────────────────────────────────────────────────────
+exports.adminPrestasiIndex = async (req, res) => {
+  const [prestasi] = await db.query('SELECT * FROM prestasi ORDER BY tahun DESC, created_at DESC');
+  res.render('admin/prestasi/index', { title: 'Kelola Prestasi', user: req.session, prestasi, success: req.query.success });
+};
+
+exports.adminPrestasiCreatePage = (req, res) => res.render('admin/prestasi/create', { title: 'Tambah Prestasi', user: req.session });
+
+exports.adminPrestasiCreate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/admin/prestasi');
+    const { judul, deskripsi, kategori, tingkat, tahun, jurusan, status } = req.body;
+    const gambar = req.file ? req.file.filename : null;
+    const slug = createSlug(judul);
+    await db.query('INSERT INTO prestasi (judul,slug,deskripsi,gambar,kategori,tingkat,tahun,jurusan,status) VALUES (?,?,?,?,?,?,?,?,?)',
+      [judul, slug, deskripsi||null, gambar, kategori||'lainnya', tingkat||'sekolah', tahun||new Date().getFullYear(), jurusan||null, status||'published']);
+    res.redirect('/admin/prestasi?success=1');
+  });
+};
+
+exports.adminPrestasiEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM prestasi WHERE id=?', [req.params.id]);
+  if (!rows.length) return res.redirect('/admin/prestasi');
+  res.render('admin/prestasi/edit', { title: 'Edit Prestasi', user: req.session, item: rows[0] });
+};
+
+exports.adminPrestasiUpdate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/admin/prestasi');
+    const { judul, deskripsi, kategori, tingkat, tahun, jurusan, status } = req.body;
+    const [rows] = await db.query('SELECT gambar FROM prestasi WHERE id=?', [req.params.id]);
+    const gambar = req.file ? req.file.filename : rows[0]?.gambar;
+    await db.query('UPDATE prestasi SET judul=?,deskripsi=?,gambar=?,kategori=?,tingkat=?,tahun=?,jurusan=?,status=? WHERE id=?',
+      [judul, deskripsi||null, gambar, kategori||'lainnya', tingkat||'sekolah', tahun, jurusan||null, status||'published', req.params.id]);
+    res.redirect('/admin/prestasi?success=2');
+  });
+};
+
+exports.adminPrestasiDelete = async (req, res) => {
+  await db.query('DELETE FROM prestasi WHERE id=?', [req.params.id]);
+  res.redirect('/admin/prestasi?success=3');
+};
+
+// ── ADMIN: Kelola Portal Users ────────────────────────────────────────────────
+exports.adminPortalUsers = async (req, res) => {
+  const [users] = await db.query('SELECT id,username,nama,role,jurusan,aktif,created_at FROM portal_users ORDER BY role,nama');
+  res.render('admin/portal-users', { title: 'Kelola Akun Portal', user: req.session, portalUsers: users, success: req.query.success });
+};
+
+exports.adminPortalUserCreate = async (req, res) => {
+  const { username, password, nama, role, jurusan } = req.body;
+  const hash = await bcrypt.hash(password, 10);
+  await db.query('INSERT INTO portal_users (username,password,nama,role,jurusan) VALUES (?,?,?,?,?)',
+    [username, hash, nama, role, jurusan||null]);
+  res.redirect('/admin/portal-users?success=1');
+};
+
+exports.adminPortalUserDelete = async (req, res) => {
+  await db.query('DELETE FROM portal_users WHERE id=?', [req.params.id]);
+  res.redirect('/admin/portal-users?success=3');
+};
+
+exports.adminPortalUserToggle = async (req, res) => {
+  await db.query('UPDATE portal_users SET aktif = NOT aktif WHERE id=?', [req.params.id]);
+  res.redirect('/admin/portal-users?success=2');
+};

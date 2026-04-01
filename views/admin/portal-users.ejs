@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Admin Panel</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <%- include('partials/sidebar') %>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <%- include('partials/topbar', { user }) %>
+            <div class="container-fluid">
+                <h1 class="h3 mb-4 text-gray-800">Kelola Akun Portal (BKK / OSIS / Jurusan)</h1>
+                <% if (success == 1) { %><div class="alert alert-success alert-dismissible fade show">Akun berhasil dibuat.<button type="button" class="close" data-dismiss="alert">&times;</button></div><% } %>
+                <% if (success == 2) { %><div class="alert alert-info alert-dismissible fade show">Status akun diperbarui.<button type="button" class="close" data-dismiss="alert">&times;</button></div><% } %>
+                <% if (success == 3) { %><div class="alert alert-danger alert-dismissible fade show">Akun berhasil dihapus.<button type="button" class="close" data-dismiss="alert">&times;</button></div><% } %>
+
+                <div class="row">
+                    <div class="col-lg-5">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Buat Akun Baru</h6></div>
+                            <div class="card-body">
+                                <form method="POST" action="/admin/portal-users/create">
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                    <div class="form-group"><label>Nama Lengkap</label><input type="text" class="form-control" name="nama" required></div>
+                                    <div class="form-group"><label>Username</label><input type="text" class="form-control" name="username" required></div>
+                                    <div class="form-group"><label>Password</label><input type="password" class="form-control" name="password" required minlength="6"></div>
+                                    <div class="form-group"><label>Role</label>
+                                        <select class="form-control" name="role" id="roleSelect" onchange="toggleJurusan()">
+                                            <option value="bkk">BKK</option>
+                                            <option value="osis">OSIS</option>
+                                            <option value="jurusan">Jurusan</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" id="jurusanField" style="display:none;">
+                                        <label>Jurusan</label>
+                                        <select class="form-control" name="jurusan">
+                                            <option value="TKJ">TKJ</option>
+                                            <option value="TKRO">TKRO</option>
+                                            <option value="Kuliner">Kuliner</option>
+                                            <option value="TPTUP">TPTUP</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-user-plus mr-1"></i>Buat Akun</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-7">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Daftar Akun Portal</h6></div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover">
+                                        <thead class="thead-light"><tr><th>Nama</th><th>Username</th><th>Role</th><th>Jurusan</th><th>Status</th><th>Aksi</th></tr></thead>
+                                        <tbody>
+                                        <% if (!portalUsers||portalUsers.length===0) { %><tr><td colspan="6" class="text-center">Belum ada akun</td></tr>
+                                        <% } else { portalUsers.forEach(u=>{ %>
+                                        <tr>
+                                            <td><%= u.nama %></td>
+                                            <td><code><%= u.username %></code></td>
+                                            <td>
+                                                <span class="badge badge-<%= u.role==='bkk'?'success':u.role==='osis'?'warning':'info' %>">
+                                                    <%= u.role.toUpperCase() %>
+                                                </span>
+                                            </td>
+                                            <td><%= u.jurusan||'-' %></td>
+                                            <td><span class="badge badge-<%= u.aktif?'success':'secondary' %>"><%= u.aktif?'Aktif':'Nonaktif' %></span></td>
+                                            <td>
+                                                <form method="POST" action="/admin/portal-users/toggle/<%= u.id %>" style="display:inline">
+                                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                    <button class="btn btn-<%= u.aktif?'warning':'success' %> btn-sm" title="<%= u.aktif?'Nonaktifkan':'Aktifkan' %>">
+                                                        <i class="fas fa-<%= u.aktif?'ban':'check' %>"></i>
+                                                    </button>
+                                                </form>
+                                                <form method="POST" action="/admin/portal-users/delete/<%= u.id %>" style="display:inline" onsubmit="return confirm('Hapus akun ini?')">
+                                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                    <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        <% }) } %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="alert alert-info small mt-3">
+                                    <i class="fas fa-info-circle mr-1"></i>
+                                    <strong>URL Login:</strong>
+                                    BKK: <code>/bkk/login</code> |
+                                    OSIS: <code>/osis/login</code> |
+                                    Jurusan: <code>/jurusan-portal/login</code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%- include('partials/footer') %>
+    </div>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="/assets/js/sb-admin-2.min.js"></script>
+<script>
+function toggleJurusan() {
+    const role = document.getElementById('roleSelect').value;
+    document.getElementById('jurusanField').style.display = role === 'jurusan' ? 'block' : 'none';
+}
+</script>
+</body>
+</html>

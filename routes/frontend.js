@@ -32,6 +32,15 @@ router.get('/alumni/update', alumniController.updatePage);
 router.get('/alumni/edit/:token', alumniController.editPage);
 router.post('/alumni/edit/:token', formLimiter, csrfProtect, alumniController.editSubmit);
 
+// Prestasi, BKK, OSIS
+const portalController = require('../controllers/portalController');
+router.get('/prestasi', portalController.prestasiIndex);
+router.get('/prestasi/:slug', validateSlugParam, portalController.prestasiDetail);
+router.get('/bkk', portalController.bkkIndex);
+router.get('/bkk/:slug', validateSlugParam, portalController.bkkDetail);
+router.get('/osis', portalController.osisIndex);
+router.get('/osis/:slug', validateSlugParam, portalController.osisDetail);
+
 // Halaman dinamis - harus di paling bawah
 const halamanController = require('../controllers/halamanController');
 router.get('/page/:slug', validateSlugParam, halamanController.show);

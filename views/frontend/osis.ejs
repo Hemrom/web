@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Website Sekolah</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/theme.css">
+    <style>
+        :root{--primary:#f59e0b;--primary-dark:#d97706;--gray-50:#f8fafc;--gray-100:#f1f5f9;--gray-600:#475569;--gray-700:#334155;--gray-800:#1e293b;}
+        *{font-family:'Inter',sans-serif;box-sizing:border-box;margin:0;padding:0;}
+        body{color:var(--gray-700);line-height:1.6;}
+        .page-header{background:linear-gradient(135deg,#1e1b4b,#f59e0b);padding:10rem 0 5rem;color:white;text-align:center;}
+        .page-title{font-size:3rem;font-weight:800;}
+        .content-section{padding:5rem 0;background:var(--gray-50);}
+        .osis-card{background:white;border-radius:20px;overflow:hidden;box-shadow:0 4px 20px rgba(245,158,11,.08);border:1px solid var(--gray-100);transition:all .3s;height:100%;}
+        .osis-card:hover{transform:translateY(-8px);box-shadow:0 16px 40px rgba(245,158,11,.15);}
+        .osis-img{height:200px;object-fit:cover;width:100%;}
+        .osis-img-placeholder{height:200px;background:linear-gradient(135deg,#1e1b4b,#f59e0b);display:flex;align-items:center;justify-content:center;color:white;font-size:3rem;}
+    </style>
+</head>
+<body>
+    <%- include('partials/navbar') %>
+    <section class="page-header">
+        <div class="container">
+            <h1 class="page-title"><i class="fas fa-users me-3"></i>OSIS</h1>
+            <p style="font-size:1.1rem;opacity:.9;margin-top:.5rem;">Organisasi Siswa Intra Sekolah — Kegiatan & Pengumuman</p>
+        </div>
+    </section>
+    <section class="content-section">
+        <div class="container">
+            <% if (!kegiatan||kegiatan.length===0) { %>
+            <div class="text-center py-5">
+                <i class="fas fa-users fa-4x text-muted mb-3 d-block"></i>
+                <h4 class="text-muted">Belum ada kegiatan OSIS</h4>
+            </div>
+            <% } else { %>
+            <div class="row g-4">
+                <% kegiatan.forEach(k=>{ %>
+                <div class="col-lg-4 col-md-6">
+                    <a href="/osis/<%= k.slug %>" style="text-decoration:none;">
+                        <div class="osis-card">
+                            <% if (k.gambar) { %>
+                            <img src="/uploads/<%= k.gambar %>" class="osis-img" alt="<%= k.judul %>">
+                            <% } else { %>
+                            <div class="osis-img-placeholder"><i class="fas fa-users"></i></div>
+                            <% } %>
+                            <div class="p-4">
+                                <span style="background:#fef3c7;color:#92400e;padding:.2rem .6rem;border-radius:10px;font-size:.75rem;font-weight:600;"><%= k.kategori %></span>
+                                <h5 style="font-weight:700;color:var(--gray-800);margin:0.5rem 0;line-height:1.4;"><%= k.judul %></h5>
+                                <p style="font-size:.8rem;color:var(--gray-600);"><i class="fas fa-calendar me-1"></i><%= new Date(k.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}) %></p>
+                                <% if (k.konten) { %><p style="font-size:.85rem;color:var(--gray-600);line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;"><%- (k.konten||'').replace(/<[^>]*>/g,'').substring(0,150) %>...</p><% } %>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <% }) %>
+            </div>
+            <% } %>
+        </div>
+    </section>
+    <%- include('partials/footer') %>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>$(window).scroll(function(){if($(window).scrollTop()>50)$('.navbar-modern').addClass('scrolled');else$('.navbar-modern').removeClass('scrolled');});</script>
+</body>
+</html>

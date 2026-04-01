@@ -1,0 +1,43 @@
+<%- include('../_portal_header', {portalColor:'success', portalLabel:'BKK', dashUrl:'/bkk/dashboard', logoutUrl:'/bkk/logout'}) %>
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Edit Lowongan</h1>
+    <a href="/bkk/dashboard" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left fa-sm"></i> Kembali</a>
+</div>
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <form method="POST" action="/bkk/edit/<%= item.id %>" enctype="multipart/form-data">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="form-group"><label>Judul *</label><input type="text" class="form-control" name="judul" value="<%= item.judul %>" required></div>
+                    <div class="form-group"><label>Perusahaan *</label><input type="text" class="form-control" name="perusahaan" value="<%= item.perusahaan %>" required></div>
+                    <div class="form-group"><label>Lokasi</label><input type="text" class="form-control" name="lokasi" value="<%= item.lokasi||'' %>"></div>
+                    <div class="form-group"><label>Deskripsi</label><textarea class="form-control" name="deskripsi" rows="4"><%= item.deskripsi||'' %></textarea></div>
+                    <div class="form-group"><label>Persyaratan</label><textarea class="form-control" name="persyaratan" rows="4"><%= item.persyaratan||'' %></textarea></div>
+                    <div class="form-group"><label>Kontak</label><input type="text" class="form-control" name="kontak" value="<%= item.kontak||'' %>"></div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group"><label>Kategori</label>
+                        <select class="form-control" name="kategori">
+                            <% ['kerja','magang','beasiswa','lainnya'].forEach(k=>{ %><option value="<%= k %>" <%= item.kategori===k?'selected':'' %>><%= k %></option><% }) %>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Deadline</label><input type="date" class="form-control" name="deadline" value="<%= item.deadline?item.deadline.toString().substring(0,10):'' %>"></div>
+                    <div class="form-group"><label>Status</label>
+                        <select class="form-control" name="status">
+                            <option value="aktif" <%= item.status==='aktif'?'selected':'' %>>Aktif</option>
+                            <option value="nonaktif" <%= item.status==='nonaktif'?'selected':'' %>>Nonaktif</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Gambar</label>
+                        <% if (item.gambar) { %><div class="mb-2"><img src="/uploads/<%= item.gambar %>" style="max-width:150px;border-radius:8px;"></div><% } %>
+                        <input type="file" class="form-control-file" name="gambar" accept=".jpg,.jpeg,.png,.webp">
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-success"><i class="fas fa-save mr-1"></i>Update</button>
+            <a href="/bkk/dashboard" class="btn btn-secondary ml-2">Batal</a>
+        </form>
+    </div>
+</div>
+<%- include('../_portal_footer', {portalLabel:'BKK'}) %>

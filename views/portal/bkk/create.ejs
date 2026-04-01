@@ -1,0 +1,44 @@
+<%- include('../_portal_header', {portalColor:'success', portalLabel:'BKK', dashUrl:'/bkk/dashboard', logoutUrl:'/bkk/logout'}) %>
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Tambah Lowongan / Info BKK</h1>
+    <a href="/bkk/dashboard" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left fa-sm"></i> Kembali</a>
+</div>
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <% if (typeof error !== 'undefined' && error) { %><div class="alert alert-danger"><%= error %></div><% } %>
+        <form method="POST" action="/bkk/create" enctype="multipart/form-data">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="form-group"><label>Judul *</label><input type="text" class="form-control" name="judul" required></div>
+                    <div class="form-group"><label>Perusahaan / Instansi *</label><input type="text" class="form-control" name="perusahaan" required></div>
+                    <div class="form-group"><label>Lokasi</label><input type="text" class="form-control" name="lokasi" placeholder="Kota, Provinsi"></div>
+                    <div class="form-group"><label>Deskripsi</label><textarea class="form-control" name="deskripsi" rows="4"></textarea></div>
+                    <div class="form-group"><label>Persyaratan</label><textarea class="form-control" name="persyaratan" rows="4" placeholder="- Minimal lulusan SMK&#10;- Usia max 25 tahun"></textarea></div>
+                    <div class="form-group"><label>Kontak / Link Pendaftaran</label><input type="text" class="form-control" name="kontak" placeholder="WA/email/link"></div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group"><label>Kategori</label>
+                        <select class="form-control" name="kategori">
+                            <option value="kerja">Lowongan Kerja</option>
+                            <option value="magang">Magang</option>
+                            <option value="beasiswa">Beasiswa</option>
+                            <option value="lainnya">Lainnya</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Deadline</label><input type="date" class="form-control" name="deadline"></div>
+                    <div class="form-group"><label>Status</label>
+                        <select class="form-control" name="status">
+                            <option value="aktif">Aktif</option>
+                            <option value="nonaktif">Nonaktif</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Gambar / Poster</label><input type="file" class="form-control-file" name="gambar" accept=".jpg,.jpeg,.png,.webp"></div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-success"><i class="fas fa-save mr-1"></i>Simpan</button>
+            <a href="/bkk/dashboard" class="btn btn-secondary ml-2">Batal</a>
+        </form>
+    </div>
+</div>
+<%- include('../_portal_footer') %>
