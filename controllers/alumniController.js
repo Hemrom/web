@@ -1,15 +1,21 @@
 const db = require('../config/database');
 const crypto = require('crypto');
 const { createUpload } = require('../middleware/uploadSecurity');
+const cache = require('../utils/cache');
 
 const upload = createUpload('alumni').single('foto');
 
 const getCommonData = async () => {
-  const { getMenuItems, getMediaSosialFooter } = require('./frontendController');
-  const [[profilRows], menuItems, mediaSosialFooter] = await Promise.all([
+  const { getMenuItems } = require('./frontendController');
+  const cached = cache.get('media_sosial_footer');
+  const mediaSosialFooter = cached || await (async () => {
+    const [rows] = await db.query("SELECT id,judul,platform,embed_url FROM media_sosial WHERE status='aktif' ORDER BY urutan ASC");
+    cache.set('media_sosial_footer', rows, 300);
+    return rows;
+  })();
+  const [[profilRows], menuItems] = await Promise.all([
     db.query('SELECT * FROM profil_sekolah LIMIT 1'),
-    getMenuItems(),
-    getMediaSosialFooter()
+    getMenuItems()
   ]);
   return { profil: profilRows || {}, menuItems, mediaSosialFooter };
 };
