@@ -44,7 +44,7 @@ const createUpload = (prefix, opts = {}) => multer({
   fileFilter: strictImageFilter,
   limits: {
     fileSize: 10 * 1024 * 1024, // 10MB max
-    files: opts.maxFiles || 1
+    files: opts.maxFiles || 10  // default 10 agar tidak error Too many files
   }
 });
 
