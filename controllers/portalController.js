@@ -592,8 +592,17 @@ exports.jurusanHalamanUpdate = async (req, res) => {
   try {
     const kode = req.session.portalJurusan;
     const { deskripsi, deskripsi_lengkap } = req.body;
+    // Decode HTML entities yang mungkin di-encode ganda
+    const decodeHtml = (str) => {
+      if (!str) return null;
+      return str
+        .replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+        .replace(/&amp;/g, '&').replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'").replace(/&nbsp;/g, '\u00a0');
+    };
+    const decodedLengkap = decodeHtml(deskripsi_lengkap);
     await db.query('UPDATE jurusan SET deskripsi=?, deskripsi_lengkap=? WHERE kode=?',
-      [deskripsi||null, deskripsi_lengkap||null, kode]);
+      [deskripsi||null, decodedLengkap, kode]);
     res.redirect('/jurusan-portal/halaman?success=1');
   } catch (err) {
     console.error(err);
