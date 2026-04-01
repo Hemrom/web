@@ -1100,70 +1100,9 @@
         </div>
     </section>
 
-    <!-- Alumni Section -->
-    <section style="padding:5rem 0;background:white;">
-        <div class="container">
-            <h2 class="section-title">Alumni Kami</h2>
-            <p class="section-subtitle">Kebanggaan kami yang telah meraih kesuksesan di berbagai bidang</p>
-
-            <% if (alumniHome && alumniHome.length > 0) { %>
-            <div class="row g-4 mb-4">
-                <% alumniHome.forEach(function(a) { %>
-                <div class="col-lg-4 col-md-6">
-                    <div style="background:var(--gray-50);border-radius:20px;padding:1.5rem;border:1px solid var(--gray-100);height:100%;display:flex;flex-direction:column;transition:all .3s;" onmouseover="this.style.transform='translateY(-5px)';this.style.boxShadow='0 12px 30px rgba(14,165,233,.12)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none'">
-                        <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;">
-                            <% if (a.foto) { %>
-                            <img src="/uploads/<%= a.foto %>" style="width:56px;height:56px;border-radius:50%;object-fit:cover;object-position:top;border:3px solid var(--light-blue);flex-shrink:0;">
-                            <% } else { %>
-                            <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--primary-blue),var(--secondary-blue));display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                <i class="fas fa-user" style="color:white;font-size:1.2rem;"></i>
-                            </div>
-                            <% } %>
-                            <div>
-                                <div style="font-weight:700;color:var(--gray-800);font-size:.95rem;"><%= a.nama %></div>
-                                <div style="font-size:.78rem;color:var(--gray-500);">
-                                    <% if (a.tahun_lulus) { %><span style="background:var(--light-blue);color:var(--primary-blue-dark);padding:.1rem .5rem;border-radius:10px;font-weight:600;">Angkatan <%= a.tahun_lulus %></span><% } %>
-                                    <% if (a.jurusan) { %> · <%= a.jurusan %><% } %>
-                                </div>
-                                <% if (a.pekerjaan) { %>
-                                <div style="font-size:.8rem;color:var(--primary-blue);font-weight:600;margin-top:.2rem;"><i class="fas fa-briefcase me-1"></i><%= a.pekerjaan %><% if(a.perusahaan){%> · <%=a.perusahaan%><% } %></div>
-                                <% } %>
-                            </div>
-                        </div>
-                        <% if (a.cerita) { %>
-                        <div style="flex:1;font-size:.83rem;color:var(--gray-600);font-style:italic;line-height:1.6;border-left:3px solid var(--accent-blue);padding-left:.9rem;">
-                            "<%= a.cerita.substring(0,160) %><%= a.cerita.length>160?'...':'' %>"
-                        </div>
-                        <% } %>
-                    </div>
-                </div>
-                <% }) %>
-            </div>
-            <% } else { %>
-            <div style="text-align:center;padding:3rem;background:var(--gray-50);border-radius:20px;border:1px solid var(--gray-100);margin-bottom:2rem;">
-                <i class="fas fa-user-graduate fa-3x mb-3 d-block" style="color:var(--accent-blue);"></i>
-                <p style="color:var(--gray-600);font-size:1rem;margin:0;">Jadilah alumni pertama yang berbagi cerita sukses!</p>
-            </div>
-            <% } %>
-
-            <div style="text-align:center;display:flex;flex-wrap:wrap;gap:.75rem;justify-content:center;">
-                <a href="/alumni" class="btn btn-primary btn-lg" style="border-radius:50px;">
-                    <i class="fas fa-users me-2"></i>Lihat Semua Alumni
-                </a>
-                <a href="/alumni/daftar" class="btn btn-outline-primary btn-lg" style="border-radius:50px;">
-                    <i class="fas fa-user-plus me-2"></i>Daftar Alumni
-                </a>
-                <a href="/alumni/update" class="btn btn-outline-secondary btn-lg" style="border-radius:50px;">
-                    <i class="fas fa-edit me-2"></i>Update Biodata
-                </a>
-            </div>
-        </div>
-    </section>
-
     <!-- Link Terkait Section -->
     <% if (linkTerkait && linkTerkait.length > 0) { %>
     <section class="link-terkait-section">
-        <div class="container-fluid px-0">
             <div class="link-terkait-wrapper">
                 <div class="link-terkait-header">
                     <i class="fas fa-link me-2"></i> Link Terkait
@@ -1330,6 +1269,47 @@
         </div>
     </section>
     <% } %>
+
+    <!-- Alumni Section -->
+    <section style="padding:5rem 0;background:white;">
+        <div class="container">
+            <h2 class="section-title">Alumni Kami</h2>
+            <p class="section-subtitle">Kebanggaan kami yang telah meraih kesuksesan di berbagai bidang</p>
+            <% if (alumniHome && alumniHome.length > 0) { %>
+            <div class="row g-4 mb-4">
+                <% alumniHome.forEach(function(a) { %>
+                <div class="col-lg-4 col-md-6">
+                    <div style="background:var(--gray-50);border-radius:20px;padding:1.5rem;border:1px solid var(--gray-100);height:100%;display:flex;flex-direction:column;transition:all .3s;" onmouseover="this.style.transform='translateY(-5px)';this.style.boxShadow='0 12px 30px rgba(14,165,233,.12)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none'">
+                        <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;">
+                            <% if (a.foto) { %><img src="/uploads/<%= a.foto %>" style="width:56px;height:56px;border-radius:50%;object-fit:cover;object-position:top;border:3px solid var(--light-blue);flex-shrink:0;">
+                            <% } else { %><div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--primary-blue),var(--secondary-blue));display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fas fa-user" style="color:white;font-size:1.2rem;"></i></div><% } %>
+                            <div>
+                                <div style="font-weight:700;color:var(--gray-800);font-size:.95rem;"><%= a.nama %></div>
+                                <div style="font-size:.78rem;color:var(--gray-500);">
+                                    <% if (a.tahun_lulus) { %><span style="background:var(--light-blue);color:var(--primary-blue-dark);padding:.1rem .5rem;border-radius:10px;font-weight:600;">Angkatan <%= a.tahun_lulus %></span><% } %>
+                                    <% if (a.jurusan) { %> · <%= a.jurusan %><% } %>
+                                </div>
+                                <% if (a.pekerjaan) { %><div style="font-size:.8rem;color:var(--primary-blue);font-weight:600;margin-top:.2rem;"><i class="fas fa-briefcase me-1"></i><%= a.pekerjaan %><% if(a.perusahaan){%> · <%=a.perusahaan%><% } %></div><% } %>
+                            </div>
+                        </div>
+                        <% if (a.cerita) { %><div style="flex:1;font-size:.83rem;color:var(--gray-600);font-style:italic;line-height:1.6;border-left:3px solid var(--accent-blue);padding-left:.9rem;">"<%= a.cerita.substring(0,160) %><%= a.cerita.length>160?'...':'' %>"</div><% } %>
+                    </div>
+                </div>
+                <% }) %>
+            </div>
+            <% } else { %>
+            <div style="text-align:center;padding:3rem;background:var(--gray-50);border-radius:20px;border:1px solid var(--gray-100);margin-bottom:2rem;">
+                <i class="fas fa-user-graduate fa-3x mb-3 d-block" style="color:var(--accent-blue);"></i>
+                <p style="color:var(--gray-600);font-size:1rem;margin:0;">Jadilah alumni pertama yang berbagi cerita sukses!</p>
+            </div>
+            <% } %>
+            <div style="text-align:center;display:flex;flex-wrap:wrap;gap:.75rem;justify-content:center;">
+                <a href="/alumni" class="btn btn-primary btn-lg" style="border-radius:50px;"><i class="fas fa-users me-2"></i>Lihat Semua Alumni</a>
+                <a href="/alumni/daftar" class="btn btn-outline-primary btn-lg" style="border-radius:50px;"><i class="fas fa-user-plus me-2"></i>Daftar Alumni</a>
+                <a href="/alumni/update" class="btn btn-outline-secondary btn-lg" style="border-radius:50px;"><i class="fas fa-edit me-2"></i>Update Biodata</a>
+            </div>
+        </div>
+    </section>
 
     <!-- CTA Section -->
     <section class="cta-section">
