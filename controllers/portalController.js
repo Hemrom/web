@@ -6,6 +6,11 @@ const { loginLimiter } = require('../middleware/security');
 
 const uploadSingle = createUpload('portal').single('gambar');
 
+// Helper: render portal view dengan csrfToken otomatis
+const portalRender = (res, req, view, data) => {
+  res.render(view, { csrfToken: req.session.csrfToken, ...data });
+};
+
 const createSlug = (text) => text.toLowerCase()
   .replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').trim()
   + '-' + Date.now().toString(36);
@@ -114,14 +119,14 @@ exports.portalLogout = (role) => (req, res) => {
 // ── PORTAL BKK DASHBOARD ──────────────────────────────────────────────────────
 exports.bkkDashboard = async (req, res) => {
   const [lowongan] = await db.query('SELECT * FROM bkk_lowongan ORDER BY created_at DESC');
-  res.render('portal/bkk/dashboard', { title: 'Dashboard BKK', user: req.session, lowongan });
+  portalRender(res, req, 'portal/bkk/dashboard', { title: 'Dashboard BKK', user: req.session, lowongan, success: req.query.success });
 };
 
-exports.bkkCreatePage = (req, res) => res.render('portal/bkk/create', { title: 'Tambah Lowongan', user: req.session });
+exports.bkkCreatePage = (req, res) => portalRender(res, req, 'portal/bkk/create', { title: 'Tambah Lowongan', user: req.session });
 
 exports.bkkCreate = (req, res) => {
   uploadSingle(req, res, async (err) => {
-    if (err) return res.render('portal/bkk/create', { title: 'Tambah Lowongan', user: req.session, error: err.message });
+    if (err) return portalRender(res, req, 'portal/bkk/create', { title: 'Tambah Lowongan', user: req.session, error: err.message });
     const { judul, perusahaan, lokasi, deskripsi, persyaratan, kategori, deadline, kontak, status } = req.body;
     const gambar = req.file ? req.file.filename : null;
     const slug = createSlug(judul);
@@ -134,7 +139,7 @@ exports.bkkCreate = (req, res) => {
 exports.bkkEditPage = async (req, res) => {
   const [rows] = await db.query('SELECT * FROM bkk_lowongan WHERE id=?', [req.params.id]);
   if (!rows.length) return res.redirect('/bkk/dashboard');
-  res.render('portal/bkk/edit', { title: 'Edit Lowongan', user: req.session, item: rows[0] });
+  portalRender(res, req, 'portal/bkk/edit', { title: 'Edit Lowongan', user: req.session, item: rows[0] });
 };
 
 exports.bkkUpdate = (req, res) => {
@@ -157,14 +162,14 @@ exports.bkkDelete = async (req, res) => {
 // ── PORTAL OSIS DASHBOARD ─────────────────────────────────────────────────────
 exports.osisDashboard = async (req, res) => {
   const [kegiatan] = await db.query('SELECT * FROM osis_kegiatan ORDER BY created_at DESC');
-  res.render('portal/osis/dashboard', { title: 'Dashboard OSIS', user: req.session, kegiatan });
+  portalRender(res, req, 'portal/osis/dashboard', { title: 'Dashboard OSIS', user: req.session, kegiatan, success: req.query.success });
 };
 
-exports.osisCreatePage = (req, res) => res.render('portal/osis/create', { title: 'Tambah Kegiatan', user: req.session });
+exports.osisCreatePage = (req, res) => portalRender(res, req, 'portal/osis/create', { title: 'Tambah Kegiatan', user: req.session });
 
 exports.osisCreate = (req, res) => {
   uploadSingle(req, res, async (err) => {
-    if (err) return res.render('portal/osis/create', { title: 'Tambah Kegiatan', user: req.session, error: err.message });
+    if (err) return portalRender(res, req, 'portal/osis/create', { title: 'Tambah Kegiatan', user: req.session, error: err.message });
     const { judul, konten, kategori, status } = req.body;
     const gambar = req.file ? req.file.filename : null;
     const slug = createSlug(judul);
@@ -177,7 +182,7 @@ exports.osisCreate = (req, res) => {
 exports.osisEditPage = async (req, res) => {
   const [rows] = await db.query('SELECT * FROM osis_kegiatan WHERE id=?', [req.params.id]);
   if (!rows.length) return res.redirect('/osis/dashboard');
-  res.render('portal/osis/edit', { title: 'Edit Kegiatan', user: req.session, item: rows[0] });
+  portalRender(res, req, 'portal/osis/edit', { title: 'Edit Kegiatan', user: req.session, item: rows[0] });
 };
 
 exports.osisUpdate = (req, res) => {
@@ -201,14 +206,14 @@ exports.osisDelete = async (req, res) => {
 exports.jurusanDashboard = async (req, res) => {
   const jurusan = req.session.portalJurusan;
   const [prestasi] = await db.query('SELECT * FROM prestasi WHERE jurusan=? ORDER BY created_at DESC', [jurusan]);
-  res.render('portal/jurusan/dashboard', { title: `Dashboard Jurusan ${jurusan}`, user: req.session, prestasi, jurusan, success: req.query.success });
+  portalRender(res, req, 'portal/jurusan/dashboard', { title: `Dashboard Jurusan ${jurusan}`, user: req.session, prestasi, jurusan, success: req.query.success });
 };
 
-exports.jurusanCreatePage = (req, res) => res.render('portal/jurusan/create', { title: 'Tambah Prestasi', user: req.session });
+exports.jurusanCreatePage = (req, res) => portalRender(res, req, 'portal/jurusan/create', { title: 'Tambah Prestasi', user: req.session });
 
 exports.jurusanCreate = (req, res) => {
   uploadSingle(req, res, async (err) => {
-    if (err) return res.render('portal/jurusan/create', { title: 'Tambah Prestasi', user: req.session, error: err.message });
+    if (err) return portalRender(res, req, 'portal/jurusan/create', { title: 'Tambah Prestasi', user: req.session, error: err.message });
     const { judul, deskripsi, kategori, tingkat, tahun, status } = req.body;
     const gambar = req.file ? req.file.filename : null;
     const slug = createSlug(judul);
@@ -222,7 +227,7 @@ exports.jurusanCreate = (req, res) => {
 exports.jurusanEditPage = async (req, res) => {
   const [rows] = await db.query('SELECT * FROM prestasi WHERE id=? AND jurusan=?', [req.params.id, req.session.portalJurusan]);
   if (!rows.length) return res.redirect('/jurusan-portal/dashboard');
-  res.render('portal/jurusan/edit', { title: 'Edit Prestasi', user: req.session, item: rows[0] });
+  portalRender(res, req, 'portal/jurusan/edit', { title: 'Edit Prestasi', user: req.session, item: rows[0] });
 };
 
 exports.jurusanUpdate = (req, res) => {
@@ -437,15 +442,15 @@ exports.jurusanDetailPage = async (req, res) => {
 exports.jurusanBeritaIndex = async (req, res) => {
   const jurusan = req.session.portalJurusan;
   const [berita] = await db.query('SELECT * FROM jurusan_berita WHERE jurusan=? ORDER BY created_at DESC', [jurusan]);
-  res.render('portal/jurusan/berita', { title: `Berita Jurusan ${jurusan}`, user: req.session, berita, jurusan, success: req.query.success });
+  res.render('portal/jurusan/berita', { title: `Berita Jurusan ${jurusan}`, user: req.session, berita, jurusan, success: req.query.success, csrfToken: req.session.csrfToken });
 };
 
 exports.jurusanBeritaCreatePage = (req, res) =>
-  res.render('portal/jurusan/berita-create', { title: 'Tambah Berita/Informasi', user: req.session });
+  res.render('portal/jurusan/berita-create', { title: 'Tambah Berita/Informasi', user: req.session, csrfToken: req.session.csrfToken });
 
 exports.jurusanBeritaCreate = (req, res) => {
   uploadSingle(req, res, async (err) => {
-    if (err) return res.redirect('/jurusan-portal/berita');
+    if (err) return res.render('portal/jurusan/berita-create', { title: 'Tambah Berita/Informasi', user: req.session, csrfToken: req.session.csrfToken, error: err.message });
     const { judul, konten, kategori, status } = req.body;
     const gambar = req.file ? req.file.filename : null;
     const slug = createSlug(judul);
@@ -459,7 +464,7 @@ exports.jurusanBeritaCreate = (req, res) => {
 exports.jurusanBeritaEditPage = async (req, res) => {
   const [rows] = await db.query('SELECT * FROM jurusan_berita WHERE id=? AND jurusan=?', [req.params.id, req.session.portalJurusan]);
   if (!rows.length) return res.redirect('/jurusan-portal/berita');
-  res.render('portal/jurusan/berita-edit', { title: 'Edit Berita', user: req.session, item: rows[0] });
+  res.render('portal/jurusan/berita-edit', { title: 'Edit Berita', user: req.session, item: rows[0], csrfToken: req.session.csrfToken });
 };
 
 exports.jurusanBeritaUpdate = (req, res) => {
