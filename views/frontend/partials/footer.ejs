@@ -1,21 +1,25 @@
 <footer class="footer">
     <div class="container">
-        <div class="row">
-            <div class="col-lg-4 col-md-6 mb-4">
-                <h3 class="footer-title"><%= profil.nama_sekolah || 'SMKN 1 Kras' %></h3>
-                <p style="font-size:0.9rem;color:#fff;">Memberikan pendidikan berkualitas untuk menciptakan generasi yang cerdas dan berkarakter.</p>
-                <div class="footer-sosmed mt-3">
+        <div class="row g-4">
+            <!-- Kolom 1: Nama Sekolah & Sosmed -->
+            <div class="col-lg-4 col-md-6">
+                <div class="d-flex align-items-center mb-3" style="gap:.75rem;">
+                    <img src="/uploads/logo-sekolah.png" style="width:44px;height:44px;object-fit:contain;border-radius:8px;background:rgba(255,255,255,.1);padding:4px;" onerror="this.style.display='none'">
+                    <h3 class="footer-title mb-0" style="font-size:1.1rem;"><%= (typeof profil !== 'undefined' && profil.nama_sekolah) ? profil.nama_sekolah : 'SMKN 1 Kras' %></h3>
+                </div>
+                <p style="font-size:.88rem;color:rgba(255,255,255,.75);line-height:1.6;margin-bottom:1rem;">Memberikan pendidikan berkualitas untuk menciptakan generasi yang cerdas, berkarakter, dan siap kerja.</p>
+                <div class="footer-sosmed">
                     <%
                         const sosmedList = [
-                            { platform: 'instagram', icon: 'fa-instagram', label: 'Instagram', color: '#E1306C', bg: 'linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)' },
-                            { platform: 'youtube',   icon: 'fa-youtube',   label: 'YouTube',   color: '#FF0000', bg: '#FF0000' },
-                            { platform: 'facebook',  icon: 'fa-facebook-f',label: 'Facebook',  color: '#1877F2', bg: '#1877F2' },
-                            { platform: 'tiktok',    icon: 'fa-tiktok',    label: 'TikTok',    color: '#010101', bg: '#010101' },
-                            { platform: 'twitter',   icon: 'fa-x-twitter', label: 'X/Twitter', color: '#000000', bg: '#000000' },
-                            { platform: 'threads',   icon: 'fa-threads',   label: 'Threads',   color: '#101010', bg: '#101010' },
+                            { platform: 'instagram', icon: 'fa-instagram', bg: 'linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)' },
+                            { platform: 'youtube',   icon: 'fa-youtube',   bg: '#FF0000' },
+                            { platform: 'facebook',  icon: 'fa-facebook-f',bg: '#1877F2' },
+                            { platform: 'tiktok',    icon: 'fa-tiktok',    bg: '#010101' },
+                            { platform: 'twitter',   icon: 'fa-x-twitter', bg: '#000000' },
+                            { platform: 'threads',   icon: 'fa-threads',   bg: '#101010' },
                         ];
                         const activeMap = {};
-                        if (mediaSosialFooter) {
+                        if (typeof mediaSosialFooter !== 'undefined' && mediaSosialFooter) {
                             mediaSosialFooter.forEach(function(ms) { activeMap[ms.platform] = ms; });
                         }
                     %>
@@ -24,88 +28,102 @@
                         <a href="<%= active ? active.embed_url : '#' %>"
                            target="<%= active ? '_blank' : '_self' %>"
                            rel="noopener"
-                           title="<%= active ? active.judul : s.label %>"
                            class="footer-sosmed-btn <%= active ? '' : 'inactive' %>"
-                           style="background:<%= s.bg %>;">
+                           style="background:<%= s.bg %>;"
+                           title="<%= s.platform %>">
                             <i class="fab <%= s.icon %>"></i>
                         </a>
                     <% }) %>
                 </div>
-                <style>
-                .footer-sosmed { display:flex; flex-wrap:wrap; gap:10px; margin-top:1rem; }
-                .footer-sosmed-btn {
-                    display:inline-flex; align-items:center; justify-content:center;
-                    width:44px; height:44px; border-radius:12px;
-                    color:white; font-size:1.25rem;
-                    text-decoration:none; transition:transform 0.2s, opacity 0.2s;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-                }
-                .footer-sosmed-btn:hover { transform:translateY(-3px); opacity:0.9; color:white; text-decoration:none; }
-                .footer-sosmed-btn.inactive { opacity:0.35; cursor:default; }
-                .footer-sosmed-btn.inactive:hover { transform:none; opacity:0.35; }
-                </style>
             </div>
-            <div class="col-lg-2 col-md-6 mb-4">
+
+            <!-- Kolom 2: Menu -->
+            <div class="col-lg-2 col-md-3 col-6">
                 <h4 class="footer-title">Menu</h4>
                 <a href="/" class="footer-link">Beranda</a>
                 <a href="/profil" class="footer-link">Profil</a>
                 <a href="/berita" class="footer-link">Berita</a>
                 <a href="/galeri" class="footer-link">Galeri</a>
+                <a href="/prestasi" class="footer-link">Prestasi</a>
             </div>
-            <div class="col-lg-2 col-md-6 mb-4">
+
+            <!-- Kolom 3: Informasi -->
+            <div class="col-lg-2 col-md-3 col-6">
                 <h4 class="footer-title">Informasi</h4>
                 <a href="/guru" class="footer-link">Guru & Staff</a>
+                <a href="/bkk" class="footer-link">BKK</a>
+                <a href="/osis" class="footer-link">OSIS</a>
+                <a href="/alumni" class="footer-link">Alumni</a>
                 <a href="/kontak" class="footer-link">Kontak</a>
-                <a href="/media-sosial" class="footer-link">Media Sosial</a>
             </div>
-            <div class="col-lg-4 col-md-6 mb-4 text-right">
+
+            <!-- Kolom 4: Kontak -->
+            <div class="col-lg-4 col-md-6">
                 <h4 class="footer-title">Kontak Kami</h4>
+                <% if (typeof profil !== 'undefined') { %>
                 <% if (profil.alamat) { %>
-                <p class="mb-1" style="color:#fff;font-size:0.9rem;">
-                    <%= profil.alamat %> <i class="fas fa-map-marker-alt ml-2"></i>
-                </p>
+                <div class="d-flex align-items-start gap-2 mb-2">
+                    <i class="fas fa-map-marker-alt mt-1" style="color:rgba(255,255,255,.6);font-size:.85rem;flex-shrink:0;"></i>
+                    <span style="color:rgba(255,255,255,.85);font-size:.88rem;line-height:1.5;"><%= profil.alamat %></span>
+                </div>
                 <% } %>
                 <% if (profil.telepon) { %>
-                <p class="mb-1" style="color:#fff;font-size:0.9rem;">
-                    <%= profil.telepon %> <i class="fas fa-phone ml-2"></i>
-                </p>
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="fas fa-phone" style="color:rgba(255,255,255,.6);font-size:.85rem;flex-shrink:0;"></i>
+                    <span style="color:rgba(255,255,255,.85);font-size:.88rem;"><%= profil.telepon %></span>
+                </div>
+                <% } %>
+                <% if (profil.email) { %>
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="fas fa-envelope" style="color:rgba(255,255,255,.6);font-size:.85rem;flex-shrink:0;"></i>
+                    <span style="color:rgba(255,255,255,.85);font-size:.88rem;"><%= profil.email %></span>
+                </div>
                 <% } %>
                 <% if (profil.whatsapp && profil.tampil_wa != 0) { %>
-                <a href="https://wa.me/<%= profil.whatsapp.replace(/[^0-9]/g, '') %>" target="_blank" rel="noopener" class="wa-btn mb-2">
+                <a href="https://wa.me/<%= profil.whatsapp.replace(/[^0-9]/g, '') %>" target="_blank" rel="noopener" class="wa-btn mt-2">
                     <span class="wa-icon"><i class="fab fa-whatsapp"></i></span>
                     <span class="wa-text">
                         <span class="wa-label">Chat WhatsApp</span>
                         <span class="wa-number"><%= profil.whatsapp %></span>
                     </span>
                 </a>
-                <style>
-                .wa-btn {
-                    display:inline-flex; align-items:center; gap:10px;
-                    background:linear-gradient(135deg,#25d366,#128c7e);
-                    color:white; text-decoration:none;
-                    padding:10px 16px; border-radius:50px;
-                    box-shadow:0 4px 15px rgba(37,211,102,0.35);
-                    transition:transform 0.2s, box-shadow 0.2s;
-                    max-width:100%;
-                }
-                .wa-btn:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(37,211,102,0.5); color:white; text-decoration:none; }
-                .wa-icon { font-size:1.6rem; line-height:1; flex-shrink:0; }
-                .wa-text { display:flex; flex-direction:column; line-height:1.3; }
-                .wa-label { font-size:0.7rem; opacity:0.85; font-weight:500; }
-                .wa-number { font-size:0.9rem; font-weight:700; }
-                </style>
                 <% } %>
-                <% if (profil.email) { %>
-                <p class="mb-1" style="color:#fff;font-size:0.9rem;">
-                    <%= profil.email %> <i class="fas fa-envelope ml-2"></i>
-                </p>
                 <% } %>
             </div>
         </div>
-        <div class="footer-bottom">
-            <p>&copy; <%= new Date().getFullYear() %> <%= profil.nama_sekolah || 'Website Sekolah' %>. All rights reserved.</p>
+
+        <div class="footer-bottom" style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;">
+            <p style="margin:0;color:rgba(255,255,255,.5);font-size:.85rem;">&copy; <%= new Date().getFullYear() %> <%= (typeof profil !== 'undefined' && profil.nama_sekolah) ? profil.nama_sekolah : 'SMKN 1 Kras' %>. All rights reserved.</p>
+            <p style="margin:0;color:rgba(255,255,255,.4);font-size:.8rem;">Website Resmi Sekolah</p>
         </div>
     </div>
 </footer>
+
+<style>
+.footer-sosmed { display:flex; flex-wrap:wrap; gap:8px; }
+.footer-sosmed-btn {
+    display:inline-flex; align-items:center; justify-content:center;
+    width:40px; height:40px; border-radius:10px;
+    color:white; font-size:1.1rem;
+    text-decoration:none; transition:transform .2s, opacity .2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,.3);
+}
+.footer-sosmed-btn:hover { transform:translateY(-3px); opacity:.9; color:white; text-decoration:none; }
+.footer-sosmed-btn.inactive { opacity:.3; cursor:default; }
+.footer-sosmed-btn.inactive:hover { transform:none; opacity:.3; }
+.wa-btn {
+    display:inline-flex; align-items:center; gap:10px;
+    background:linear-gradient(135deg,#25d366,#128c7e);
+    color:white; text-decoration:none;
+    padding:10px 16px; border-radius:50px;
+    box-shadow:0 4px 15px rgba(37,211,102,.35);
+    transition:transform .2s, box-shadow .2s;
+}
+.wa-btn:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(37,211,102,.5); color:white; text-decoration:none; }
+.wa-icon { font-size:1.5rem; line-height:1; flex-shrink:0; }
+.wa-text { display:flex; flex-direction:column; line-height:1.3; }
+.wa-label { font-size:.7rem; opacity:.85; font-weight:500; }
+.wa-number { font-size:.88rem; font-weight:700; }
+</style>
 
 <%- include('mobile-nav') %>
