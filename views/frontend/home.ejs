@@ -1228,35 +1228,41 @@
                         <h3 class="medsos-featured-title"><%= featured.judul %></h3>
                         <div class="medsos-embed-wrap">
                             <%
-                            // YouTube: bisa embed langsung
-                            // Instagram/TikTok/Facebook/Threads/Twitter: tidak bisa iframe, tampilkan card preview
                             const ytMatch = featured.embed_url.match(/(?:v=|youtu\.be\/)([^&\n?#]+)/);
                             const ytId = ytMatch ? ytMatch[1] : null;
+                            const bgMap = {instagram:'linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045)',facebook:'linear-gradient(135deg,#1877F2,#0d5dbf)',tiktok:'linear-gradient(135deg,#010101,#69C9D0)',twitter:'linear-gradient(135deg,#000,#333)',threads:'linear-gradient(135deg,#101010,#444)'};
+                            const iconMap = {instagram:'fa-instagram',facebook:'fa-facebook-f',tiktok:'fa-tiktok',twitter:'fa-x-twitter',threads:'fa-threads'};
+                            const labelMap = {instagram:'Lihat di Instagram',facebook:'Lihat di Facebook',tiktok:'Lihat di TikTok',twitter:'Lihat di X/Twitter',threads:'Lihat di Threads'};
                             %>
                             <% if (featured.platform === 'youtube' && ytId) { %>
+                                <!-- YouTube: embed langsung -->
                                 <div class="ratio ratio-16x9" style="border-radius:16px;overflow:hidden;">
                                     <iframe src="https://www.youtube.com/embed/<%= ytId %>?rel=0&modestbranding=1" allowfullscreen style="border:0;"></iframe>
                                 </div>
                             <% } else { %>
+                                <!-- Non-YouTube: card dengan thumbnail otomatis atau foto alternatif -->
                                 <%
-                                const bgMap = {instagram:'linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045)',facebook:'linear-gradient(135deg,#1877F2,#0d5dbf)',tiktok:'linear-gradient(135deg,#010101,#69C9D0)',twitter:'linear-gradient(135deg,#000,#333)',threads:'linear-gradient(135deg,#101010,#444)',youtube:'linear-gradient(135deg,#FF0000,#cc0000)'};
-                                const iconMap = {instagram:'fa-instagram',facebook:'fa-facebook-f',tiktok:'fa-tiktok',twitter:'fa-x-twitter',threads:'fa-threads',youtube:'fa-youtube'};
-                                const labelMap = {instagram:'Lihat di Instagram',facebook:'Lihat di Facebook',tiktok:'Lihat di TikTok',twitter:'Lihat di X/Twitter',threads:'Lihat di Threads',youtube:'Lihat di YouTube'};
                                 const bg = bgMap[featured.platform] || 'linear-gradient(135deg,#334155,#1e293b)';
                                 const icon = iconMap[featured.platform] || 'fa-globe';
                                 const label = labelMap[featured.platform] || 'Lihat Postingan';
+                                // Thumbnail otomatis YouTube (fallback), atau foto yang diupload admin
+                                const thumbSrc = featured.thumbnail ? '/uploads/' + featured.thumbnail : null;
                                 %>
                                 <a href="<%= featured.embed_url %>" target="_blank" rel="noopener" style="display:block;text-decoration:none;">
-                                    <div style="background:<%= bg %>;border-radius:16px;padding:2.5rem 2rem;text-align:center;min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;transition:opacity .2s;position:relative;overflow:hidden;" onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'">
-                                        <% if (featured.thumbnail) { %>
-                                        <img src="/uploads/<%= featured.thumbnail %>" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;opacity:.35;border-radius:16px;">
+                                    <div style="background:<%= bg %>;border-radius:16px;min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;position:relative;overflow:hidden;" onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'">
+                                        <% if (thumbSrc) { %>
+                                        <!-- Thumbnail dari admin -->
+                                        <img src="<%= thumbSrc %>" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border-radius:16px;">
+                                        <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.45);border-radius:16px;"></div>
                                         <% } %>
-                                        <div style="position:relative;z-index:1;width:80px;height:80px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(5px);">
-                                            <i class="fab <%= icon %>" style="font-size:2.5rem;color:white;"></i>
-                                        </div>
-                                        <div style="position:relative;z-index:1;color:white;font-weight:700;font-size:1rem;"><%= featured.judul %></div>
-                                        <div style="position:relative;z-index:1;background:rgba(255,255,255,.2);color:white;padding:.6rem 1.5rem;border-radius:50px;font-weight:600;font-size:.9rem;border:1px solid rgba(255,255,255,.3);">
-                                            <i class="fas fa-external-link-alt me-2"></i><%= label %>
+                                        <div style="position:relative;z-index:1;text-align:center;padding:2rem;">
+                                            <div style="width:72px;height:72px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .75rem;backdrop-filter:blur(5px);">
+                                                <i class="fab <%= icon %>" style="font-size:2.2rem;color:white;"></i>
+                                            </div>
+                                            <div style="color:white;font-weight:700;font-size:1rem;margin-bottom:.75rem;text-shadow:0 1px 4px rgba(0,0,0,.5);"><%= featured.judul %></div>
+                                            <div style="background:rgba(255,255,255,.2);color:white;padding:.5rem 1.25rem;border-radius:50px;font-weight:600;font-size:.85rem;border:1px solid rgba(255,255,255,.35);display:inline-block;">
+                                                <i class="fas fa-external-link-alt me-2"></i><%= label %>
+                                            </div>
                                         </div>
                                     </div>
                                 </a>

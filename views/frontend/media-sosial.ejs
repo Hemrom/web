@@ -339,7 +339,12 @@
                                     <% if (ytEmbedId) { %>
                                     <iframe src="https://www.youtube.com/embed/<%= ytEmbedId %>?rel=0&modestbranding=1" allowfullscreen style="width:100%;height:100%;border:0;"></iframe>
                                     <% } else { %>
-                                    <%- include('partials/_medsos_card', {url: item.embed_url, platform: item.platform, judul: item.judul}) %>
+                                    <div style="display:flex;align-items:center;justify-content:center;height:100%;background:#FF0000;">
+                                        <a href="<%= item.embed_url %>" target="_blank" rel="noopener" style="color:white;text-decoration:none;text-align:center;">
+                                            <i class="fab fa-youtube" style="font-size:4rem;display:block;margin-bottom:.5rem;"></i>
+                                            <span>Lihat di YouTube</span>
+                                        </a>
+                                    </div>
                                     <% } %>
                                 <% } else { %>
                                     <%
@@ -350,13 +355,17 @@
                                     const icon2 = iconMap2[item.platform] || 'fa-globe';
                                     const label2 = labelMap2[item.platform] || 'Lihat Postingan';
                                     %>
-                                    <a href="<%= item.embed_url %>" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;height:100%;text-decoration:none;background:<%= bg2 %>;">
-                                        <div style="text-align:center;padding:2rem;">
-                                            <div style="width:80px;height:80px;background:rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;backdrop-filter:blur(5px);">
-                                                <i class="fab <%= icon2 %>" style="font-size:2.5rem;color:white;"></i>
+                                    <a href="<%= item.embed_url %>" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;height:100%;text-decoration:none;background:<%= bg2 %>;position:relative;overflow:hidden;">
+                                        <% if (item.thumbnail) { %>
+                                        <img src="/uploads/<%= item.thumbnail %>" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">
+                                        <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.45);"></div>
+                                        <% } %>
+                                        <div style="text-align:center;padding:2rem;position:relative;z-index:1;">
+                                            <div style="width:72px;height:72px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;backdrop-filter:blur(5px);">
+                                                <i class="fab <%= icon2 %>" style="font-size:2rem;color:white;"></i>
                                             </div>
-                                            <div style="color:white;font-weight:700;font-size:1rem;margin-bottom:1rem;"><%= item.judul %></div>
-                                            <div style="background:rgba(255,255,255,.2);color:white;padding:.6rem 1.5rem;border-radius:50px;font-weight:600;font-size:.9rem;border:1px solid rgba(255,255,255,.3);display:inline-block;">
+                                            <div style="color:white;font-weight:700;font-size:.95rem;margin-bottom:.75rem;text-shadow:0 1px 4px rgba(0,0,0,.5);"><%= item.judul %></div>
+                                            <div style="background:rgba(255,255,255,.2);color:white;padding:.5rem 1.25rem;border-radius:50px;font-weight:600;font-size:.85rem;border:1px solid rgba(255,255,255,.35);display:inline-block;">
                                                 <i class="fas fa-external-link-alt me-2"></i><%= label2 %>
                                             </div>
                                         </div>
