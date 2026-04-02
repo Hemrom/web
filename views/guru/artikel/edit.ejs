@@ -37,7 +37,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Konten Artikel *</label>
-                            <textarea id="konten" name="konten" rows="10"><%- artikel.konten || '' %></textarea>
+                            <textarea class="form-control" id="editor" name="konten" rows="10"><%- artikel.konten || '' %></textarea>
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Gambar Cover</label>
@@ -81,19 +81,25 @@
     </div>
 </div>
 <script src="/assets/vendor/jquery/jquery.min.js"></script>
-<script src="/assets/vendor/bootstrap5/bootstrap.bundle.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="/assets/vendor/summernote/summernote-bs4.min.js"></script>
 <script>
-$('#konten').summernote({
-    height: 350,
-    toolbar: [
-        ['style', ['style']],
-        ['font', ['bold', 'italic', 'underline', 'clear']],
-        ['para', ['ul', 'ol', 'paragraph']],
-        ['table', ['table']],
-        ['insert', ['link', 'picture', 'hr']],
-        ['view', ['fullscreen', 'codeview']]
-    ]
+$(document).ready(function() {
+    $('#editor').summernote({
+        height: 400,
+        toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+            ['fontsize', ['fontsize']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'hr']],
+            ['view', ['fullscreen', 'codeview']]
+        ],
+        styleTags: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote'],
+        fontSizes: ['10','11','12','13','14','16','18','20','24','28','32','36']
+    });
 });
 </script>
 </body>
