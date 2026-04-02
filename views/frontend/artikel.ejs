@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Website Sekolah</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <link href="/assets/vendor/bootstrap5/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/vendor/fontawesome6/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/theme.css">
+    <style>
+        :root {
+            --primary-blue: #0ea5e9; --primary-blue-dark: #0284c7;
+            --light-blue: #e0f2fe; --dark-blue: #0c4a6e;
+            --gray-50: #f8fafc; --gray-100: #f1f5f9; --gray-200: #e2e8f0;
+            --gray-500: #64748b; --gray-600: #475569; --gray-700: #334155;
+            --gray-800: #1e293b; --gray-900: #0f172a;
+        }
+        * { font-family: 'Inter', sans-serif; box-sizing: border-box; }
+        body { line-height: 1.6; color: var(--gray-700); }
+        .navbar-modern { background: rgba(255,255,255,0.95) !important; backdrop-filter: blur(10px); box-shadow: 0 2px 20px rgba(14,165,233,0.1); padding: 1rem 0; transition: all 0.3s; }
+        .navbar-modern.scrolled { box-shadow: 0 4px 30px rgba(14,165,233,0.15); }
+        .navbar-brand { font-weight: 700; color: var(--primary-blue) !important; font-size: 1.5rem; text-decoration: none; }
+        .nav-link { font-weight: 500; color: var(--gray-600) !important; padding: 0.75rem 1rem !important; border-radius: 8px; transition: all 0.3s; text-decoration: none; }
+        .nav-link:hover, .nav-link.active { color: var(--primary-blue) !important; background: var(--light-blue); }
+        .page-header { background: linear-gradient(135deg, var(--primary-blue) 0%, var(--dark-blue) 100%); padding: 10rem 0 6rem; color: white; text-align: center; position: relative; overflow: hidden; }
+        .page-header::before { content: ''; position: absolute; inset: 0; background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="rgba(255,255,255,0.05)" points="0,1000 1000,0 1000,1000"/></svg>'); }
+        .page-title { font-size: 3.5rem; font-weight: 800; margin-bottom: 1rem; position: relative; z-index: 1; }
+        .page-subtitle { font-size: 1.3rem; opacity: 0.9; position: relative; z-index: 1; }
+        .content-section { padding: 5rem 0; background: var(--gray-50); }
+        .artikel-card { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 20px rgba(14,165,233,0.08); transition: all 0.3s; height: 100%; border: 1px solid var(--gray-100); }
+        .artikel-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(14,165,233,0.15); }
+        .artikel-image { height: 220px; background-size: cover; background-position: center; position: relative; }
+        .artikel-badge { position: absolute; top: 1rem; left: 1rem; background: var(--primary-blue); color: white; padding: 0.4rem 0.9rem; border-radius: 50px; font-size: 0.78rem; font-weight: 600; }
+        .artikel-content { padding: 1.75rem; }
+        .artikel-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--gray-800); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .artikel-excerpt { color: var(--gray-600); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.25rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .artikel-meta { display: flex; align-items: center; justify-content: space-between; font-size: 0.85rem; color: var(--gray-500); }
+        .read-more { color: var(--primary-blue); font-weight: 600; text-decoration: none; }
+        .read-more:hover { color: var(--primary-blue-dark); }
+        .filter-bar { background: white; border-radius: 16px; padding: 1.5rem; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 2.5rem; }
+        .filter-btn { border: 2px solid var(--gray-200); background: white; color: var(--gray-600); padding: 0.5rem 1.25rem; border-radius: 50px; font-size: 0.875rem; font-weight: 500; text-decoration: none; transition: all 0.2s; display: inline-block; margin: 0.25rem; }
+        .filter-btn:hover, .filter-btn.active { border-color: var(--primary-blue); background: var(--primary-blue); color: white; text-decoration: none; }
+        .pagination-modern { display: flex; justify-content: center; margin-top: 3rem; }
+        .pagination-modern .page-link { border: none; padding: 0.75rem 1rem; margin: 0 0.25rem; border-radius: 10px; color: var(--gray-600); font-weight: 500; transition: all 0.3s; }
+        .pagination-modern .page-item.active .page-link { background: var(--primary-blue); color: white; }
+        .pagination-modern .page-link:hover { background: var(--light-blue); color: var(--primary-blue); }
+        .footer { background: var(--gray-900); color: white; padding: 4rem 0 2rem; }
+        .footer-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 1.25rem; color: white; }
+        .footer-link { color: rgba(255,255,255,0.7); text-decoration: none; margin-bottom: 0.5rem; display: block; transition: color 0.3s; }
+        .footer-link:hover { color: #7dd3fc; text-decoration: none; }
+        @media (max-width: 991px) { .navbar-collapse { background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-top: 1rem; padding: 1rem; } .page-title { font-size: 2.5rem; } }
+        @media (max-width: 768px) { .page-title { font-size: 2rem; } }
+    </style>
+</head>
+<body>
+    <%- include('partials/navbar') %>
+
+    <section class="page-header">
+        <div class="container">
+            <h1 class="page-title"><i class="fas fa-pen-nib me-3"></i>Artikel</h1>
+            <p class="page-subtitle">Kumpulan artikel edukatif dari guru dan staf sekolah</p>
+        </div>
+    </section>
+
+    <section class="content-section">
+        <div class="container">
+            <!-- Filter Kategori -->
+            <% if (kategoriList.length > 0) { %>
+            <div class="filter-bar">
+                <div class="d-flex align-items-center flex-wrap gap-1">
+                    <span class="text-muted small me-2 fw-semibold">Filter:</span>
+                    <a href="/artikel" class="filter-btn <%= !kategoriAktif ? 'active' : '' %>">Semua</a>
+                    <% kategoriList.forEach(k => { %>
+                    <a href="/artikel?kategori=<%= encodeURIComponent(k.kategori) %>" class="filter-btn <%= kategoriAktif === k.kategori ? 'active' : '' %>"><%= k.kategori %></a>
+                    <% }) %>
+                </div>
+            </div>
+            <% } %>
+
+            <% if (!artikel.length) { %>
+            <div class="text-center py-5">
+                <i class="fas fa-file-alt fa-4x text-muted mb-4" style="opacity:0.3;"></i>
+                <h4 class="text-muted">Belum ada artikel</h4>
+                <p class="text-muted">Artikel akan segera hadir di sini.</p>
+            </div>
+            <% } else { %>
+            <div class="row g-4">
+                <% artikel.forEach(item => { %>
+                <div class="col-lg-4 col-md-6">
+                    <div class="artikel-card">
+                        <div class="artikel-image" style="background-image:url('<%= item.gambar ? '/uploads/' + item.gambar : '/assets/img/undraw_posting_photo.svg' %>')">
+                            <div class="artikel-badge"><%= item.kategori %></div>
+                        </div>
+                        <div class="artikel-content">
+                            <h3 class="artikel-title"><%= item.judul %></h3>
+                            <p class="artikel-excerpt"><%= item.ringkasan || (item.konten || '').replace(/<[^>]*>/g, '').substring(0, 120) %>...</p>
+                            <div class="artikel-meta">
+                                <div>
+                                    <i class="fas fa-user-circle me-1"></i><%= item.penulis_nama || 'Admin' %>
+                                    <span class="mx-2">·</span>
+                                    <i class="fas fa-calendar me-1"></i><%= new Date(item.created_at).toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric'}) %>
+                                </div>
+                                <a href="/artikel/<%= item.slug %>" class="read-more">Baca <i class="fas fa-arrow-right ms-1"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <% }) %>
+            </div>
+
+            <% if (totalPages > 1) { %>
+            <nav class="pagination-modern">
+                <ul class="pagination">
+                    <% if (currentPageNum > 1) { %>
+                    <li class="page-item"><a class="page-link" href="/artikel?page=<%= currentPageNum - 1 %><%= kategoriAktif ? '&kategori=' + encodeURIComponent(kategoriAktif) : '' %>"><i class="fas fa-chevron-left"></i></a></li>
+                    <% } %>
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                    <li class="page-item <%= i === currentPageNum ? 'active' : '' %>">
+                        <a class="page-link" href="/artikel?page=<%= i %><%= kategoriAktif ? '&kategori=' + encodeURIComponent(kategoriAktif) : '' %>"><%= i %></a>
+                    </li>
+                    <% } %>
+                    <% if (currentPageNum < totalPages) { %>
+                    <li class="page-item"><a class="page-link" href="/artikel?page=<%= currentPageNum + 1 %><%= kategoriAktif ? '&kategori=' + encodeURIComponent(kategoriAktif) : '' %>"><i class="fas fa-chevron-right"></i></a></li>
+                    <% } %>
+                </ul>
+            </nav>
+            <% } %>
+            <% } %>
+        </div>
+    </section>
+
+    <%- include('partials/footer') %>
+    <script src="/assets/vendor/bootstrap5/bootstrap.bundle.min.js"></script>
+    <script src="/assets/vendor/jquery3/jquery.min.js"></script>
+    <script>
+        $(window).scroll(function() {
+            if ($(window).scrollTop() > 50) $('.navbar-modern').addClass('scrolled');
+            else $('.navbar-modern').removeClass('scrolled');
+        });
+    </script>
+</body>
+</html>

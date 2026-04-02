@@ -1,0 +1,94 @@
+<%
+  // shareTitle dan shareUrl harus di-set sebelum include partial ini
+  // contoh: shareTitle = berita.judul, shareUrl = '/berita/' + berita.slug
+  const _title = encodeURIComponent(typeof shareTitle !== 'undefined' ? shareTitle : title || '');
+  const _url   = encodeURIComponent(typeof shareUrl !== 'undefined' ? shareUrl : '');
+%>
+<div class="share-section">
+  <span class="share-label"><i class="fas fa-share-alt me-2"></i>Bagikan:</span>
+  <div class="share-buttons">
+
+    <!-- Facebook -->
+    <a href="https://www.facebook.com/sharer/sharer.php?u=<%= _url %>"
+       target="_blank" rel="noopener" class="share-btn share-fb" title="Bagikan ke Facebook">
+      <i class="fab fa-facebook-f"></i><span>Facebook</span>
+    </a>
+
+    <!-- WhatsApp -->
+    <a href="https://wa.me/?text=<%= _title %>%20<%= _url %>"
+       target="_blank" rel="noopener" class="share-btn share-wa" title="Bagikan ke WhatsApp">
+      <i class="fab fa-whatsapp"></i><span>WhatsApp</span>
+    </a>
+
+    <!-- Telegram -->
+    <a href="https://t.me/share/url?url=<%= _url %>&text=<%= _title %>"
+       target="_blank" rel="noopener" class="share-btn share-tg" title="Bagikan ke Telegram">
+      <i class="fab fa-telegram-plane"></i><span>Telegram</span>
+    </a>
+
+    <!-- Twitter / X -->
+    <a href="https://twitter.com/intent/tweet?text=<%= _title %>&url=<%= _url %>"
+       target="_blank" rel="noopener" class="share-btn share-tw" title="Bagikan ke Twitter/X">
+      <i class="fab fa-x-twitter"></i><span>Twitter</span>
+    </a>
+
+    <!-- Threads -->
+    <a href="https://www.threads.net/intent/post?text=<%= _title %>%20<%= _url %>"
+       target="_blank" rel="noopener" class="share-btn share-threads" title="Bagikan ke Threads">
+      <i class="fab fa-threads"></i><span>Threads</span>
+    </a>
+
+    <!-- Copy Link -->
+    <button type="button" class="share-btn share-copy" onclick="copyShareLink('<%= _url %>')" title="Salin tautan">
+      <i class="fas fa-link"></i><span>Salin Link</span>
+    </button>
+
+  </div>
+</div>
+
+<style>
+.share-section { display:flex; align-items:center; flex-wrap:wrap; gap:.75rem; padding:1.25rem 0; border-top:1px solid #e2e8f0; margin-top:1.5rem; }
+.share-label { font-size:.875rem; font-weight:700; color:#475569; white-space:nowrap; }
+.share-buttons { display:flex; flex-wrap:wrap; gap:.5rem; }
+.share-btn {
+  display:inline-flex; align-items:center; gap:.45rem;
+  padding:.5rem 1.1rem; border-radius:50px;
+  font-size:.82rem; font-weight:600; color:white;
+  text-decoration:none; border:none; cursor:pointer;
+  transition:transform .2s, opacity .2s, box-shadow .2s;
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
+  line-height:1;
+}
+.share-btn:hover { transform:translateY(-2px); opacity:.92; box-shadow:0 6px 16px rgba(0,0,0,.2); color:white; text-decoration:none; }
+.share-btn i { font-size:.9rem; }
+.share-fb      { background:#1877F2; }
+.share-wa      { background:#25d366; }
+.share-tg      { background:#229ED9; }
+.share-tw      { background:#000000; }
+.share-threads { background:#101010; }
+.share-copy    { background:#64748b; }
+.share-copy.copied { background:#22c55e; }
+@media (max-width:576px) {
+  .share-btn span { display:none; }
+  .share-btn { padding:.55rem .75rem; }
+  .share-btn i { font-size:1rem; }
+}
+</style>
+
+<script>
+function copyShareLink(encodedUrl) {
+  const url = decodeURIComponent(encodedUrl);
+  const full = url.startsWith('http') ? url : window.location.origin + url;
+  navigator.clipboard.writeText(full).then(function() {
+    const btn = document.querySelector('.share-copy');
+    if (!btn) return;
+    btn.classList.add('copied');
+    const span = btn.querySelector('span');
+    if (span) { const orig = span.textContent; span.textContent = 'Tersalin!'; setTimeout(() => { span.textContent = orig; btn.classList.remove('copied'); }, 2000); }
+  }).catch(function() {
+    const ta = document.createElement('textarea');
+    ta.value = full; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    alert('Link berhasil disalin!');
+  });
+}
+</script>

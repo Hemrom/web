@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Admin Panel</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="/assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <%- include('../partials/sidebar') %>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <%- include('../partials/topbar', { user }) %>
+            <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Kelola Artikel</h1>
+                    <a href="/admin/artikel/create" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                        <i class="fas fa-plus fa-sm text-white-50"></i> Tambah Artikel
+                    </a>
+                </div>
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Data Artikel</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Gambar</th>
+                                        <th>Judul</th>
+                                        <th>Kategori</th>
+                                        <th>Penulis</th>
+                                        <th>Status</th>
+                                        <th>Home</th>
+                                        <th>Tanggal</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (!artikel.length) { %>
+                                    <tr><td colspan="9" class="text-center">Belum ada artikel</td></tr>
+                                    <% } else { %>
+                                    <% artikel.forEach((item, i) => { %>
+                                    <tr>
+                                        <td><%= i + 1 %></td>
+                                        <td>
+                                            <% if (item.gambar) { %>
+                                            <img src="/uploads/<%= item.gambar %>" style="width:60px;height:40px;object-fit:cover;border-radius:5px;">
+                                            <% } else { %><span class="text-muted">-</span><% } %>
+                                        </td>
+                                        <td><%= item.judul %></td>
+                                        <td><span class="badge badge-info"><%= item.kategori %></span></td>
+                                        <td><%= item.penulis_nama || '-' %> <small class="text-muted">(<%= item.penulis_tipe %>)</small></td>
+                                        <td><span class="badge badge-<%= item.status === 'published' ? 'success' : 'secondary' %>"><%= item.status %></span></td>
+                                        <td><span class="badge badge-<%= item.tampil_home ? 'warning' : 'light' %>"><%= item.tampil_home ? 'Ya' : 'Tidak' %></span></td>
+                                        <td><%= new Date(item.created_at).toLocaleDateString('id-ID') %></td>
+                                        <td>
+                                            <a href="/admin/artikel/edit/<%= item.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                                            <form action="/admin/artikel/delete/<%= item.id %>" method="POST" style="display:inline;" onsubmit="return confirm('Hapus artikel ini?')">
+                                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%- include('../partials/footer') %>
+    </div>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="/assets/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+<script src="/assets/js/sb-admin-2.min.js"></script>
+<script>$(document).ready(function(){ $('#dataTable').DataTable({ language: { url: '' }, order: [[7,'desc']] }); });</script>
+</body>
+</html>

@@ -6,22 +6,55 @@
     <title><%= title %> - Website Sekolah</title>
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
     <link href="/assets/vendor/bootstrap5/bootstrap.min.css" rel="stylesheet">
-    <link href="/assets/vendor/fontawesome6/all.min.css" rel="stylesheet">    <link rel="stylesheet" href="/theme.css">
+    <link href="/assets/vendor/fontawesome6/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/theme.css">
     <style>
-        :root{--primary:#10b981;--primary-dark:#059669;--gray-50:#f8fafc;--gray-100:#f1f5f9;--gray-600:#475569;--gray-700:#334155;--gray-800:#1e293b;}
+        :root{--g:#10b981;--gd:#064e3b;--gl:#d1fae5;--g50:#f8fafc;--g100:#f1f5f9;--g200:#e2e8f0;--g500:#64748b;--g600:#475569;--g700:#334155;--g800:#1e293b;}
         *{font-family:'Inter',sans-serif;box-sizing:border-box;margin:0;padding:0;}
-        body{color:var(--gray-700);line-height:1.6;}
-        .page-header{background:linear-gradient(135deg,#064e3b,#10b981);padding:10rem 0 5rem;color:white;text-align:center;}
-        .page-title{font-size:3rem;font-weight:800;}
-        .content-section{padding:5rem 0;background:var(--gray-50);}
-        .bkk-card{background:white;border-radius:20px;overflow:hidden;box-shadow:0 4px 20px rgba(16,185,129,.08);border:1px solid var(--gray-100);transition:all .3s;height:100%;}
-        .bkk-card:hover{transform:translateY(-8px);box-shadow:0 16px 40px rgba(16,185,129,.15);}
-        .bkk-img{height:180px;object-fit:cover;width:100%;}
-        .bkk-img-placeholder{height:180px;background:linear-gradient(135deg,#064e3b,#10b981);display:flex;align-items:center;justify-content:center;color:white;font-size:3rem;}
-        .badge-kategori{font-size:.75rem;padding:.3rem .75rem;border-radius:20px;font-weight:600;}
-        .badge-kerja{background:#d1fae5;color:#065f46;}
-        .badge-magang{background:#dbeafe;color:#1e40af;}
-        .badge-beasiswa{background:#fef3c7;color:#92400e;}
+        body{color:var(--g700);line-height:1.6;background:var(--g50);}
+        .navbar-modern{background:rgba(255,255,255,.95)!important;backdrop-filter:blur(10px);box-shadow:0 2px 20px rgba(16,185,129,.1);padding:1rem 0;transition:all .3s;}
+        .navbar-modern.scrolled{box-shadow:0 4px 30px rgba(16,185,129,.15);}
+        .navbar-brand{font-weight:700;color:var(--g)!important;font-size:1.5rem;text-decoration:none;}
+        .nav-link{font-weight:500;color:var(--g600)!important;padding:.75rem 1rem!important;border-radius:8px;transition:all .3s;text-decoration:none;}
+        .nav-link:hover,.nav-link.active{color:var(--g)!important;background:var(--gl);}
+        .page-header{background:linear-gradient(135deg,var(--gd),var(--g));padding:10rem 0 5rem;color:white;text-align:center;position:relative;overflow:hidden;}
+        .page-title{font-size:3rem;font-weight:800;position:relative;z-index:1;}
+        .page-sub{font-size:1.1rem;opacity:.9;margin-top:.5rem;position:relative;z-index:1;}
+        .content-wrap{padding:4rem 0;}
+        .stats-bar{background:white;border-radius:20px;padding:1.25rem 1.75rem;box-shadow:0 4px 20px rgba(0,0,0,.06);margin-bottom:2rem;display:flex;gap:1.5rem;flex-wrap:wrap;align-items:center;}
+        .stat-item{display:flex;align-items:center;gap:.65rem;}
+        .stat-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+        .stat-label{font-size:.7rem;color:var(--g500);font-weight:700;text-transform:uppercase;letter-spacing:.05em;}
+        .stat-val{font-size:1.2rem;font-weight:800;color:var(--g800);line-height:1;}
+        .filter-bar{background:white;border-radius:14px;padding:1rem 1.25rem;box-shadow:0 2px 10px rgba(0,0,0,.05);margin-bottom:1.75rem;display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;}
+        .fbtn{border:2px solid var(--g200);background:white;color:var(--g600);padding:.4rem 1rem;border-radius:50px;font-size:.8rem;font-weight:600;text-decoration:none;transition:all .2s;cursor:pointer;}
+        .fbtn:hover,.fbtn.active{border-color:var(--g);background:var(--g);color:white;}
+        .bkk-card{background:white;border-radius:20px;overflow:hidden;box-shadow:0 4px 20px rgba(16,185,129,.07);border:1px solid var(--g100);transition:all .3s;height:100%;display:flex;flex-direction:column;}
+        .bkk-card:hover{transform:translateY(-6px);box-shadow:0 16px 40px rgba(16,185,129,.15);}
+        .bkk-img{height:200px;object-fit:cover;width:100%;}
+        .bkk-placeholder{height:200px;background:linear-gradient(135deg,var(--gd),var(--g));display:flex;align-items:center;justify-content:center;color:white;font-size:3rem;}
+        .bkk-body{padding:1.4rem;flex:1;display:flex;flex-direction:column;}
+        .bkat{font-size:.72rem;padding:.28rem .75rem;border-radius:20px;font-weight:700;display:inline-block;}
+        .bkat-kerja{background:#d1fae5;color:#065f46;}
+        .bkat-magang{background:#dbeafe;color:#1e40af;}
+        .bkat-beasiswa{background:#fef3c7;color:#92400e;}
+        .bkat-lainnya{background:var(--g100);color:var(--g600);}
+        .dl-badge{background:#fef2f2;color:#991b1b;padding:.22rem .6rem;border-radius:8px;font-size:.7rem;font-weight:600;display:inline-flex;align-items:center;gap:.3rem;}
+        .dl-badge.exp{background:var(--g100);color:#94a3b8;}
+        .bkk-title{font-size:1.05rem;font-weight:700;color:var(--g800);margin:.65rem 0 .2rem;line-height:1.4;}
+        .bkk-co{font-size:.85rem;color:var(--g);font-weight:600;margin-bottom:.35rem;}
+        .bkk-meta{font-size:.78rem;color:var(--g500);margin-bottom:.2rem;display:flex;align-items:center;gap:.35rem;}
+        .bkk-desc{font-size:.83rem;color:var(--g600);line-height:1.6;margin:.65rem 0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;flex:1;}
+        .bkk-actions{display:flex;gap:.45rem;margin-top:auto;padding-top:.9rem;border-top:1px solid var(--g100);}
+        .btn-det{flex:1;background:var(--g100);color:var(--g700);padding:.5rem .75rem;border-radius:50px;text-decoration:none;font-size:.8rem;font-weight:600;text-align:center;transition:all .2s;}
+        .btn-det:hover{background:var(--g200);color:var(--g800);text-decoration:none;}
+        .btn-daf{flex:1;background:var(--g);color:white;padding:.5rem .75rem;border-radius:50px;text-decoration:none;font-size:.8rem;font-weight:600;text-align:center;transition:all .2s;}
+        .btn-daf:hover{background:#059669;color:white;text-decoration:none;}
+        .footer{background:var(--g800);color:white;padding:4rem 0 2rem;}
+        .footer-title{font-size:1.1rem;font-weight:600;margin-bottom:1.25rem;color:white;}
+        .footer-link{color:rgba(255,255,255,.7);text-decoration:none;margin-bottom:.5rem;display:block;transition:color .3s;}
+        .footer-link:hover{color:#6ee7b7;text-decoration:none;}
+        @media(max-width:991px){.navbar-collapse{background:white;border-radius:15px;box-shadow:0 10px 30px rgba(0,0,0,.1);margin-top:1rem;padding:1rem;}.page-title{font-size:2.2rem;}}
     </style>
 </head>
 <body>
@@ -29,50 +62,87 @@
     <section class="page-header">
         <div class="container">
             <h1 class="page-title"><i class="fas fa-briefcase me-3"></i>BKK</h1>
-            <p style="font-size:1.1rem;opacity:.9;margin-top:.5rem;">Bursa Kerja Khusus — Lowongan Kerja & Magang</p>
+            <p class="page-sub">Bursa Kerja Khusus &mdash; Lowongan Kerja, Magang &amp; Beasiswa</p>
         </div>
     </section>
-    <section class="content-section">
+    <section class="content-wrap">
         <div class="container">
-            <% if (!lowongan||lowongan.length===0) { %>
+            <% if (!lowongan || lowongan.length === 0) { %>
             <div class="text-center py-5">
-                <i class="fas fa-briefcase fa-4x text-muted mb-3 d-block"></i>
+                <i class="fas fa-briefcase fa-4x text-muted mb-4 d-block" style="opacity:.3;"></i>
                 <h4 class="text-muted">Belum ada lowongan tersedia</h4>
+                <p class="text-muted">Pantau terus halaman ini untuk info lowongan terbaru.</p>
             </div>
             <% } else { %>
-            <div class="row g-4">
-                <% lowongan.forEach(l=>{ %>
-                <div class="col-lg-4 col-md-6">
+            <% var totalKerja=lowongan.filter(function(l){return l.kategori==='kerja';}).length; %>
+            <% var totalMagang=lowongan.filter(function(l){return l.kategori==='magang';}).length; %>
+            <% var totalBeasiswa=lowongan.filter(function(l){return l.kategori==='beasiswa';}).length; %>
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <div class="stat-icon" style="background:#d1fae5;color:#065f46;"><i class="fas fa-list-check"></i></div>
+                    <div><div class="stat-label">Total</div><div class="stat-val"><%= lowongan.length %></div></div>
+                </div>
+                <% if (totalKerja > 0) { %>
+                <div class="stat-item">
+                    <div class="stat-icon" style="background:#d1fae5;color:#065f46;"><i class="fas fa-briefcase"></i></div>
+                    <div><div class="stat-label">Kerja</div><div class="stat-val"><%= totalKerja %></div></div>
+                </div>
+                <% } %>
+                <% if (totalMagang > 0) { %>
+                <div class="stat-item">
+                    <div class="stat-icon" style="background:#dbeafe;color:#1e40af;"><i class="fas fa-graduation-cap"></i></div>
+                    <div><div class="stat-label">Magang</div><div class="stat-val"><%= totalMagang %></div></div>
+                </div>
+                <% } %>
+                <% if (totalBeasiswa > 0) { %>
+                <div class="stat-item">
+                    <div class="stat-icon" style="background:#fef3c7;color:#92400e;"><i class="fas fa-award"></i></div>
+                    <div><div class="stat-label">Beasiswa</div><div class="stat-val"><%= totalBeasiswa %></div></div>
+                </div>
+                <% } %>
+            </div>
+            <div class="filter-bar">
+                <span class="text-muted small fw-semibold me-1">Filter:</span>
+                <button class="fbtn active" onclick="doFilter('all',this)">Semua</button>
+                <button class="fbtn" onclick="doFilter('kerja',this)">Kerja</button>
+                <button class="fbtn" onclick="doFilter('magang',this)">Magang</button>
+                <button class="fbtn" onclick="doFilter('beasiswa',this)">Beasiswa</button>
+                <button class="fbtn" onclick="doFilter('lainnya',this)">Lainnya</button>
+            </div>
+            <div class="row g-4" id="bkk-grid">
+                <% lowongan.forEach(function(l) { %>
+                <% var isExp = l.deadline && new Date(l.deadline) < new Date(); %>
+                <% var kat = l.kategori || 'lainnya'; %>
+                <div class="col-lg-4 col-md-6 bkk-item" data-kat="<%= kat %>">
                     <div class="bkk-card">
                         <% if (l.gambar) { %>
                         <img src="/uploads/<%= l.gambar %>" class="bkk-img" alt="<%= l.judul %>">
                         <% } else { %>
-                        <div class="bkk-img-placeholder"><i class="fas fa-building"></i></div>
+                        <div class="bkk-placeholder"><i class="fas fa-building"></i></div>
                         <% } %>
-                        <div class="p-4">
-                            <div class="d-flex gap-2 mb-2 flex-wrap">
-                                <span class="badge-kategori badge-<%= l.kategori %>"><%= l.kategori.charAt(0).toUpperCase()+l.kategori.slice(1) %></span>
+                        <div class="bkk-body">
+                            <div class="d-flex gap-2 flex-wrap align-items-center">
+                                <span class="bkat bkat-<%= kat %>"><%= kat.charAt(0).toUpperCase()+kat.slice(1) %></span>
                                 <% if (l.deadline) { %>
-                                <span style="background:#fef2f2;color:#991b1b;padding:.2rem .6rem;border-radius:10px;font-size:.75rem;font-weight:600;">
-                                    <i class="fas fa-clock me-1"></i>Deadline: <%= new Date(l.deadline).toLocaleDateString('id-ID') %>
+                                <span class="dl-badge <%= isExp ? 'exp' : '' %>">
+                                    <i class="fas fa-clock"></i><%= isExp ? 'Berakhir' : 'Deadline' %>: <%= new Date(l.deadline).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}) %>
                                 </span>
                                 <% } %>
                             </div>
-                            <h5 style="font-weight:700;color:var(--gray-800);margin-bottom:.25rem;"><%= l.judul %></h5>
-                            <p style="font-size:.85rem;color:#10b981;font-weight:600;margin-bottom:.5rem;"><i class="fas fa-building me-1"></i><%= l.perusahaan %></p>
-                            <% if (l.lokasi) { %><p style="font-size:.8rem;color:var(--gray-600);margin-bottom:.5rem;"><i class="fas fa-map-marker-alt me-1"></i><%= l.lokasi %></p><% } %>
-                            <% if (l.deskripsi) { %><p style="font-size:.85rem;color:var(--gray-600);line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;"><%= l.deskripsi %></p><% } %>
-                            <% if (l.kontak) { %>
-                            <div class="mt-3">
-                                <a href="<%= l.kontak.startsWith('http')?l.kontak:'https://wa.me/'+l.kontak.replace(/[^0-9]/g,'') %>" target="_blank" rel="noopener" style="background:#10b981;color:white;padding:.5rem 1.25rem;border-radius:50px;text-decoration:none;font-size:.85rem;font-weight:600;display:inline-block;">
-                                    <i class="fas fa-paper-plane me-1"></i>Daftar Sekarang
-                                </a>
+                            <h5 class="bkk-title"><%= l.judul %></h5>
+                            <p class="bkk-co"><i class="fas fa-building me-1"></i><%= l.perusahaan %></p>
+                            <% if (l.lokasi) { %><p class="bkk-meta"><i class="fas fa-map-marker-alt"></i><%= l.lokasi %></p><% } %>
+                            <% if (l.deskripsi) { %><p class="bkk-desc"><%= l.deskripsi %></p><% } else { %><div style="flex:1;"></div><% } %>
+                            <div class="bkk-actions">
+                                <a href="/bkk/<%= l.slug %>" class="btn-det"><i class="fas fa-eye me-1"></i>Lihat Detail</a>
+                                <% if (l.kontak && !isExp) { %>
+                                <a href="<%= l.kontak.startsWith('http') ? l.kontak : 'https://wa.me/'+l.kontak.replace(/[^0-9]/g,'') %>" target="_blank" rel="noopener" class="btn-daf"><i class="fas fa-paper-plane me-1"></i>Daftar</a>
+                                <% } %>
                             </div>
-                            <% } %>
                         </div>
                     </div>
                 </div>
-                <% }) %>
+                <% }); %>
             </div>
             <% } %>
         </div>
@@ -80,6 +150,9 @@
     <%- include('partials/footer') %>
     <script src="/assets/vendor/bootstrap5/bootstrap.bundle.min.js"></script>
     <script src="/assets/vendor/jquery3/jquery.min.js"></script>
-    <script>$(window).scroll(function(){if($(window).scrollTop()>50)$('.navbar-modern').addClass('scrolled');else$('.navbar-modern').removeClass('scrolled');});</script>
+    <script>
+        $(window).scroll(function(){if($(window).scrollTop()>50)$('.navbar-modern').addClass('scrolled');else $('.navbar-modern').removeClass('scrolled');});
+        function doFilter(kat,el){document.querySelectorAll('.fbtn').forEach(function(b){b.classList.remove('active');});el.classList.add('active');document.querySelectorAll('.bkk-item').forEach(function(item){item.style.display=(kat==='all'||item.dataset.kat===kat)?'':'none';});}
+    </script>
 </body>
 </html>

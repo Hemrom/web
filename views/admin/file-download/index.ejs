@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Admin Panel</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="/assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <%- include('../partials/sidebar') %>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <%- include('../partials/topbar', { user }) %>
+            <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Kelola File Download</h1>
+                    <a href="/admin/file-download/create" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                        <i class="fas fa-upload fa-sm text-white-50"></i> Upload File
+                    </a>
+                </div>
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Data File Download</h6></div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Judul</th>
+                                        <th>Tipe</th>
+                                        <th>Ukuran</th>
+                                        <th>Kategori</th>
+                                        <th>Penulis</th>
+                                        <th>Status</th>
+                                        <th>Home</th>
+                                        <th>Download</th>
+                                        <th>Tanggal</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (!files.length) { %>
+                                    <tr><td colspan="11" class="text-center">Belum ada file</td></tr>
+                                    <% } else { %>
+                                    <% files.forEach((item, i) => { %>
+                                    <tr>
+                                        <td><%= i + 1 %></td>
+                                        <td><%= item.judul %></td>
+                                        <td>
+                                            <% const tipeColor = { PDF: 'danger', DOC: 'primary', DOCX: 'primary', XLS: 'success', XLSX: 'success', PPT: 'warning', PPTX: 'warning', ZIP: 'secondary', RAR: 'secondary' }; %>
+                                            <span class="badge badge-<%= tipeColor[item.tipe_file] || 'info' %>"><%= item.tipe_file %></span>
+                                        </td>
+                                        <td><%= item.ukuran_file %></td>
+                                        <td><span class="badge badge-info"><%= item.kategori %></span></td>
+                                        <td><%= item.penulis_nama %> <small class="text-muted">(<%= item.penulis_tipe %>)</small></td>
+                                        <td><span class="badge badge-<%= item.status === 'aktif' ? 'success' : 'secondary' %>"><%= item.status %></span></td>
+                                        <td><span class="badge badge-<%= item.tampil_home ? 'warning' : 'light' %>"><%= item.tampil_home ? 'Ya' : 'Tidak' %></span></td>
+                                        <td><span class="badge badge-dark"><%= item.jumlah_download %>x</span></td>
+                                        <td><%= new Date(item.created_at).toLocaleDateString('id-ID') %></td>
+                                        <td>
+                                            <a href="/file-download/<%= item.id %>" target="_blank" class="btn btn-info btn-sm" title="Download"><i class="fas fa-download"></i></a>
+                                            <a href="/admin/file-download/edit/<%= item.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                                            <form action="/admin/file-download/delete/<%= item.id %>" method="POST" style="display:inline;" onsubmit="return confirm('Hapus file ini?')">
+                                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%- include('../partials/footer') %>
+    </div>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="/assets/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+<script src="/assets/js/sb-admin-2.min.js"></script>
+<script>$(document).ready(function(){ $('#dataTable').DataTable({ order: [[9,'desc']] }); });</script>
+</body>
+</html>

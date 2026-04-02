@@ -721,3 +721,107 @@ exports.jurusanGaleriDelete = async (req, res) => {
   await db.query('DELETE FROM jurusan_galeri WHERE id=? AND jurusan=?', [req.params.id, req.session.portalJurusan]);
   res.redirect('/jurusan-portal/galeri?success=3');
 };
+
+// ── FRONTEND FASILITAS ────────────────────────────────────────────────────────
+exports.fasilitasIndex = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const kategori = req.query.kategori || '';
+    const [fasilitas] = await db.query(
+      kategori
+        ? "SELECT * FROM fasilitas WHERE status='published' AND kategori=? ORDER BY nama ASC"
+        : "SELECT * FROM fasilitas WHERE status='published' ORDER BY nama ASC",
+      kategori ? [kategori] : []
+    );
+    // Ambil semua foto untuk fasilitas yang ada
+    const ids = fasilitas.map(f => f.id);
+    let fotoMap = {};
+    if (ids.length) {
+      const [fotos] = await db.query(
+        `SELECT * FROM fasilitas_foto WHERE fasilitas_id IN (${ids.map(() => '?').join(',')}) ORDER BY urutan ASC, id ASC`,
+        ids
+      );
+      fotos.forEach(f => {
+        if (!fotoMap[f.fasilitas_id]) fotoMap[f.fasilitas_id] = [];
+        fotoMap[f.fasilitas_id].push(f);
+      });
+    }
+    res.render('frontend/fasilitas', { title: 'Fasilitas', currentPage: 'fasilitas', fasilitas, fotoMap, kategori, ...common });
+  } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
+};
+
+// ── ADMIN: Kelola Fasilitas ───────────────────────────────────────────────────
+const uploadFasilitasMulti = createUpload('fasilitas', { maxFiles: 10 }).array('foto', 10);
+
+exports.adminFasilitasIndex = async (req, res) => {
+  const [fasilitas] = await db.query(
+    'SELECT f.*, (SELECT gambar FROM fasilitas_foto WHERE fasilitas_id=f.id ORDER BY urutan ASC, id ASC LIMIT 1) as cover FROM fasilitas f ORDER BY nama ASC'
+  );
+  res.render('admin/fasilitas/index', { title: 'Kelola Fasilitas', user: req.session, fasilitas, success: req.query.success });
+};
+
+exports.adminFasilitasCreatePage = (req, res) =>
+  res.render('admin/fasilitas/create', { title: 'Tambah Fasilitas', user: req.session });
+
+exports.adminFasilitasCreate = (req, res) => {
+  uploadFasilitasMulti(req, res, async (err) => {
+    if (err) return res.redirect('/admin/fasilitas?error=' + encodeURIComponent(err.message));
+    try {
+      const { nama, deskripsi, kategori, status } = req.body;
+      const slug = createSlug(nama);
+      const [result] = await db.query(
+        'INSERT INTO fasilitas (nama,slug,deskripsi,kategori,status) VALUES (?,?,?,?,?)',
+        [nama, slug, deskripsi||null, kategori||'lainnya', status||'published']
+      );
+      const fasilitasId = result.insertId;
+      if (req.files && req.files.length) {
+        for (let i = 0; i < req.files.length; i++) {
+          await db.query('INSERT INTO fasilitas_foto (fasilitas_id,gambar,urutan) VALUES (?,?,?)',
+            [fasilitasId, req.files[i].filename, i]);
+        }
+      }
+      res.redirect('/admin/fasilitas?success=1');
+    } catch (e) { console.error(e); res.redirect('/admin/fasilitas?error=' + encodeURIComponent(e.message)); }
+  });
+};
+
+exports.adminFasilitasEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM fasilitas WHERE id=?', [req.params.id]);
+  if (!rows.length) return res.redirect('/admin/fasilitas');
+  const [fotos] = await db.query('SELECT * FROM fasilitas_foto WHERE fasilitas_id=? ORDER BY urutan ASC, id ASC', [req.params.id]);
+  res.render('admin/fasilitas/edit', { title: 'Edit Fasilitas', user: req.session, item: rows[0], fotos });
+};
+
+exports.adminFasilitasUpdate = (req, res) => {
+  uploadFasilitasMulti(req, res, async (err) => {
+    if (err) return res.redirect('/admin/fasilitas?error=' + encodeURIComponent(err.message));
+    try {
+      const { nama, deskripsi, kategori, status, hapus_foto } = req.body;
+      await db.query('UPDATE fasilitas SET nama=?,deskripsi=?,kategori=?,status=? WHERE id=?',
+        [nama, deskripsi||null, kategori||'lainnya', status||'published', req.params.id]);
+      // Hapus foto yang dicentang
+      if (hapus_foto) {
+        const ids = Array.isArray(hapus_foto) ? hapus_foto : [hapus_foto];
+        for (const fid of ids) {
+          await db.query('DELETE FROM fasilitas_foto WHERE id=? AND fasilitas_id=?', [fid, req.params.id]);
+        }
+      }
+      // Tambah foto baru
+      if (req.files && req.files.length) {
+        const [lastOrder] = await db.query('SELECT MAX(urutan) as mx FROM fasilitas_foto WHERE fasilitas_id=?', [req.params.id]);
+        let startOrder = (lastOrder[0].mx || 0) + 1;
+        for (let i = 0; i < req.files.length; i++) {
+          await db.query('INSERT INTO fasilitas_foto (fasilitas_id,gambar,urutan) VALUES (?,?,?)',
+            [req.params.id, req.files[i].filename, startOrder + i]);
+        }
+      }
+      res.redirect('/admin/fasilitas?success=2');
+    } catch (e) { console.error(e); res.redirect('/admin/fasilitas?error=' + encodeURIComponent(e.message)); }
+  });
+};
+
+exports.adminFasilitasDelete = async (req, res) => {
+  await db.query('DELETE FROM fasilitas_foto WHERE fasilitas_id=?', [req.params.id]);
+  await db.query('DELETE FROM fasilitas WHERE id=?', [req.params.id]);
+  res.redirect('/admin/fasilitas?success=3');
+};

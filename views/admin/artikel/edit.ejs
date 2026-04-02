@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Admin Panel</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="/assets/vendor/summernote/summernote-bs4.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <%- include('../partials/sidebar') %>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <%- include('../partials/topbar', { user }) %>
+            <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Edit Artikel</h1>
+                    <a href="/admin/artikel" class="btn btn-sm btn-secondary shadow-sm"><i class="fas fa-arrow-left fa-sm"></i> Kembali</a>
+                </div>
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Edit Artikel</h6></div>
+                            <div class="card-body">
+                                <form method="POST" action="/admin/artikel/edit/<%= artikel.id %>" enctype="multipart/form-data">
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                    <div class="form-group">
+                                        <label>Judul Artikel *</label>
+                                        <input type="text" class="form-control" name="judul" value="<%= artikel.judul %>" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Ringkasan</label>
+                                        <textarea class="form-control" name="ringkasan" rows="2"><%= artikel.ringkasan || '' %></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Kategori</label>
+                                        <input type="text" class="form-control" name="kategori" value="<%= artikel.kategori %>">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Konten Artikel *</label>
+                                        <textarea id="konten" name="konten" rows="12"><%- artikel.konten || '' %></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Gambar Cover</label>
+                                        <% if (artikel.gambar) { %>
+                                        <div class="mb-2"><img src="/uploads/<%= artikel.gambar %>" style="height:80px;border-radius:6px;object-fit:cover;"></div>
+                                        <% } %>
+                                        <input type="file" class="form-control-file" name="gambar" accept="image/*">
+                                        <small class="text-muted">Kosongkan jika tidak ingin mengganti gambar</small>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label>Status</label>
+                                            <select class="form-control" name="status">
+                                                <option value="draft" <%= artikel.status === 'draft' ? 'selected' : '' %>>Draft</option>
+                                                <option value="published" <%= artikel.status === 'published' ? 'selected' : '' %>>Published</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label>Tampil di Beranda</label>
+                                            <select class="form-control" name="tampil_home">
+                                                <option value="0" <%= !artikel.tampil_home ? 'selected' : '' %>>Tidak</option>
+                                                <option value="1" <%= artikel.tampil_home ? 'selected' : '' %>>Ya</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Update</button>
+                                    <a href="/admin/artikel" class="btn btn-secondary">Batal</a>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-info">Info Artikel</h6></div>
+                            <div class="card-body small">
+                                <p><strong>Penulis:</strong> <%= artikel.penulis_nama %> (<%= artikel.penulis_tipe %>)</p>
+                                <p><strong>Views:</strong> <%= artikel.views %></p>
+                                <p><strong>Dibuat:</strong> <%= new Date(artikel.created_at).toLocaleDateString('id-ID') %></p>
+                                <p><strong>URL:</strong> /artikel/<%= artikel.slug %></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%- include('../partials/footer') %>
+    </div>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/js/sb-admin-2.min.js"></script>
+<script src="/assets/vendor/summernote/summernote-bs4.min.js"></script>
+<script>
+$('#konten').summernote({
+    height: 400,
+    toolbar: [
+        ['style', ['style']],
+        ['font', ['bold', 'italic', 'underline', 'clear']],
+        ['para', ['ul', 'ol', 'paragraph']],
+        ['table', ['table']],
+        ['insert', ['link', 'picture', 'hr']],
+        ['view', ['fullscreen', 'codeview']]
+    ],
+    callbacks: {
+        onImageUpload: function(files) {
+            var formData = new FormData();
+            formData.append('file', files[0]);
+            formData.append('_csrf', '<%= csrfToken %>');
+            $.ajax({
+                url: '/admin/berita/upload-gambar',
+                type: 'POST', data: formData, processData: false, contentType: false,
+                success: function(res) {
+                    if (res.url) $('#konten').summernote('insertImage', res.url, function($img) {
+                        $img.css({ 'max-width': '100%', 'display': 'block', 'margin': '1rem auto' });
+                    });
+                }
+            });
+        }
+    }
+});
+</script>
+</body>
+</html>

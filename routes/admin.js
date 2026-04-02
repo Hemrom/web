@@ -16,6 +16,8 @@ const menuController = require('../controllers/menuController');
 const linkTerkaitController = require('../controllers/linkTerkaitController');
 const alumniController = require('../controllers/alumniController');
 const portalController = require('../controllers/portalController');
+const artikelController = require('../controllers/artikelController');
+const fileDownloadController = require('../controllers/fileDownloadController');
 
 const { loginLimiter, uploadLimiter, formLimiter } = require('../middleware/security');
 const { csrfProtect } = require('../middleware/csrf');
@@ -150,6 +152,14 @@ router.get('/jurusan-berita/edit/:id', isAuthenticated, validateIdParam, portalC
 router.post('/jurusan-berita/edit/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminJurusanBeritaUpdate);
 router.post('/jurusan-berita/delete/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminJurusanBeritaDelete);
 
+// Fasilitas
+router.get('/fasilitas', isAuthenticated, portalController.adminFasilitasIndex);
+router.get('/fasilitas/create', isAuthenticated, portalController.adminFasilitasCreatePage);
+router.post('/fasilitas/create', isAuthenticated, csrfProtect, portalController.adminFasilitasCreate);
+router.get('/fasilitas/edit/:id', isAuthenticated, validateIdParam, portalController.adminFasilitasEditPage);
+router.post('/fasilitas/edit/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminFasilitasUpdate);
+router.post('/fasilitas/delete/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminFasilitasDelete);
+
 // Portal Users (BKK, OSIS, Jurusan)
 router.get('/portal-users', isAuthenticated, isAdmin, portalController.adminPortalUsers);
 router.post('/portal-users/create', isAuthenticated, isAdmin, csrfProtect, portalController.adminPortalUserCreate);
@@ -180,5 +190,21 @@ router.get('/menu/edit/:id', isAuthenticated, validateIdParam, menuController.ed
 router.post('/menu/edit/:id', isAuthenticated, csrfProtect, validateIdParam, menuController.update);
 router.post('/menu/delete/:id', isAuthenticated, csrfProtect, validateIdParam, menuController.delete);
 router.post('/menu/toggle/:id', isAuthenticated, csrfProtect, validateIdParam, menuController.toggleStatus);
+
+// Artikel
+router.get('/artikel', isAuthenticated, artikelController.adminIndex);
+router.get('/artikel/create', isAuthenticated, artikelController.adminCreatePage);
+router.post('/artikel/create', isAuthenticated, csrfProtect, uploadLimiter, artikelController.adminCreate);
+router.get('/artikel/edit/:id', isAuthenticated, validateIdParam, artikelController.adminEditPage);
+router.post('/artikel/edit/:id', isAuthenticated, csrfProtect, validateIdParam, uploadLimiter, artikelController.adminUpdate);
+router.post('/artikel/delete/:id', isAuthenticated, csrfProtect, validateIdParam, artikelController.adminDelete);
+
+// File Download
+router.get('/file-download', isAuthenticated, fileDownloadController.adminIndex);
+router.get('/file-download/create', isAuthenticated, fileDownloadController.adminCreatePage);
+router.post('/file-download/create', isAuthenticated, csrfProtect, uploadLimiter, fileDownloadController.adminCreate);
+router.get('/file-download/edit/:id', isAuthenticated, validateIdParam, fileDownloadController.adminEditPage);
+router.post('/file-download/edit/:id', isAuthenticated, csrfProtect, validateIdParam, uploadLimiter, fileDownloadController.adminUpdate);
+router.post('/file-download/delete/:id', isAuthenticated, csrfProtect, validateIdParam, fileDownloadController.adminDelete);
 
 module.exports = router;

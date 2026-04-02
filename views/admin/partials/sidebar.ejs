@@ -21,9 +21,30 @@
     <!-- Profil & Data Sekolah -->
     <div class="sidebar-heading">Sekolah</div>
     <li class="nav-item">
-        <a class="nav-link" href="/admin/profil">
-            <i class="fas fa-fw fa-building"></i><span>Profil Sekolah</span>
+        <a class="nav-link collapsed" href="#collapseProfilSekolah" data-toggle="collapse"
+           aria-expanded="false" aria-controls="collapseProfilSekolah">
+            <i class="fas fa-fw fa-building"></i>
+            <span>Profil Sekolah</span>
         </a>
+        <div id="collapseProfilSekolah" class="collapse" aria-labelledby="headingProfilSekolah" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item" href="/admin/profil">
+                    <i class="fas fa-school fa-fw mr-2 text-primary"></i>Data Profil
+                </a>
+                <a class="collapse-item" href="/admin/profil-konten/visi_misi">
+                    <i class="fas fa-bullseye fa-fw mr-2 text-info"></i>Visi & Misi
+                </a>
+                <a class="collapse-item" href="/admin/profil-konten/sejarah">
+                    <i class="fas fa-history fa-fw mr-2 text-secondary"></i>Sejarah
+                </a>
+                <a class="collapse-item" href="/admin/profil-konten/sambutan">
+                    <i class="fas fa-user-tie fa-fw mr-2 text-success"></i>Sambutan Kepsek
+                </a>
+                <a class="collapse-item" href="/admin/fasilitas">
+                    <i class="fas fa-building fa-fw mr-2 text-warning"></i>Fasilitas
+                </a>
+            </div>
+        </div>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="/admin/data-sekolah">
@@ -64,6 +85,12 @@
                 </a>
                 <a class="collapse-item" href="/admin/jurusan-berita">
                     <i class="fas fa-graduation-cap fa-fw mr-2 text-info"></i>Berita Jurusan
+                </a>
+                <a class="collapse-item" href="/admin/artikel">
+                    <i class="fas fa-pen-nib fa-fw mr-2 text-primary"></i>Artikel
+                </a>
+                <a class="collapse-item" href="/admin/file-download">
+                    <i class="fas fa-download fa-fw mr-2 text-info"></i>File Download
                 </a>
             </div>
         </div>

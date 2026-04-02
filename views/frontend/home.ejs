@@ -296,8 +296,8 @@
         
         /* Features Section */
         .features-section {
-            padding: 6rem 0;
-            background: white;
+            padding: 5rem 0;
+            background: #f8fafc;
         }
         .section-title {
             font-size: 2.5rem;
@@ -313,41 +313,40 @@
             margin-bottom: 4rem;
         }
         .feature-card {
-            text-align: center;
-            padding: 3rem 2rem;
-            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            border-radius: 24px;
             background: white;
-            box-shadow: 0 4px 20px rgba(14, 165, 233, 0.08);
+            box-shadow: 0 2px 20px rgba(14,165,233,0.07);
             height: 100%;
             transition: all 0.3s ease;
-            border: 1px solid var(--gray-100);
+            border: 1px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
         }
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(14, 165, 233, 0.15);
+        .feature-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 4px;
+            border-radius: 0 0 24px 24px;
+            opacity: 0;
+            transition: opacity 0.3s;
         }
+        .feature-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(14,165,233,0.13); border-color: #bfdbfe; }
+        .feature-card:hover::after { opacity: 1; }
+        .feature-card-blue::after { background: linear-gradient(90deg,#0ea5e9,#38bdf8); }
+        .feature-card-indigo::after { background: linear-gradient(90deg,#6366f1,#818cf8); }
+        .feature-card-amber::after { background: linear-gradient(90deg,#f59e0b,#fbbf24); }
         .feature-icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 2rem;
-            color: white;
-            font-size: 2rem;
+            width: 88px; height: 88px;
+            border-radius: 24px;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1.75rem;
+            font-size: 2.2rem;
         }
-        .feature-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: var(--gray-800);
-        }
-        .feature-desc {
-            color: var(--gray-600);
-            line-height: 1.6;
-        }
+        .feature-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem; color: #1e293b; }
+        .feature-desc { color: #64748b; line-height: 1.7; font-size: 0.92rem; margin: 0; }
         
         /* News Section */
         .news-section {
@@ -416,51 +415,48 @@
             color: var(--primary-blue-dark);
         }
         
-        /* Gallery Section */
-        .gallery-section {
-            padding: 6rem 0;
-            background: white;
-        }
-        .gallery-item {
-            border-radius: 20px;
-            overflow: hidden;
-            margin-bottom: 2rem;
-            position: relative;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(14, 165, 233, 0.08);
-        }
-        .gallery-item:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 30px rgba(14, 165, 233, 0.15);
-        }
-        .gallery-item img {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-        }
-        .gallery-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(to top, rgba(14, 165, 233, 0.8), transparent);
-            display: flex;
-            align-items: flex-end;
-            padding: 1.5rem;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .gallery-item:hover .gallery-overlay {
-            opacity: 1;
-        }
-        .gallery-title {
-            color: white;
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-        
+        /* Gallery Section - Modern Clean */
+        .gallery-section { padding: 5rem 0; background: #f8fafc; }
+        .gallery-masonry { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+        .gallery-masonry .g-item { border-radius: 16px; overflow: hidden; position: relative; cursor: pointer; background: #e2e8f0; }
+        .gallery-masonry .g-item:nth-child(1) { grid-column: span 2; }
+        .gallery-masonry .g-item img { width: 100%; height: 260px; object-fit: cover; display: block; transition: transform 0.4s ease; }
+        .gallery-masonry .g-item:nth-child(1) img { height: 320px; }
+        .gallery-masonry .g-item:hover img { transform: scale(1.05); }
+        .g-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(14,165,233,0.85) 0%, transparent 55%); opacity: 0; transition: opacity 0.3s; display: flex; align-items: flex-end; padding: 1.25rem; }
+        .g-item:hover .g-overlay { opacity: 1; }
+        .g-overlay-title { color: white; font-weight: 700; font-size: 0.95rem; line-height: 1.3; }
+        .g-overlay-count { color: rgba(255,255,255,0.85); font-size: 0.78rem; margin-top: 0.2rem; }
+        .g-count-badge { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); color: white; border-radius: 20px; padding: 3px 10px; font-size: 0.75rem; font-weight: 600; }
+        @media(max-width:768px) { .gallery-masonry { grid-template-columns: repeat(2,1fr); } .gallery-masonry .g-item:nth-child(1) { grid-column: span 2; } .gallery-masonry .g-item img { height: 200px; } .gallery-masonry .g-item:nth-child(1) img { height: 240px; } }
+        @media(max-width:480px) { .gallery-masonry { grid-template-columns: 1fr; } .gallery-masonry .g-item:nth-child(1) { grid-column: span 1; } }
+
+        /* BKK Home Section */
+        .bkk-home-section { padding: 5rem 0; background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); position: relative; overflow: hidden; }
+        .bkk-home-section::before { content: ''; position: absolute; top: -60px; right: -60px; width: 300px; height: 300px; border-radius: 50%; background: rgba(16,185,129,0.08); }
+        .bkk-home-section::after { content: ''; position: absolute; bottom: -40px; left: -40px; width: 200px; height: 200px; border-radius: 50%; background: rgba(16,185,129,0.06); }
+        .bkk-home-section .container { position: relative; z-index: 1; }
+        .bkk-scroll-track { display: flex; gap: 1.25rem; overflow-x: auto; padding-bottom: 1rem; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        .bkk-scroll-track::-webkit-scrollbar { display: none; }
+        .bkk-home-card { flex: 0 0 300px; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 20px rgba(16,185,129,0.1); border: 1px solid #d1fae5; transition: all 0.3s; scroll-snap-align: start; display: flex; flex-direction: column; }
+        .bkk-home-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(16,185,129,0.2); }
+        .bkk-home-img { height: 160px; object-fit: cover; width: 100%; }
+        .bkk-home-placeholder { height: 160px; background: linear-gradient(135deg, #064e3b, #10b981); display: flex; align-items: center; justify-content: center; color: white; font-size: 2.5rem; }
+        .bkk-home-body { padding: 1.25rem; flex: 1; display: flex; flex-direction: column; }
+        .bkk-home-kat { font-size: 0.7rem; font-weight: 700; padding: 0.25rem 0.7rem; border-radius: 20px; display: inline-block; margin-bottom: 0.6rem; }
+        .bkk-home-kat.kerja { background: #d1fae5; color: #065f46; }
+        .bkk-home-kat.magang { background: #dbeafe; color: #1e40af; }
+        .bkk-home-kat.beasiswa { background: #fef3c7; color: #92400e; }
+        .bkk-home-kat.lainnya { background: #f1f5f9; color: #475569; }
+        .bkk-home-title { font-size: 0.95rem; font-weight: 700; color: #1e293b; margin-bottom: 0.3rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .bkk-home-co { font-size: 0.8rem; color: #10b981; font-weight: 600; margin-bottom: 0.25rem; }
+        .bkk-home-loc { font-size: 0.75rem; color: #64748b; margin-bottom: 0.75rem; }
+        .bkk-home-actions { display: flex; gap: 0.5rem; margin-top: auto; }
+        .bkk-home-btn-det { flex: 1; background: #f0fdf4; color: #065f46; padding: 0.5rem; border-radius: 50px; text-decoration: none; font-size: 0.78rem; font-weight: 600; text-align: center; transition: all 0.2s; }
+        .bkk-home-btn-det:hover { background: #d1fae5; color: #064e3b; text-decoration: none; }
+        .bkk-home-btn-daf { flex: 1; background: #10b981; color: white; padding: 0.5rem; border-radius: 50px; text-decoration: none; font-size: 0.78rem; font-weight: 600; text-align: center; transition: all 0.2s; }
+        .bkk-home-btn-daf:hover { background: #059669; color: white; text-decoration: none; }
+
         /* CTA Section */
         .cta-section {
             background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
@@ -845,6 +841,149 @@
             .mobile-bottom-nav { display: block; }
             body { padding-bottom: 70px; }
         }
+
+        /* ── Fasilitas Home Section ── */
+        .fasilitas-home-section {
+            padding: 6rem 0;
+            background: white;
+            position: relative;
+            overflow: hidden;
+        }
+        .fasilitas-bg-decor {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .fasilitas-decor-1 {
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(14,165,233,.06) 0%, transparent 70%);
+            top: -100px; right: -100px;
+        }
+        .fasilitas-decor-2 {
+            width: 350px; height: 350px;
+            background: radial-gradient(circle, rgba(139,92,246,.05) 0%, transparent 70%);
+            bottom: -80px; left: -80px;
+        }
+        .fasilitas-eyebrow {
+            display: inline-flex; align-items: center;
+            background: var(--light-blue); color: var(--primary-blue);
+            font-size: .8rem; font-weight: 700; letter-spacing: .08em;
+            text-transform: uppercase; padding: .4rem 1rem;
+            border-radius: 50px; margin-bottom: 1rem;
+        }
+        .fasilitas-section-title {
+            font-size: 2.5rem; font-weight: 800;
+            color: var(--gray-800); line-height: 1.2; margin-bottom: .75rem;
+        }
+        .fasilitas-highlight {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .fasilitas-section-sub {
+            font-size: 1.05rem; color: var(--gray-600); max-width: 520px;
+        }
+        .btn-fasilitas-all {
+            display: inline-flex; align-items: center;
+            background: var(--primary-blue); color: white;
+            font-weight: 600; font-size: .95rem;
+            padding: .75rem 1.75rem; border-radius: 50px;
+            text-decoration: none; transition: all .3s;
+            box-shadow: 0 4px 15px rgba(14,165,233,.3);
+        }
+        .btn-fasilitas-all:hover {
+            background: var(--primary-blue-dark); color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(14,165,233,.4);
+            text-decoration: none;
+        }
+
+        /* Grid layout */
+        .fasilitas-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+        }
+        @media (max-width: 1199px) { .fasilitas-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 767px)  { .fasilitas-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 480px)  { .fasilitas-grid { grid-template-columns: 1fr; } }
+
+        /* Featured item spans 2 cols */
+        .fasilitas-item--featured {
+            grid-column: span 2;
+        }
+        @media (max-width: 767px) { .fasilitas-item--featured { grid-column: span 2; } }
+        @media (max-width: 480px) { .fasilitas-item--featured { grid-column: span 1; } }
+
+        .fasilitas-item {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--gray-100);
+            box-shadow: 0 4px 20px rgba(14,165,233,.06);
+            transition: all .3s ease;
+            display: flex; flex-direction: column;
+        }
+        .fasilitas-item:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 40px rgba(14,165,233,.14);
+            border-color: var(--accent-blue);
+        }
+
+        /* Image */
+        .fasilitas-item-img-wrap {
+            position: relative; overflow: hidden;
+        }
+        .fasilitas-item-img {
+            width: 100%; object-fit: cover;
+            transition: transform .4s ease;
+            display: block;
+        }
+        .fasilitas-item { } /* height auto */
+        .fasilitas-item--featured .fasilitas-item-img { height: 240px; }
+        .fasilitas-item:not(.fasilitas-item--featured) .fasilitas-item-img { height: 160px; }
+        .fasilitas-item:hover .fasilitas-item-img { transform: scale(1.06); }
+        .fasilitas-item-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,.35) 0%, transparent 60%);
+        }
+        .fasilitas-item-badge {
+            position: absolute; bottom: .75rem; left: .75rem;
+            color: white; font-size: .72rem; font-weight: 700;
+            padding: .3rem .75rem; border-radius: 50px;
+            text-transform: capitalize; letter-spacing: .03em;
+        }
+
+        /* Placeholder (no image) */
+        .fasilitas-item-placeholder {
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.5rem; color: white; position: relative;
+        }
+        .fasilitas-item--featured .fasilitas-item-placeholder { height: 240px; }
+        .fasilitas-item:not(.fasilitas-item--featured) .fasilitas-item-placeholder { height: 160px; }
+
+        /* Body */
+        .fasilitas-item-body {
+            padding: 1.1rem 1.25rem;
+            display: flex; align-items: flex-start; gap: .85rem;
+            flex: 1;
+        }
+        .fasilitas-item-icon-wrap {
+            width: 40px; height: 40px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; flex-shrink: 0; margin-top: .1rem;
+        }
+        .fasilitas-item-info { flex: 1; min-width: 0; }
+        .fasilitas-item-nama {
+            font-size: .95rem; font-weight: 700;
+            color: var(--gray-800); margin-bottom: .3rem;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .fasilitas-item--featured .fasilitas-item-nama { font-size: 1.1rem; }
+        .fasilitas-item-desc {
+            font-size: .82rem; color: var(--gray-500);
+            line-height: 1.5; margin: 0;
+        }
     </style>
 </head>
 <body>
@@ -952,38 +1091,55 @@
     <!-- Features Section -->
     <section class="features-section">
         <div class="container">
-            <h2 class="section-title">Mengapa Memilih Kami?</h2>
-            <p class="section-subtitle">Kami berkomitmen memberikan pendidikan terbaik dengan fasilitas modern dan tenaga pengajar berkualitas</p>
-            
-            <div class="row">
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-chalkboard-teacher"></i>
+            <div class="text-center mb-5">
+                <span style="display:inline-block;background:#e0f2fe;color:#0369a1;padding:.35rem 1.1rem;border-radius:50px;font-size:.8rem;font-weight:700;margin-bottom:.9rem;">✦ Keunggulan Kami</span>
+                <h2 style="font-size:2.25rem;font-weight:800;color:#1e293b;margin-bottom:.6rem;">Mengapa Memilih Kami?</h2>
+                <p style="color:#64748b;font-size:1rem;max-width:520px;margin:0 auto;">Kami berkomitmen memberikan pendidikan terbaik dengan fasilitas modern dan tenaga pengajar berkualitas</p>
+            </div>
+
+            <div class="row g-4 mb-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card feature-card-blue">
+                        <div class="feature-icon" style="background:linear-gradient(135deg,#0ea5e9,#0284c7);box-shadow:0 12px 28px rgba(14,165,233,0.35);">
+                            <i class="fas fa-chalkboard-teacher" style="color:white;"></i>
                         </div>
                         <h3 class="feature-title">Guru Berkualitas</h3>
-                        <p class="feature-desc">Tenaga pengajar berpengalaman dan bersertifikat yang siap membimbing siswa mencapai prestasi terbaik</p>
+                        <p class="feature-desc">Tenaga pengajar berpengalaman dan bersertifikat yang siap membimbing siswa mencapai prestasi terbaik.</p>
+                        <div style="margin-top:1.25rem;display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;">
+                            <span style="background:#e0f2fe;color:#0369a1;padding:.3rem .9rem;border-radius:20px;font-size:.75rem;font-weight:600;">✓ Bersertifikat</span>
+                            <span style="background:#e0f2fe;color:#0369a1;padding:.3rem .9rem;border-radius:20px;font-size:.75rem;font-weight:600;">✓ Berpengalaman</span>
+                        </div>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-laptop"></i>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card feature-card-indigo" style="border-color:#e0e7ff;box-shadow:0 8px 32px rgba(99,102,241,0.12);">
+                        <div style="position:absolute;top:1.25rem;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,#6366f1,#818cf8);color:white;padding:.2rem .9rem;border-radius:20px;font-size:.7rem;font-weight:700;white-space:nowrap;">⭐ UNGGULAN</div>
+                        <div class="feature-icon" style="background:linear-gradient(135deg,#6366f1,#4f46e5);box-shadow:0 12px 28px rgba(99,102,241,0.35);margin-top:1.5rem;">
+                            <i class="fas fa-laptop" style="color:white;"></i>
                         </div>
                         <h3 class="feature-title">Fasilitas Modern</h3>
-                        <p class="feature-desc">Dilengkapi dengan fasilitas pembelajaran modern termasuk laboratorium komputer dan perpustakaan digital</p>
+                        <p class="feature-desc">Dilengkapi fasilitas pembelajaran modern termasuk laboratorium komputer dan perpustakaan digital.</p>
+                        <div style="margin-top:1.25rem;display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;">
+                            <span style="background:#ede9fe;color:#4f46e5;padding:.3rem .9rem;border-radius:20px;font-size:.75rem;font-weight:600;">✓ Lab Komputer</span>
+                            <span style="background:#ede9fe;color:#4f46e5;padding:.3rem .9rem;border-radius:20px;font-size:.75rem;font-weight:600;">✓ Perpustakaan</span>
+                        </div>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-trophy"></i>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card feature-card-amber">
+                        <div class="feature-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706);box-shadow:0 12px 28px rgba(245,158,11,0.35);">
+                            <i class="fas fa-trophy" style="color:white;"></i>
                         </div>
                         <h3 class="feature-title">Prestasi Gemilang</h3>
-                        <p class="feature-desc">Meraih berbagai prestasi di tingkat regional dan nasional dalam bidang akademik maupun non-akademik</p>
+                        <p class="feature-desc">Meraih berbagai prestasi di tingkat regional dan nasional dalam bidang akademik maupun non-akademik.</p>
+                        <div style="margin-top:1.25rem;display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;">
+                            <span style="background:#fef3c7;color:#92400e;padding:.3rem .9rem;border-radius:20px;font-size:.75rem;font-weight:600;">✓ Regional</span>
+                            <span style="background:#fef3c7;color:#92400e;padding:.3rem .9rem;border-radius:20px;font-size:.75rem;font-weight:600;">✓ Nasional</span>
+                        </div>
                     </div>
                 </div>
             </div>
+
         </div>
     </section>
 
@@ -1018,6 +1174,76 @@
             </div>
         </div>
     </section>
+
+    <!-- Fasilitas Section -->
+    <% if (typeof fasilitasHome !== 'undefined' && fasilitasHome && fasilitasHome.length > 0) { %>
+    <section class="fasilitas-home-section">
+        <div class="fasilitas-bg-decor fasilitas-decor-1"></div>
+        <div class="fasilitas-bg-decor fasilitas-decor-2"></div>
+        <div class="container position-relative">
+            <div class="row align-items-end mb-5">
+                <div class="col-lg-7">
+                    <span class="fasilitas-eyebrow"><i class="fas fa-building me-2"></i>Sarana & Prasarana</span>
+                    <h2 class="fasilitas-section-title">Fasilitas <span class="fasilitas-highlight">Unggulan</span></h2>
+                    <p class="fasilitas-section-sub">Kami menyediakan fasilitas modern untuk mendukung proses belajar mengajar yang optimal dan menyenangkan.</p>
+                </div>
+                <div class="col-lg-5 text-lg-end mt-3 mt-lg-0">
+                    <a href="/fasilitas" class="btn-fasilitas-all">
+                        Lihat Semua Fasilitas <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Fasilitas Grid -->
+            <div class="fasilitas-grid">
+                <% fasilitasHome.forEach((f, idx) => {
+                    const iconMap = {
+                        'ruang-kelas': { icon: 'fa-chalkboard-teacher', color: '#0ea5e9', bg: '#e0f2fe' },
+                        'laboratorium': { icon: 'fa-flask', color: '#8b5cf6', bg: '#ede9fe' },
+                        'perpustakaan': { icon: 'fa-book-open', color: '#10b981', bg: '#d1fae5' },
+                        'olahraga': { icon: 'fa-running', color: '#f59e0b', bg: '#fef3c7' },
+                        'kantin': { icon: 'fa-utensils', color: '#ef4444', bg: '#fee2e2' },
+                        'kesehatan': { icon: 'fa-heartbeat', color: '#ec4899', bg: '#fce7f3' },
+                        'ibadah': { icon: 'fa-mosque', color: '#14b8a6', bg: '#ccfbf1' },
+                        'lainnya': { icon: 'fa-building', color: '#64748b', bg: '#f1f5f9' }
+                    };
+                    const meta = iconMap[f.kategori] || iconMap['lainnya'];
+                    const isFeatured = idx === 0;
+                %>
+                <div class="fasilitas-item <%= isFeatured ? 'fasilitas-item--featured' : '' %>">
+                    <% if (f.cover) { %>
+                    <div class="fasilitas-item-img-wrap">
+                        <img src="/uploads/<%= f.cover %>" alt="<%= f.nama %>" class="fasilitas-item-img">
+                        <div class="fasilitas-item-overlay"></div>
+                        <span class="fasilitas-item-badge" style="background:<%- meta.color %>">
+                            <i class="fas <%= meta.icon %> me-1"></i><%= f.kategori.replace('-', ' ') %>
+                        </span>
+                    </div>
+                    <% } else { %>
+                    <div class="fasilitas-item-placeholder" style="background:linear-gradient(135deg,<%- meta.color %>,<%- meta.color %>cc)">
+                        <i class="fas <%= meta.icon %>"></i>
+                        <span class="fasilitas-item-badge" style="background:rgba(255,255,255,.2)">
+                            <%= f.kategori.replace('-', ' ') %>
+                        </span>
+                    </div>
+                    <% } %>
+                    <div class="fasilitas-item-body">
+                        <div class="fasilitas-item-icon-wrap" style="background:<%- meta.bg %>;color:<%- meta.color %>">
+                            <i class="fas <%= meta.icon %>"></i>
+                        </div>
+                        <div class="fasilitas-item-info">
+                            <h3 class="fasilitas-item-nama"><%= f.nama %></h3>
+                            <% if (f.deskripsi) { %>
+                            <p class="fasilitas-item-desc"><%= f.deskripsi.length > 80 ? f.deskripsi.substring(0, 80) + '...' : f.deskripsi %></p>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+                <% }) %>
+            </div>
+        </div>
+    </section>
+    <% } %>
 
     <!-- News Section -->
     <section class="news-section">
@@ -1057,44 +1283,175 @@
         </div>
     </section>
 
+    <!-- Artikel & File Download Section -->
+    <% if ((typeof artikelHome !== 'undefined' && artikelHome && artikelHome.length > 0) || (typeof fileDownloadHome !== 'undefined' && fileDownloadHome && fileDownloadHome.length > 0)) { %>
+    <section style="padding:5rem 0;background:#f8fafc;">
+        <div class="container">
+            <div class="row g-5">
+                <!-- Artikel Terbaru -->
+                <% if (typeof artikelHome !== 'undefined' && artikelHome && artikelHome.length > 0) { %>
+                <div class="col-lg-7">
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <div>
+                            <h2 style="font-size:1.75rem;font-weight:800;color:#1e293b;margin-bottom:.25rem;">Artikel Terbaru</h2>
+                            <p style="color:#64748b;font-size:.9rem;margin:0;">Tulisan edukatif dari guru dan staf sekolah</p>
+                        </div>
+                        <a href="/artikel" style="color:#0ea5e9;font-weight:600;text-decoration:none;font-size:.875rem;white-space:nowrap;">Lihat Semua <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                    <div class="row g-3">
+                        <% artikelHome.forEach((item, idx) => { %>
+                        <div class="col-<%= idx === 0 ? '12' : '6' %>">
+                            <a href="/artikel/<%= item.slug %>" style="text-decoration:none;display:block;">
+                                <div style="background:white;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(14,165,233,.07);transition:all .3s;border:1px solid #f1f5f9;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 30px rgba(14,165,233,.15)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 2px 12px rgba(14,165,233,.07)'">
+                                    <% if (item.gambar) { %>
+                                    <div style="height:<%= idx === 0 ? '200px' : '130px' %>;background:url('/uploads/<%= item.gambar %>') center/cover;"></div>
+                                    <% } %>
+                                    <div style="padding:1.25rem;">
+                                        <span style="background:#e0f2fe;color:#0369a1;padding:.25rem .75rem;border-radius:50px;font-size:.75rem;font-weight:600;"><%= item.kategori %></span>
+                                        <h3 style="font-size:<%= idx === 0 ? '1.1rem' : '.9rem' %>;font-weight:700;color:#1e293b;margin:.75rem 0 .5rem;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;"><%= item.judul %></h3>
+                                        <p style="font-size:.8rem;color:#64748b;margin:0;"><i class="fas fa-user me-1"></i><%= item.penulis_nama %> · <i class="fas fa-calendar ms-1 me-1"></i><%= new Date(item.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}) %></p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <% }) %>
+                    </div>
+                </div>
+                <% } %>
+
+                <!-- File Download -->
+                <% if (typeof fileDownloadHome !== 'undefined' && fileDownloadHome && fileDownloadHome.length > 0) { %>
+                <div class="col-lg-5">
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <div>
+                            <h2 style="font-size:1.75rem;font-weight:800;color:#1e293b;margin-bottom:.25rem;">File Download</h2>
+                            <p style="color:#64748b;font-size:.9rem;margin:0;">Materi dan dokumen untuk diunduh</p>
+                        </div>
+                        <a href="/file-download" style="color:#0ea5e9;font-weight:600;text-decoration:none;font-size:.875rem;white-space:nowrap;">Lihat Semua <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                    <div style="background:white;border-radius:16px;box-shadow:0 2px 12px rgba(14,165,233,.07);overflow:hidden;border:1px solid #f1f5f9;">
+                        <%
+                            const tipeColorHome = { PDF:'#ef4444',DOC:'#3b82f6',DOCX:'#3b82f6',XLS:'#22c55e',XLSX:'#22c55e',PPT:'#f59e0b',PPTX:'#f59e0b',ZIP:'#6b7280',RAR:'#6b7280' };
+                        %>
+                        <% fileDownloadHome.forEach((item, idx) => { %>
+                        <a href="/file-download/<%= item.id %>" style="display:flex;align-items:center;gap:1rem;padding:1rem 1.25rem;text-decoration:none;color:inherit;border-bottom:<%= idx < fileDownloadHome.length - 1 ? '1px solid #f1f5f9' : 'none' %>;transition:background .2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+                            <div style="width:44px;height:44px;border-radius:10px;background:<%= tipeColorHome[item.tipe_file] || '#0ea5e9' %>;display:flex;align-items:center;justify-content:center;color:white;font-size:.75rem;font-weight:800;flex-shrink:0;">
+                                <%= item.tipe_file ? item.tipe_file.substring(0,3) : 'FILE' %>
+                            </div>
+                            <div style="flex:1;min-width:0;">
+                                <div style="font-weight:600;color:#1e293b;font-size:.875rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><%= item.judul %></div>
+                                <div style="font-size:.75rem;color:#94a3b8;margin-top:.2rem;"><%= item.kategori %> · <%= item.ukuran_file %> · <i class="fas fa-download me-1"></i><%= item.jumlah_download %>x</div>
+                            </div>
+                            <i class="fas fa-download" style="color:#0ea5e9;flex-shrink:0;"></i>
+                        </a>
+                        <% }) %>
+                        <div style="padding:1rem 1.25rem;border-top:1px solid #f1f5f9;">
+                            <a href="/file-download" style="display:block;text-align:center;background:#0ea5e9;color:white;padding:.6rem;border-radius:10px;text-decoration:none;font-size:.875rem;font-weight:600;transition:background .2s;" onmouseover="this.style.background='#0284c7'" onmouseout="this.style.background='#0ea5e9'">
+                                <i class="fas fa-folder-open me-1"></i>Lihat Semua File
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </section>
+    <% } %>
+
+    <!-- BKK Home Section -->
+    <% if (typeof bkkHome !== 'undefined' && bkkHome && bkkHome.length > 0) { %>
+    <section class="bkk-home-section">
+        <div class="container">
+            <div class="d-flex align-items-end justify-content-between mb-4 flex-wrap gap-3">
+                <div>
+                    <div style="display:inline-flex;align-items:center;gap:.5rem;background:#d1fae5;color:#065f46;padding:.35rem 1rem;border-radius:50px;font-size:.8rem;font-weight:700;margin-bottom:.75rem;">
+                        <i class="fas fa-briefcase"></i> BKK — Bursa Kerja Khusus
+                    </div>
+                    <h2 style="font-size:2rem;font-weight:800;color:#1e293b;margin-bottom:.25rem;">Lowongan Terbaru</h2>
+                    <p style="color:#64748b;font-size:.95rem;margin:0;">Peluang kerja, magang, dan beasiswa untuk lulusan</p>
+                </div>
+                <a href="/bkk" style="display:inline-flex;align-items:center;gap:.5rem;background:#10b981;color:white;padding:.65rem 1.5rem;border-radius:50px;text-decoration:none;font-weight:700;font-size:.875rem;transition:all .2s;white-space:nowrap;" onmouseover="this.style.background='#059669'" onmouseout="this.style.background='#10b981'">
+                    Lihat Semua <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="bkk-scroll-track" id="bkkTrack">
+                <% bkkHome.forEach(function(l) { %>
+                <% var isExp = l.deadline && new Date(l.deadline) < new Date(); %>
+                <% var kat = l.kategori || 'lainnya'; %>
+                <div class="bkk-home-card">
+                    <% if (l.gambar) { %>
+                    <img src="/uploads/<%= l.gambar %>" class="bkk-home-img" alt="<%= l.judul %>">
+                    <% } else { %>
+                    <div class="bkk-home-placeholder"><i class="fas fa-building"></i></div>
+                    <% } %>
+                    <div class="bkk-home-body">
+                        <span class="bkk-home-kat <%= kat %>"><%= kat.charAt(0).toUpperCase()+kat.slice(1) %></span>
+                        <div class="bkk-home-title"><%= l.judul %></div>
+                        <div class="bkk-home-co"><i class="fas fa-building me-1"></i><%= l.perusahaan %></div>
+                        <% if (l.lokasi) { %><div class="bkk-home-loc"><i class="fas fa-map-marker-alt me-1"></i><%= l.lokasi %></div><% } %>
+                        <% if (l.deadline && !isExp) { %>
+                        <div style="background:#fef2f2;color:#991b1b;padding:.25rem .65rem;border-radius:8px;font-size:.7rem;font-weight:600;display:inline-flex;align-items:center;gap:.3rem;margin-bottom:.75rem;width:fit-content;">
+                            <i class="fas fa-clock"></i>Deadline: <%= new Date(l.deadline).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}) %>
+                        </div>
+                        <% } %>
+                        <div class="bkk-home-actions">
+                            <a href="/bkk/<%= l.slug %>" class="bkk-home-btn-det"><i class="fas fa-eye me-1"></i>Detail</a>
+                            <% if (l.kontak && !isExp) { %>
+                            <a href="<%= l.kontak.startsWith('http') ? l.kontak : 'https://wa.me/'+l.kontak.replace(/[^0-9]/g,'') %>" target="_blank" rel="noopener" class="bkk-home-btn-daf"><i class="fas fa-paper-plane me-1"></i>Daftar</a>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+                <% }); %>
+            </div>
+            <!-- Scroll indicator dots -->
+            <div style="display:flex;justify-content:center;gap:.5rem;margin-top:1.25rem;" id="bkkDots">
+                <% bkkHome.forEach(function(l, i) { %>
+                <div style="width:<%= i===0?'24px':'8px' %>;height:8px;border-radius:4px;background:<%= i===0?'#10b981':'#d1fae5' %>;transition:all .3s;cursor:pointer;" onclick="scrollBkk(<%= i %>)" class="bkk-dot"></div>
+                <% }); %>
+            </div>
+        </div>
+    </section>
+    <% } %>
+
     <!-- Gallery Section -->
     <section class="gallery-section">
         <div class="container">
-            <h2 class="section-title">Galeri Kegiatan</h2>
-            <p class="section-subtitle">Dokumentasi kegiatan dan prestasi siswa-siswi kami</p>
-            
-            <div class="row">
-                <% if (galeri.length === 0) { %>
-                    <div class="col-12 text-center">
-                        <p class="text-muted">Belum ada foto galeri</p>
+            <div class="d-flex align-items-end justify-content-between mb-4 flex-wrap gap-3">
+                <div>
+                    <div style="display:inline-flex;align-items:center;gap:.5rem;background:#e0f2fe;color:#0369a1;padding:.35rem 1rem;border-radius:50px;font-size:.8rem;font-weight:700;margin-bottom:.75rem;">
+                        <i class="fas fa-images"></i> Dokumentasi
                     </div>
-                <% } else { %>
-                    <%
-                        const albums = galeri;
-                    %>
-                    <% albums.forEach(function(album) { %>
-                        <div class="col-lg-4 col-md-6 mb-4">
-                            <div class="gallery-item" style="cursor:pointer;" onclick="window.location='/galeri'">
-                                <div style="position:relative;overflow:hidden;">
-                                    <img src="/uploads/<%= album.gambar %>" alt="<%= album.judul %>" onerror="this.src='/assets/img/undraw_posting_photo.svg'" style="width:100%;height:250px;object-fit:cover;transition:transform 0.3s;">
-                                    <% if (album.jumlah > 1) { %>
-                                    <span style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.6);color:white;border-radius:20px;padding:3px 10px;font-size:0.8rem;">
-                                        <i class="fas fa-images"></i> <%= album.jumlah %> foto
-                                    </span>
-                                    <% } %>
-                                </div>
-                                <div class="gallery-overlay">
-                                    <div class="gallery-title"><%= album.judul %></div>
-                                </div>
-                            </div>
+                    <h2 style="font-size:2rem;font-weight:800;color:#1e293b;margin-bottom:.25rem;">Galeri Kegiatan</h2>
+                    <p style="color:#64748b;font-size:.95rem;margin:0;">Momen berharga dari kegiatan dan prestasi siswa-siswi kami</p>
+                </div>
+                <a href="/galeri" style="display:inline-flex;align-items:center;gap:.5rem;border:2px solid #0ea5e9;color:#0ea5e9;padding:.6rem 1.4rem;border-radius:50px;text-decoration:none;font-weight:600;font-size:.875rem;transition:all .2s;white-space:nowrap;" onmouseover="this.style.background='#0ea5e9';this.style.color='white'" onmouseout="this.style.background='transparent';this.style.color='#0ea5e9'">
+                    Lihat Semua <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            <% if (galeri && galeri.length > 0) { %>
+            <div class="gallery-masonry">
+                <% galeri.forEach(function(album, idx) { %>
+                <div class="g-item" onclick="window.location='/galeri'" title="<%= album.judul %>">
+                    <img src="/uploads/<%= album.gambar %>" alt="<%= album.judul %>" onerror="this.src='/assets/img/undraw_posting_photo.svg'">
+                    <% if (album.jumlah > 1) { %>
+                    <div class="g-count-badge"><i class="fas fa-images me-1"></i><%= album.jumlah %></div>
+                    <% } %>
+                    <div class="g-overlay">
+                        <div>
+                            <div class="g-overlay-title"><%= album.judul %></div>
+                            <% if (album.jumlah > 1) { %><div class="g-overlay-count"><%= album.jumlah %> foto</div><% } %>
                         </div>
-                    <% }); %>
-                <% } %>
+                    </div>
+                </div>
+                <% }); %>
             </div>
-            
-            <div class="text-center mt-4">
-                <a href="/galeri" class="btn btn-outline-primary btn-lg">Lihat Semua Galeri</a>
+            <% } else { %>
+            <div class="text-center py-5 text-muted">
+                <i class="fas fa-images fa-3x mb-3 d-block" style="opacity:.3;"></i>
+                <p>Belum ada foto galeri</p>
             </div>
+            <% } %>
         </div>
     </section>
 
@@ -1340,6 +1697,31 @@
                 $('.navbar-modern').removeClass('scrolled');
             }
         });
+
+        // BKK Scroll
+        function scrollBkk(idx) {
+            var track = document.getElementById('bkkTrack');
+            if (!track) return;
+            var card = track.querySelectorAll('.bkk-home-card')[idx];
+            if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+            document.querySelectorAll('.bkk-dot').forEach(function(d, i) {
+                d.style.width = i === idx ? '24px' : '8px';
+                d.style.background = i === idx ? '#10b981' : '#d1fae5';
+            });
+        }
+        // Auto-update dots on scroll
+        (function() {
+            var track = document.getElementById('bkkTrack');
+            if (!track) return;
+            track.addEventListener('scroll', function() {
+                var cards = track.querySelectorAll('.bkk-home-card');
+                var idx = Math.round(track.scrollLeft / (cards[0] ? cards[0].offsetWidth + 20 : 320));
+                document.querySelectorAll('.bkk-dot').forEach(function(d, i) {
+                    d.style.width = i === idx ? '24px' : '8px';
+                    d.style.background = i === idx ? '#10b981' : '#d1fae5';
+                });
+            });
+        })();
         
         // Initialize tooltips and popovers
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));

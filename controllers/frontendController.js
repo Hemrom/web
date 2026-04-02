@@ -34,6 +34,8 @@ const getMediaSosialFooter = async () => {
   return rows;
 };
 
+exports.getMediaSosialFooter = getMediaSosialFooter;
+
 const getProfilSekolah = async () => {
   const cached = cache.get('profil_sekolah');
   if (cached) return cached;
@@ -42,6 +44,8 @@ const getProfilSekolah = async () => {
   cache.set('profil_sekolah', profil, 600); // cache 10 menit
   return profil;
 };
+
+exports.getProfilSekolah = getProfilSekolah;
 
 const getRelatedBerita = async (excludeId = null) => {
   const key = `related_berita_${excludeId || 'all'}`;
@@ -78,7 +82,11 @@ exports.home = async (req, res) => {
       menuItems,
       mediaSosialFooter,
       [linkTerkait],
-      [alumniHome]
+      [alumniHome],
+      [fasilitasHome],
+      [artikelHome],
+      [fileDownloadHome],
+      [bkkHome]
     ] = await Promise.all([
       getProfilSekolah(),
       db.query('SELECT id, judul, slug, gambar, konten, kategori, created_at FROM berita WHERE status = "published" ORDER BY created_at DESC LIMIT 6'),
@@ -88,12 +96,17 @@ exports.home = async (req, res) => {
       getMenuItems(),
       getMediaSosialFooter(),
       db.query("SELECT * FROM link_terkait WHERE status = 'aktif' ORDER BY urutan ASC, created_at DESC"),
-      db.query("SELECT id,nama,tahun_lulus,jurusan,pekerjaan,perusahaan,foto,cerita FROM alumni WHERE status='disetujui' ORDER BY RAND() LIMIT 6")
+      db.query("SELECT id,nama,tahun_lulus,jurusan,pekerjaan,perusahaan,foto,cerita FROM alumni WHERE status='disetujui' ORDER BY RAND() LIMIT 6"),
+      db.query("SELECT f.*, (SELECT gambar FROM fasilitas_foto WHERE fasilitas_id=f.id ORDER BY urutan ASC, id ASC LIMIT 1) as cover FROM fasilitas f WHERE f.status='published' ORDER BY f.nama ASC LIMIT 8"),
+      db.query('SELECT id, judul, slug, gambar, ringkasan, konten, kategori, penulis_nama, created_at FROM artikel WHERE status = "published" AND tampil_home = 1 ORDER BY created_at DESC LIMIT 4'),
+      db.query('SELECT id, judul, tipe_file, ukuran_file, kategori, jumlah_download, created_at FROM file_download WHERE status = "aktif" AND tampil_home = 1 ORDER BY created_at DESC LIMIT 6'),
+      db.query("SELECT id, judul, slug, perusahaan, lokasi, kategori, gambar, deadline, kontak FROM bkk_lowongan WHERE status='aktif' ORDER BY created_at DESC LIMIT 6")
     ]);
 
     res.render('frontend/home', {
       title: 'Beranda', currentPage: 'home',
-      profil, berita: beritaTerbaru, galeri, slider, jurusan, menuItems, mediaSosialFooter, linkTerkait, alumniHome
+      profil, berita: beritaTerbaru, galeri, slider, jurusan, menuItems, mediaSosialFooter, linkTerkait, alumniHome, fasilitasHome,
+      artikelHome, fileDownloadHome, bkkHome
     });
   } catch (error) {
     console.error(error);

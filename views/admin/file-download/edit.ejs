@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Admin Panel</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <%- include('../partials/sidebar') %>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <%- include('../partials/topbar', { user }) %>
+            <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Edit File Download</h1>
+                    <a href="/admin/file-download" class="btn btn-sm btn-secondary shadow-sm"><i class="fas fa-arrow-left fa-sm"></i> Kembali</a>
+                </div>
+                <div class="row">
+                    <div class="col-lg-7">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Edit File</h6></div>
+                            <div class="card-body">
+                                <form method="POST" action="/admin/file-download/edit/<%= file.id %>" enctype="multipart/form-data">
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                    <div class="form-group">
+                                        <label>Judul File *</label>
+                                        <input type="text" class="form-control" name="judul" value="<%= file.judul %>" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Deskripsi</label>
+                                        <textarea class="form-control" name="deskripsi" rows="3"><%= file.deskripsi || '' %></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Kategori</label>
+                                        <input type="text" class="form-control" name="kategori" value="<%= file.kategori %>">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Ganti File (opsional)</label>
+                                        <div class="mb-2 p-2 bg-light rounded">
+                                            <i class="fas fa-file text-primary mr-2"></i>
+                                            <strong>File saat ini:</strong> <%= file.nama_file %> 
+                                            <span class="badge badge-secondary ml-2"><%= file.tipe_file %></span>
+                                            <span class="text-muted ml-2"><%= file.ukuran_file %></span>
+                                        </div>
+                                        <input type="file" class="form-control-file" name="file">
+                                        <small class="text-muted">Kosongkan jika tidak ingin mengganti file</small>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label>Status</label>
+                                            <select class="form-control" name="status">
+                                                <option value="aktif" <%= file.status === 'aktif' ? 'selected' : '' %>>Aktif</option>
+                                                <option value="nonaktif" <%= file.status === 'nonaktif' ? 'selected' : '' %>>Nonaktif</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label>Tampil di Beranda</label>
+                                            <select class="form-control" name="tampil_home">
+                                                <option value="0" <%= !file.tampil_home ? 'selected' : '' %>>Tidak</option>
+                                                <option value="1" <%= file.tampil_home ? 'selected' : '' %>>Ya</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Update</button>
+                                    <a href="/admin/file-download" class="btn btn-secondary">Batal</a>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-info">Info File</h6></div>
+                            <div class="card-body small">
+                                <p><strong>Penulis:</strong> <%= file.penulis_nama %> (<%= file.penulis_tipe %>)</p>
+                                <p><strong>Tipe:</strong> <%= file.tipe_file %></p>
+                                <p><strong>Ukuran:</strong> <%= file.ukuran_file %></p>
+                                <p><strong>Total Download:</strong> <%= file.jumlah_download %>x</p>
+                                <p><strong>Dibuat:</strong> <%= new Date(file.created_at).toLocaleDateString('id-ID') %></p>
+                                <a href="/file-download/<%= file.id %>" target="_blank" class="btn btn-info btn-sm btn-block">
+                                    <i class="fas fa-download mr-1"></i> Test Download
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%- include('../partials/footer') %>
+    </div>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/js/sb-admin-2.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%= title %></title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
+    <link href="/assets/vendor/bootstrap5/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/vendor/fontawesome6/all.min.css" rel="stylesheet">
+    <style>
+        body { background: #f1f5f9; font-family: 'Segoe UI', sans-serif; }
+        .card-stat { border: none; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+        .badge-status-published { background: #dcfce7; color: #166534; }
+        .badge-status-draft { background: #f1f5f9; color: #475569; }
+    </style>
+</head>
+<body>
+<%- include('../partials/navbar') %>
+<div class="container py-4">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h4 class="fw-bold mb-1">Artikel Saya</h4>
+            <p class="text-muted small mb-0">Kelola artikel yang Anda tulis</p>
+        </div>
+        <a href="/guru/artikel/create" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Tulis Artikel</a>
+    </div>
+
+    <div class="card card-stat">
+        <div class="card-body p-0">
+            <% if (!artikel.length) { %>
+            <div class="text-center py-5">
+                <i class="fas fa-file-alt fa-3x text-muted mb-3"></i>
+                <p class="text-muted">Belum ada artikel. Mulai tulis artikel pertama Anda!</p>
+                <a href="/guru/artikel/create" class="btn btn-primary btn-sm">Tulis Sekarang</a>
+            </div>
+            <% } else { %>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Judul</th>
+                            <th>Kategori</th>
+                            <th>Status</th>
+                            <th>Views</th>
+                            <th>Tanggal</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% artikel.forEach(item => { %>
+                        <tr>
+                            <td>
+                                <div class="fw-semibold" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><%= item.judul %></div>
+                                <% if (item.ringkasan) { %><small class="text-muted"><%= item.ringkasan.substring(0,60) %>...</small><% } %>
+                            </td>
+                            <td><span class="badge bg-light text-dark"><%= item.kategori %></span></td>
+                            <td><span class="badge badge-status-<%= item.status %>"><%= item.status === 'published' ? 'Terbit' : 'Draft' %></span></td>
+                            <td><%= item.views %></td>
+                            <td><%= new Date(item.created_at).toLocaleDateString('id-ID') %></td>
+                            <td>
+                                <% if (item.status === 'published') { %>
+                                <a href="/artikel/<%= item.slug %>" target="_blank" class="btn btn-outline-info btn-sm" title="Lihat"><i class="fas fa-eye"></i></a>
+                                <% } %>
+                                <a href="/guru/artikel/edit/<%= item.id %>" class="btn btn-outline-warning btn-sm"><i class="fas fa-edit"></i></a>
+                                <form action="/guru/artikel/delete/<%= item.id %>" method="POST" style="display:inline;" onsubmit="return confirm('Hapus artikel ini?')">
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+<script src="/assets/vendor/bootstrap5/bootstrap.bundle.min.js"></script>
+</body>
+</html>

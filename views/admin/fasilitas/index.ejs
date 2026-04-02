@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Admin Panel</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="/assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <%- include('../partials/sidebar') %>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <%- include('../partials/topbar', { user }) %>
+            <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Kelola Fasilitas</h1>
+                    <a href="/admin/fasilitas/create" class="btn btn-sm btn-primary shadow-sm"><i class="fas fa-plus fa-sm text-white-50"></i> Tambah Fasilitas</a>
+                </div>
+                <% if (success == 1) { %><div class="alert alert-success alert-dismissible fade show">Fasilitas berhasil ditambahkan.<button type="button" class="close" data-dismiss="alert">&times;</button></div><% } %>
+                <% if (success == 2) { %><div class="alert alert-success alert-dismissible fade show">Fasilitas berhasil diperbarui.<button type="button" class="close" data-dismiss="alert">&times;</button></div><% } %>
+                <% if (success == 3) { %><div class="alert alert-danger alert-dismissible fade show">Fasilitas berhasil dihapus.<button type="button" class="close" data-dismiss="alert">&times;</button></div><% } %>
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable">
+                                <thead><tr><th>#</th><th>Foto</th><th>Nama</th><th>Kategori</th><th>Status</th><th>Aksi</th></tr></thead>
+                                <tbody>
+                                <% if (!fasilitas || fasilitas.length === 0) { %>
+                                <tr><td colspan="6" class="text-center">Belum ada data fasilitas</td></tr>
+                                <% } else { fasilitas.forEach((f, i) => { %>
+                                <tr>
+                                    <td><%= i+1 %></td>
+                                    <td><% if (f.cover) { %><img src="/uploads/<%= f.cover %>" style="width:60px;height:45px;object-fit:cover;border-radius:4px;"><% } else { %>-<% } %></td>
+                                    <td><%= f.nama %></td>
+                                    <td><span class="badge badge-info"><%= f.kategori %></span></td>
+                                    <td><span class="badge badge-<%= f.status === 'published' ? 'success' : 'secondary' %>"><%= f.status %></span></td>
+                                    <td>
+                                        <a href="/admin/fasilitas/edit/<%= f.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                                        <form method="POST" action="/admin/fasilitas/delete/<%= f.id %>" style="display:inline" onsubmit="return confirm('Hapus fasilitas ini?')">
+                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                            <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <% }) } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%- include('../partials/footer') %>
+    </div>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="/assets/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="/assets/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+<script src="/assets/js/sb-admin-2.min.js"></script>
+<script>$(document).ready(function(){ $('#dataTable').DataTable({ language: { url: '' }, order: [] }); });</script>
+</body>
+</html>

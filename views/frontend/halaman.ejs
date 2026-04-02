@@ -71,6 +71,8 @@
                         <% } %>
                         <%- halaman.konten %>
                     </div>
+                    <% shareTitle = halaman.judul; shareUrl = '/page/' + halaman.slug; %>
+                    <%- include('partials/share-buttons') %>
 
                     <% if (embeds && embeds.length > 0) { %>
                     <div style="margin-top:2.5rem;">

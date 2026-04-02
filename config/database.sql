@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 29 Mar 2026 pada 11.10
+-- Waktu pembuatan: 02 Apr 2026 pada 09.07
 -- Versi server: 10.4.32-MariaDB
--- Versi PHP: 8.1.25
+-- Versi PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -46,6 +46,64 @@ INSERT INTO `admin` (`id`, `username`, `password`, `nama`, `email`, `created_at`
 -- --------------------------------------------------------
 
 --
+-- Struktur dari tabel `alumni`
+--
+
+CREATE TABLE `alumni` (
+  `id` int(11) NOT NULL,
+  `nama` varchar(100) NOT NULL,
+  `nis` varchar(50) DEFAULT NULL,
+  `tahun_lulus` year(4) DEFAULT NULL,
+  `jurusan` varchar(100) DEFAULT NULL,
+  `pekerjaan` varchar(150) DEFAULT NULL,
+  `perusahaan` varchar(150) DEFAULT NULL,
+  `kota` varchar(100) DEFAULT NULL,
+  `foto` varchar(255) DEFAULT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `telepon` varchar(20) DEFAULT NULL,
+  `instagram` varchar(100) DEFAULT NULL,
+  `linkedin` varchar(200) DEFAULT NULL,
+  `cerita` text DEFAULT NULL,
+  `token` varchar(64) DEFAULT NULL,
+  `status` enum('pending','disetujui','ditolak') DEFAULT 'pending',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `artikel`
+--
+
+CREATE TABLE `artikel` (
+  `id` int(11) NOT NULL,
+  `judul` varchar(255) NOT NULL,
+  `slug` varchar(255) NOT NULL,
+  `konten` longtext DEFAULT NULL,
+  `ringkasan` text DEFAULT NULL,
+  `gambar` varchar(255) DEFAULT NULL,
+  `kategori` varchar(100) DEFAULT 'Umum',
+  `penulis_id` int(11) DEFAULT NULL,
+  `penulis_nama` varchar(150) DEFAULT NULL,
+  `penulis_tipe` enum('admin','guru') DEFAULT 'admin',
+  `status` enum('draft','published') DEFAULT 'draft',
+  `tampil_home` tinyint(1) DEFAULT 0,
+  `views` int(11) DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `artikel`
+--
+
+INSERT INTO `artikel` (`id`, `judul`, `slug`, `konten`, `ringkasan`, `gambar`, `kategori`, `penulis_id`, `penulis_nama`, `penulis_tipe`, `status`, `tampil_home`, `views`, `created_at`, `updated_at`) VALUES
+(1, 'Jaringan Internet dan Peranannya dalam Kehidupan Modern', 'jaringan-internet-dan-peranannya-dalam-kehidupan-modern', '<p style=\"text-align: justify; \"><br></p><p style=\"text-align: justify;\">Jaringan internet telah menjadi bagian yang tidak terpisahkan dari kehidupan manusia modern. Hampir semua aktivitas, mulai dari komunikasi, pendidikan, bisnis, hingga hiburan, kini bergantung pada koneksi internet. Secara sederhana, jaringan internet adalah kumpulan perangkat yang saling terhubung untuk berbagi data dan informasi melalui protokol komunikasi tertentu. Dengan perkembangan teknologi yang pesat, internet telah berevolusi dari sekadar alat pertukaran data menjadi infrastruktur utama dalam transformasi digital global.</p><p style=\"text-align: justify;\">Pada dasarnya, jaringan internet terdiri dari berbagai komponen penting, seperti perangkat keras (hardware) dan perangkat lunak (software). Perangkat keras meliputi router, switch, server, dan kabel jaringan, sedangkan perangkat lunak mencakup sistem operasi jaringan serta protokol komunikasi seperti TCP/IP. Router berfungsi mengarahkan lalu lintas data antar jaringan, sementara switch menghubungkan perangkat dalam satu jaringan lokal. Server berperan sebagai pusat penyimpanan dan penyedia layanan data yang dapat diakses oleh pengguna.</p><p style=\"text-align: justify;\">Jenis jaringan internet dapat dibedakan berdasarkan cakupan wilayahnya. Local Area Network (LAN) adalah jaringan dengan cakupan kecil, seperti di rumah, sekolah, atau kantor. Metropolitan Area Network (MAN) mencakup wilayah yang lebih luas, seperti satu kota. Sedangkan Wide Area Network (WAN) merupakan jaringan dengan cakupan sangat luas yang dapat menghubungkan berbagai negara, bahkan seluruh dunia, seperti internet itu sendiri. Selain itu, terdapat juga jaringan nirkabel (wireless) seperti Wi-Fi yang memungkinkan pengguna terhubung tanpa menggunakan kabel.</p><p style=\"text-align: justify; \">Perkembangan jaringan internet juga sangat dipengaruhi oleh teknologi transmisi data. Dahulu, koneksi internet menggunakan dial-up yang lambat dan terbatas. Kini, teknologi seperti fiber optic, 4G, dan bahkan 5G telah memungkinkan kecepatan internet yang jauh lebih tinggi dan stabil. Fiber optic, misalnya, menggunakan cahaya untuk mentransmisikan data sehingga memiliki kecepatan yang sangat tinggi dan latensi rendah. Hal ini sangat mendukung kebutuhan masyarakat akan akses informasi yang cepat dan real-time.</p><p style=\"text-align: justify;\">Dalam dunia pendidikan, jaringan internet memberikan dampak yang sangat signifikan. Guru dan siswa dapat mengakses berbagai sumber belajar secara online, mengikuti kelas virtual, serta berkolaborasi tanpa batas ruang dan waktu. Platform pembelajaran digital dan Learning Management System (LMS) semakin banyak digunakan untuk meningkatkan efektivitas proses belajar mengajar. Hal ini sangat relevan terutama dalam era pembelajaran berbasis teknologi seperti saat ini.</p><p style=\"text-align: justify;\">Di bidang bisnis, internet membuka peluang besar bagi pelaku usaha untuk memperluas pasar. E-commerce, digital marketing, dan layanan berbasis cloud menjadi tulang punggung dalam operasional bisnis modern. Dengan adanya internet, transaksi dapat dilakukan secara cepat dan efisien tanpa harus bertatap muka secara langsung. Selain itu, komunikasi internal perusahaan juga menjadi lebih mudah melalui email, video conference, dan aplikasi kolaborasi.</p><p style=\"text-align: justify;\">Namun, di balik berbagai manfaatnya, jaringan internet juga memiliki tantangan dan risiko. Keamanan jaringan menjadi salah satu isu utama yang harus diperhatikan. Ancaman seperti hacking, malware, phishing, dan pencurian data dapat merugikan individu maupun organisasi. Oleh karena itu, diperlukan sistem keamanan yang baik, seperti penggunaan firewall, enkripsi data, serta edukasi kepada pengguna tentang pentingnya keamanan digital.</p><p style=\"text-align: justify;\">Selain itu, kesenjangan akses internet juga masih menjadi masalah di beberapa daerah, terutama di wilayah terpencil. Tidak semua masyarakat memiliki akses internet yang memadai, baik dari segi infrastruktur maupun biaya. Hal ini dapat menghambat pemerataan informasi dan perkembangan teknologi. Oleh karena itu, diperlukan peran pemerintah dan pihak terkait untuk memperluas akses jaringan internet secara merata.</p><p style=\"text-align: justify;\">Di masa depan, jaringan internet diprediksi akan terus berkembang dengan hadirnya teknologi seperti Internet of Things (IoT), Artificial Intelligence (AI), dan jaringan 6G. IoT memungkinkan berbagai perangkat terhubung dan saling berkomunikasi secara otomatis, seperti smart home dan smart city. Sementara itu, AI dapat meningkatkan efisiensi dan kecerdasan dalam pengelolaan jaringan.</p><p style=\"text-align: justify; \">Sebagai kesimpulan, jaringan internet memiliki peran yang sangat penting dalam kehidupan modern. Dengan memahami konsep, manfaat, serta tantangannya, kita dapat memanfaatkan internet secara optimal dan bijak. Perkembangan teknologi jaringan yang terus maju diharapkan dapat memberikan dampak positif bagi seluruh lapisan masyarakat dan mendukung kemajuan di berbagai bidang.</p>', 'Kecepatan teknologi jaringan', 'artikel-1775103126758-4498355963a914e5e4398a938f88921e.jpg', 'Umum', 7, 'Admin', 'admin', 'published', 1, 5, '2026-04-02 04:12:06', '2026-04-02 04:28:45');
+
+-- --------------------------------------------------------
+
+--
 -- Struktur dari tabel `berita`
 --
 
@@ -76,6 +134,115 @@ INSERT INTO `berita` (`id`, `judul`, `slug`, `konten`, `gambar`, `penulis`, `tan
 -- --------------------------------------------------------
 
 --
+-- Struktur dari tabel `bkk_lowongan`
+--
+
+CREATE TABLE `bkk_lowongan` (
+  `id` int(11) NOT NULL,
+  `judul` varchar(255) NOT NULL,
+  `slug` varchar(255) DEFAULT NULL,
+  `perusahaan` varchar(150) NOT NULL,
+  `lokasi` varchar(150) DEFAULT NULL,
+  `deskripsi` text DEFAULT NULL,
+  `persyaratan` text DEFAULT NULL,
+  `gambar` varchar(255) DEFAULT NULL,
+  `kategori` enum('magang','kerja','beasiswa','lainnya') DEFAULT 'kerja',
+  `deadline` date DEFAULT NULL,
+  `kontak` varchar(255) DEFAULT NULL,
+  `status` enum('aktif','nonaktif') DEFAULT 'aktif',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `bkk_lowongan`
+--
+
+INSERT INTO `bkk_lowongan` (`id`, `judul`, `slug`, `perusahaan`, `lokasi`, `deskripsi`, `persyaratan`, `gambar`, `kategori`, `deadline`, `kontak`, `status`, `created_at`) VALUES
+(2, 'Magang Jepang', 'magang-jepang-mng2bh50', 'OKINAWA', 'Kediri', 'Segara melamar', '- Laki-laki\r\n- Siap Biaya dan Raga', 'portal-1775048957306-7228ba2a19fafdf3251eb62101b57a40.jpeg', 'magang', '2026-04-16', '08566343242132', 'aktif', '2026-04-01 13:09:17');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `fasilitas`
+--
+
+CREATE TABLE `fasilitas` (
+  `id` int(11) NOT NULL,
+  `nama` varchar(255) NOT NULL,
+  `slug` varchar(255) DEFAULT NULL,
+  `deskripsi` text DEFAULT NULL,
+  `gambar` varchar(255) DEFAULT NULL,
+  `kategori` enum('ruang-kelas','laboratorium','perpustakaan','olahraga','kantin','kesehatan','ibadah','lainnya') DEFAULT 'lainnya',
+  `status` enum('draft','published') DEFAULT 'published',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `fasilitas`
+--
+
+INSERT INTO `fasilitas` (`id`, `nama`, `slug`, `deskripsi`, `gambar`, `kategori`, `status`, `created_at`, `updated_at`) VALUES
+(1, 'Masjid', 'masjid-mngjwsqp', 'Masjid almuttaqin SMKN 1 Kras', 'portal-1775078505580-506741ecf59728836e9ad7175d9dc1ff.jpg', 'ibadah', 'published', '2026-04-01 21:21:45', '2026-04-01 21:21:45'),
+(2, 'Lab TKJ', 'lab-tkj-mngjxh4r', 'Lab Mikrotik TKJ', 'portal-1775078537204-c7c33175078c60ce3eb515e599239149.jpg', 'lainnya', 'published', '2026-04-01 21:22:17', '2026-04-01 21:22:17'),
+(3, 'Perpustakaan', 'perpustakaan-mngjxwk5', 'Perpus', 'portal-1775078557202-c9be254a098d3558dce2cc4548b2d671.jpg', 'perpustakaan', 'published', '2026-04-01 21:22:37', '2026-04-01 21:22:37');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `fasilitas_foto`
+--
+
+CREATE TABLE `fasilitas_foto` (
+  `id` int(11) NOT NULL,
+  `fasilitas_id` int(11) NOT NULL,
+  `gambar` varchar(255) NOT NULL,
+  `urutan` int(11) DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `fasilitas_foto`
+--
+
+INSERT INTO `fasilitas_foto` (`id`, `fasilitas_id`, `gambar`, `urutan`, `created_at`) VALUES
+(1, 1, 'portal-1775078505580-506741ecf59728836e9ad7175d9dc1ff.jpg', 0, '2026-04-01 21:39:01'),
+(2, 2, 'portal-1775078537204-c7c33175078c60ce3eb515e599239149.jpg', 0, '2026-04-01 21:39:01'),
+(3, 3, 'portal-1775078557202-c9be254a098d3558dce2cc4548b2d671.jpg', 0, '2026-04-01 21:39:01'),
+(4, 2, 'fasilitas-1775079688686-afad3e1efe9a6b05dc3305e98d1583e1.jpg', 1, '2026-04-01 21:41:28'),
+(5, 2, 'fasilitas-1775079688691-1fdba26380f554570a45d6e5086d200a.jpg', 2, '2026-04-01 21:41:28'),
+(6, 1, 'fasilitas-1775079699944-fdb6c5006fa8e5d98793c59a7ffe7c7d.jpg', 1, '2026-04-01 21:41:39'),
+(7, 1, 'fasilitas-1775079699945-734f37f39281544d40713ef396dc326b.jpg', 2, '2026-04-01 21:41:39'),
+(8, 3, 'fasilitas-1775079710549-c44f2914d96bd36b466e068ac90fea6b.jpg', 1, '2026-04-01 21:41:50'),
+(9, 3, 'fasilitas-1775079710558-83ad77f4133cca0162fa01dc7c47fe87.webp', 2, '2026-04-01 21:41:50');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `file_download`
+--
+
+CREATE TABLE `file_download` (
+  `id` int(11) NOT NULL,
+  `judul` varchar(255) NOT NULL,
+  `deskripsi` text DEFAULT NULL,
+  `nama_file` varchar(255) NOT NULL,
+  `ukuran_file` varchar(50) DEFAULT NULL,
+  `tipe_file` varchar(50) DEFAULT NULL,
+  `kategori` varchar(100) DEFAULT 'Umum',
+  `penulis_id` int(11) DEFAULT NULL,
+  `penulis_nama` varchar(150) DEFAULT NULL,
+  `penulis_tipe` enum('admin','guru') DEFAULT 'admin',
+  `status` enum('aktif','nonaktif') DEFAULT 'aktif',
+  `tampil_home` tinyint(1) DEFAULT 0,
+  `jumlah_download` int(11) DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Struktur dari tabel `galeri`
 --
 
@@ -93,7 +260,13 @@ CREATE TABLE `galeri` (
 --
 
 INSERT INTO `galeri` (`id`, `judul`, `deskripsi`, `gambar`, `kategori`, `created_at`) VALUES
-(2, 'Kegiatan Halal Bi Halal', 'Halal Bi Halal', 'galeri-1774677492695.jpeg', 'Kegiatan', '2026-03-28 05:58:12');
+(2, 'Kegiatan Halal Bi Halal', 'Halal Bi Halal', 'galeri-1774677492695.jpeg', 'Kegiatan', '2026-03-28 05:58:12'),
+(31, 'Pondok Ramadhan', '<p>Ponrom</p>', 'galeri-1775001542268-bff6fa580d90f505215b66cb5fed56fe.jpg', 'Kegiatan', '2026-03-31 23:59:03'),
+(32, 'Pondok Ramadhan', '<p>Ponrom</p>', 'galeri-1775001542290-79e1d815ea17983e7f364b45d63c7551.jpg', 'Kegiatan', '2026-03-31 23:59:03'),
+(33, 'Pondok Ramadhan', '<p>Ponrom</p>', 'galeri-1775001542312-69401bcc2f0ea88f9c6e6fc2686dc2a4.jpg', 'Kegiatan', '2026-03-31 23:59:03'),
+(34, 'Pondok Ramadhan', '<p>Ponrom</p>', 'galeri-1775001542329-6d4ba8ea702954867ac2955bbf4d6c97.jpg', 'Kegiatan', '2026-03-31 23:59:03'),
+(35, 'Pondok Ramadhan', '<p>Ponrom</p>', 'galeri-1775001542345-bb7dcb048574087da0876bdf9b8852d8.jpg', 'Kegiatan', '2026-03-31 23:59:03'),
+(36, 'Pondok Ramadhan', '<p>Ponrom</p>', 'galeri-1775001542361-ba0babcc5b43c3e4cd8138b83c62f6ff.jpg', 'Kegiatan', '2026-03-31 23:59:03');
 
 -- --------------------------------------------------------
 
@@ -114,100 +287,102 @@ CREATE TABLE `guru` (
   `mata_pelajaran` varchar(100) DEFAULT NULL,
   `foto` varchar(255) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `jabatan` varchar(100) DEFAULT NULL
+  `jabatan` varchar(100) DEFAULT NULL,
+  `guru_username` varchar(50) DEFAULT NULL,
+  `guru_password` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data untuk tabel `guru`
 --
 
-INSERT INTO `guru` (`id`, `nip`, `nama`, `jenis_kelamin`, `tempat_lahir`, `tanggal_lahir`, `alamat`, `telepon`, `email`, `mata_pelajaran`, `foto`, `created_at`, `jabatan`) VALUES
-(77, '', 'ANIK SAFITRI BUDIYATI, S.Kom.', 'L', NULL, NULL, NULL, '', '', '', 'guru-1774750265698.png', '2026-03-29 01:45:21', 'KEPALA SEKOLAH'),
-(78, NULL, 'Drs. ANDIKA BAYU SAPUTRO', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TPTUP', NULL, '2026-03-29 01:45:21', 'WAKA SARPRAS'),
-(79, NULL, 'Drs. HAJI SIGIT SUPRANOTO', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TKRO', NULL, '2026-03-29 01:45:21', 'KAPROGLI TPTUP'),
-(80, NULL, 'AYU DINI ARDIANTI,S.Pd.', 'L', NULL, NULL, NULL, NULL, NULL, 'BK', NULL, '2026-03-29 01:45:21', 'WAKA KURIKULUM'),
-(81, NULL, 'KUSMAN RAHMANU ADI,S.T', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TKJ', NULL, '2026-03-29 01:45:21', 'GURU'),
-(82, NULL, 'ACHMAD AMIN, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'BK', NULL, '2026-03-29 01:45:21', 'GURU'),
-(83, NULL, 'ALI ZURO, SPd.', 'L', NULL, NULL, NULL, NULL, NULL, 'B. Inggris', NULL, '2026-03-29 01:45:21', 'GURU'),
-(84, NULL, 'RENI YULIASIH,S.Pd.', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif Kuliner', NULL, '2026-03-29 01:45:22', 'BENDAHARA'),
-(85, NULL, 'PENI SULISTYOWATI, S.Pd.I', 'L', NULL, NULL, NULL, NULL, NULL, 'Matematika', NULL, '2026-03-29 01:45:22', 'GURU'),
-(86, NULL, 'INDRAGUS SHOLEHHUDIN, M.Pd.', 'L', NULL, NULL, NULL, NULL, NULL, 'PJOK', NULL, '2026-03-29 01:45:22', 'GURU'),
-(87, NULL, 'SUHARDHINI SETYANINGSIH,S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif Kuliner', NULL, '2026-03-29 01:45:22', 'GURU'),
-(88, NULL, 'WINDI YUNITA, S.Pd.', 'L', NULL, NULL, NULL, NULL, NULL, 'Sejarah Indonesia', NULL, '2026-03-29 01:45:22', 'GURU'),
-(89, NULL, 'RIZKY LIA ANGGRAENY, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'B. Indonesia', NULL, '2026-03-29 01:45:22', 'GURU'),
-(90, NULL, 'EKO DODY PRASETYO, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'IPAS', NULL, '2026-03-29 01:45:22', 'GURU'),
-(91, NULL, 'SRI PURWANTI M, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'BK', NULL, '2026-03-29 01:45:22', 'GURU'),
-(92, NULL, 'DIANA CATUR  K.S, S.Kom', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TKJ', NULL, '2026-03-29 01:45:22', 'GURU'),
-(93, NULL, 'SOJU PURWANTO, S.Pd.', 'L', NULL, NULL, NULL, NULL, NULL, 'Matematika', NULL, '2026-03-29 01:45:22', 'GURU'),
-(94, NULL, 'ANGGA WARDHANA, S.Kom.', 'L', NULL, NULL, NULL, NULL, NULL, 'Informatika', NULL, '2026-03-29 01:45:22', 'WAKA HUMAS'),
-(95, NULL, 'ATIK NURUL AINI, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'B. Inggris', NULL, '2026-03-29 01:45:22', 'GURU'),
-(96, NULL, 'AHMAD BAGUS DWI S, S.S', 'L', NULL, NULL, NULL, NULL, NULL, 'B. Inggris', NULL, '2026-03-29 01:45:22', 'WAKA KESISWAAN'),
-(97, NULL, 'AFIF RAHMAWATI, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif Kuliner', NULL, '2026-03-29 01:45:22', 'GURU'),
-(98, NULL, 'BASRONI , S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'Matematika', NULL, '2026-03-29 01:45:22', 'GURU'),
-(99, NULL, 'YANUAR DWIANTA, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'PPKN', NULL, '2026-03-29 01:45:22', 'GURU'),
-(100, NULL, 'M. ANDIK ROHMATULLOH, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'IPAS', NULL, '2026-03-29 01:45:22', 'GURU'),
-(101, NULL, 'LU\'LUATUL MABRUROH,S.Ag,Gr', 'L', NULL, NULL, NULL, NULL, NULL, 'PAI', NULL, '2026-03-29 01:45:22', 'GURU'),
-(102, NULL, 'IKE CINTIA DEWI, S.Pd, Gr', 'L', NULL, NULL, NULL, NULL, NULL, 'B. Indonesia', NULL, '2026-03-29 01:45:22', 'GURU'),
-(103, NULL, 'ADHIEN WAHYU F.M. S.Pd.,Gr', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TKRO', NULL, '2026-03-29 01:45:22', 'GURU'),
-(104, NULL, 'BOBY SUTANTO, S.Kom', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TKJ', NULL, '2026-03-29 01:45:22', 'GURU'),
-(105, NULL, 'TINO BAMBANG GUNAWAN, S.Kom., Gr', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TKJ', NULL, '2026-03-29 01:45:22', 'KAPROGLI TKJ'),
-(106, NULL, 'NANDA DHARA AYU P. M, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif Kuliner', NULL, '2026-03-29 01:45:22', 'GURU'),
-(107, NULL, 'BAGUS SETIAWAN, S.Pd, Kons.', 'L', NULL, NULL, NULL, NULL, NULL, 'BK', NULL, '2026-03-29 01:45:22', 'GURU'),
-(108, NULL, 'ULFIAN ASIFA AMINULLOH, S.Pd.', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TKRO', NULL, '2026-03-29 01:45:22', 'GURU'),
-(109, NULL, 'NIA SASI HARDIANI, M.Pd.', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif Kuliner', NULL, '2026-03-29 01:45:22', 'KAPROGLI KULINER'),
-(110, NULL, 'RISKA HANDAYANI, S.Pd.', 'L', NULL, NULL, NULL, NULL, NULL, 'B. Jawa', NULL, '2026-03-29 01:45:22', 'GURU'),
-(111, NULL, 'BINTI MUSAFAAH,S.Pd,Gr', 'L', NULL, NULL, NULL, NULL, NULL, 'PPKN', NULL, '2026-03-29 01:45:22', 'GURU'),
-(112, NULL, 'Dra. ENI RELAWATI.,Gr', 'L', NULL, NULL, NULL, NULL, NULL, 'B. Jepang', NULL, '2026-03-29 01:45:22', 'GURU'),
-(113, NULL, 'AGUS NAWATRI, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TKRO', NULL, '2026-03-29 01:45:22', 'GURU'),
-(114, NULL, 'BEKTI WIDHIANTO, S.Kom.,Gr.', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TKJ', NULL, '2026-03-29 01:45:22', 'GURU'),
-(115, NULL, 'SULISTIYO ANIS, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif Kuliner', NULL, '2026-03-29 01:45:22', 'GURU'),
-(116, NULL, 'M. HATTA UBAID, S.T.,Gr', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TKRO', NULL, '2026-03-29 01:45:22', 'GURU'),
-(117, '', 'IMAM JUNAIDI ABROR, S.Kom.', 'L', NULL, NULL, NULL, '', '', 'Produktif TKJ', 'guru-1774755530289.png', '2026-03-29 01:45:22', 'GURU'),
-(118, NULL, 'DONI ARDIANTO,S.KOM.,Gr.', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TKJ', NULL, '2026-03-29 01:45:22', 'GURU'),
-(119, NULL, 'BIMA BUDI PRAKOSA, S.Pd.,Gr', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif Kuliner', NULL, '2026-03-29 01:45:22', 'GURU'),
-(120, NULL, 'DEVY RARA GUVITHA, S.Pd.', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif Kuliner', NULL, '2026-03-29 01:45:22', 'GURU'),
-(121, NULL, 'ABIDATUL ROKHIMAH, S.Pd.I', 'L', NULL, NULL, NULL, NULL, NULL, 'PAI', NULL, '2026-03-29 01:45:22', 'GURU'),
-(122, NULL, 'RR. YUNITA SAMAWATI, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'B. Inggris', NULL, '2026-03-29 01:45:22', 'GURU'),
-(123, NULL, 'NASIKIN, S.E', 'L', NULL, NULL, NULL, NULL, NULL, 'Kewirausahaan', NULL, '2026-03-29 01:45:22', 'GURU'),
-(124, NULL, 'KURNIA SILVI MUSTIKA SARI, SPd', 'L', NULL, NULL, NULL, NULL, NULL, 'PAI', NULL, '2026-03-29 01:45:22', 'GURU'),
-(125, NULL, 'ANANG KURNIAWAN, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'B. Indonesia', NULL, '2026-03-29 01:45:22', 'GURU'),
-(126, NULL, 'WIWIK KAMDIATI, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'Matematika', NULL, '2026-03-29 01:45:22', 'GURU'),
-(127, NULL, 'SETYAWATI, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'Matematika', NULL, '2026-03-29 01:45:22', 'GURU'),
-(128, NULL, 'DIEBA NABILLA, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif Kuliner', NULL, '2026-03-29 01:45:22', 'GURU'),
-(129, NULL, 'ANGGRAINI WULANSARI, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'B. Inggris', NULL, '2026-03-29 01:45:22', 'GURU'),
-(130, NULL, 'SITI KOMARIRIATUZ ZAHROK, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'PPKN', NULL, '2026-03-29 01:45:22', 'GURU'),
-(131, NULL, 'CANDRA DWI NURUDIANTO, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'B. Indonesia', NULL, '2026-03-29 01:45:22', 'GURU'),
-(132, NULL, 'EKO SANTOSO, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'IPAS', NULL, '2026-03-29 01:45:22', 'GURU'),
-(133, NULL, 'HENDRIK KURNIAWAN, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TKRO', NULL, '2026-03-29 01:45:22', 'KAPROGLI TKRO'),
-(134, NULL, 'DEVI AYU LIA FITRIA, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'Seni Budaya', NULL, '2026-03-29 01:45:22', 'GURU'),
-(135, NULL, 'SITI NURUL FAUZIYAH, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'IPAS', NULL, '2026-03-29 01:45:22', 'GURU'),
-(136, NULL, 'SANDY RIAWAN, M.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'PPKN', NULL, '2026-03-29 01:45:22', 'GURU'),
-(137, NULL, 'ADI PRAWIRO, S.T.', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TPTUP', NULL, '2026-03-29 01:45:22', 'GURU'),
-(138, NULL, 'FAIZ SYAIKHONI AZIZ, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TPTUP', NULL, '2026-03-29 01:45:22', 'GURU'),
-(139, NULL, 'MOHAMAD KUSMAN NADI, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'PAI', NULL, '2026-03-29 01:45:22', 'GURU'),
-(140, NULL, 'JUNIANTO, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'B. Jawa', NULL, '2026-03-29 01:45:22', 'GURU'),
-(141, NULL, 'YUNENI FITRI HARIATI, SP', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'KTU'),
-(142, NULL, 'M. LUFFI SYAFI\'I, S.T', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Staf TU'),
-(143, NULL, 'ROIYATUS SYARI\'AH', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Staf TU'),
-(144, NULL, 'AGUNG SUBELA, S.H', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Staf TU'),
-(145, NULL, 'SUHARTI', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Staf TU'),
-(146, NULL, 'IKE SASI JARIYANTO', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Staf TU'),
-(147, NULL, 'PURNOMO', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Staf TU'),
-(148, NULL, 'FUAT HASIM', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Staf TU'),
-(149, NULL, 'ABDUL FATAH', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Staf TU'),
-(150, NULL, 'MAFTUCHIN QOMARUZZAMAN', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Staf TU'),
-(151, NULL, 'MOH A\'AM TAUFIQI', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Staf TU'),
-(152, NULL, 'MUHAMAD RO\'UF FIRNANDA', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Staf TU'),
-(153, NULL, 'FEBRIANA EKA WULANDARI', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Staf TU'),
-(154, NULL, 'ADHIYASA KHOIRUL MUTTAQIIN', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Staf TU'),
-(155, NULL, 'RISKI PANDUWINATA', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Toolman Kuliner'),
-(156, NULL, 'M. SUGENG RIADI', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Perpus'),
-(157, NULL, 'AHMAT ASROFI', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Caraka'),
-(158, NULL, 'RIKI WAHYU KUSUMA', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Toolman TKRO'),
-(159, NULL, 'DANANG', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Satpam'),
-(160, NULL, 'ALIF PUTRA FADHILAH, S.T', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TKRO', NULL, '2026-03-29 05:08:49', 'GURU'),
-(161, NULL, 'ANDIK TRIYONO, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TKRO', NULL, '2026-03-29 05:08:49', 'GURU'),
-(162, NULL, 'FAISSAL RACHMAN, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TPTUP', NULL, '2026-03-29 05:08:49', 'GURU');
+INSERT INTO `guru` (`id`, `nip`, `nama`, `jenis_kelamin`, `tempat_lahir`, `tanggal_lahir`, `alamat`, `telepon`, `email`, `mata_pelajaran`, `foto`, `created_at`, `jabatan`, `guru_username`, `guru_password`) VALUES
+(77, '', 'ANIK SAFITRI BUDIYATI, S.Kom.', 'L', NULL, NULL, NULL, '', '', '', 'guru-1774750265698.png', '2026-03-29 01:45:21', 'KEPALA SEKOLAH', 'guru77', '$2a$10$pBE7SS.mlzvanq/VX8XZUelIWnqaChbUkusMOfBz0uItzf0596ExC'),
+(78, NULL, 'Drs. ANDIKA BAYU SAPUTRO', 'L', NULL, NULL, NULL, '', '', 'Produktif TKRO', NULL, '2026-03-29 01:45:21', 'WAKA SARPRAS', 'guru78', '$2a$10$K1hHAG6cJXrOnCDLwsZaweoPYbbd/ualm3DskezI/h8L7cdTsAZRi'),
+(79, NULL, 'Drs. HAJI SIGIT SUPRANOTO', 'L', NULL, NULL, NULL, '', '', 'Produktif TPTUP', NULL, '2026-03-29 01:45:21', 'KAPROGLI TPTUP', 'guru79', '$2a$10$A8Hn2UBkeEWahc6WWZKQzuqqhxuvQ/VEW3VBxuc0ZEA/R.VUqIrAu'),
+(80, NULL, 'AYU DINI ARDIANTI,S.Pd.', 'L', NULL, NULL, NULL, NULL, NULL, 'BK', NULL, '2026-03-29 01:45:21', 'WAKA KURIKULUM', 'guru80', '$2a$10$Ll5/8Hjw3xrnOL7USYBiWeKVJBDcuftX13445Wx6x64Sl6M35FJPe'),
+(81, NULL, 'KUSMAN RAHMANU ADI,S.T', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TKJ', NULL, '2026-03-29 01:45:21', 'GURU', 'guru81', '$2a$10$9mWOWcCnQ0vTGs7T9md3G.jHNC3k6/LKS6k3Osx2dw9AN2lFZagRO'),
+(82, NULL, 'ACHMAD AMIN, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'BK', NULL, '2026-03-29 01:45:21', 'GURU', 'guru82', '$2a$10$H1FkcPvG6BhWIfbo4hFtMugefwV2SsSoQE1/dZbvfWHHPgRymdCK6'),
+(83, NULL, 'ALI ZURO, SPd.', 'L', NULL, NULL, NULL, NULL, NULL, 'B. Inggris', NULL, '2026-03-29 01:45:21', 'GURU', 'guru83', '$2a$10$Ng/jVkCH8gkKXfgrx3TCNeDnF4rUL.hCgeq.oJtC14shadiYI40f6'),
+(84, NULL, 'RENI YULIASIH,S.Pd.', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif Kuliner', NULL, '2026-03-29 01:45:22', 'BENDAHARA', 'guru84', '$2a$10$f7ckeNC01wtLjx.UKzeV.O3pAHoAB/XdvfPcE9NA8a2JEvAhd0qUO'),
+(85, NULL, 'PENI SULISTYOWATI, S.Pd.I', 'L', NULL, NULL, NULL, NULL, NULL, 'Matematika', NULL, '2026-03-29 01:45:22', 'GURU', 'guru85', '$2a$10$BHaJ1b1yRDU17C1ef7VVo.xlYTuY4miBLQ4o76WSta.l1gaeReeAO'),
+(86, NULL, 'INDRAGUS SHOLEHHUDIN, M.Pd.', 'L', NULL, NULL, NULL, NULL, NULL, 'PJOK', NULL, '2026-03-29 01:45:22', 'GURU', 'guru86', '$2a$10$pLVdVUkG5FwB7qhth4cvq.JqNGwSP4EbRb4HFxKYOpMe/F48AMBli'),
+(87, NULL, 'SUHARDHINI SETYANINGSIH,S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif Kuliner', NULL, '2026-03-29 01:45:22', 'GURU', 'guru87', '$2a$10$oZvpQNHW/tF6AYtt0EDjf.CO6uDyLtmI17TBmzT0Dia.XeClVEwcW'),
+(88, NULL, 'WINDI YUNITA, S.Pd.', 'L', NULL, NULL, NULL, NULL, NULL, 'Sejarah Indonesia', NULL, '2026-03-29 01:45:22', 'GURU', 'guru88', '$2a$10$aWLnrY8lBsSpC0JoC1Rd7.jI3ZSnyQ2IpXZD72SCB116gB8ZGYMOa'),
+(89, NULL, 'RIZKY LIA ANGGRAENY, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'B. Indonesia', NULL, '2026-03-29 01:45:22', 'GURU', 'guru89', '$2a$10$5e3SpFv98faRo/otwUj.wueGDEiUw97q1qUyRHEiDIOvkvOkgXrrW'),
+(90, NULL, 'EKO DODY PRASETYO, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'IPAS', NULL, '2026-03-29 01:45:22', 'GURU', 'guru90', '$2a$10$utUn6H/N3h2CCNh3Pa6HWOZ1fcKtrBLAvE0hnZqKW.wiCEsPy3Yiy'),
+(91, NULL, 'SRI PURWANTI M, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'BK', NULL, '2026-03-29 01:45:22', 'GURU', 'guru91', '$2a$10$uRE6k0.FglGORigzl7yzW.0cCIx6S3GMXVVXQJrOwBr0S9HUnPj5W'),
+(92, NULL, 'DIANA CATUR  K.S, S.Kom', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TKJ', NULL, '2026-03-29 01:45:22', 'GURU', 'guru92', '$2a$10$cd9yS5TMKgwJPse9apDZy.6zvNS6eFHcdHKIl37oXflPloc398I1i'),
+(93, NULL, 'SOJU PURWANTO, S.Pd.', 'L', NULL, NULL, NULL, NULL, NULL, 'Matematika', NULL, '2026-03-29 01:45:22', 'GURU', 'guru93', '$2a$10$.77bsVAUjInsFbbQePm2IuM1shBXeq64qdQT8YsPU8ODKy6MGI7w6'),
+(94, NULL, 'ANGGA WARDHANA, S.Kom.', 'L', NULL, NULL, NULL, NULL, NULL, 'Informatika', NULL, '2026-03-29 01:45:22', 'WAKA HUMAS', 'guru94', '$2a$10$kj.T9DE73L6VmtcMn5DSNOvadPRXCuejjOg5ytyqP34z9rYlgnofW'),
+(95, NULL, 'ATIK NURUL AINI, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'B. Inggris', NULL, '2026-03-29 01:45:22', 'GURU', 'guru95', '$2a$10$kvlbP0AQZ7YmltL./tHDrOlQccgGQBActXAFvhnzHF2KkZyR9dRgi'),
+(96, NULL, 'AHMAD BAGUS DWI S, S.S', 'L', NULL, NULL, NULL, NULL, NULL, 'B. Inggris', NULL, '2026-03-29 01:45:22', 'WAKA KESISWAAN', 'guru96', '$2a$10$YoIlqAzpkvXmQJO15qaxmuAPw8IKfag.5WI6wbknIBoqLafDgD4Ea'),
+(97, NULL, 'AFIF RAHMAWATI, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif Kuliner', NULL, '2026-03-29 01:45:22', 'GURU', 'guru97', '$2a$10$VN0jI1b32nJ5aFdtYl/EBusYN7nbiBTqOevDmGs7.rmUwp1NHvP3e'),
+(98, NULL, 'BASRONI , S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'Matematika', NULL, '2026-03-29 01:45:22', 'GURU', 'guru98', '$2a$10$m0IJVp8flUc4j7ibDURPUOE1vjLVJNBIMQUkIhfb6sUcXm0lTcHb2'),
+(99, NULL, 'YANUAR DWIANTA, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'PPKN', NULL, '2026-03-29 01:45:22', 'GURU', 'guru99', '$2a$10$LCLvCChg/jdl6w2VvZip.ez8cHjWTEBovaeLCuz7PFJiemm8fucxi'),
+(100, NULL, 'M. ANDIK ROHMATULLOH, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'IPAS', NULL, '2026-03-29 01:45:22', 'GURU', 'guru100', '$2a$10$PrFHdhO5gbEpOzAz0zJGTuNTXxYbIQ6Y7YXoCdOZmVFVWYefq635i'),
+(101, NULL, 'LU\'LUATUL MABRUROH,S.Ag,Gr', 'L', NULL, NULL, NULL, NULL, NULL, 'PAI', NULL, '2026-03-29 01:45:22', 'GURU', 'guru101', '$2a$10$q2aMLBVfAbDncofWkIJjkO8Z/0bZw1WVxH7ZhJbfNd4sVX1F4s2F.'),
+(102, NULL, 'IKE CINTIA DEWI, S.Pd, Gr', 'L', NULL, NULL, NULL, NULL, NULL, 'B. Indonesia', NULL, '2026-03-29 01:45:22', 'GURU', 'guru102', '$2a$10$Y1rhUcjym9gWPVzrftFBh.8sMt3LCvRgveljB5vXfi2oqcDFWXgLC'),
+(103, NULL, 'ADHIEN WAHYU F.M. S.Pd.,Gr', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TKRO', NULL, '2026-03-29 01:45:22', 'GURU', 'guru103', '$2a$10$BJs/BGpxjZYKFlKXHCgkv.SCoYDrWuPR8TUB8Nto0XWq9yBDn0Kbm'),
+(104, NULL, 'BOBY SUTANTO, S.Kom', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TKJ', NULL, '2026-03-29 01:45:22', 'GURU', 'guru104', '$2a$10$0MIS1UQmcnE0fU1Oy2.hceUsGImLwOzJKKJyAUjebNZcxrmNmbgKK'),
+(105, NULL, 'TINO BAMBANG GUNAWAN, S.Kom., Gr', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TKJ', NULL, '2026-03-29 01:45:22', 'KAPROGLI TKJ', 'guru105', '$2a$10$.GU8cqrDK7ukcrhU2LEIWeJI3cEmWK.tJ6Wb9LBmfdsBxfdSh0SlC'),
+(106, NULL, 'NANDA DHARA AYU P. M, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif Kuliner', NULL, '2026-03-29 01:45:22', 'GURU', 'guru106', '$2a$10$p1BmthLSJUSjqUvUFox09Oe5JIhjs7rpZIqHYm8DoADhCAuTwEcga'),
+(107, NULL, 'BAGUS SETIAWAN, S.Pd, Kons.', 'L', NULL, NULL, NULL, NULL, NULL, 'BK', NULL, '2026-03-29 01:45:22', 'GURU', 'guru107', '$2a$10$kbe8LaDpFyAyKawUDY4owOui4tjjp.RHFFZmmE8O0n.0puO7B2pJG'),
+(108, NULL, 'ULFIAN ASIFA AMINULLOH, S.Pd.', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TKRO', NULL, '2026-03-29 01:45:22', 'GURU', 'guru108', '$2a$10$LRNGkX8VKY/lApFI/58lbeTFTpD4bGbk1iAMnh56jX14zDYLwIVW6'),
+(109, NULL, 'NIA SASI HARDIANI, M.Pd.', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif Kuliner', NULL, '2026-03-29 01:45:22', 'KAPROGLI KULINER', 'guru109', '$2a$10$Zp0S3rflMo8Azpnoa0/e.OMB5k.FMxQUDWCDP07JoD8WxPPSpURu2'),
+(110, NULL, 'RISKA HANDAYANI, S.Pd.', 'L', NULL, NULL, NULL, NULL, NULL, 'B. Jawa', NULL, '2026-03-29 01:45:22', 'GURU', 'guru110', '$2a$10$LLi/35A.ntR4twj2OZhwb.XYdrvCS.rYWKVZM1Qf02V6grUp2aTHS'),
+(111, NULL, 'BINTI MUSAFAAH,S.Pd,Gr', 'L', NULL, NULL, NULL, NULL, NULL, 'PPKN', NULL, '2026-03-29 01:45:22', 'GURU', 'guru111', '$2a$10$grEw/J50sbVuaDoecQD6penMJUmr6r0J9Sdr0/3C0KFThwKX2pPai'),
+(112, NULL, 'Dra. ENI RELAWATI.,Gr', 'L', NULL, NULL, NULL, NULL, NULL, 'B. Jepang', NULL, '2026-03-29 01:45:22', 'GURU', 'guru112', '$2a$10$xJgMfAJc6YD9Nheik18mc.L64tgoNM40/xljttBvEmUXL7tBCFuJ6'),
+(113, NULL, 'AGUS NAWATRI, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TKRO', NULL, '2026-03-29 01:45:22', 'GURU', 'guru113', '$2a$10$IDAlpiDQROHzQO075Iv/Ze6szPqHZbs8pg87reKsWEU0jHFbWX172'),
+(114, NULL, 'BEKTI WIDHIANTO, S.Kom.,Gr.', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TKJ', NULL, '2026-03-29 01:45:22', 'GURU', 'guru114', '$2a$10$I7q.K9QFC/L3Wn00iO9Wq.ta3VJHCxNqApvcrC2gyjo.ss.l6qQ4y'),
+(115, NULL, 'SULISTIYO ANIS, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif Kuliner', NULL, '2026-03-29 01:45:22', 'GURU', 'guru115', '$2a$10$HKF27hC9Kap1o6LkRcyZWuAyW2aB8VE4ZTt.XBrx2BMjMZCtZRNvW'),
+(116, NULL, 'M. HATTA UBAID, S.T.,Gr', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TKRO', NULL, '2026-03-29 01:45:22', 'GURU', 'guru116', '$2a$10$DSK10OOCQn2Wi1oniL9PLulhy.pfwK6SDxI.eweT8DNPAI2.86df2'),
+(117, '', 'IMAM JUNAIDI ABROR, S.Kom.', 'L', NULL, NULL, NULL, '', '', 'Produktif TKJ', 'guru-1774755530289.png', '2026-03-29 01:45:22', 'GURU', 'guru117', '$2a$10$YBSiCnb8gGGK0EEI3k1s5eENojKhsbMlyhlFIJuje3akvRAqaVMVm'),
+(118, NULL, 'DONI ARDIANTO,S.KOM.,Gr.', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TKJ', NULL, '2026-03-29 01:45:22', 'GURU', 'guru118', '$2a$10$SKbeR24Cknd5yEdVbYsveehfOT2pNIEkhE4EjXh7aBdjgVjKnIX.K'),
+(119, NULL, 'BIMA BUDI PRAKOSA, S.Pd.,Gr', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif Kuliner', NULL, '2026-03-29 01:45:22', 'GURU', 'guru119', '$2a$10$41xNLTGIyo2kCPDrInoIIusgNL26k4B8XXwsA9RFKPloBvB.zzr1e'),
+(120, NULL, 'DEVY RARA GUVITHA, S.Pd.', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif Kuliner', NULL, '2026-03-29 01:45:22', 'GURU', 'guru120', '$2a$10$4bgKLC.SIFd8OzqPhpiG8uE5VvYjV8oiWG3n/8LgmSleBll.Cmwru'),
+(121, NULL, 'ABIDATUL ROKHIMAH, S.Pd.I', 'L', NULL, NULL, NULL, NULL, NULL, 'PAI', NULL, '2026-03-29 01:45:22', 'GURU', 'guru121', '$2a$10$El7As5W7nGFxZt.DeLjJROblBT5RWh.gUaHFokXVSh/SG1LHJemdi'),
+(122, NULL, 'RR. YUNITA SAMAWATI, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'B. Inggris', NULL, '2026-03-29 01:45:22', 'GURU', 'guru122', '$2a$10$ZcQCFk18WteSLpSmApop.OvGakcgaGHlx978DzIEycxbMYYPvJ3lS'),
+(123, NULL, 'NASIKIN, S.E', 'L', NULL, NULL, NULL, NULL, NULL, 'Kewirausahaan', NULL, '2026-03-29 01:45:22', 'GURU', 'guru123', '$2a$10$s6AVYMdfBiqPm0guTmpP1eSX4ue8/rivzWPu2g2LTF.eGImVAO87S'),
+(124, NULL, 'KURNIA SILVI MUSTIKA SARI, SPd', 'L', NULL, NULL, NULL, NULL, NULL, 'PAI', NULL, '2026-03-29 01:45:22', 'GURU', 'guru124', '$2a$10$wRSlarKSyph0zuvgJMqsCeDSvYd.gWpAymUKI99UWR/UKOOafI2mS'),
+(125, NULL, 'ANANG KURNIAWAN, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'B. Indonesia', NULL, '2026-03-29 01:45:22', 'GURU', 'guru125', '$2a$10$OHjub6jj.fboTbK8egHgUuBEgCEr5iQZ1l3w2LTCCjl.hjsEvYH3O'),
+(126, NULL, 'WIWIK KAMDIATI, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'Matematika', NULL, '2026-03-29 01:45:22', 'GURU', 'guru126', '$2a$10$QqaX2c8RAmsYO9tB.GF00egQxtVtMfJDGky/l16fl8M49WmMt8SfO'),
+(127, NULL, 'SETYAWATI, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'Matematika', NULL, '2026-03-29 01:45:22', 'GURU', 'guru127', '$2a$10$jKKGg/hvYZ/9./xcdvYF3ObDe1ypjhkAmksJh4iVjLcjQJj0hURgm'),
+(128, NULL, 'DIEBA NABILLA, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif Kuliner', NULL, '2026-03-29 01:45:22', 'GURU', 'guru128', '$2a$10$l69Sd8nkzusZB54gEscsseNpbj8goYpcorBlTCw9NbaaXn4.a7ET6'),
+(129, NULL, 'ANGGRAINI WULANSARI, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'B. Inggris', NULL, '2026-03-29 01:45:22', 'GURU', 'guru129', '$2a$10$7bomu1WDVCE2h5rrRpmrGOM0pmrVxIWL3yBBTUILPXW83NexaXHZi'),
+(130, NULL, 'SITI KOMARIRIATUZ ZAHROK, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'PPKN', NULL, '2026-03-29 01:45:22', 'GURU', 'guru130', '$2a$10$j2Aoi7TpJVVWp4SwTH2eaORPb/2Jmk6PYXL2H9.eWmFGMv3HRZpxS'),
+(131, NULL, 'CANDRA DWI NURUDIANTO, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'B. Indonesia', NULL, '2026-03-29 01:45:22', 'GURU', 'guru131', '$2a$10$dYrOl53iXU8u1EKJkmiJjufDGdKRgiZ/iTd1xQkpCLo66pKdt9eKm'),
+(132, NULL, 'EKO SANTOSO, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'IPAS', NULL, '2026-03-29 01:45:22', 'GURU', 'guru132', '$2a$10$buLMLnn4Os/liG2RLfJOBOOTuSNL1ut1xZ/ppVOcJNXQsqNkiscSe'),
+(133, NULL, 'HENDRIK KURNIAWAN, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TKRO', NULL, '2026-03-29 01:45:22', 'KAPROGLI TKRO', 'guru133', '$2a$10$QdjFTIuyzT5YlRQwnmPam.qLfGKHJiY3Jq0XFbBW5CBbU9.zJtbXq'),
+(134, NULL, 'DEVI AYU LIA FITRIA, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'Seni Budaya', NULL, '2026-03-29 01:45:22', 'GURU', 'guru134', '$2a$10$baxc2qWiRBOaALfX48L2cu/kWpjrVVsT83trVL8xOiowqHVj/H1ry'),
+(135, NULL, 'SITI NURUL FAUZIYAH, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'IPAS', NULL, '2026-03-29 01:45:22', 'GURU', 'guru135', '$2a$10$h9C5lRmCO5jChAK/VJm88OCOyY1fP6DIeDHk/O2YGWp6qXVtcGF3m'),
+(136, NULL, 'SANDY RIAWAN, M.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'PPKN', NULL, '2026-03-29 01:45:22', 'GURU', 'guru136', '$2a$10$jwFv91DpWtlbU/w1mtsIVO4rjsYUoXTJCdf6usPaWAxUJOHoZOcX.'),
+(137, NULL, 'ADI PRAWIRO, S.T.', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TPTUP', NULL, '2026-03-29 01:45:22', 'GURU', 'guru137', '$2a$10$62yBSYS8dTNRRxYsf4H2l.tMvWg/jLtZJHSZJYm9E3SKsmtYbSGNS'),
+(138, NULL, 'FAIZ SYAIKHONI AZIZ, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TPTUP', NULL, '2026-03-29 01:45:22', 'GURU', 'guru138', '$2a$10$fY5TJqmvY4qM4xsXqM2kGebFIuxf7pbOEyDTbuW2jEFDrGnVoJJDW'),
+(139, NULL, 'MOHAMAD KUSMAN NADI, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'PAI', NULL, '2026-03-29 01:45:22', 'GURU', 'guru139', '$2a$10$Cz7m5yXAGit6SWZrXTQmMeylJ7rn.A1Wl/CJiLq2PNygOBdOPoeke'),
+(140, NULL, 'JUNIANTO, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'B. Jawa', NULL, '2026-03-29 01:45:22', 'GURU', 'guru140', '$2a$10$e70DlnYV/wWAszq2IJy44u0Uc68Ii5dJkOkJmu5UeW2LCRdr9X6pu'),
+(141, NULL, 'YUNENI FITRI HARIATI, SP', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'KTU', 'guru141', '$2a$10$HybVbg5av9He.QiB7Ph.w.rL7qjAZZA0pf2XsVFXJnZwR7/pDRi9C'),
+(142, NULL, 'M. LUFFI SYAFI\'I, S.T', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Staf TU', 'guru142', '$2a$10$eYWs9XA.Uz434mKxzTczz.kTMfjUyllBWxO3nijROAgudIunOVPj2'),
+(143, NULL, 'ROIYATUS SYARI\'AH', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Staf TU', 'guru143', '$2a$10$312xmFipqPMmFxUAA1P5quxq.S542VBn85Ah.szt/GWvkzvCQqVfu'),
+(144, NULL, 'AGUNG SUBELA, S.H', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Staf TU', 'guru144', '$2a$10$m2yPgLEKI3VuOpjPru9vgOUrJA10/UCHjXrPjZtpBUut6XK8E5s1S'),
+(145, NULL, 'SUHARTI', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Staf TU', 'guru145', '$2a$10$g.UdIc5Z2pEuuW/dXqb4HuidWhHG4wMQu0m/F4p191QQ.Cv.BgayS'),
+(146, NULL, 'IKE SASI JARIYANTO', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Staf TU', 'guru146', '$2a$10$ztXFquG4pI4QLF1rvqUfge4BmNXDiqr10Qf4Yfrdzx2PKnVFoY2le'),
+(147, NULL, 'PURNOMO', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Staf TU', 'guru147', '$2a$10$v1a/VqVjd3rEXv700EO81e2gLIR5F.gyz7vOGdyBv1ry9WYQs2vhe'),
+(148, NULL, 'FUAT HASIM', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Staf TU', 'guru148', '$2a$10$3VqE9tXIsF73SMi6YO.Hueuo2QpGy2xjg18H7JRSORSxu3FcUKZ0O'),
+(149, NULL, 'ABDUL FATAH', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Staf TU', 'guru149', '$2a$10$aVQ.y3Qnnq3B/QFNp3zjQOoFmsDU0NELhiQwK/EI6p38rlgSB7R9m'),
+(150, NULL, 'MAFTUCHIN QOMARUZZAMAN', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Staf TU', 'guru150', '$2a$10$lqpk2B7qUm2wVUV4Pu/EOO6EwjROunRBWHUm/e1uiJVnBxynz1R9W'),
+(151, NULL, 'MOH A\'AM TAUFIQI', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Staf TU', 'guru151', '$2a$10$0gvPTHsqVfxdLxAnhdhQ4u1UT.4gu5RGXWJxhSUhvnox1U7IdqwpO'),
+(152, NULL, 'MUHAMAD RO\'UF FIRNANDA', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Staf TU', 'guru152', '$2a$10$RJn1qr.Yh1xdgoFYikqAUOopEPfE6mwHmRR9Y3SnmO3tLEpUMUwh.'),
+(153, NULL, 'FEBRIANA EKA WULANDARI', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Staf TU', 'guru153', '$2a$10$JP0E9vXmyaZ1swhGc2qMnOwaQI.TFIBJVu7rCFeGx8EjfGdYHDmcq'),
+(154, NULL, 'ADHIYASA KHOIRUL MUTTAQIIN', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Staf TU', 'guru154', '$2a$10$PxdFLLThXMVrBPhjPmb26OWn9ofC4n8uw.FXF0TKmuFY9ztwuANl2'),
+(155, NULL, 'RISKI PANDUWINATA', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Toolman Kuliner', 'guru155', '$2a$10$ZauA.nSD92kKDzmSe.DJUuvM6L4pL0cUOW5KHkSzVs/RXn.BuD9DW'),
+(156, NULL, 'M. SUGENG RIADI', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Perpus', 'guru156', '$2a$10$OfOVOKHWHPZxrwvFBDyNUuWsfpegaJ9KRDPwkx09Z49yWSYVY8OwO'),
+(157, NULL, 'AHMAT ASROFI', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Caraka', 'guru157', '$2a$10$T/dyH8w0XIimXUFaW/VG2uzuE9/axX.wOvy0nKrnFkkUqtV73W8Gi'),
+(158, NULL, 'RIKI WAHYU KUSUMA', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Toolman TKRO', 'guru158', '$2a$10$5uHJ0HjQYNjHt32amNYT6ueX80fKZR.EmW.T/qqk84d.b83xfBcx.'),
+(159, NULL, 'DANANG', 'L', NULL, NULL, NULL, NULL, NULL, '', NULL, '2026-03-29 01:48:14', 'Satpam', 'guru159', '$2a$10$MWfCN4PXdGz2W2u8ycYxCO8oe34DKiGZ9yXzO8bsEiCaqkk1.R6lG'),
+(160, NULL, 'ALIF PUTRA FADHILAH, S.T', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TKRO', NULL, '2026-03-29 05:08:49', 'GURU', 'guru160', '$2a$10$vAooHNdsa9iCQIcEtUaykui0h6F54YNPUFEhMFeDHepA2kJIg3g7K'),
+(161, NULL, 'ANDIK TRIYONO, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TKRO', NULL, '2026-03-29 05:08:49', 'GURU', 'guru161', '$2a$10$eG01b7oXGZQhr4I1lU6hWOuYvWiCSbNoKOThCgYbFfdkC6MKP2.Fe'),
+(162, NULL, 'FAISSAL RACHMAN, S.Pd', 'L', NULL, NULL, NULL, NULL, NULL, 'Produktif TPTUP', NULL, '2026-03-29 05:08:49', 'GURU', 'guru162', '$2a$10$u96rnUHK8lPPUyRMxKVJwuOV4V4Ghulk9u.qNT5VOtZbDSnllcOx2');
 
 -- --------------------------------------------------------
 
@@ -218,6 +393,7 @@ INSERT INTO `guru` (`id`, `nip`, `nama`, `jenis_kelamin`, `tempat_lahir`, `tangg
 CREATE TABLE `halaman` (
   `id` int(11) NOT NULL,
   `judul` varchar(255) NOT NULL,
+  `subtitle` varchar(500) DEFAULT NULL,
   `slug` varchar(255) NOT NULL,
   `konten` longtext DEFAULT NULL,
   `foto` varchar(255) DEFAULT NULL,
@@ -230,14 +406,10 @@ CREATE TABLE `halaman` (
 -- Dumping data untuk tabel `halaman`
 --
 
-INSERT INTO `halaman` (`id`, `judul`, `slug`, `konten`, `foto`, `status`, `created_at`, `updated_at`) VALUES
-(3, 'Pencak Silat', 'pencak-silat', '<p style=\"text-align: justify;\">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Ekstrakurikuler pencak silat adalah kegiatan sekolah di luar jam pelajaran yang bertujuan melatih seni bela diri tradisional Indonesia, meningkatkan kebugaran fisik, disiplin, mental tangguh, serta melestarikan budaya bangsa. Kegiatan ini memadukan empat aspek utama: mental-spiritual, bela diri, seni budaya, dan olahraga.&nbsp;</p><p style=\"text-align: justify;\"><br></p><p style=\"text-align: justify;\"><b>Berikut adalah poin-poin penting mengenai ekstrakurikuler pencak silat:</b></p><ul><li style=\"text-align: justify;\"><b>Pengembangan Karakter</b>: Membentuk mental disiplin, percaya diri, bertanggung jawab, sportif, dan berani, sebagaimana dijelaskan dalam artikel UNESA dan smk-almuttaqien.sch.id.</li><li style=\"text-align: justify;\"><b>Fisik &amp; Teknik</b>: Melatih kuda-kuda, pukulan, tendangan, stamina, kekuatan, dan kelenturan tubuh, menurut website SDNSuradadi4 dan Halodoc.</li><li style=\"text-align: justify;\"><b>Prestasi</b>: Menyediakan wadah untuk menyalurkan bakat dan berprestasi di kejuaraan tingkat sekolah, daerah, maupun nasional.</li><li style=\"text-align: justify;\"><b>Pelestarian Budaya</b>: Mengenalkan budaya luhur Indonesia kepada generasi muda</li></ul>', 'halaman-1774761639873.jpg', 'aktif', '2026-03-28 14:58:08', '2026-03-29 05:31:08'),
-(4, 'Pramuka', 'pramuka', '<p style=\"text-align: justify; \">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Ekskul pramuka adalah kegiatan ekstrakurikuler wajib di sekolah yang bertujuan membentuk karakter siswa, kepemimpinan, kemandirian, dan disiplin melalui aktivitas luar ruangan yang menyenangkan. Pramuka (Praja Muda Karana) menanamkan nilai-nilai Pancasila, cinta alam, serta keterampilan hidup seperti pertolongan pertama (P3K), berkemah, dan tali-temali.&nbsp;</p><p style=\"text-align: justify;\"><b>Karakteristik &amp; Tujuan Ekskul Pramuka:</b></p><ul><li style=\"text-align: justify;\">Pembentukan Karakter: Mengembangkan akhlak mulia, kemandirian, dan tanggung jawab.</li><li style=\"text-align: justify;\">Pendidikan Karakter &amp; Keterampilan: Mengajarkan disiplin, kepedulian sosial, dan kecintaan terhadap lingkungan.</li><li style=\"text-align: justify; \">Wajib Disediakan: Sekolah wajib menyediakan, namun tidak wajib diikuti secara individu (berdasarkan Permendikbudristek No 12 Tahun 2024).</li><li style=\"text-align: justify;\">Sistem Belajar: Menggunakan pola \"belajar sambil melakukan\" (learning by doing) dan permainan edukatif di alam terbuka.&nbsp;</li></ul><p style=\"text-align: justify;\"><b>Contoh Kegiatan Pramuka (Usage Examples):</b></p><ul><li style=\"text-align: justify;\">Perkemahan Sabtu-Minggu (Persami): Berkemah untuk melatih kemandirian dan kerjasama.</li><li style=\"text-align: justify;\">Pionering dan Tali-Temali: Membuat tandu atau tenda darurat menggunakan tongkat dan tali.</li><li style=\"text-align: justify;\">Baris-Berbaris (PBB): Latihan rutin untuk disiplin dan kekompakan.</li><li style=\"text-align: justify;\">Jelajah Alam (Wide Game): Kegiatan penjelajahan untuk melatih fisik dan kerjasama tim.</li><li style=\"text-align: justify;\">Bakti Sosial: Gotong royong membersihkan lingkungan atau membantu masyarakat.&nbsp;</li></ul>', 'halaman-1774761942548.jpg', 'aktif', '2026-03-29 05:25:42', '2026-03-29 05:31:46'),
-(5, 'Badminton', 'badminton', '<p style=\"text-align: justify; \">          Ekstrakurikuler badminton (bulu tangkis) adalah kegiatan olahraga di luar jam pelajaran sekolah yang bertujuan mengembangkan bakat, minat, serta kebugaran fisik dan mental siswa. Ekskul ini melatih teknik dasar, taktik, dan sportivitas untuk mempersiapkan siswa dalam kompetisi, seperti O2SN, serta menanamkan karakter disiplin. </p><p style=\"text-align: justify;\"><br></p><p style=\"text-align: justify; \"><b>Tujuan dan Manfaat Ekstrakurikuler Badminton:</b></p><ul><li style=\"text-align: justify;\">Pengembangan Bakat: Wadah bagi siswa yang memiliki hobi bulu tangkis.</li><li style=\"text-align: justify;\">Kesehatan Fisik: Meningkatkan kelincahan, ketahanan fisik, dan menurunkan berat badan.</li><li style=\"text-align: justify;\">Prestasi: Mempersiapkan fisik dan mental untuk kejuaraan antar pelajar.</li><li style=\"text-align: justify;\">Sportivitas & Karakter: Membangun rasa persaudaraan, kerjasama tim, dan karakter pantang menyerah. </li></ul><p style=\"text-align: justify;\"><br></p><p style=\"text-align: justify;\"><b>Aktivitas dalam Ekskul Badminton:</b></p><ul><li style=\"text-align: justify;\">Latihan rutin teknik dasar (pukulan, footwork) dan taktik permainan.</li><li style=\"text-align: justify;\">Latihan fisik seperti skipping, push up, dan lari.</li><li style=\"text-align: justify;\">Sparring (pertandingan) antar anggota atau sekolah lain.</li></ul>', 'halaman-1774762089550.jpg', 'aktif', '2026-03-29 05:28:09', '2026-03-29 07:22:53'),
-(7, 'PROGLI TKJ', 'progli-tkj', '<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Jurusan Teknik Jaringan Komputer dan Telekomunikasi (TJKT) adalah program keahlian SMK yang fokus mempelajari instalasi, konfigurasi, perawatan, dan keamanan jaringan komputer serta infrastruktur telekomunikasi. Ini adalah evolusi dari jurusan TKJ yang lebih modern, mencakup teknologi cloud, IoT, dan fiber optik.&nbsp;</p><p><b style=\"font-size: 1rem;\">Detail Materi Pembelajaran TJKT:</b></p><ul><li>Perakitan &amp; Troubleshooting PC: Merakit komputer, instalasi sistem operasi (Windows/Linux), dan perbaikan perangkat keras/lunak.</li><li>Jaringan Komputer (LAN/WAN/WiFi): Membangun jaringan kabel dan nirkabel, konfigurasi router, manageable switch, dan firewall.</li><li>Administrasi Server: Mengelola server jaringan, sistem keamanan jaringan, dan layanan berbasis cloud.</li><li>Telekomunikasi: Mempelajari teknologi fiber optik, kabel struktural, dan sistem telepon.</li><li>Pemrograman Dasar: Mempelajari dasar pemrograman (HTML, CSS, PHP, MySQL) untuk kebutuhan web dan jaringan.&nbsp;</li></ul><p><span style=\"font-size: 1rem;\"><b>Prospek Kerja Lulusan TJKT:</b></span></p><ul><li>Lulusan TJKT sangat dibutuhkan untuk posisi seperti:&nbsp;</li><li>Network Administrator: Pengelola jaringan perusahaan.</li><li>Teknisi Jaringan/Fiber Optik: Pemasang dan pemelihara jaringan.</li><li>IT Support/Helpdesk: Teknisi perbaikan perangkat.</li><li>System Administrator: Pengelola server.</li><li>Wirausaha IT: Membuka jasa servis atau Depok internet service provider (ISP).&nbsp;</li></ul><p><span style=\"font-size: 1rem;\"><b>Keunggulan:</b></span></p><p>Siswa TJKT seringkali dibekali sertifikasi kompetensi (BNSP) dan kurikulum industri, membuat mereka siap kerja langsung setelah lulus.</p>', NULL, 'aktif', '2026-03-29 07:16:16', '2026-03-29 07:16:16'),
-(8, 'PROGLI TPTUP', 'progli-tptup', '<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Jurusan TPTU (Teknik Pendingin dan Tata Udara) atau Refrigeration and Air Conditioning adalah bidang keahlian SMK yang mempelajari perencanaan, instalasi, perawatan, dan perbaikan sistem pendingin (kulkas, freezer) serta tata udara (AC gedung, ventilasi). Lulusan TPTU dipersiapkan menjadi teknisi HVAC profesional yang ahli dalam kelistrikan, pemipaan, dan refrigeran.&nbsp;</p><p><span style=\"font-size: 1rem;\"><b>Detail Kompetensi dan Materi Pembelajaran TPTU:</b></span></p><ul><li>Dasar Pendinginan: Mempelajari siklus refrigerasi, jenis-jenis refrigeran, dan prinsip perpindahan panas.</li><li>Instalasi AC dan Tata Udara: Memasang AC rumah tangga (split), AC komersial (cassette, standing), dan sistem tata udara gedung (AC Central/Chiller).</li><li>Pemeliharaan dan Perbaikan (Maintenance &amp; Troubleshooting): Merawat rutin, mendeteksi kerusakan, dan memperbaiki kulkas, freezer, cold storage, serta AC.</li><li>Kelistrikan dan Kontrol: Memahami sistem kelistrikan pada unit pendingin dan sistem kontrol otomatis.</li><li>Keselamatan Kerja (K3): Menerapkan standar keselamatan kerja dalam menangani sistem kelistrikan dan tekanan tinggi.</li><li>Pipa dan Alat Ukur: Menguasai pengelasan pipa tembaga, instalasi pemipaan, dan penggunaan alat ukur refrigerasi (manifold gauge, tang ampere, las).&nbsp;</li></ul><p><b style=\"font-size: 1rem;\">Prospek Kerja Lulusan TPTU:</b></p><ul><li>Teknisi AC/Refrigerasi: Teknisi di perkantoran, perhotelan, rumah sakit, atau pabrik.</li><li>Maintenance Engineer: Petugas perawatan sistem pendingin di gedung komersial.</li><li>Wirausaha: Membuka jasa servis AC, instalasi, dan penjualan unit pendingin.</li><li>Industri: Teknisi di industri makanan, minuman, dan cold storage (gudang pendingin).</li><li>Teknisi Mesin Otomotif: Spesialis AC kendaraan.&nbsp;</li></ul><p><span style=\"font-size: 1rem;\">TPTU adalah jurusan yang langka dengan tingkat kebutuhan industri yang tinggi, menjadikannya salah satu jurusan SMK dengan peluang kerja yang sangat menjanjikan.&nbsp;</span></p>', NULL, 'aktif', '2026-03-29 07:29:17', '2026-03-29 07:29:17'),
-(9, 'PROGLI KULINER', 'progli-kuliner', '<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Jurusan Kuliner (atau Tata Boga) adalah bidang studi yang mempelajari seni dan teknik mengolah makanan, manajemen dapur profesional, serta pelayanan makanan dan minuman. Fokus utamanya adalah persiapan, pengolahan, hingga penyajian hidangan Nusantara dan Internasional, baik di tingkat SMK maupun pendidikan tinggi, untuk mencetak koki profesional, pastry chef, atau wirausahawan kuliner.&nbsp;</p><p><span style=\"font-size: 1rem;\"><b>Berikut adalah detail mengenai Jurusan Kuliner:</b></span></p><p><b>1. Apa yang Dipelajari?</b></p><ul><li>Teknik Memasak: Dasar-dasar memasak seperti cutting skills (memotong), sauté (menumis), grill (memanggang), hingga metode masak kontinental dan oriental.</li><li>Pastry &amp; Bakery: Keterampilan khusus membuat roti, kue, kue kering, dan dessert.</li><li>Keamanan Pangan &amp; Sanitasi: Penerapan standar kebersihan dapur dan keamanan makanan (seperti HACCP).</li><li>Manajemen Dapur &amp; Restoran: Pengelolaan operasional, perencanaan menu, kontrol stok bahan, dan layanan pelanggan (food and beverage service).</li><li>Ilmu Gizi: Pemahaman nilai gizi dan nutrisi makanan.&nbsp;</li></ul><p><b style=\"font-size: 1rem;\">2. Fokus Konsentrasi</b></p><ul><li>Kuliner/Tata Boga: Lebih fokus pada teknis memasak dan operasional dapur.</li><li>Pastry &amp; Bakery: Khusus mendalami seni membuat kue dan roti.</li><li>Bisnis Kuliner: Fokus pada penerapan ilmu bisnis, konsep menu, dan kewirausahaan.&nbsp;</li></ul><p><span style=\"font-size: 1rem;\"><b>3. Prospek Karier</b></span></p><ul><li>Chef/Koki Profesional: Bekerja di restoran, hotel, atau kapal pesiar.</li><li>Patissier/Pastry Chef: Ahli kue dan roti.</li><li>Entrepreneur Kuliner: Membuka kafe, restoran, katering, atau bisnis makanan online.</li><li>Food Stylist/Consultant: Penata makanan atau konsultan bisnis kuliner.</li><li>Barista: Ahli peracik kopi.&nbsp;</li></ul><p><span style=\"font-size: 1rem;\">Jurusan ini sangat cocok bagi yang menyukai dunia kreativitas makanan, memiliki ketelitian, dan ingin berkarier langsung di industri makanan dan minuman (food and beverage industry</span></p>', NULL, 'aktif', '2026-03-29 07:31:00', '2026-03-29 07:31:00'),
-(10, 'PROGLI TKRO', 'progli-tkro', '<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Teknik Kendaraan Ringan Otomotif (TKRO) adalah jurusan SMK yang mempelajari perawatan, perbaikan, dan teknik mesin mobil (bensin/diesel) sesuai standar industri. Siswa dibekali keterampilan memperbaiki mesin, sistem pemindah tenaga, sasis, suspensi, dan kelistrikan kendaraan ringan untuk menjadi mekanik atau teknisi otomotif yang profesional.&nbsp;</p><p><span style=\"font-size: 1rem;\"><b>Detail Apa yang Dipelajari di Jurusan TKRO:</b></span></p><ul><li>Mesin Otomotif: Perawatan dan perbaikan mesin (overhaul) bensin maupun diesel.</li><li>Sistem Pemindah Tenaga (Drivetrain): Mempelajari transmisi manual/otomatis, kopling, dan gardan.</li><li>Sasis dan Suspensi: Perbaikan sistem kemudi, rem (termasuk ABS), roda, dan suspensi.</li><li>Kelistrikan Otomotif: Perbaikan sistem starter, pengisian, pengapian, lampu-lampu, dan komponen elektronik mobil.</li><li>Sistem Bahan Bakar: Servis sistem karburator hingga injeksi bahan bakar modern (EFI/EMS).</li><li>Penunjang: Gambar teknik, penggunaan alat ukur (jangka sorong, mikrometer), dan pengelasan.&nbsp;</li></ul><p><span style=\"font-size: 1rem;\"><b>Keahlian Khusus &amp; Peluang Kerja:</b></span></p><p>Lulusan dididik untuk mampu mendiagnosis kerusakan, melakukan tune-up, serta mengoperasikan scanner diagnosis komputerisasi pada mobil. Peluang kerja meliputi mekanik bengkel resmi/umum, service advisor, teknisi perakitan mobil, atau wirausaha bengkel mandiri.</p>', NULL, 'aktif', '2026-03-29 07:32:14', '2026-03-29 07:32:14');
+INSERT INTO `halaman` (`id`, `judul`, `subtitle`, `slug`, `konten`, `foto`, `status`, `created_at`, `updated_at`) VALUES
+(3, 'Pencak Silat', NULL, 'pencak-silat', '<p style=\"text-align: justify;\">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Ekstrakurikuler pencak silat adalah kegiatan sekolah di luar jam pelajaran yang bertujuan melatih seni bela diri tradisional Indonesia, meningkatkan kebugaran fisik, disiplin, mental tangguh, serta melestarikan budaya bangsa. Kegiatan ini memadukan empat aspek utama: mental-spiritual, bela diri, seni budaya, dan olahraga.&nbsp;</p><p style=\"text-align: justify;\"><br></p><p style=\"text-align: justify;\"><b>Berikut adalah poin-poin penting mengenai ekstrakurikuler pencak silat:</b></p><ul><li style=\"text-align: justify;\"><b>Pengembangan Karakter</b>: Membentuk mental disiplin, percaya diri, bertanggung jawab, sportif, dan berani, sebagaimana dijelaskan dalam artikel UNESA dan smk-almuttaqien.sch.id.</li><li style=\"text-align: justify;\"><b>Fisik &amp; Teknik</b>: Melatih kuda-kuda, pukulan, tendangan, stamina, kekuatan, dan kelenturan tubuh, menurut website SDNSuradadi4 dan Halodoc.</li><li style=\"text-align: justify;\"><b>Prestasi</b>: Menyediakan wadah untuk menyalurkan bakat dan berprestasi di kejuaraan tingkat sekolah, daerah, maupun nasional.</li><li style=\"text-align: justify;\"><b>Pelestarian Budaya</b>: Mengenalkan budaya luhur Indonesia kepada generasi muda</li></ul>', 'halaman-1774761639873.jpg', 'aktif', '2026-03-28 14:58:08', '2026-03-29 05:31:08'),
+(4, 'Pramuka', NULL, 'pramuka', '<p style=\"text-align: justify; \">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Ekskul pramuka adalah kegiatan ekstrakurikuler wajib di sekolah yang bertujuan membentuk karakter siswa, kepemimpinan, kemandirian, dan disiplin melalui aktivitas luar ruangan yang menyenangkan. Pramuka (Praja Muda Karana) menanamkan nilai-nilai Pancasila, cinta alam, serta keterampilan hidup seperti pertolongan pertama (P3K), berkemah, dan tali-temali.&nbsp;</p><p style=\"text-align: justify;\"><b>Karakteristik &amp; Tujuan Ekskul Pramuka:</b></p><ul><li style=\"text-align: justify;\">Pembentukan Karakter: Mengembangkan akhlak mulia, kemandirian, dan tanggung jawab.</li><li style=\"text-align: justify;\">Pendidikan Karakter &amp; Keterampilan: Mengajarkan disiplin, kepedulian sosial, dan kecintaan terhadap lingkungan.</li><li style=\"text-align: justify; \">Wajib Disediakan: Sekolah wajib menyediakan, namun tidak wajib diikuti secara individu (berdasarkan Permendikbudristek No 12 Tahun 2024).</li><li style=\"text-align: justify;\">Sistem Belajar: Menggunakan pola \"belajar sambil melakukan\" (learning by doing) dan permainan edukatif di alam terbuka.&nbsp;</li></ul><p style=\"text-align: justify;\"><b>Contoh Kegiatan Pramuka (Usage Examples):</b></p><ul><li style=\"text-align: justify;\">Perkemahan Sabtu-Minggu (Persami): Berkemah untuk melatih kemandirian dan kerjasama.</li><li style=\"text-align: justify;\">Pionering dan Tali-Temali: Membuat tandu atau tenda darurat menggunakan tongkat dan tali.</li><li style=\"text-align: justify;\">Baris-Berbaris (PBB): Latihan rutin untuk disiplin dan kekompakan.</li><li style=\"text-align: justify;\">Jelajah Alam (Wide Game): Kegiatan penjelajahan untuk melatih fisik dan kerjasama tim.</li><li style=\"text-align: justify;\">Bakti Sosial: Gotong royong membersihkan lingkungan atau membantu masyarakat.&nbsp;</li></ul>', 'halaman-1774761942548.jpg', 'aktif', '2026-03-29 05:25:42', '2026-03-29 05:31:46'),
+(5, 'Badminton', NULL, 'badminton', '<p style=\"text-align: justify; \">          Ekstrakurikuler badminton (bulu tangkis) adalah kegiatan olahraga di luar jam pelajaran sekolah yang bertujuan mengembangkan bakat, minat, serta kebugaran fisik dan mental siswa. Ekskul ini melatih teknik dasar, taktik, dan sportivitas untuk mempersiapkan siswa dalam kompetisi, seperti O2SN, serta menanamkan karakter disiplin. </p><p style=\"text-align: justify;\"><br></p><p style=\"text-align: justify; \"><b>Tujuan dan Manfaat Ekstrakurikuler Badminton:</b></p><ul><li style=\"text-align: justify;\">Pengembangan Bakat: Wadah bagi siswa yang memiliki hobi bulu tangkis.</li><li style=\"text-align: justify;\">Kesehatan Fisik: Meningkatkan kelincahan, ketahanan fisik, dan menurunkan berat badan.</li><li style=\"text-align: justify;\">Prestasi: Mempersiapkan fisik dan mental untuk kejuaraan antar pelajar.</li><li style=\"text-align: justify;\">Sportivitas & Karakter: Membangun rasa persaudaraan, kerjasama tim, dan karakter pantang menyerah. </li></ul><p style=\"text-align: justify;\"><br></p><p style=\"text-align: justify;\"><b>Aktivitas dalam Ekskul Badminton:</b></p><ul><li style=\"text-align: justify;\">Latihan rutin teknik dasar (pukulan, footwork) dan taktik permainan.</li><li style=\"text-align: justify;\">Latihan fisik seperti skipping, push up, dan lari.</li><li style=\"text-align: justify;\">Sparring (pertandingan) antar anggota atau sekolah lain.</li></ul>', 'halaman-1774762089550.jpg', 'aktif', '2026-03-29 05:28:09', '2026-03-29 07:22:53');
 
 -- --------------------------------------------------------
 
@@ -288,18 +460,72 @@ CREATE TABLE `jurusan` (
   `kepala_jurusan` varchar(100) DEFAULT NULL,
   `status` enum('aktif','nonaktif') DEFAULT 'aktif',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `deskripsi_lengkap` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data untuk tabel `jurusan`
 --
 
-INSERT INTO `jurusan` (`id`, `kode`, `nama`, `deskripsi`, `icon`, `warna`, `warna_badge`, `warna_teks_badge`, `kepala_jurusan`, `status`, `created_at`, `updated_at`) VALUES
-(1, 'TKJ', 'Teknik Jaringan Komputer dan Telekomunikasi', 'Mempelajari perakitan komputer, instalasi sistem operasi, pembangunan jaringan komputer (LAN/WAN/MAN), management jaringan Mikrotik, Fiber Optik & Cisco', 'fas fa-network-wired', 'linear-gradient(135deg,#0ea5e9,#0369a1)', '#e0f2fe', '#0369a1', 'Tino Bambang Gunawan, S.Kom., M.Pd.', 'aktif', '2026-03-28 03:19:31', '2026-03-29 05:13:36'),
-(2, 'TKRO', 'Teknik Kendaraan Ringan Otomotif', 'Mempelajari perawatan, perbaikan sistem mesin, kelistrikan, sasis, dan teknologi otomotif modern dan teknik kendaraan roda empat (mobil).', 'fas fa-car', 'linear-gradient(135deg,#ef4444,#dc2626)', '#fee2e2', '#dc2626', 'Hendrik Kurniawan, S.Pd.', 'aktif', '2026-03-28 03:22:11', '2026-03-29 05:42:45'),
-(3, 'KULINER', 'Kuliner', 'Mempelajari seni mengolah makanan, teknik memasak, penyajian, nutrisi, keamanan pangan, dan kewirausahaan hingga manajemen bisnis F&B (Food & Beverage).', 'fas fa-utensils', 'linear-gradient(135deg,#10b981,#059669)', '#d1fae5', '#059669', 'Nia Sasi Hardiani, S.Pd.', 'aktif', '2026-03-28 03:23:17', '2026-03-29 05:42:24'),
-(4, 'TPTUP', 'Teknik Pendingin, Tata Udara, dan Pemanasan', 'Mempelajari perancangan, instalasi, perawatan, dan perbaikan sistem pendingin (AC/kulkas) serta pemanas (water heater/heat pump)', 'fas fa-snowflake', 'linear-gradient(135deg,#8b5cf6,#7c3aed)', '#ede9fe', '#7c3aed', 'Drs. Haji Sigit Supranoto', 'aktif', '2026-03-28 03:24:46', '2026-03-29 05:42:30');
+INSERT INTO `jurusan` (`id`, `kode`, `nama`, `deskripsi`, `icon`, `warna`, `warna_badge`, `warna_teks_badge`, `kepala_jurusan`, `status`, `created_at`, `updated_at`, `deskripsi_lengkap`) VALUES
+(1, 'TKJ', 'Teknik Jaringan Komputer dan Telekomunikasi', 'Mempelajari perakitan komputer, instalasi sistem operasi, pembangunan jaringan komputer (LAN/WAN/MAN), management jaringan Mikrotik, Fiber Optik & Cisco', 'fas fa-network-wired', 'linear-gradient(135deg,#0ea5e9,#0369a1)', '#e0f2fe', '#0369a1', 'Tino Bambang Gunawan, S.Kom., M.Pd.', 'aktif', '2026-03-28 03:19:31', '2026-04-01 12:41:43', '<div>          Jurusan Teknik Jaringan Komputer dan Telekomunikasi (TJKT) adalah program keahlian SMK yang fokus mempelajari instalasi, konfigurasi, perawatan, dan keamanan jaringan komputer serta infrastruktur telekomunikasi. Ini adalah evolusi dari jurusan TKJ yang lebih modern, mencakup teknologi cloud, IoT, dan fiber optik. </div><div><br></div><div><b>Detail Materi Pembelajaran TJKT:</b></div><div><br></div><ul><li>Perakitan & Troubleshooting PC: Merakit komputer, instalasi sistem operasi (Windows/Linux), dan perbaikan perangkat keras/lunak.</li><li>Jaringan Komputer (LAN/WAN/WiFi): Membangun jaringan kabel dan nirkabel, konfigurasi router, manageable switch, dan firewall.</li><li>Administrasi Server: Mengelola server jaringan, sistem keamanan jaringan, dan layanan berbasis cloud.</li><li>Telekomunikasi: Mempelajari teknologi fiber optik, kabel struktural, dan sistem telepon.</li><li>Pemrograman Dasar: Mempelajari dasar pemrograman (HTML, CSS, PHP, MySQL) untuk kebutuhan web dan jaringan. </li></ul><div><br></div><div><b>Prospek Kerja Lulusan TJKT:</b></div><div><br></div><ul><li>Lulusan TJKT sangat dibutuhkan untuk posisi seperti: </li><li>Network Administrator: Pengelola jaringan perusahaan.</li><li>Teknisi Jaringan/Fiber Optik: Pemasang dan pemelihara jaringan.</li><li>IT Support/Helpdesk: Teknisi perbaikan perangkat.</li><li>System Administrator: Pengelola server.</li><li>Wirausaha IT: Membuka jasa servis atau Depok internet service provider (ISP). </li></ul><div><br></div><div><b>Keunggulan:</b></div><div><br></div><div>Siswa TJKT seringkali dibekali sertifikasi kompetensi (BNSP) dan kurikulum industri, membuat mereka siap kerja langsung setelah lulus.</div>'),
+(2, 'TKRO', 'Teknik Kendaraan Ringan Otomotif', 'Mempelajari perawatan, perbaikan sistem mesin, kelistrikan, sasis, dan teknologi otomotif modern dan teknik kendaraan roda empat (mobil).', 'fas fa-car', 'linear-gradient(135deg,#ef4444,#dc2626)', '#fee2e2', '#dc2626', 'Hendrik Kurniawan, S.Pd.', 'aktif', '2026-03-28 03:22:11', '2026-03-29 05:42:45', NULL),
+(3, 'KULINER', 'Kuliner', 'Mempelajari seni mengolah makanan, teknik memasak, penyajian, nutrisi, keamanan pangan, dan kewirausahaan hingga manajemen bisnis F&B (Food & Beverage).', 'fas fa-utensils', 'linear-gradient(135deg,#10b981,#059669)', '#d1fae5', '#059669', 'Nia Sasi Hardiani, S.Pd.', 'aktif', '2026-03-28 03:23:17', '2026-03-29 05:42:24', NULL),
+(4, 'TPTUP', 'Teknik Pendingin, Tata Udara, dan Pemanasan', 'Mempelajari perancangan, instalasi, perawatan, dan perbaikan sistem pendingin (AC/kulkas) serta pemanas (water heater/heat pump)', 'fas fa-snowflake', 'linear-gradient(135deg,#8b5cf6,#7c3aed)', '#ede9fe', '#7c3aed', 'Drs. Haji Sigit Supranoto', 'aktif', '2026-03-28 03:24:46', '2026-03-29 05:42:30', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `jurusan_berita`
+--
+
+CREATE TABLE `jurusan_berita` (
+  `id` int(11) NOT NULL,
+  `jurusan` varchar(100) NOT NULL,
+  `judul` varchar(255) NOT NULL,
+  `slug` varchar(255) DEFAULT NULL,
+  `konten` text DEFAULT NULL,
+  `gambar` varchar(255) DEFAULT NULL,
+  `kategori` enum('berita','informasi','pengumuman','prestasi') DEFAULT 'berita',
+  `status` enum('draft','published') DEFAULT 'published',
+  `penulis` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `jurusan_berita`
+--
+
+INSERT INTO `jurusan_berita` (`id`, `jurusan`, `judul`, `slug`, `konten`, `gambar`, `kategori`, `status`, `penulis`, `created_at`, `updated_at`) VALUES
+(1, 'TKJ', 'Selayang', 'selayang-mnfus2kq', '<p>          Jurusan Teknik Jaringan Komputer dan Telekomunikasi (TJKT) adalah program keahlian SMK yang fokus mempelajari instalasi, konfigurasi, perawatan, dan keamanan jaringan komputer serta infrastruktur telekomunikasi. Ini adalah evolusi dari jurusan TKJ yang lebih modern, mencakup teknologi cloud, IoT, dan fiber optik. </p><p><span style=\"font-weight: bolder; font-size: 1rem;\">Detail Materi Pembelajaran TJKT:</span></p><ul><li>Perakitan & Troubleshooting PC: Merakit komputer, instalasi sistem operasi (Windows/Linux), dan perbaikan perangkat keras/lunak.</li><li>Jaringan Komputer (LAN/WAN/WiFi): Membangun jaringan kabel dan nirkabel, konfigurasi router, manageable switch, dan firewall.</li><li>Administrasi Server: Mengelola server jaringan, sistem keamanan jaringan, dan layanan berbasis cloud.</li><li>Telekomunikasi: Mempelajari teknologi fiber optik, kabel struktural, dan sistem telepon.</li><li>Pemrograman Dasar: Mempelajari dasar pemrograman (HTML, CSS, PHP, MySQL) untuk kebutuhan web dan jaringan. </li></ul><p><span style=\"font-size: 1rem;\"><span style=\"font-weight: bolder;\">Prospek Kerja Lulusan TJKT:</span></span></p><ul><li>Lulusan TJKT sangat dibutuhkan untuk posisi seperti: </li><li>Network Administrator: Pengelola jaringan perusahaan.</li><li>Teknisi Jaringan/Fiber Optik: Pemasang dan pemelihara jaringan.</li><li>IT Support/Helpdesk: Teknisi perbaikan perangkat.</li><li>System Administrator: Pengelola server.</li><li>Wirausaha IT: Membuka jasa servis atau Depok internet service provider (ISP). </li></ul><p><span style=\"font-size: 1rem;\"><span style=\"font-weight: bolder;\">Keunggulan:</span></span></p><p>Siswa TJKT seringkali dibekali sertifikasi kompetensi (BNSP) dan kurikulum industri, membuat mereka siap kerja langsung setelah lulus.</p>', 'portal-1775047650593-e9f658e4bd8362267f60f8c6cac18a79.jpg', 'informasi', 'published', 'Imam Junaidi Abror', '2026-04-01 09:38:14', '2026-04-01 12:47:30');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `jurusan_galeri`
+--
+
+CREATE TABLE `jurusan_galeri` (
+  `id` int(11) NOT NULL,
+  `jurusan` varchar(100) NOT NULL,
+  `judul` varchar(255) NOT NULL,
+  `gambar` varchar(255) NOT NULL,
+  `keterangan` varchar(255) DEFAULT NULL,
+  `urutan` int(11) DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `jurusan_galeri`
+--
+
+INSERT INTO `jurusan_galeri` (`id`, `jurusan`, `judul`, `gambar`, `keterangan`, `urutan`, `created_at`) VALUES
+(1, 'TKJ', 'UKK', 'jurusan-galeri-1775045341866-b3b7514edcc1b2f59a7269053601d37b.jpeg', 'Kegiatan UKK', 0, '2026-04-01 12:09:01'),
+(2, 'TKJ', 'UKK', 'jurusan-galeri-1775045341872-7aede637335e17c0e3bedcd095a6f38c.jpeg', 'Kegiatan UKK', 0, '2026-04-01 12:09:01'),
+(3, 'TKJ', 'UKK', 'jurusan-galeri-1775045341874-042743b00c5cbb9269d6052e37403aa5.jpeg', 'Kegiatan UKK', 0, '2026-04-01 12:09:01'),
+(6, 'TKJ', 'UKK', 'jurusan-galeri-1775045341889-4f56e9014c85bb43bafe0e1c7d834721.jpeg', 'Kegiatan UKK', 0, '2026-04-01 12:09:01');
 
 -- --------------------------------------------------------
 
@@ -316,6 +542,30 @@ CREATE TABLE `kontak_masuk` (
   `status` enum('baru','dibaca','dibalas') DEFAULT 'baru',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `link_terkait`
+--
+
+CREATE TABLE `link_terkait` (
+  `id` int(11) NOT NULL,
+  `nama` varchar(255) NOT NULL,
+  `url` varchar(500) NOT NULL,
+  `logo` varchar(255) DEFAULT NULL,
+  `deskripsi` varchar(255) DEFAULT NULL,
+  `urutan` int(11) DEFAULT 0,
+  `status` enum('aktif','nonaktif') DEFAULT 'aktif',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `link_terkait`
+--
+
+INSERT INTO `link_terkait` (`id`, `nama`, `url`, `logo`, `deskripsi`, `urutan`, `status`, `created_at`) VALUES
+(1, 'Dapodik', 'http://210.79.142.181:5774/', 'link-1774991526923.png', NULL, 0, 'aktif', '2026-03-31 21:12:06');
 
 -- --------------------------------------------------------
 
@@ -341,8 +591,11 @@ CREATE TABLE `media_sosial` (
 --
 
 INSERT INTO `media_sosial` (`id`, `judul`, `deskripsi`, `platform`, `embed_url`, `thumbnail`, `status`, `urutan`, `created_at`, `updated_at`) VALUES
-(1, 'Hari Raya Idul Fitri 1447 H', 'Selamat Hari Raya Idul Fitri 1447 H.\r\nTaqabbalallahu minna wa minkum.\r\nMinal Aidin wal Faizin.', 'instagram', 'https://www.instagram.com/p/DWGneZ8E4TN/', NULL, 'aktif', 0, '2026-03-28 03:17:14', '2026-03-28 05:28:00'),
-(2, 'Pentas Seni', 'Kegiatan ini merupakan rangkaian acara Dies Natalis SMKN 1 Kras', 'youtube', 'https://www.youtube.com/watch?v=23Kf5HqzIhc', NULL, 'aktif', 1, '2026-03-28 03:41:26', '2026-03-28 05:26:56');
+(1, 'Hari Raya Idul Fitri 1447 H', 'Selamat Hari Raya Idul Fitri 1447 H.\r\nTaqabbalallahu minna wa minkum.\r\nMinal Aidin wal Faizin.', 'instagram', 'https://www.instagram.com/p/DWGneZ8E4TN/', NULL, 'aktif', 3, '2026-03-28 03:17:14', '2026-04-01 04:40:26'),
+(2, 'Pentas Seni', 'Kegiatan ini merupakan rangkaian acara Dies Natalis SMKN 1 Kras', 'youtube', 'https://www.youtube.com/watch?v=23Kf5HqzIhc', NULL, 'aktif', 1, '2026-03-28 03:41:26', '2026-04-01 02:25:27'),
+(3, 'Verifikasi TUK UKK', 'TPTUP', 'instagram', 'https://www.instagram.com/reel/DU5crxdgYqP', NULL, 'aktif', 2, '2026-04-01 02:16:20', '2026-04-01 02:40:00'),
+(4, 'Mesin', 'TKRO', 'facebook', 'https://www.facebook.com/share/1KsbYk2LfC/', NULL, 'aktif', 4, '2026-04-01 02:45:07', '2026-04-01 02:45:07'),
+(5, 'Expo JATIM', 'EXPO', 'instagram', 'https://www.instagram.com/p/DUuqUPDEXfB', NULL, 'aktif', 0, '2026-04-01 04:40:18', '2026-04-01 04:40:18');
 
 -- --------------------------------------------------------
 
@@ -372,7 +625,6 @@ INSERT INTO `menu_navigasi` (`id`, `label`, `url`, `parent_id`, `urutan`, `statu
 (3, 'Berita', '/berita', NULL, 3, 'aktif', NULL, '_self', '2026-03-28 04:31:26'),
 (4, 'Galeri', '/galeri', NULL, 6, 'aktif', NULL, '_self', '2026-03-28 04:31:26'),
 (5, 'Guru & Staf Karyawan', '/guru', 2, 4, 'aktif', NULL, '_self', '2026-03-28 04:31:26'),
-(6, 'Media Sosial', '/media-sosial', NULL, 7, 'aktif', NULL, '_self', '2026-03-28 04:31:26'),
 (7, 'Kontak', '/kontak', NULL, 8, 'aktif', NULL, '_self', '2026-03-28 04:31:26'),
 (12, 'Sambutan Kepala Sekolah', '/profil/sambutan', 2, 3, 'aktif', NULL, '_self', '2026-03-28 13:32:23'),
 (13, 'Visi & Misi', '/profil/visi-misi', 2, 1, 'aktif', NULL, '_self', '2026-03-28 13:32:23'),
@@ -382,13 +634,155 @@ INSERT INTO `menu_navigasi` (`id`, `label`, `url`, `parent_id`, `urutan`, `statu
 (17, 'Pencak Silat', '/page/pencak-silat', 21, 0, 'aktif', NULL, '_self', '2026-03-28 14:58:29'),
 (18, 'Pramuka', '/page/pramuka', 21, 1, 'aktif', NULL, '_self', '2026-03-29 05:29:13'),
 (19, 'Badminton', '/page/badminton', 21, 2, 'aktif', NULL, '_self', '2026-03-29 05:29:36'),
-(20, 'Program Keahlian', '/', NULL, 4, 'aktif', NULL, '_self', '2026-03-29 06:21:31'),
 (21, 'Ekstrakurikuler', '/', 16, 0, 'aktif', NULL, '_self', '2026-03-29 06:26:40'),
-(22, 'BKK', '/', 16, 1, 'aktif', NULL, '_self', '2026-03-29 06:41:01'),
-(23, 'Progli TKJ', '/page/progli-tkj', 20, 0, 'aktif', NULL, '_self', '2026-03-29 07:27:09'),
-(24, 'Progli Kuliner', '/page/progli-kuliner', 20, 1, 'aktif', NULL, '_self', '2026-03-29 07:32:46'),
-(25, 'Progli TPTUP', '/page/progli-tptup', 20, 2, 'aktif', NULL, '_self', '2026-03-29 07:33:16'),
-(26, 'Progli TKRO', '/page/progli-tkro', 20, 3, 'aktif', NULL, '_self', '2026-03-29 07:33:34');
+(27, 'Prestasi', '/prestasi', 16, 6, 'aktif', NULL, '_self', '2026-04-01 06:36:29'),
+(28, 'BKK', '/bkk', 16, 7, 'aktif', NULL, '_self', '2026-04-01 06:36:29'),
+(29, 'OSIS', '/osis', 21, 8, 'aktif', NULL, '_self', '2026-04-01 06:36:29'),
+(30, 'Program Keahlian', '/jurusan', NULL, 5, 'aktif', NULL, '_self', '2026-04-01 06:43:59'),
+(31, 'Kuliner', '/jurusan/kuliner', 30, 1, 'aktif', NULL, '_self', '2026-04-01 06:43:59'),
+(32, 'Teknik Jaringan Komputer dan Telekomunikasi', '/jurusan/tkj', 30, 2, 'aktif', NULL, '_self', '2026-04-01 06:43:59'),
+(33, 'Teknik Kendaraan Ringan Otomotif', '/jurusan/tkro', 30, 3, 'aktif', NULL, '_self', '2026-04-01 06:43:59'),
+(34, 'Teknik Pendingin, Tata Udara, dan Pemanasan', '/jurusan/tptup', 30, 4, 'aktif', NULL, '_self', '2026-04-01 06:43:59'),
+(35, 'Sosial Media', '/media-sosial', 16, 9, 'aktif', NULL, '_self', '2026-04-01 06:44:38'),
+(36, 'Learning Management System (LMS)', 'https://lms.smkn1kras.sch.id', 16, 3, 'aktif', NULL, '_self', '2026-04-01 08:58:36'),
+(37, 'Fasilitas', '/fasilitas', 2, 9, 'aktif', NULL, '_self', '2026-04-01 21:23:24'),
+(38, 'Presensi Siswa', 'https://presensi.tamanet.site', 16, 8, 'aktif', NULL, '_self', '2026-04-02 01:03:33'),
+(39, 'Artikel', '/artikel', 16, 10, 'aktif', NULL, '_self', '2026-04-02 04:05:50'),
+(40, 'File Download', '/file-download', 16, 11, 'aktif', NULL, '_self', '2026-04-02 04:06:18');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `osis_berita`
+--
+
+CREATE TABLE `osis_berita` (
+  `id` int(11) NOT NULL,
+  `judul` varchar(255) NOT NULL,
+  `slug` varchar(255) DEFAULT NULL,
+  `konten` text DEFAULT NULL,
+  `gambar` varchar(255) DEFAULT NULL,
+  `kategori` enum('berita','pengumuman','kegiatan','lainnya') DEFAULT 'berita',
+  `status` enum('draft','published') DEFAULT 'published',
+  `penulis` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `osis_berita`
+--
+
+INSERT INTO `osis_berita` (`id`, `judul`, `slug`, `konten`, `gambar`, `kategori`, `status`, `penulis`, `created_at`, `updated_at`) VALUES
+(1, 'Jumat bersib', 'jumat-bersib-mng3oh6y', '<p>bersih-bersih</p>', 'portal-1775051243510-5f39ecd60468c9c8b70746e0e256be53.jpg', 'kegiatan', 'published', 'elrica', '2026-04-01 13:47:23', '2026-04-01 13:47:23');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `osis_galeri`
+--
+
+CREATE TABLE `osis_galeri` (
+  `id` int(11) NOT NULL,
+  `judul` varchar(255) NOT NULL,
+  `gambar` varchar(255) NOT NULL,
+  `keterangan` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `osis_galeri`
+--
+
+INSERT INTO `osis_galeri` (`id`, `judul`, `gambar`, `keterangan`, `created_at`) VALUES
+(1, 'Kerja', 'osis-galeri-1775051268197-40870c9e53cc7794961f97d874f36bec.jpg', 'kerja', '2026-04-01 13:47:48'),
+(2, 'Kerja', 'osis-galeri-1775051268208-fe8d33137a8220ae98d250bcaffea069.jpg', 'kerja', '2026-04-01 13:47:48'),
+(3, 'Kerja', 'osis-galeri-1775051268239-296513cc8b7668c1d0d7f98af63e4833.jpg', 'kerja', '2026-04-01 13:47:48');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `osis_kegiatan`
+--
+
+CREATE TABLE `osis_kegiatan` (
+  `id` int(11) NOT NULL,
+  `judul` varchar(255) NOT NULL,
+  `slug` varchar(255) DEFAULT NULL,
+  `konten` text DEFAULT NULL,
+  `gambar` varchar(255) DEFAULT NULL,
+  `kategori` enum('kegiatan','pengumuman','prestasi','lainnya') DEFAULT 'kegiatan',
+  `status` enum('draft','published') DEFAULT 'published',
+  `penulis` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `osis_kegiatan`
+--
+
+INSERT INTO `osis_kegiatan` (`id`, `judul`, `slug`, `konten`, `gambar`, `kategori`, `status`, `penulis`, `created_at`, `updated_at`) VALUES
+(1, 'LDKS', 'ldks-mng3ntiy', '<p>siap LDKS</p>', 'portal-1775051212848-b5aa1bdebdb8efde44990a7182704fbb.jpeg', 'kegiatan', 'published', 'elrica', '2026-04-01 13:46:52', '2026-04-01 13:46:52');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `portal_users`
+--
+
+CREATE TABLE `portal_users` (
+  `id` int(11) NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `nama` varchar(100) NOT NULL,
+  `role` enum('bkk','osis','jurusan') NOT NULL,
+  `jurusan` varchar(100) DEFAULT NULL,
+  `aktif` tinyint(1) DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `portal_users`
+--
+
+INSERT INTO `portal_users` (`id`, `username`, `password`, `nama`, `role`, `jurusan`, `aktif`, `created_at`) VALUES
+(1, 'imam', '$2a$10$fHtoYaX7ux4cVeIxhbyvv.W0MYS58MVtvwwZufr.SN3iG9LGefW12', 'Imam Junaidi Abror', 'jurusan', 'TKJ', 1, '2026-04-01 06:54:14'),
+(6, 'jou', '$2a$10$B1nLV.AKrluXpDif1B4i6eVeqQeLq9F5jIhLp.O0Q6F0HAr9Lacdq', 'Imam Junaidi Abror', 'jurusan', 'TKRO', 1, '2026-04-01 11:18:58'),
+(7, 'aab', '$2a$10$GLt6Vf.oU/JvzkrejTL6Au8.udMRAZGM72ANz1MDsIWGtWTOs7I/q', 'Imam Junaidi Abror', 'jurusan', 'Kuliner', 1, '2026-04-01 11:19:37'),
+(8, 'maz', '$2a$10$kucitkPAuO/2Gj4WLZjQA.Enlzfm6/o8bJuIeiVE8oWMPZ7Mij0eW', 'Imam Junaidi Abror', 'jurusan', 'TPTUP', 1, '2026-04-01 11:19:58'),
+(9, 'yanu', '$2a$10$wHxhl3pHslKmUvsIeMWADehK88HiABz8VYS9GCROOt9NEV2F3m1MS', 'Yanuar', 'bkk', 'TKJ', 1, '2026-04-01 11:20:22'),
+(10, 'el', '$2a$10$30ALc1YvHTdfVi1GoJ.3kOYyFhEd1kx9NkIedHKvFuLn.jUE8m10i', 'elrica', 'osis', 'TKJ', 1, '2026-04-01 13:10:14');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `prestasi`
+--
+
+CREATE TABLE `prestasi` (
+  `id` int(11) NOT NULL,
+  `judul` varchar(255) NOT NULL,
+  `slug` varchar(255) DEFAULT NULL,
+  `deskripsi` text DEFAULT NULL,
+  `gambar` varchar(255) DEFAULT NULL,
+  `kategori` enum('akademik','non-akademik','olahraga','seni','teknologi','lainnya') DEFAULT 'lainnya',
+  `tingkat` enum('sekolah','kecamatan','kabupaten','provinsi','nasional','internasional') DEFAULT 'sekolah',
+  `tahun` year(4) DEFAULT NULL,
+  `jurusan` varchar(100) DEFAULT NULL,
+  `status` enum('draft','published') DEFAULT 'published',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `prestasi`
+--
+
+INSERT INTO `prestasi` (`id`, `judul`, `slug`, `deskripsi`, `gambar`, `kategori`, `tingkat`, `tahun`, `jurusan`, `status`, `created_at`, `updated_at`) VALUES
+(1, 'Juara 1 Lomba Pencak Silat Nasional', 'juara-1-lomba-pencak-silat-nasional-mnfnthtt', 'ananda fulan', 'portal-1775024603772-1ae74c64c4962bd1dd4be1adb2e8f0e7.jpg', 'olahraga', 'provinsi', '2025', 'TKRO', 'published', '2026-04-01 06:23:23', '2026-04-01 06:23:23'),
+(2, 'Cloud Cmputing', 'cloud-cmputing-mnfyh4x4', 'Juara 1', 'portal-1775042502941-dd6dcf3289e2386292c71b5a7d850c22.png', 'akademik', 'provinsi', '2026', 'TKJ', 'published', '2026-04-01 11:21:42', '2026-04-01 11:21:42'),
+(3, 'Cyber Security', 'cyber-security-mnfyintq', 'Juara 2', 'portal-1775042574101-4571b13bdfa6f02f3aa13b79fbd69046.jpeg', 'akademik', 'provinsi', '2026', 'TKJ', 'published', '2026-04-01 11:22:54', '2026-04-01 11:22:54');
 
 -- --------------------------------------------------------
 
@@ -441,15 +835,16 @@ CREATE TABLE `profil_sekolah` (
   `sk_izin` varchar(100) DEFAULT NULL,
   `tanggal_sk_izin` date DEFAULT NULL,
   `maps` text DEFAULT NULL,
-  `website` varchar(255) DEFAULT NULL
+  `website` varchar(255) DEFAULT NULL,
+  `tampil_wa` tinyint(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data untuk tabel `profil_sekolah`
 --
 
-INSERT INTO `profil_sekolah` (`id`, `nama_sekolah`, `alamat`, `telepon`, `whatsapp`, `email`, `visi`, `misi`, `logo`, `updated_at`, `npsn`, `status`, `jenjang`, `akreditasi`, `no_sk_akreditasi`, `sk_pendirian`, `tanggal_sk`, `sk_izin`, `tanggal_sk_izin`, `maps`, `website`) VALUES
-(1, 'SMKN 1 KRAS', 'Dsn. Demangan, Desa Setonorejo, Kecamatan Kras, Kabupaten Kediri, Provinsi Jawa Timur, 64172. ', '', '-', 'smkn1kras@gmail.com', NULL, NULL, '1774666777516.png', '2026-03-29 04:49:48', '69775452', 'Negeri', 'SMK', 'A', '022/BAN-PDM/SK/2023', '188.45/106/418.32/2012', '2012-03-22', '188.45/106/418.32/2012', '2012-03-22', 'https://maps.app.goo.gl/WGHtLP6k46Nm2wL5A', 'https://smkn1kras.sch.id');
+INSERT INTO `profil_sekolah` (`id`, `nama_sekolah`, `alamat`, `telepon`, `whatsapp`, `email`, `visi`, `misi`, `logo`, `updated_at`, `npsn`, `status`, `jenjang`, `akreditasi`, `no_sk_akreditasi`, `sk_pendirian`, `tanggal_sk`, `sk_izin`, `tanggal_sk_izin`, `maps`, `website`, `tampil_wa`) VALUES
+(1, 'SMKN 1 KRAS', 'Dsn. Demangan, Desa Setonorejo, Kecamatan Kras, Kabupaten Kediri, Provinsi Jawa Timur, 64172. ', '', '-', 'smkn1kras@gmail.com', NULL, NULL, '1774666777516.png', '2026-04-01 09:35:09', '69775452', 'Negeri', 'SMK', 'A', '022/BAN-PDM/SK/2023', '188.45/106/418.32/2012', NULL, '188.45/106/418.32/2012', NULL, 'https://maps.app.goo.gl/WGHtLP6k46Nm2wL5A', 'https://smkn1kras.sch.id', 0);
 
 -- --------------------------------------------------------
 
@@ -525,7 +920,8 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `username`, `password`, `nama_lengkap`, `email`, `role`, `created_at`) VALUES
 (1, 'admin', '$2a$10$qqyyMTiwrKRZ1wvVKkjc1.j3Ccm9WS8sZ4qlLmjL5.m5w9J1z16Di', 'Administrator', 'admin@sekolah.com', 'admin', '2026-03-28 02:42:22'),
-(7, 'mazjou', '$2a$10$RlHAMSpbo6JF9wDA.5AhFuUFh5bY/ZlVDhfn8Hi2q3YBnpnENHBCu', 'Imam', 'imamjunaidiabror@gmail.com', 'admin', '2026-03-28 03:43:33');
+(7, 'mazjou', '$2a$10$RlHAMSpbo6JF9wDA.5AhFuUFh5bY/ZlVDhfn8Hi2q3YBnpnENHBCu', 'Imam', 'imamjunaidiabror@gmail.com', 'admin', '2026-03-28 03:43:33'),
+(8, 'master', '$2a$10$ZnUriOVPj8ea5PpAZIvgAu68vVAFFBHqVrT.YHVKP7pOeVoVM1/ZW', 'master', 'master@gmail.com', 'guru', '2026-03-30 07:17:37');
 
 -- --------------------------------------------------------
 
@@ -545,12 +941,14 @@ CREATE TABLE `website_settings` (
 --
 
 INSERT INTO `website_settings` (`id`, `setting_key`, `setting_value`, `updated_at`) VALUES
-(1, 'theme_mode', 'light', '2026-03-29 05:58:12'),
-(2, 'primary_color', '#0ea5e9', '2026-03-29 05:58:43'),
-(3, 'secondary_color', '#0369a1', '2026-03-29 05:58:43'),
-(4, 'navbar_bg', '#ffffff', '2026-03-29 05:50:21'),
-(5, 'footer_bg', '#0f172a', '2026-03-29 05:50:21'),
-(26, 'maintenance_mode', '0', '2026-03-29 06:13:26');
+(1, 'theme_mode', 'light', '2026-04-01 05:17:11'),
+(2, 'primary_color', '#8b5cf6', '2026-04-01 14:05:59'),
+(3, 'secondary_color', '#7c3aed', '2026-04-01 14:05:59'),
+(4, 'navbar_bg', '#ffffff', '2026-04-01 05:17:11'),
+(5, 'footer_bg', '#2e1065', '2026-04-01 14:05:59'),
+(26, 'maintenance_mode', '0', '2026-04-01 20:58:22'),
+(46, 'font_family', 'Poppins', '2026-04-01 14:05:59'),
+(47, 'border_radius', '20', '2026-04-01 14:05:59');
 
 --
 -- Indexes for dumped tables
@@ -564,11 +962,50 @@ ALTER TABLE `admin`
   ADD UNIQUE KEY `username` (`username`);
 
 --
+-- Indeks untuk tabel `alumni`
+--
+ALTER TABLE `alumni`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `artikel`
+--
+ALTER TABLE `artikel`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `slug` (`slug`);
+
+--
 -- Indeks untuk tabel `berita`
 --
 ALTER TABLE `berita`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `slug` (`slug`);
+
+--
+-- Indeks untuk tabel `bkk_lowongan`
+--
+ALTER TABLE `bkk_lowongan`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `slug` (`slug`);
+
+--
+-- Indeks untuk tabel `fasilitas`
+--
+ALTER TABLE `fasilitas`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `fasilitas_foto`
+--
+ALTER TABLE `fasilitas_foto`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fasilitas_id` (`fasilitas_id`);
+
+--
+-- Indeks untuk tabel `file_download`
+--
+ALTER TABLE `file_download`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indeks untuk tabel `galeri`
@@ -580,7 +1017,8 @@ ALTER TABLE `galeri`
 -- Indeks untuk tabel `guru`
 --
 ALTER TABLE `guru`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `guru_username` (`guru_username`);
 
 --
 -- Indeks untuk tabel `halaman`
@@ -611,9 +1049,28 @@ ALTER TABLE `jurusan`
   ADD UNIQUE KEY `kode` (`kode`);
 
 --
+-- Indeks untuk tabel `jurusan_berita`
+--
+ALTER TABLE `jurusan_berita`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `slug` (`slug`);
+
+--
+-- Indeks untuk tabel `jurusan_galeri`
+--
+ALTER TABLE `jurusan_galeri`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indeks untuk tabel `kontak_masuk`
 --
 ALTER TABLE `kontak_masuk`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `link_terkait`
+--
+ALTER TABLE `link_terkait`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -628,6 +1085,40 @@ ALTER TABLE `media_sosial`
 ALTER TABLE `menu_navigasi`
   ADD PRIMARY KEY (`id`),
   ADD KEY `parent_id` (`parent_id`);
+
+--
+-- Indeks untuk tabel `osis_berita`
+--
+ALTER TABLE `osis_berita`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `slug` (`slug`);
+
+--
+-- Indeks untuk tabel `osis_galeri`
+--
+ALTER TABLE `osis_galeri`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `osis_kegiatan`
+--
+ALTER TABLE `osis_kegiatan`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `slug` (`slug`);
+
+--
+-- Indeks untuk tabel `portal_users`
+--
+ALTER TABLE `portal_users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `username` (`username`);
+
+--
+-- Indeks untuk tabel `prestasi`
+--
+ALTER TABLE `prestasi`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `slug` (`slug`);
 
 --
 -- Indeks untuk tabel `profil_konten`
@@ -679,16 +1170,52 @@ ALTER TABLE `admin`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT untuk tabel `alumni`
+--
+ALTER TABLE `alumni`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT untuk tabel `artikel`
+--
+ALTER TABLE `artikel`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT untuk tabel `berita`
 --
 ALTER TABLE `berita`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
+-- AUTO_INCREMENT untuk tabel `bkk_lowongan`
+--
+ALTER TABLE `bkk_lowongan`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT untuk tabel `fasilitas`
+--
+ALTER TABLE `fasilitas`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT untuk tabel `fasilitas_foto`
+--
+ALTER TABLE `fasilitas_foto`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT untuk tabel `file_download`
+--
+ALTER TABLE `file_download`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT untuk tabel `galeri`
 --
 ALTER TABLE `galeri`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT untuk tabel `guru`
@@ -721,22 +1248,70 @@ ALTER TABLE `jurusan`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
+-- AUTO_INCREMENT untuk tabel `jurusan_berita`
+--
+ALTER TABLE `jurusan_berita`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT untuk tabel `jurusan_galeri`
+--
+ALTER TABLE `jurusan_galeri`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
 -- AUTO_INCREMENT untuk tabel `kontak_masuk`
 --
 ALTER TABLE `kontak_masuk`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT untuk tabel `link_terkait`
+--
+ALTER TABLE `link_terkait`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT untuk tabel `media_sosial`
 --
 ALTER TABLE `media_sosial`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT untuk tabel `menu_navigasi`
 --
 ALTER TABLE `menu_navigasi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+
+--
+-- AUTO_INCREMENT untuk tabel `osis_berita`
+--
+ALTER TABLE `osis_berita`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT untuk tabel `osis_galeri`
+--
+ALTER TABLE `osis_galeri`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT untuk tabel `osis_kegiatan`
+--
+ALTER TABLE `osis_kegiatan`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT untuk tabel `portal_users`
+--
+ALTER TABLE `portal_users`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT untuk tabel `prestasi`
+--
+ALTER TABLE `prestasi`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT untuk tabel `profil_konten`
@@ -766,13 +1341,13 @@ ALTER TABLE `slider`
 -- AUTO_INCREMENT untuk tabel `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT untuk tabel `website_settings`
 --
 ALTER TABLE `website_settings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=143;
 
 --
 -- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)

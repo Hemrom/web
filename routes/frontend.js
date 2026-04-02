@@ -41,6 +41,9 @@ router.get('/bkk/:slug', validateSlugParam, portalController.bkkDetail);
 router.get('/osis', portalController.osisIndex);
 router.get('/osis/:slug', validateSlugParam, portalController.osisDetail);
 
+// Fasilitas
+router.get('/fasilitas', portalController.fasilitasIndex);
+
 // Halaman Jurusan (dinamis dari DB)
 router.get('/jurusan', portalController.jurusanListPage);
 router.get('/jurusan/:kode', portalController.jurusanDetailPage);
@@ -49,5 +52,15 @@ router.get('/jurusan/:kode/berita/:slug', validateSlugParam, portalController.ju
 // Halaman dinamis - harus di paling bawah
 const halamanController = require('../controllers/halamanController');
 router.get('/page/:slug', validateSlugParam, halamanController.show);
+
+// Artikel
+const artikelController = require('../controllers/artikelController');
+router.get('/artikel', artikelController.frontendIndex);
+router.get('/artikel/:slug', validateSlugParam, artikelController.frontendDetail);
+
+// File Download
+const fileDownloadController = require('../controllers/fileDownloadController');
+router.get('/file-download', fileDownloadController.frontendIndex);
+router.get('/file-download/:id', fileDownloadController.frontendDownload);
 
 module.exports = router;

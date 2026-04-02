@@ -3,63 +3,292 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title><%= title %> - Website Sekolah</title>
+    <title><%= lowongan.judul %> - BKK Website Sekolah</title>
+    <meta name="description" content="<%= (lowongan.deskripsi||'').substring(0,160) %>">
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
     <link href="/assets/vendor/bootstrap5/bootstrap.min.css" rel="stylesheet">
-    <link href="/assets/vendor/fontawesome6/all.min.css" rel="stylesheet">    <link rel="stylesheet" href="/theme.css">
+    <link href="/assets/vendor/fontawesome6/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/theme.css">
     <style>
-        *{font-family:'Inter',sans-serif;box-sizing:border-box;margin:0;padding:0;}
-        body{color:#334155;line-height:1.6;background:#f8fafc;}
-        .page-header{background:linear-gradient(135deg,#064e3b,#10b981);padding:10rem 0 4rem;color:white;text-align:center;}
-        .content-section{padding:5rem 0;}
-        .content-card{background:white;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.06);padding:3rem;}
-        .info-row{display:flex;align-items:center;gap:.75rem;padding:.75rem 0;border-bottom:1px solid #f1f5f9;}
-        .info-icon{width:36px;height:36px;background:#d1fae5;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#065f46;flex-shrink:0;}
+        :root {
+            --bkk-green: #10b981; --bkk-dark: #064e3b; --bkk-light: #d1fae5;
+            --gray-50: #f8fafc; --gray-100: #f1f5f9; --gray-200: #e2e8f0;
+            --gray-500: #64748b; --gray-600: #475569; --gray-700: #334155; --gray-800: #1e293b;
+        }
+        * { font-family: 'Inter', sans-serif; box-sizing: border-box; margin: 0; padding: 0; }
+        body { color: var(--gray-700); line-height: 1.6; background: var(--gray-50); }
+        .navbar-modern { background: rgba(255,255,255,0.95) !important; backdrop-filter: blur(10px); box-shadow: 0 2px 20px rgba(16,185,129,0.1); padding: 1rem 0; transition: all 0.3s; }
+        .navbar-modern.scrolled { box-shadow: 0 4px 30px rgba(16,185,129,0.15); }
+        .navbar-brand { font-weight: 700; color: var(--bkk-green) !important; font-size: 1.5rem; text-decoration: none; }
+        .nav-link { font-weight: 500; color: var(--gray-600) !important; padding: 0.75rem 1rem !important; border-radius: 8px; transition: all 0.3s; text-decoration: none; }
+        .nav-link:hover, .nav-link.active { color: var(--bkk-green) !important; background: var(--bkk-light); }
+
+        .page-hero { background: linear-gradient(135deg, var(--bkk-dark) 0%, var(--bkk-green) 100%); padding: 9rem 0 4rem; color: white; position: relative; overflow: hidden; }
+        .page-hero::before { content: ''; position: absolute; inset: 0; background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="rgba(255,255,255,0.04)" points="0,1000 1000,0 1000,1000"/></svg>'); }
+        .page-hero .container { position: relative; z-index: 1; }
+        .hero-badge { display: inline-block; background: rgba(255,255,255,0.2); color: white; padding: 0.35rem 1rem; border-radius: 50px; font-size: 0.82rem; font-weight: 700; margin-bottom: 1rem; }
+        .hero-title { font-size: 2.5rem; font-weight: 800; line-height: 1.3; margin-bottom: 0.75rem; }
+        .hero-company { font-size: 1.1rem; opacity: 0.9; font-weight: 600; }
+
+        .content-section { padding: 4rem 0; }
+        .main-card { background: white; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); overflow: hidden; }
+        .cover-img { width: 100%; max-height: 420px; object-fit: cover; }
+        .card-body-pad { padding: 2.5rem; }
+
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
+        .info-item { background: var(--gray-50); border-radius: 12px; padding: 1rem 1.25rem; display: flex; align-items: flex-start; gap: 0.75rem; }
+        .info-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; flex-shrink: 0; }
+        .info-label { font-size: 0.72rem; color: var(--gray-500); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
+        .info-value { font-size: 0.9rem; font-weight: 600; color: var(--gray-800); }
+
+        .section-heading { font-size: 1.1rem; font-weight: 700; color: var(--gray-800); margin-bottom: 1rem; padding-bottom: 0.6rem; border-bottom: 2px solid var(--bkk-light); display: flex; align-items: center; gap: 0.5rem; }
+        .section-heading i { color: var(--bkk-green); }
+        .persyaratan-list { list-style: none; padding: 0; }
+        .persyaratan-list li { padding: 0.6rem 0; border-bottom: 1px solid var(--gray-100); display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.9rem; }
+        .persyaratan-list li:last-child { border-bottom: none; }
+        .persyaratan-list li::before { content: '✓'; color: var(--bkk-green); font-weight: 700; flex-shrink: 0; margin-top: 0.1rem; }
+        .deskripsi-text { font-size: 0.95rem; line-height: 1.8; color: var(--gray-700); white-space: pre-line; }
+
+        .cta-box { background: linear-gradient(135deg, var(--bkk-dark), var(--bkk-green)); border-radius: 16px; padding: 2rem; color: white; text-align: center; margin-top: 2rem; }
+        .cta-box h5 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .cta-box p { opacity: 0.85; font-size: 0.9rem; margin-bottom: 1.25rem; }
+        .btn-daftar-big { background: white; color: var(--bkk-dark); padding: 0.85rem 2.5rem; border-radius: 50px; text-decoration: none; font-weight: 700; font-size: 1rem; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.2s; }
+        .btn-daftar-big:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); color: var(--bkk-dark); text-decoration: none; }
+
+        .sidebar-card { background: white; border-radius: 16px; padding: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.06); margin-bottom: 1.25rem; }
+        .sidebar-card h6 { font-weight: 700; color: var(--gray-800); margin-bottom: 1rem; padding-bottom: 0.6rem; border-bottom: 2px solid var(--bkk-light); }
+        .deadline-alert { background: #fef2f2; border: 1px solid #fecaca; border-radius: 12px; padding: 1rem 1.25rem; }
+        .deadline-alert.expired { background: var(--gray-100); border-color: var(--gray-200); }
+
+        .footer { background: var(--gray-800); color: white; padding: 4rem 0 2rem; }
+        .footer-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 1.25rem; color: white; }
+        .footer-link { color: rgba(255,255,255,0.7); text-decoration: none; margin-bottom: 0.5rem; display: block; transition: color 0.3s; }
+        .footer-link:hover { color: #6ee7b7; text-decoration: none; }
+
+        @media (max-width: 991px) {
+            .navbar-collapse { background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-top: 1rem; padding: 1rem; }
+            .hero-title { font-size: 1.8rem; }
+            .info-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
     <%- include('partials/navbar') %>
-    <section class="page-header">
+
+    <section class="page-hero">
         <div class="container">
-            <h1 style="font-size:2.5rem;font-weight:800;"><%= lowongan.judul %></h1>
-            <p style="opacity:.85;margin-top:.5rem;font-size:1.1rem;"><%= lowongan.perusahaan %></p>
+            <nav aria-label="breadcrumb" class="mb-3">
+                <ol class="breadcrumb" style="background:none;padding:0;margin:0;">
+                    <li class="breadcrumb-item"><a href="/" style="color:rgba(255,255,255,0.7);text-decoration:none;">Beranda</a></li>
+                    <li class="breadcrumb-item"><a href="/bkk" style="color:rgba(255,255,255,0.7);text-decoration:none;">BKK</a></li>
+                    <li class="breadcrumb-item active" style="color:white;">Detail</li>
+                </ol>
+            </nav>
+            <span class="hero-badge">
+                <i class="fas fa-tag me-1"></i><%= (lowongan.kategori||'lainnya').charAt(0).toUpperCase()+(lowongan.kategori||'lainnya').slice(1) %>
+            </span>
+            <h1 class="hero-title"><%= lowongan.judul %></h1>
+            <p class="hero-company"><i class="fas fa-building me-2"></i><%= lowongan.perusahaan %></p>
         </div>
     </section>
+
     <section class="content-section">
         <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-9">
-                    <div class="content-card">
-                        <% if (lowongan.gambar) { %><img src="/uploads/<%= lowongan.gambar %>" style="width:100%;border-radius:12px;margin-bottom:2rem;" alt="<%= lowongan.judul %>"><% } %>
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <div class="info-row"><div class="info-icon"><i class="fas fa-building"></i></div><div><small style="color:#94a3b8;">Perusahaan</small><div style="font-weight:600;"><%= lowongan.perusahaan %></div></div></div>
-                                <% if (lowongan.lokasi) { %><div class="info-row"><div class="info-icon"><i class="fas fa-map-marker-alt"></i></div><div><small style="color:#94a3b8;">Lokasi</small><div style="font-weight:600;"><%= lowongan.lokasi %></div></div></div><% } %>
-                                <div class="info-row"><div class="info-icon"><i class="fas fa-tag"></i></div><div><small style="color:#94a3b8;">Kategori</small><div style="font-weight:600;"><%= lowongan.kategori %></div></div></div>
-                            </div>
-                            <div class="col-md-6">
-                                <% if (lowongan.deadline) { %><div class="info-row"><div class="info-icon"><i class="fas fa-clock"></i></div><div><small style="color:#94a3b8;">Deadline</small><div style="font-weight:600;color:#dc2626;"><%= new Date(lowongan.deadline).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}) %></div></div></div><% } %>
-                                <% if (lowongan.kontak) { %><div class="info-row"><div class="info-icon"><i class="fas fa-phone"></i></div><div><small style="color:#94a3b8;">Kontak</small><div style="font-weight:600;"><%= lowongan.kontak %></div></div></div><% } %>
-                            </div>
-                        </div>
-                        <% if (lowongan.deskripsi) { %><h5 style="font-weight:700;margin-bottom:1rem;">Deskripsi</h5><p style="line-height:1.8;margin-bottom:1.5rem;"><%= lowongan.deskripsi %></p><% } %>
-                        <% if (lowongan.persyaratan) { %><h5 style="font-weight:700;margin-bottom:1rem;">Persyaratan</h5><p style="line-height:1.8;white-space:pre-line;margin-bottom:1.5rem;"><%= lowongan.persyaratan %></p><% } %>
-                        <% if (lowongan.kontak) { %>
-                        <a href="<%= lowongan.kontak.startsWith('http')?lowongan.kontak:'https://wa.me/'+lowongan.kontak.replace(/[^0-9]/g,'') %>" target="_blank" rel="noopener" style="background:#10b981;color:white;padding:.9rem 2.5rem;border-radius:50px;text-decoration:none;font-weight:700;display:inline-block;margin-bottom:1.5rem;">
-                            <i class="fas fa-paper-plane me-2"></i>Daftar Sekarang
-                        </a>
+            <div class="row g-4">
+                <!-- Main Content -->
+                <div class="col-lg-8">
+                    <div class="main-card">
+                        <% if (lowongan.gambar) { %>
+                        <img src="/uploads/<%= lowongan.gambar %>" class="cover-img" alt="<%= lowongan.judul %>">
                         <% } %>
-                        <div class="mt-2 pt-3" style="border-top:1px solid #f1f5f9;">
-                            <a href="/bkk" style="color:#10b981;font-weight:600;text-decoration:none;"><i class="fas fa-arrow-left me-2"></i>Kembali ke BKK</a>
+                        <div class="card-body-pad">
+
+                            <!-- Info Grid -->
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-icon" style="background:#d1fae5;color:#065f46;"><i class="fas fa-building"></i></div>
+                                    <div>
+                                        <div class="info-label">Perusahaan</div>
+                                        <div class="info-value"><%= lowongan.perusahaan %></div>
+                                    </div>
+                                </div>
+                                <% if (lowongan.lokasi) { %>
+                                <div class="info-item">
+                                    <div class="info-icon" style="background:#dbeafe;color:#1e40af;"><i class="fas fa-map-marker-alt"></i></div>
+                                    <div>
+                                        <div class="info-label">Lokasi</div>
+                                        <div class="info-value"><%= lowongan.lokasi %></div>
+                                    </div>
+                                </div>
+                                <% } %>
+                                <div class="info-item">
+                                    <div class="info-icon" style="background:#fef3c7;color:#92400e;"><i class="fas fa-tag"></i></div>
+                                    <div>
+                                        <div class="info-label">Kategori</div>
+                                        <div class="info-value"><%= (lowongan.kategori||'lainnya').charAt(0).toUpperCase()+(lowongan.kategori||'lainnya').slice(1) %></div>
+                                    </div>
+                                </div>
+                                <% if (lowongan.deadline) { %>
+                                <%
+                                    const isExpired = new Date(lowongan.deadline) < new Date();
+                                    const deadlineStr = new Date(lowongan.deadline).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
+                                %>
+                                <div class="info-item">
+                                    <div class="info-icon" style="background:<%= isExpired ? '#f1f5f9' : '#fef2f2' %>;color:<%= isExpired ? '#94a3b8' : '#991b1b' %>;"><i class="fas fa-clock"></i></div>
+                                    <div>
+                                        <div class="info-label">Deadline</div>
+                                        <div class="info-value" style="color:<%= isExpired ? '#94a3b8' : '#dc2626' %>;">
+                                            <%= deadlineStr %> <%= isExpired ? '(Berakhir)' : '' %>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% } %>
+                                <% if (lowongan.kontak) { %>
+                                <div class="info-item">
+                                    <div class="info-icon" style="background:#d1fae5;color:#065f46;"><i class="fas fa-phone"></i></div>
+                                    <div>
+                                        <div class="info-label">Kontak</div>
+                                        <div class="info-value"><%= lowongan.kontak %></div>
+                                    </div>
+                                </div>
+                                <% } %>
+                                <div class="info-item">
+                                    <div class="info-icon" style="background:var(--gray-100);color:var(--gray-500);"><i class="fas fa-calendar"></i></div>
+                                    <div>
+                                        <div class="info-label">Diposting</div>
+                                        <div class="info-value"><%= new Date(lowongan.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}) %></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Deskripsi -->
+                            <% if (lowongan.deskripsi) { %>
+                            <div class="mb-4">
+                                <h5 class="section-heading"><i class="fas fa-align-left"></i>Deskripsi Lowongan</h5>
+                                <p class="deskripsi-text"><%= lowongan.deskripsi %></p>
+                            </div>
+                            <% } %>
+
+                            <!-- Persyaratan -->
+                            <% if (lowongan.persyaratan) { %>
+                            <div class="mb-4">
+                                <h5 class="section-heading"><i class="fas fa-list-check"></i>Persyaratan</h5>
+                                <%
+                                    const syaratLines = lowongan.persyaratan.split('\n').map(s => s.trim()).filter(s => s.length > 0);
+                                %>
+                                <% if (syaratLines.length > 1) { %>
+                                <ul class="persyaratan-list">
+                                    <% syaratLines.forEach(s => { %>
+                                    <li><%= s.replace(/^[-•*]\s*/, '') %></li>
+                                    <% }) %>
+                                </ul>
+                                <% } else { %>
+                                <p class="deskripsi-text"><%= lowongan.persyaratan %></p>
+                                <% } %>
+                            </div>
+                            <% } %>
+
+                            <!-- CTA Daftar -->
+                            <% if (lowongan.kontak) { %>
+                            <%
+                                const isExpiredCta = lowongan.deadline && new Date(lowongan.deadline) < new Date();
+                            %>
+                            <% if (!isExpiredCta) { %>
+                            <div class="cta-box">
+                                <h5><i class="fas fa-paper-plane me-2"></i>Tertarik dengan lowongan ini?</h5>
+                                <p>Segera daftarkan diri Anda sebelum batas waktu pendaftaran berakhir.</p>
+                                <a href="<%= lowongan.kontak.startsWith('http') ? lowongan.kontak : 'https://wa.me/'+lowongan.kontak.replace(/[^0-9]/g,'') %>"
+                                   target="_blank" rel="noopener" class="btn-daftar-big">
+                                    <i class="fas fa-paper-plane"></i> Daftar Sekarang
+                                </a>
+                            </div>
+                            <% } else { %>
+                            <div class="deadline-alert expired">
+                                <i class="fas fa-info-circle me-2 text-muted"></i>
+                                <span class="text-muted">Pendaftaran untuk lowongan ini telah berakhir.</span>
+                            </div>
+                            <% } %>
+                            <% } %>
+
+                            <!-- Share Buttons -->
+                            <% shareTitle = lowongan.judul + ' - ' + lowongan.perusahaan; shareUrl = '/bkk/' + lowongan.slug; %>
+                            <%- include('partials/share-buttons') %>
+
+                            <div class="mt-3">
+                                <a href="/bkk" style="color:var(--bkk-green);font-weight:600;text-decoration:none;">
+                                    <i class="fas fa-arrow-left me-2"></i>Kembali ke BKK
+                                </a>
+                            </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    <% if (lowongan.deadline) { %>
+                    <%
+                        const isExpiredSidebar = new Date(lowongan.deadline) < new Date();
+                        const daysLeft = Math.ceil((new Date(lowongan.deadline) - new Date()) / (1000*60*60*24));
+                    %>
+                    <div class="sidebar-card">
+                        <h6><i class="fas fa-clock text-danger me-2"></i>Status Pendaftaran</h6>
+                        <% if (isExpiredSidebar) { %>
+                        <div class="deadline-alert expired">
+                            <div class="fw-bold text-muted mb-1">Pendaftaran Berakhir</div>
+                            <div class="small text-muted"><%= new Date(lowongan.deadline).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}) %></div>
+                        </div>
+                        <% } else { %>
+                        <div class="deadline-alert">
+                            <div class="fw-bold text-danger mb-1">Sisa <%= daysLeft %> hari lagi</div>
+                            <div class="small text-muted">Deadline: <%= new Date(lowongan.deadline).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}) %></div>
+                        </div>
+                        <% } %>
+                    </div>
+                    <% } %>
+
+                    <div class="sidebar-card">
+                        <h6><i class="fas fa-info-circle text-primary me-2"></i>Ringkasan</h6>
+                        <div class="small">
+                            <div class="d-flex justify-content-between py-2 border-bottom">
+                                <span class="text-muted">Perusahaan</span>
+                                <span class="fw-semibold text-end" style="max-width:60%;"><%= lowongan.perusahaan %></span>
+                            </div>
+                            <% if (lowongan.lokasi) { %>
+                            <div class="d-flex justify-content-between py-2 border-bottom">
+                                <span class="text-muted">Lokasi</span>
+                                <span class="fw-semibold"><%= lowongan.lokasi %></span>
+                            </div>
+                            <% } %>
+                            <div class="d-flex justify-content-between py-2 border-bottom">
+                                <span class="text-muted">Kategori</span>
+                                <span class="fw-semibold"><%= (lowongan.kategori||'lainnya').charAt(0).toUpperCase()+(lowongan.kategori||'lainnya').slice(1) %></span>
+                            </div>
+                            <div class="d-flex justify-content-between py-2">
+                                <span class="text-muted">Diposting</span>
+                                <span class="fw-semibold"><%= new Date(lowongan.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}) %></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-card">
+                        <h6><i class="fas fa-briefcase text-success me-2"></i>Lowongan Lainnya</h6>
+                        <a href="/bkk" style="display:block;background:var(--bkk-green);color:white;padding:.65rem 1rem;border-radius:10px;text-decoration:none;font-size:.875rem;font-weight:600;text-align:center;transition:background .2s;" onmouseover="this.style.background='#059669'" onmouseout="this.style.background='var(--bkk-green)'">
+                            <i class="fas fa-list me-1"></i>Lihat Semua Lowongan
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
     <%- include('partials/footer') %>
     <script src="/assets/vendor/bootstrap5/bootstrap.bundle.min.js"></script>
     <script src="/assets/vendor/jquery3/jquery.min.js"></script>
-    <script>$(window).scroll(function(){if($(window).scrollTop()>50)$('.navbar-modern').addClass('scrolled');else$('.navbar-modern').removeClass('scrolled');});</script>
+    <script>
+        $(window).scroll(function() {
+            if ($(window).scrollTop() > 50) $('.navbar-modern').addClass('scrolled');
+            else $('.navbar-modern').removeClass('scrolled');
+        });
+    </script>
 </body>
 </html>

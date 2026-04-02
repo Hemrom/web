@@ -346,6 +346,8 @@
                             <%- berita.konten %>
                         <% } %>
                     </div>
+                    <% shareTitle = berita.judul; shareUrl = '/berita/' + berita.slug; %>
+                    <%- include('partials/share-buttons') %>
                 </div>
             </div>
         </div>
