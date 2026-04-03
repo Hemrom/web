@@ -207,7 +207,3 @@ exports.bulkDeleteKontak = async (req, res) => {
     res.status(500).send('Terjadi kesalahan');
   }
 };
-    console.error(error);
-    res.status(500).send('Terjadi kesalahan');
-  }
-};
