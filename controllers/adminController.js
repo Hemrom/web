@@ -164,7 +164,8 @@ exports.kontakMasuk = async (req, res) => {
     res.render('admin/kontak', {
       title: 'Kontak Masuk',
       user: req.session,
-      kontak
+      kontak,
+      query: req.query
     });
   } catch (error) {
     console.error(error);
@@ -178,6 +179,34 @@ exports.updateStatusKontak = async (req, res) => {
     await db.query('UPDATE kontak_masuk SET status = ? WHERE id = ?', [status, req.params.id]);
     res.redirect('/admin/kontak');
   } catch (error) {
+    console.error(error);
+    res.status(500).send('Terjadi kesalahan');
+  }
+};
+
+exports.deleteKontak = async (req, res) => {
+  try {
+    await db.query('DELETE FROM kontak_masuk WHERE id = ?', [req.params.id]);
+    res.redirect('/admin/kontak?success=deleted');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Terjadi kesalahan');
+  }
+};
+
+exports.bulkDeleteKontak = async (req, res) => {
+  try {
+    const ids = req.body.ids;
+    if (!ids || ids.length === 0) return res.redirect('/admin/kontak');
+    const idArr = Array.isArray(ids) ? ids : [ids];
+    const placeholders = idArr.map(() => '?').join(',');
+    await db.query(`DELETE FROM kontak_masuk WHERE id IN (${placeholders})`, idArr);
+    res.redirect('/admin/kontak?success=bulk_deleted');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Terjadi kesalahan');
+  }
+};
     console.error(error);
     res.status(500).send('Terjadi kesalahan');
   }

@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title><%= title %> - Admin Panel</title>
     <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
-    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
     <link href="/assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 </head>
 <body id="page-top">
@@ -20,15 +21,34 @@
                         <h1 class="h3 mb-0 text-gray-800">Kontak Masuk</h1>
                     </div>
 
+                    <% if (query && query.success === 'deleted') { %>
+                    <div class="alert alert-success alert-dismissible fade show">Pesan berhasil dihapus. <button type="button" class="close" data-dismiss="alert">&times;</button></div>
+                    <% } %>
+                    <% if (query && query.success === 'bulk_deleted') { %>
+                    <div class="alert alert-success alert-dismissible fade show">Pesan terpilih berhasil dihapus. <button type="button" class="close" data-dismiss="alert">&times;</button></div>
+                    <% } %>
+
                     <div class="card shadow mb-4">
-                        <div class="card-header py-3">
+                        <div class="card-header py-3 d-flex align-items-center justify-content-between">
                             <h6 class="m-0 font-weight-bold text-primary">Pesan dari Pengunjung</h6>
+                            <div id="bulkActions" style="display:none;">
+                                <form method="POST" action="/admin/kontak/bulk-delete" id="bulkDeleteForm" onsubmit="return confirm('Hapus semua pesan yang dipilih?')">
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                    <div id="bulkIdsContainer"></div>
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        <i class="fas fa-trash mr-1"></i> Hapus Terpilih (<span id="selectedCount">0</span>)
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
+                                            <th style="width:40px;">
+                                                <input type="checkbox" id="checkAll" title="Pilih Semua">
+                                            </th>
                                             <th>No</th>
                                             <th>Tanggal</th>
                                             <th>Nama</th>
@@ -42,11 +62,14 @@
                                     <tbody>
                                         <% if (kontak.length === 0) { %>
                                             <tr>
-                                                <td colspan="8" class="text-center">Belum ada pesan masuk</td>
+                                                <td colspan="9" class="text-center">Belum ada pesan masuk</td>
                                             </tr>
                                         <% } else { %>
                                             <% kontak.forEach((item, index) => { %>
                                                 <tr>
+                                                    <td>
+                                                        <input type="checkbox" class="row-check" value="<%= item.id %>">
+                                                    </td>
                                                     <td><%= index + 1 %></td>
                                                     <td><%= new Date(item.created_at).toLocaleDateString('id-ID') %></td>
                                                     <td><%= item.nama %></td>
@@ -54,7 +77,7 @@
                                                     <td><%= item.subjek || '-' %></td>
                                                     <td>
                                                         <small><%= item.pesan.substring(0, 50) %>...</small>
-                                                        <button type="button" class="btn btn-sm btn-link" data-toggle="modal" data-target="#pesanModal<%= item.id %>">
+                                                        <button type="button" class="btn btn-sm btn-link p-0" data-toggle="modal" data-target="#pesanModal<%= item.id %>">
                                                             Lihat
                                                         </button>
                                                     </td>
@@ -64,26 +87,30 @@
                                                         </span>
                                                     </td>
                                                     <td>
-                                                        <form method="POST" action="/admin/kontak/update-status/<%= item.id %>" style="display: inline;">
+                                                        <form method="POST" action="/admin/kontak/update-status/<%= item.id %>" style="display:inline;">
                                                             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                                            <select name="status" class="form-control form-control-sm" onchange="this.form.submit()">
+                                                            <select name="status" class="form-control form-control-sm d-inline-block" style="width:auto;" onchange="this.form.submit()">
                                                                 <option value="baru" <%= item.status === 'baru' ? 'selected' : '' %>>Baru</option>
                                                                 <option value="dibaca" <%= item.status === 'dibaca' ? 'selected' : '' %>>Dibaca</option>
                                                                 <option value="dibalas" <%= item.status === 'dibalas' ? 'selected' : '' %>>Dibalas</option>
                                                             </select>
                                                         </form>
+                                                        <form method="POST" action="/admin/kontak/delete/<%= item.id %>" style="display:inline;" onsubmit="return confirm('Hapus pesan ini?')">
+                                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                            <button type="submit" class="btn btn-danger btn-sm ml-1" title="Hapus">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </form>
                                                     </td>
                                                 </tr>
-                                                
+
                                                 <!-- Modal -->
                                                 <div class="modal fade" id="pesanModal<%= item.id %>" tabindex="-1" role="dialog">
                                                     <div class="modal-dialog" role="document">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
                                                                 <h5 class="modal-title">Pesan dari <%= item.nama %></h5>
-                                                                <button type="button" class="close" data-dismiss="modal">
-                                                                    <span>&times;</span>
-                                                                </button>
+                                                                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
                                                             </div>
                                                             <div class="modal-body">
                                                                 <p><strong>Email:</strong> <%= item.email %></p>
@@ -112,15 +139,43 @@
             <%- include('partials/footer') %>
         </div>
     </div>
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a>
+    <a class="scroll-to-top rounded" href="#page-top"><i class="fas fa-angle-up"></i></a>
     <script src="/assets/vendor/jquery/jquery.min.js"></script>
     <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
     <script src="/assets/js/sb-admin-2.min.js"></script>
     <script src="/assets/vendor/datatables/jquery.dataTables.min.js"></script>
     <script src="/assets/vendor/datatables/dataTables.bootstrap4.min.js"></script>
-    <script src="/assets/js/demo/datatables-demo.js"></script>
+    <script>
+        $(document).ready(function() { $('#dataTable').DataTable({ order: [] }); });
+
+        // Check all
+        document.getElementById('checkAll').addEventListener('change', function() {
+            document.querySelectorAll('.row-check').forEach(cb => cb.checked = this.checked);
+            updateBulkActions();
+        });
+
+        document.querySelectorAll('.row-check').forEach(cb => {
+            cb.addEventListener('change', updateBulkActions);
+        });
+
+        function updateBulkActions() {
+            const checked = document.querySelectorAll('.row-check:checked');
+            const count = checked.length;
+            document.getElementById('selectedCount').textContent = count;
+            document.getElementById('bulkActions').style.display = count > 0 ? 'block' : 'none';
+
+            // Update hidden inputs
+            const container = document.getElementById('bulkIdsContainer');
+            container.innerHTML = '';
+            checked.forEach(cb => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'ids[]';
+                input.value = cb.value;
+                container.appendChild(input);
+            });
+        }
+    </script>
 </body>
 </html>

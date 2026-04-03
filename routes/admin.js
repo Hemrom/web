@@ -91,6 +91,8 @@ router.post('/media-sosial/delete/:id', isAuthenticated, csrfProtect, validateId
 // Kontak Masuk
 router.get('/kontak', isAuthenticated, adminController.kontakMasuk);
 router.post('/kontak/update-status/:id', isAuthenticated, csrfProtect, validateIdParam, adminController.updateStatusKontak);
+router.post('/kontak/delete/:id', isAuthenticated, csrfProtect, validateIdParam, adminController.deleteKontak);
+router.post('/kontak/bulk-delete', isAuthenticated, csrfProtect, adminController.bulkDeleteKontak);
 
 // Manajemen User
 router.get('/users', isAuthenticated, isAdmin, userController.index);
