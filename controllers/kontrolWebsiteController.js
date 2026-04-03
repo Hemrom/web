@@ -42,7 +42,7 @@ exports.index = async (req, res) => {
 
 exports.saveTampilan = async (req, res) => {
   try {
-    const fields = ['theme_mode','primary_color','secondary_color','navbar_bg','footer_bg','font_family','border_radius','hero_style'];
+    const fields = ['theme_mode','primary_color','secondary_color','navbar_bg','footer_bg','font_family','border_radius','hero_style','hero_bg_style'];
     for (const key of fields) {
       const value = req.body[key];
       if (value) {
@@ -86,6 +86,7 @@ exports.themeCss = async (req, res) => {
     const fontFamily = settings.font_family || 'Inter';
     const borderRadius = settings.border_radius || '16';
     const heroStyle = settings.hero_style || 'gradient';
+    const heroBgStyle = settings.hero_bg_style || 'dark-space';
 
     const isDark = mode === 'dark';
     const bodyBg = isDark ? '#0f172a' : '#ffffff';
@@ -98,6 +99,58 @@ exports.themeCss = async (req, res) => {
     // Derive lighter/darker variants
     const primaryLight = primary + '22';
     const primaryMid = primary + '44';
+
+    // Hero background styles
+    const heroBgMap = {
+      'dark-space': `background: linear-gradient(135deg, #0f0c29 0%, #302b63 40%, #24243e 100%);`,
+      'light-aurora': `background: linear-gradient(135deg, #e0f2fe 0%, #f0fdf4 40%, #fdf4ff 100%);`,
+      'soft-blue': `background: linear-gradient(135deg, #dbeafe 0%, #ede9fe 50%, #e0f2fe 100%);`,
+      'warm-sunrise': `background: linear-gradient(135deg, #fff7ed 0%, #fef3c7 40%, #fce7f3 100%);`,
+      'mint-fresh': `background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 40%, #e0f2fe 100%);`,
+      'royal-purple': `background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #1e1b4b 100%);`,
+      'ocean-deep': `background: linear-gradient(135deg, #0c4a6e 0%, #0369a1 50%, #0ea5e9 100%);`,
+      'rose-gold': `background: linear-gradient(135deg, #fff1f2 0%, #fce7f3 40%, #fdf4ff 100%);`,
+      'custom-primary': `background: linear-gradient(135deg, ${secondary} 0%, ${primary} 100%);`,
+    };
+
+    const heroTextMap = {
+      'dark-space': 'light',
+      'light-aurora': 'dark',
+      'soft-blue': 'dark',
+      'warm-sunrise': 'dark',
+      'mint-fresh': 'dark',
+      'royal-purple': 'light',
+      'ocean-deep': 'light',
+      'rose-gold': 'dark',
+      'custom-primary': 'light',
+    };
+
+    const heroBgCss = heroBgMap[heroBgStyle] || heroBgMap['dark-space'];
+    const heroTextMode = heroTextMap[heroBgStyle] || 'light';
+
+    // Light hero text overrides
+    const heroLightOverrides = heroTextMode === 'dark' ? `
+.hero-default { ${heroBgCss} }
+.hero-title-main { color: #1e293b !important; text-shadow: none !important; }
+.hero-desc-main { color: #475569 !important; }
+.hero-eyebrow { background: rgba(0,0,0,.07) !important; border-color: rgba(0,0,0,.12) !important; color: #334155 !important; }
+.hero-card-float { background: rgba(255,255,255,.7) !important; border-color: rgba(0,0,0,.1) !important; backdrop-filter: blur(12px); }
+.hero-card-label { color: #64748b !important; }
+.hero-card-value { color: #1e293b !important; }
+.hero-orb-1 { background: rgba(99,102,241,.2) !important; }
+.hero-orb-2 { background: rgba(14,165,233,.15) !important; }
+.hero-orb-3 { background: rgba(236,72,153,.12) !important; }
+.hero-orb-4 { background: rgba(16,185,129,.1) !important; }
+.hero-grid { background-image: linear-gradient(rgba(0,0,0,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,.04) 1px, transparent 1px) !important; }
+.btn-hero-outline { background: rgba(0,0,0,.06) !important; border-color: rgba(0,0,0,.2) !important; color: #1e293b !important; }
+.btn-hero-outline:hover { background: rgba(0,0,0,.12) !important; color: #1e293b !important; }
+.hero-scroll-hint { color: rgba(0,0,0,.4) !important; }
+.scroll-mouse { border-color: rgba(0,0,0,.25) !important; }
+.scroll-wheel { background: rgba(0,0,0,.4) !important; }
+.gradient-text { background: linear-gradient(135deg, ${primary}, ${secondary}, #6366f1) !important; -webkit-background-clip: text !important; -webkit-text-fill-color: transparent !important; background-clip: text !important; }
+` : `
+.hero-default { ${heroBgCss} }
+`;
 
     const css = `
 @import url('https://fonts.googleapis.com/css2?family=${fontFamily.replace(/ /g,'+')}:wght@300;400;500;600;700;800&display=swap');
@@ -141,6 +194,7 @@ body { background-color: ${bodyBg} !important; color: ${bodyColor} !important; }
 .news-badge { background: ${primary} !important; }
 .link-terkait-header { background: ${primary} !important; }
 .medsos-section { background: linear-gradient(135deg, ${secondary}dd 0%, ${primary}cc 100%) !important; }
+${heroLightOverrides}
 ${isDark ? `
 .stat-card, .feature-card, .news-card { background: ${cardBg} !important; border-color: ${gray100} !important; }
 .section-title, .feature-title, .news-title { color: #f1f5f9 !important; }
