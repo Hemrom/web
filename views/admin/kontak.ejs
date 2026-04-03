@@ -87,20 +87,30 @@
                                                         </span>
                                                     </td>
                                                     <td>
-                                                        <form method="POST" action="/admin/kontak/update-status/<%= item.id %>" style="display:inline;">
-                                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                                            <select name="status" class="form-control form-control-sm d-inline-block" style="width:auto;" onchange="this.form.submit()">
-                                                                <option value="baru" <%= item.status === 'baru' ? 'selected' : '' %>>Baru</option>
-                                                                <option value="dibaca" <%= item.status === 'dibaca' ? 'selected' : '' %>>Dibaca</option>
-                                                                <option value="dibalas" <%= item.status === 'dibalas' ? 'selected' : '' %>>Dibalas</option>
-                                                            </select>
-                                                        </form>
-                                                        <form method="POST" action="/admin/kontak/delete/<%= item.id %>" style="display:inline;" onsubmit="return confirm('Hapus pesan ini?')">
-                                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                                            <button type="submit" class="btn btn-danger btn-sm ml-1" title="Hapus">
-                                                                <i class="fas fa-trash"></i>
+                                                        <div class="dropdown">
+                                                            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
+                                                                Aksi
                                                             </button>
-                                                        </form>
+                                                            <div class="dropdown-menu">
+                                                                <h6 class="dropdown-header">Ubah Status</h6>
+                                                                <% ['baru','dibaca','dibalas'].forEach(function(s) { %>
+                                                                <form method="POST" action="/admin/kontak/update-status/<%= item.id %>">
+                                                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                                    <input type="hidden" name="status" value="<%= s %>">
+                                                                    <button type="submit" class="dropdown-item <%= item.status === s ? 'active' : '' %>">
+                                                                        <%= s.charAt(0).toUpperCase() + s.slice(1) %>
+                                                                    </button>
+                                                                </form>
+                                                                <% }) %>
+                                                                <div class="dropdown-divider"></div>
+                                                                <form method="POST" action="/admin/kontak/delete/<%= item.id %>" onsubmit="return confirm('Hapus pesan ini?')">
+                                                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                                    <button type="submit" class="dropdown-item text-danger">
+                                                                        <i class="fas fa-trash fa-sm mr-1"></i> Hapus
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
                                                     </td>
                                                 </tr>
 
