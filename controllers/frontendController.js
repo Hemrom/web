@@ -28,7 +28,7 @@ const getMediaSosialFooter = async () => {
   const cached = cache.get('media_sosial_footer');
   if (cached) return cached;
   const [rows] = await db.query(
-    "SELECT id, judul, platform, embed_url FROM media_sosial WHERE status = 'aktif' ORDER BY urutan ASC, created_at DESC"
+    "SELECT id, judul, platform, embed_url, thumbnail FROM media_sosial WHERE status = 'aktif' ORDER BY urutan ASC, created_at DESC"
   );
   cache.set('media_sosial_footer', rows, 300);
   return rows;
