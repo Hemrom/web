@@ -2011,10 +2011,17 @@
                 </div>
                 <div class="medsos-platforms">
                     <% const platformColors = {instagram:'#E1306C',youtube:'#FF0000',facebook:'#1877F2',tiktok:'#010101',twitter:'#000000',threads:'#101010'}; %>
-                    <% const platformIcons = {instagram:'fa-instagram',youtube:'fa-youtube',facebook:'fa-facebook-f',tiktok:'fa-tiktok',twitter:'fa-x-twitter',threads:'fa-threads'}; %>
+                    <% const platformIcons = {instagram:'fa-instagram',youtube:'fa-youtube',facebook:'fa-facebook-f',tiktok:'fa-tiktok',twitter:'_x_icon',threads:'_threads_icon'}; %>
+                    <% const platformLabels = {instagram:'Instagram',youtube:'YouTube',facebook:'Facebook',tiktok:'TikTok',twitter:'X/Twitter',threads:'Threads'}; %>
                     <% mediaSosialFooter.forEach(function(ms) { %>
                     <a href="<%= ms.embed_url %>" target="_blank" rel="noopener" class="medsos-platform-btn" style="background:<%= platformColors[ms.platform]||'#333' %>;" title="<%= ms.judul %>">
+                        <% if (ms.platform === 'twitter') { %>
+                        <span style="font-weight:900;font-size:1rem;line-height:1;font-family:Arial,sans-serif;">𝕏</span>
+                        <% } else if (ms.platform === 'threads') { %>
+                        <span style="font-weight:900;font-size:1.1rem;line-height:1;font-family:Arial,sans-serif;">@</span>
+                        <% } else { %>
                         <i class="fab <%= platformIcons[ms.platform]||'fa-globe' %>"></i>
+                        <% } %>
                     </a>
                     <% }) %>
                 </div>
@@ -2026,8 +2033,10 @@
                     <% const featured = mediaSosialFooter[0]; %>
                     <div class="medsos-featured">
                         <div class="medsos-featured-badge">
-                            <i class="fab <%= platformIcons[featured.platform]||'fa-globe' %> me-1"></i>
-                            <%= featured.platform.charAt(0).toUpperCase()+featured.platform.slice(1) %>
+                            <% if (featured.platform === 'twitter') { %><span style="font-weight:900;font-size:.9rem;font-family:Arial,sans-serif;margin-right:.3rem;">𝕏</span>
+                            <% } else if (featured.platform === 'threads') { %><span style="font-weight:900;font-size:1rem;font-family:Arial,sans-serif;margin-right:.3rem;">@</span>
+                            <% } else { %><i class="fab <%= platformIcons[featured.platform]||'fa-globe' %> me-1"></i><% } %>
+                            <%= featured.platform === 'twitter' ? 'X/Twitter' : featured.platform.charAt(0).toUpperCase()+featured.platform.slice(1) %>
                         </div>
                         <h3 class="medsos-featured-title"><%= featured.judul %></h3>
                         <div class="medsos-embed-wrap">
@@ -2035,7 +2044,7 @@
                             const ytMatch = featured.embed_url.match(/(?:v=|youtu\.be\/)([^&\n?#]+)/);
                             const ytId = ytMatch ? ytMatch[1] : null;
                             const bgMap = {instagram:'linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045)',facebook:'linear-gradient(135deg,#1877F2,#0d5dbf)',tiktok:'linear-gradient(135deg,#010101,#69C9D0)',twitter:'linear-gradient(135deg,#000,#333)',threads:'linear-gradient(135deg,#101010,#444)'};
-                            const iconMap = {instagram:'fa-instagram',facebook:'fa-facebook-f',tiktok:'fa-tiktok',twitter:'fa-x-twitter',threads:'fa-threads'};
+                            const iconMap = {instagram:'fa-instagram',facebook:'fa-facebook-f',tiktok:'fa-tiktok',twitter:'fa-twitter',threads:'fa-at'};
                             const labelMap = {instagram:'Lihat di Instagram',facebook:'Lihat di Facebook',tiktok:'Lihat di TikTok',twitter:'Lihat di X/Twitter',threads:'Lihat di Threads'};
                             %>
                             <% if (featured.platform === 'youtube' && ytId) { %>
@@ -2120,7 +2129,13 @@
                         <% mediaSosialFooter.slice(1).forEach(function(ms, idx) { %>
                         <a href="<%= ms.embed_url %>" target="_blank" rel="noopener" class="medsos-list-item">
                             <div class="medsos-list-icon" style="background:<%= platformColors[ms.platform]||'#333' %>;">
+                                <% if (ms.platform === 'twitter') { %>
+                                <span style="font-weight:900;font-size:1rem;color:white;font-family:Arial,sans-serif;">𝕏</span>
+                                <% } else if (ms.platform === 'threads') { %>
+                                <span style="font-weight:900;font-size:1.2rem;color:white;font-family:Arial,sans-serif;">@</span>
+                                <% } else { %>
                                 <i class="fab <%= platformIcons[ms.platform]||'fa-globe' %>"></i>
+                                <% } %>
                             </div>
                             <div class="medsos-list-content">
                                 <div class="medsos-list-platform"><%= ms.platform.charAt(0).toUpperCase()+ms.platform.slice(1) %></div>
