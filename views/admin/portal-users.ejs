@@ -5,7 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title><%= title %> - Admin Panel</title>
     <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
-    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+    <style>
+        .role-badge { font-size:.75rem;padding:.3rem .7rem;border-radius:20px;font-weight:700; }
+        .role-bkk { background:#d1fae5;color:#065f46; }
+        .role-osis { background:#fef3c7;color:#92400e; }
+        .role-jurusan { background:#dbeafe;color:#1e40af; }
+        .action-btn { width:32px;height:32px;border-radius:8px;border:none;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s; }
+        .action-btn:hover { transform:translateY(-1px);box-shadow:0 4px 10px rgba(0,0,0,.15); }
+        .import-zone { border:2px dashed #cbd5e1;border-radius:12px;padding:1.5rem;text-align:center;transition:border-color .2s;cursor:pointer; }
+        .import-zone:hover { border-color:#4e73df; }
+    </style>
 </head>
 <body id="page-top">
 <div id="wrapper">
@@ -14,86 +25,117 @@
         <div id="content">
             <%- include('partials/topbar', { user }) %>
             <div class="container-fluid">
-                <h1 class="h3 mb-4 text-gray-800">Kelola Akun Portal (BKK / OSIS / Jurusan)</h1>
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Kelola Akun Portal</h1>
+                    <div class="d-flex gap-2">
+                        <a href="/admin/portal-users/export" class="btn btn-success btn-sm">
+                            <i class="fas fa-file-excel mr-1"></i>Export Excel
+                        </a>
+                        <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#importModal">
+                            <i class="fas fa-file-import mr-1"></i>Import Excel
+                        </button>
+                    </div>
+                </div>
+
                 <% if (success == 1) { %><div class="alert alert-success alert-dismissible fade show">Akun berhasil dibuat.<button type="button" class="close" data-dismiss="alert">&times;</button></div><% } %>
                 <% if (success == 2) { %><div class="alert alert-info alert-dismissible fade show">Status akun diperbarui.<button type="button" class="close" data-dismiss="alert">&times;</button></div><% } %>
                 <% if (success == 3) { %><div class="alert alert-danger alert-dismissible fade show">Akun berhasil dihapus.<button type="button" class="close" data-dismiss="alert">&times;</button></div><% } %>
+                <% if (success == 4) { %><div class="alert alert-success alert-dismissible fade show">Akun berhasil diperbarui.<button type="button" class="close" data-dismiss="alert">&times;</button></div><% } %>
+                <% if (success == 5) { %><div class="alert alert-success alert-dismissible fade show"><i class="fas fa-check-circle mr-1"></i>Import selesai: <strong><%= query.imported %></strong> berhasil, <strong><%= query.skipped %></strong> dilewati.<button type="button" class="close" data-dismiss="alert">&times;</button></div><% } %>
                 <% if (typeof query !== 'undefined' && query.error) { %><div class="alert alert-danger alert-dismissible fade show"><%= query.error %><button type="button" class="close" data-dismiss="alert">&times;</button></div><% } %>
 
                 <div class="row">
-                    <div class="col-lg-5">
+                    <!-- Form Buat Akun -->
+                    <div class="col-lg-4">
                         <div class="card shadow mb-4">
-                            <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Buat Akun Baru</h6></div>
+                            <div class="card-header py-3 d-flex align-items-center" style="background:linear-gradient(135deg,#4e73df,#224abe);">
+                                <i class="fas fa-user-plus text-white mr-2"></i>
+                                <h6 class="m-0 font-weight-bold text-white">Buat Akun Baru</h6>
+                            </div>
                             <div class="card-body">
                                 <form method="POST" action="/admin/portal-users/create">
                                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                    <div class="form-group"><label>Nama Lengkap</label><input type="text" class="form-control" name="nama" required></div>
-                                    <div class="form-group"><label>Username</label><input type="text" class="form-control" name="username" required></div>
-                                    <div class="form-group"><label>Password</label><input type="password" class="form-control" name="password" required minlength="6"></div>
-                                    <div class="form-group"><label>Role</label>
-                                        <select class="form-control" name="role" id="roleSelect" onchange="toggleJurusan()">
+                                    <div class="form-group"><label class="font-weight-bold small">Nama Lengkap</label><input type="text" class="form-control" name="nama" required></div>
+                                    <div class="form-group"><label class="font-weight-bold small">Username</label><input type="text" class="form-control" name="username" required></div>
+                                    <div class="form-group"><label class="font-weight-bold small">Password</label><input type="password" class="form-control" name="password" required minlength="6"></div>
+                                    <div class="form-group"><label class="font-weight-bold small">Role</label>
+                                        <select class="form-control" name="role" id="roleSelect" onchange="toggleJurusan('jurusanField','roleSelect')">
                                             <option value="bkk">BKK</option>
                                             <option value="osis">OSIS</option>
                                             <option value="jurusan">Jurusan</option>
                                         </select>
                                     </div>
                                     <div class="form-group" id="jurusanField" style="display:none;">
-                                        <label>Jurusan</label>
+                                        <label class="font-weight-bold small">Jurusan</label>
                                         <select class="form-control" name="jurusan">
-                                            <option value="TKJ">TKJ</option>
-                                            <option value="TKRO">TKRO</option>
-                                            <option value="Kuliner">Kuliner</option>
-                                            <option value="TPTUP">TPTUP</option>
+                                            <option value="TKJ">TKJ</option><option value="TKRO">TKRO</option>
+                                            <option value="Kuliner">Kuliner</option><option value="TPTUP">TPTUP</option>
                                         </select>
                                     </div>
                                     <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-user-plus mr-1"></i>Buat Akun</button>
                                 </form>
                             </div>
                         </div>
+
+                        <!-- Info Login URL -->
+                        <div class="card border-left-info shadow-sm mb-4">
+                            <div class="card-body py-3">
+                                <div class="small font-weight-bold text-info mb-2"><i class="fas fa-link mr-1"></i>URL Login Portal</div>
+                                <div class="small mb-1"><span class="badge badge-success mr-1">BKK</span><code>/bkk/login</code></div>
+                                <div class="small mb-1"><span class="badge badge-warning mr-1">OSIS</span><code>/osis/login</code></div>
+                                <div class="small"><span class="badge badge-info mr-1">Jurusan</span><code>/jurusan-portal/login</code></div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-lg-7">
+
+                    <!-- Tabel Akun -->
+                    <div class="col-lg-8">
                         <div class="card shadow mb-4">
-                            <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Daftar Akun Portal</h6></div>
-                            <div class="card-body">
+                            <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                                <h6 class="m-0 font-weight-bold text-primary">Daftar Akun Portal (<%= portalUsers.length %> akun)</h6>
+                            </div>
+                            <div class="card-body p-0">
                                 <div class="table-responsive">
-                                    <table class="table table-bordered table-hover">
-                                        <thead class="thead-light"><tr><th>Nama</th><th>Username</th><th>Role</th><th>Jurusan</th><th>Status</th><th>Aksi</th></tr></thead>
+                                    <table class="table table-hover mb-0">
+                                        <thead style="background:#f8fafc;">
+                                            <tr><th class="pl-3">Nama</th><th>Username</th><th>Role</th><th>Jurusan</th><th>Status</th><th class="text-center">Aksi</th></tr>
+                                        </thead>
                                         <tbody>
-                                        <% if (!portalUsers||portalUsers.length===0) { %><tr><td colspan="6" class="text-center">Belum ada akun</td></tr>
+                                        <% if (!portalUsers||portalUsers.length===0) { %>
+                                        <tr><td colspan="6" class="text-center py-4 text-muted">Belum ada akun portal</td></tr>
                                         <% } else { portalUsers.forEach(u=>{ %>
                                         <tr>
-                                            <td><%= u.nama %></td>
-                                            <td><code><%= u.username %></code></td>
-                                            <td>
-                                                <span class="badge badge-<%= u.role==='bkk'?'success':u.role==='osis'?'warning':'info' %>">
-                                                    <%= u.role.toUpperCase() %>
-                                                </span>
-                                            </td>
-                                            <td><%= u.jurusan||'-' %></td>
-                                            <td><span class="badge badge-<%= u.aktif?'success':'secondary' %>"><%= u.aktif?'Aktif':'Nonaktif' %></span></td>
-                                            <td>
+                                            <td class="pl-3 font-weight-600"><%= u.nama %></td>
+                                            <td><code class="text-primary"><%= u.username %></code></td>
+                                            <td><span class="role-badge role-<%= u.role %>"><%= u.role.toUpperCase() %></span></td>
+                                            <td><small class="text-muted"><%= u.jurusan||'-' %></small></td>
+                                            <td><span class="badge badge-<%= u.aktif?'success':'secondary' %> px-2 py-1"><%= u.aktif?'Aktif':'Nonaktif' %></span></td>
+                                            <td class="text-center">
+                                                <!-- Edit -->
+                                                <button class="action-btn btn-edit mr-1" style="background:#eef2ff;color:#4e73df;"
+                                                    onclick="openEdit(<%= u.id %>,'<%= u.nama.replace(/'/g,`\\'`) %>','<%= u.username %>','<%= u.role %>','<%= u.jurusan||'' %>')"
+                                                    title="Edit">
+                                                    <i class="fas fa-edit fa-sm"></i>
+                                                </button>
+                                                <!-- Toggle -->
                                                 <form method="POST" action="/admin/portal-users/toggle/<%= u.id %>" style="display:inline">
                                                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                                    <button class="btn btn-<%= u.aktif?'warning':'success' %> btn-sm" title="<%= u.aktif?'Nonaktifkan':'Aktifkan' %>">
-                                                        <i class="fas fa-<%= u.aktif?'ban':'check' %>"></i>
+                                                    <button class="action-btn mr-1" style="background:<%= u.aktif?'#fef3c7':'#d1fae5' %>;color:<%= u.aktif?'#92400e':'#065f46' %>;" title="<%= u.aktif?'Nonaktifkan':'Aktifkan' %>">
+                                                        <i class="fas fa-<%= u.aktif?'ban':'check' %> fa-sm"></i>
                                                     </button>
                                                 </form>
-                                                <form method="POST" action="/admin/portal-users/delete/<%= u.id %>" style="display:inline" onsubmit="return confirm('Hapus akun ini?')">
+                                                <!-- Delete -->
+                                                <form method="POST" action="/admin/portal-users/delete/<%= u.id %>" style="display:inline" onsubmit="return confirm('Hapus akun <%= u.nama %>?')">
                                                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                                    <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                                    <button class="action-btn" style="background:#fee2e2;color:#dc2626;" title="Hapus">
+                                                        <i class="fas fa-trash fa-sm"></i>
+                                                    </button>
                                                 </form>
                                             </td>
                                         </tr>
                                         <% }) } %>
                                         </tbody>
                                     </table>
-                                </div>
-                                <div class="alert alert-info small mt-3">
-                                    <i class="fas fa-info-circle mr-1"></i>
-                                    <strong>URL Login:</strong>
-                                    BKK: <code>/bkk/login</code> |
-                                    OSIS: <code>/osis/login</code> |
-                                    Jurusan: <code>/jurusan-portal/login</code>
                                 </div>
                             </div>
                         </div>
@@ -104,14 +146,117 @@
         <%- include('partials/footer') %>
     </div>
 </div>
+
+<!-- Modal Edit -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header" style="background:linear-gradient(135deg,#4e73df,#224abe);">
+                <h5 class="modal-title text-white"><i class="fas fa-user-edit mr-2"></i>Edit Akun Portal</h5>
+                <button type="button" class="close text-white" data-dismiss="modal"><span>&times;</span></button>
+            </div>
+            <form method="POST" id="editForm" action="">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <div class="modal-body">
+                    <div class="form-group"><label class="font-weight-bold small">Nama Lengkap</label><input type="text" class="form-control" name="nama" id="edit_nama" required></div>
+                    <div class="form-group"><label class="font-weight-bold small">Username</label><input type="text" class="form-control" name="username" id="edit_username" required></div>
+                    <div class="form-group"><label class="font-weight-bold small">Password Baru <span class="text-muted font-weight-normal">(kosongkan jika tidak diubah)</span></label><input type="password" class="form-control" name="password" placeholder="Minimal 6 karakter" minlength="6"></div>
+                    <div class="form-group"><label class="font-weight-bold small">Role</label>
+                        <select class="form-control" name="role" id="edit_role" onchange="toggleJurusan('edit_jurusanField','edit_role')">
+                            <option value="bkk">BKK</option><option value="osis">OSIS</option><option value="jurusan">Jurusan</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="edit_jurusanField">
+                        <label class="font-weight-bold small">Jurusan</label>
+                        <select class="form-control" name="jurusan" id="edit_jurusan">
+                            <option value="TKJ">TKJ</option><option value="TKRO">TKRO</option>
+                            <option value="Kuliner">Kuliner</option><option value="TPTUP">TPTUP</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i>Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Import -->
+<div class="modal fade" id="importModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header" style="background:linear-gradient(135deg,#36b9cc,#1a8a9a);">
+                <h5 class="modal-title text-white"><i class="fas fa-file-import mr-2"></i>Import Akun dari Excel</h5>
+                <button type="button" class="close text-white" data-dismiss="modal"><span>&times;</span></button>
+            </div>
+            <form method="POST" action="/admin/portal-users/import" enctype="multipart/form-data">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <div class="modal-body">
+                    <div class="alert alert-info small mb-3">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        <strong>Format kolom Excel (.xlsx):</strong><br>
+                        <code>Username | Nama | Role | Jurusan | Status | Password</code><br>
+                        <small>Role: <code>bkk</code> / <code>osis</code> / <code>jurusan</code> &nbsp;|&nbsp; Password opsional (default = username) &nbsp;|&nbsp; Username duplikat dilewati</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold small">Upload File Excel (.xlsx)</label>
+                        <div class="import-zone" id="dropZone" onclick="document.getElementById('excelFile').click()">
+                            <i class="fas fa-file-excel fa-2x text-success mb-2 d-block"></i>
+                            <div class="font-weight-600 text-gray-700">Klik untuk pilih file</div>
+                            <div class="small text-muted mt-1" id="fileName">Format: .xlsx</div>
+                        </div>
+                        <input type="file" name="excel_file" id="excelFile" accept=".xlsx,.xls" style="display:none;" required onchange="showFileName(this)">
+                    </div>
+                    <div class="text-center">
+                        <a href="/admin/portal-users/export" class="small text-info">
+                            <i class="fas fa-download mr-1"></i>Download template dari data yang ada
+                        </a>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-info"><i class="fas fa-upload mr-1"></i>Import Sekarang</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script src="/assets/vendor/jquery/jquery.min.js"></script>
 <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
 <script src="/assets/js/sb-admin-2.min.js"></script>
 <script>
-function toggleJurusan() {
-    const role = document.getElementById('roleSelect').value;
-    document.getElementById('jurusanField').style.display = role === 'jurusan' ? 'block' : 'none';
+function toggleJurusan(fieldId, selectId) {
+    const role = document.getElementById(selectId).value;
+    const field = document.getElementById(fieldId);
+    if (field) field.style.display = role === 'jurusan' ? 'block' : 'none';
+}
+
+function openEdit(id, nama, username, role, jurusan) {
+    document.getElementById('editForm').action = '/admin/portal-users/edit/' + id;
+    document.getElementById('edit_nama').value = nama;
+    document.getElementById('edit_username').value = username;
+    document.getElementById('edit_role').value = role;
+    document.getElementById('edit_jurusan').value = jurusan || 'TKJ';
+    toggleJurusan('edit_jurusanField', 'edit_role');
+    $('#editModal').modal('show');
+}
+
+// CSV file reader
+document.getElementById('csvFile') && document.getElementById('csvFile').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) { document.getElementById('csvData').value = ev.target.result; };
+    reader.readAsText(file);
+});
+function showFileName(input) {
+    const name = input.files[0] ? input.files[0].name : 'Format: .xlsx';
+    document.getElementById('fileName').textContent = name;
+    document.getElementById('dropZone').style.borderColor = '#1cc88a';
 }
 </script>
 </body>

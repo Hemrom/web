@@ -393,6 +393,25 @@ exports.adminPortalUserCreate = async (req, res) => {
   }
 };
 
+exports.adminPortalUserEdit = async (req, res) => {
+  try {
+    const { nama, username, role, jurusan, password } = req.body;
+    if (password && password.trim() !== '') {
+      const hash = await bcrypt.hash(password, 10);
+      await db.query('UPDATE portal_users SET nama=?,username=?,role=?,jurusan=?,password=? WHERE id=?',
+        [nama, username, role, jurusan||null, hash, req.params.id]);
+    } else {
+      await db.query('UPDATE portal_users SET nama=?,username=?,role=?,jurusan=? WHERE id=?',
+        [nama, username, role, jurusan||null, req.params.id]);
+    }
+    res.redirect('/admin/portal-users?success=4');
+  } catch (err) {
+    if (err.code === 'ER_DUP_ENTRY') return res.redirect('/admin/portal-users?error=Username+sudah+digunakan');
+    console.error(err);
+    res.redirect('/admin/portal-users?error=Terjadi+kesalahan');
+  }
+};
+
 exports.adminPortalUserDelete = async (req, res) => {
   await db.query('DELETE FROM portal_users WHERE id=?', [req.params.id]);
   res.redirect('/admin/portal-users?success=3');
@@ -401,6 +420,69 @@ exports.adminPortalUserDelete = async (req, res) => {
 exports.adminPortalUserToggle = async (req, res) => {
   await db.query('UPDATE portal_users SET aktif = NOT aktif WHERE id=?', [req.params.id]);
   res.redirect('/admin/portal-users?success=2');
+};
+
+exports.adminPortalUserExport = async (req, res) => {
+  try {
+    const XLSX = require('xlsx');
+    const [users] = await db.query('SELECT username,nama,role,jurusan,aktif FROM portal_users ORDER BY role,nama');
+    const data = users.map(u => ({
+      Username: u.username,
+      Nama: u.nama,
+      Role: u.role,
+      Jurusan: u.jurusan || '',
+      Status: u.aktif ? 'Aktif' : 'Nonaktif',
+      Password: '' // kosong — password lama tidak bisa di-export (sudah di-hash)
+    }));
+    const ws = XLSX.utils.json_to_sheet(data);
+    ws['!cols'] = [{wch:18},{wch:28},{wch:10},{wch:12},{wch:10},{wch:20}];
+    // Tambah catatan di baris pertama setelah data
+    const lastRow = data.length + 2;
+    ws[`A${lastRow}`] = { v: '* Kolom Password: isi untuk set password baru saat import. Kosongkan = password default sama dengan Username.' };
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Akun Portal');
+    const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename="portal-users.xlsx"');
+    res.send(buf);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Terjadi kesalahan');
+  }
+};
+
+exports.adminPortalUserImport = async (req, res) => {
+  try {
+    const XLSX = require('xlsx');
+    const multer = require('multer');
+    const upload = multer({ storage: multer.memoryStorage() }).single('excel_file');
+    upload(req, res, async (err) => {
+      if (err) return res.redirect('/admin/portal-users?error=Gagal+upload');
+      if (!req.file) return res.redirect('/admin/portal-users?error=File+tidak+ditemukan');
+      const wb = XLSX.read(req.file.buffer, { type: 'buffer' });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, { defval: '' });
+      let imported = 0, skipped = 0;
+      for (const row of rows) {
+        const username = (row['Username'] || row['username'] || '').toString().trim();
+        const nama = (row['Nama'] || row['nama'] || '').toString().trim();
+        const role = (row['Role'] || row['role'] || '').toString().trim().toLowerCase();
+        const jurusan = (row['Jurusan'] || row['jurusan'] || '').toString().trim() || null;
+        const pwd = (row['Password'] || row['password'] || username).toString().trim() || username;
+        if (!username || !nama || !['bkk','osis','jurusan'].includes(role)) { skipped++; continue; }
+        try {
+          const hash = await bcrypt.hash(pwd, 10);
+          await db.query('INSERT IGNORE INTO portal_users (username,password,nama,role,jurusan) VALUES (?,?,?,?,?)',
+            [username, hash, nama, role, jurusan]);
+          imported++;
+        } catch (e) { skipped++; }
+      }
+      res.redirect(`/admin/portal-users?success=5&imported=${imported}&skipped=${skipped}`);
+    });
+  } catch (err) {
+    console.error(err);
+    res.redirect('/admin/portal-users?error=Gagal+import');
+  }
 };
 
 // ── ADMIN: Kelola BKK ─────────────────────────────────────────────────────────

@@ -166,8 +166,11 @@ router.post('/fasilitas/delete/:id', isAuthenticated, csrfProtect, validateIdPar
 // Portal Users (BKK, OSIS, Jurusan)
 router.get('/portal-users', isAuthenticated, isAdmin, portalController.adminPortalUsers);
 router.post('/portal-users/create', isAuthenticated, isAdmin, csrfProtect, portalController.adminPortalUserCreate);
+router.post('/portal-users/edit/:id', isAuthenticated, isAdmin, csrfProtect, validateIdParam, portalController.adminPortalUserEdit);
 router.post('/portal-users/delete/:id', isAuthenticated, isAdmin, csrfProtect, validateIdParam, portalController.adminPortalUserDelete);
 router.post('/portal-users/toggle/:id', isAuthenticated, isAdmin, csrfProtect, validateIdParam, portalController.adminPortalUserToggle);
+router.get('/portal-users/export', isAuthenticated, isAdmin, portalController.adminPortalUserExport);
+router.post('/portal-users/import', isAuthenticated, isAdmin, csrfProtect, portalController.adminPortalUserImport);
 
 // Alumni
 router.get('/alumni', isAuthenticated, alumniController.adminIndex);
