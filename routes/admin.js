@@ -112,6 +112,7 @@ router.get('/data-sekolah', isAuthenticated, dataSekolahController.index);
 // Kontrol Website
 router.get('/kontrol-website', isAuthenticated, isAdmin, kontrolWebsiteController.index);
 router.post('/kontrol-website/tampilan', isAuthenticated, isAdmin, csrfProtect, kontrolWebsiteController.saveTampilan);
+router.post('/kontrol-website/editorial', isAuthenticated, isAdmin, csrfProtect, kontrolWebsiteController.saveEditorial);
 router.post('/kontrol-website/maintenance', isAuthenticated, isAdmin, csrfProtect, kontrolWebsiteController.toggleMaintenance);
 
 // Kelola Halaman Dinamis

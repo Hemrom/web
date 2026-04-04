@@ -1,17 +1,25 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title><%= title %> - Admin Panel</title>
     <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
-    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700,800,900" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
     <style>
         .nav-tabs .nav-link { color: #6c757d; font-weight: 500; }
         .nav-tabs .nav-link.active { color: #4e73df; font-weight: 600; border-bottom: 2px solid #4e73df; }
         .preset-card { border: 2px solid #e2e8f0 !important; transition: all .2s; cursor: pointer; }
-        .preset-card:hover { border-color: #4e73df !important; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,.1); }
+        .preset-card:hover { border-color: #4e73df !important; transform: translateY(-2px); }
         .preset-card.selected { border-color: #4e73df !important; background: #eef2ff !important; }
+        .hero-bg-card { border: 2px solid #e2e8f0 !important; transition: all .2s; cursor: pointer; border-radius: 12px; }
+        .hero-bg-card:hover { border-color: #4e73df !important; }
+        .hero-bg-card.selected { border-color: #4e73df !important; background: #eef2ff !important; }
+        .ed-card { border:none;border-radius:14px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.08);margin-bottom:1.5rem; }
+        .ed-card .card-body { background:#fff;padding:1.25rem; }
+        .ed-icon { width:38px;height:38px;background:rgba(255,255,255,.2);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-right:.85rem;flex-shrink:0; }
     </style>
 </head>
 <body id="page-top">
@@ -23,15 +31,13 @@
             <div class="container-fluid">
                 <h1 class="h3 mb-4 text-gray-800">Kontrol Website</h1>
                 <% if (success == 1) { %>
-                <div class="alert alert-success alert-dismissible fade show">
-                    Data berhasil disimpan.
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                </div>
+                <div class="alert alert-success alert-dismissible fade show">Data berhasil disimpan.<button type="button" class="close" data-dismiss="alert">&times;</button></div>
                 <% } %>
                 <div class="card shadow mb-4">
                     <div class="card-header p-0">
                         <ul class="nav nav-tabs">
                             <li class="nav-item"><a class="nav-link <%= activeTab==='tampilan'?'active':'' %>" href="?tab=tampilan"><i class="fas fa-palette mr-1"></i>Tampilan</a></li>
+                            <li class="nav-item"><a class="nav-link <%= activeTab==='editorial'?'active':'' %>" href="?tab=editorial"><i class="fas fa-pen-nib mr-1"></i>Editorial</a></li>
                             <li class="nav-item"><a class="nav-link <%= activeTab==='halaman'?'active':'' %>" href="?tab=halaman"><i class="fas fa-file-alt mr-1"></i>Halaman</a></li>
                             <li class="nav-item"><a class="nav-link <%= activeTab==='menu'?'active':'' %>" href="?tab=menu"><i class="fas fa-bars mr-1"></i>Menu</a></li>
                             <li class="nav-item"><a class="nav-link <%= activeTab==='users'?'active':'' %>" href="?tab=users"><i class="fas fa-user-cog mr-1"></i>User</a></li>
@@ -39,248 +45,100 @@
                     </div>
                     <div class="card-body">
                         <% if (activeTab === 'tampilan') { %>
-                        <div class="card border-left-warning shadow-sm mb-4">
-                            <div class="card-body py-3">
-                                <div class="d-flex align-items-center justify-content-between">
-                                    <div>
-                                        <h6 class="font-weight-bold mb-1"><i class="fas fa-tools mr-2 text-warning"></i>Mode Maintenance</h6>
-                                        <% if (settings.maintenance_mode==='1') { %><span class="badge badge-danger">AKTIF</span><% } else { %><span class="badge badge-secondary">NONAKTIF</span><% } %>
-                                    </div>
-                                    <form method="POST" action="/admin/kontrol-website/maintenance" onsubmit="return confirm('Yakin?')">
-                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                        <button class="btn btn-sm btn-<%= settings.maintenance_mode==='1'?'success':'danger' %>"><%= settings.maintenance_mode==='1'?'Matikan':'Aktifkan' %></button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="card border-left-warning shadow-sm mb-4"><div class="card-body py-3"><div class="d-flex align-items-center justify-content-between"><div><h6 class="font-weight-bold mb-1"><i class="fas fa-tools mr-2 text-warning"></i>Mode Maintenance</h6><% if (settings.maintenance_mode==='1') { %><span class="badge badge-danger">AKTIF</span><% } else { %><span class="badge badge-secondary">NONAKTIF</span><% } %></div><form method="POST" action="/admin/kontrol-website/maintenance" onsubmit="return confirm('Yakin?')"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="btn btn-sm btn-<%= settings.maintenance_mode==='1'?'success':'danger' %>"><%= settings.maintenance_mode==='1'?'Matikan':'Aktifkan' %></button></form></div></div></div>
                         <form method="POST" action="/admin/kontrol-website/tampilan">
                             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                            <h5 class="mb-3"><i class="fas fa-magic mr-2 text-primary"></i>Preset Tema Modern</h5>
+                            <h5 class="mb-3"><i class="fas fa-magic mr-2 text-primary"></i>Preset Tema</h5>
                             <div class="row mb-4">
-                                <% var presets=[
-                                    {label:'Ocean Blue',emoji:'??',p:'#0ea5e9',s:'#0369a1',nb:'#ffffff',fb:'#0c4a6e',font:'Inter',br:'16',mode:'light'},
-                                    {label:'Emerald',emoji:'??',p:'#10b981',s:'#059669',nb:'#ffffff',fb:'#064e3b',font:'Inter',br:'16',mode:'light'},
-                                    {label:'Royal Purple',emoji:'??',p:'#8b5cf6',s:'#7c3aed',nb:'#ffffff',fb:'#2e1065',font:'Poppins',br:'20',mode:'light'},
-                                    {label:'Sunset Red',emoji:'??',p:'#ef4444',s:'#dc2626',nb:'#ffffff',fb:'#450a0a',font:'Inter',br:'12',mode:'light'},
-                                    {label:'Golden',emoji:'??',p:'#f59e0b',s:'#d97706',nb:'#ffffff',fb:'#1c1917',font:'Nunito',br:'16',mode:'light'},
-                                    {label:'Rose Pink',emoji:'??',p:'#ec4899',s:'#db2777',nb:'#ffffff',fb:'#500724',font:'Poppins',br:'24',mode:'light'},
-                                    {label:'Teal Modern',emoji:'??',p:'#14b8a6',s:'#0d9488',nb:'#ffffff',fb:'#042f2e',font:'Inter',br:'16',mode:'light'},
-                                    {label:'Dark Mode',emoji:'??',p:'#6366f1',s:'#4f46e5',nb:'#1e293b',fb:'#0f172a',font:'Inter',br:'16',mode:'dark'}
-                                ]; %>
-                                <% presets.forEach(function(pr){ %>
-                                <div class="col-md-3 mb-3">
-                                    <div class="preset-card border rounded p-3 text-center"
-                                        data-primary="<%= pr.p %>" data-secondary="<%= pr.s %>"
-                                        data-navbar="<%= pr.nb %>" data-footer="<%= pr.fb %>"
-                                        data-font="<%= pr.font %>" data-br="<%= pr.br %>" data-mode="<%= pr.mode %>">
-                                        <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,<%= pr.p %>,<%= pr.s %>);margin:0 auto .5rem;"></div>
-                                        <div style="font-size:1.2rem;"><%= pr.emoji %></div>
-                                        <div style="font-weight:700;font-size:.85rem;margin-top:.25rem;"><%= pr.label %></div>
-                                        <div style="font-size:.7rem;color:#94a3b8;"><%= pr.font %></div>
-                                    </div>
-                                </div>
-                                <% }) %>
+                                <% var presets=[{label:'Ocean Blue',icon:'fa-water',p:'#0ea5e9',s:'#0369a1',nb:'#ffffff',fb:'#0c4a6e',font:'Inter',br:'16',mode:'light'},{label:'Emerald',icon:'fa-leaf',p:'#10b981',s:'#059669',nb:'#ffffff',fb:'#064e3b',font:'Inter',br:'16',mode:'light'},{label:'Royal Purple',icon:'fa-crown',p:'#8b5cf6',s:'#7c3aed',nb:'#ffffff',fb:'#2e1065',font:'Poppins',br:'20',mode:'light'},{label:'Sunset Red',icon:'fa-fire',p:'#ef4444',s:'#dc2626',nb:'#ffffff',fb:'#450a0a',font:'Inter',br:'12',mode:'light'},{label:'Golden',icon:'fa-star',p:'#f59e0b',s:'#d97706',nb:'#ffffff',fb:'#1c1917',font:'Nunito',br:'16',mode:'light'},{label:'Rose Pink',icon:'fa-heart',p:'#ec4899',s:'#db2777',nb:'#ffffff',fb:'#500724',font:'Poppins',br:'24',mode:'light'},{label:'Teal Modern',icon:'fa-gem',p:'#14b8a6',s:'#0d9488',nb:'#ffffff',fb:'#042f2e',font:'Inter',br:'16',mode:'light'},{label:'Dark Mode',icon:'fa-moon',p:'#6366f1',s:'#4f46e5',nb:'#1e293b',fb:'#0f172a',font:'Inter',br:'16',mode:'dark'}]; %>
+                                <% presets.forEach(function(pr){ %><div class="col-md-3 mb-3"><div class="preset-card border rounded p-3 text-center" data-primary="<%= pr.p %>" data-secondary="<%= pr.s %>" data-navbar="<%= pr.nb %>" data-footer="<%= pr.fb %>" data-font="<%= pr.font %>" data-br="<%= pr.br %>" data-mode="<%= pr.mode %>"><div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,<%= pr.p %>,<%= pr.s %>);margin:0 auto .5rem;display:flex;align-items:center;justify-content:center;"><i class="fas <%= pr.icon %>" style="color:white;font-size:1.1rem;"></i></div><div style="font-weight:700;font-size:.85rem;margin-top:.25rem;"><%= pr.label %></div><div style="font-size:.7rem;color:#94a3b8;"><%= pr.font %></div></div></div><% }) %>
                             </div>
+                            <h5 class="mb-3"><i class="fas fa-image mr-2 text-primary"></i>Background Hero</h5>
+                            <% const heroBgOptions=[{value:'dark-space',label:'Dark Space',preview:'linear-gradient(135deg,#0f0c29,#302b63)',desc:'Gelap elegan',textMode:'terang'},{value:'light-aurora',label:'Light Aurora',preview:'linear-gradient(135deg,#e0f2fe,#f0fdf4,#fdf4ff)',desc:'Terang pastel',textMode:'gelap'},{value:'soft-blue',label:'Soft Blue',preview:'linear-gradient(135deg,#dbeafe,#ede9fe)',desc:'Biru lembut',textMode:'gelap'},{value:'warm-sunrise',label:'Warm Sunrise',preview:'linear-gradient(135deg,#fff7ed,#fef3c7,#fce7f3)',desc:'Hangat cerah',textMode:'gelap'},{value:'mint-fresh',label:'Mint Fresh',preview:'linear-gradient(135deg,#ecfdf5,#d1fae5)',desc:'Hijau segar',textMode:'gelap'},{value:'royal-purple',label:'Royal Purple',preview:'linear-gradient(135deg,#1e1b4b,#312e81)',desc:'Ungu royal',textMode:'terang'},{value:'ocean-deep',label:'Ocean Deep',preview:'linear-gradient(135deg,#0c4a6e,#0ea5e9)',desc:'Biru laut',textMode:'terang'},{value:'rose-gold',label:'Rose Gold',preview:'linear-gradient(135deg,#fff1f2,#fce7f3,#fdf4ff)',desc:'Rose elegan',textMode:'gelap'},{value:'custom-primary',label:'Warna Utama',preview:'linear-gradient(135deg,#0369a1,#0ea5e9)',desc:'Ikuti tema',textMode:'terang'}]; const currentHeroBg=settings.hero_bg_style||'dark-space'; %>
+                            <div class="row mb-4"><% heroBgOptions.forEach(function(opt){ %><div class="col-md-3 col-sm-4 mb-3"><div class="hero-bg-card border rounded p-2 text-center <%= currentHeroBg===opt.value?'selected':'' %>" data-value="<%= opt.value %>" style="cursor:pointer;"><div style="height:48px;border-radius:8px;background:<%= opt.preview %>;margin-bottom:.4rem;border:1px solid rgba(0,0,0,.06);"></div><div style="font-weight:700;font-size:.78rem;"><%= opt.label %></div><div style="font-size:.65rem;color:#94a3b8;"><%= opt.desc %> &middot; teks <%= opt.textMode %></div></div></div><% }) %></div>
+                            <input type="hidden" name="hero_bg_style" id="hero_bg_style_input" value="<%= currentHeroBg %>">
                             <h5 class="mb-3"><i class="fas fa-sliders-h mr-2 text-primary"></i>Kustomisasi Manual</h5>
                             <div class="row mb-3">
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label class="font-weight-bold small">Warna Utama</label>
-                                        <div class="d-flex align-items-center">
-                                            <input type="color" id="cp_primary" name="primary_color" value="<%= settings.primary_color||'#0ea5e9' %>" style="width:44px;height:36px;border:none;border-radius:8px;cursor:pointer;margin-right:8px;">
-                                            <input type="text" class="form-control form-control-sm" id="primary_hex" value="<%= settings.primary_color||'#0ea5e9' %>">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label class="font-weight-bold small">Warna Sekunder</label>
-                                        <div class="d-flex align-items-center">
-                                            <input type="color" id="cp_secondary" name="secondary_color" value="<%= settings.secondary_color||'#0369a1' %>" style="width:44px;height:36px;border:none;border-radius:8px;cursor:pointer;margin-right:8px;">
-                                            <input type="text" class="form-control form-control-sm" id="secondary_hex" value="<%= settings.secondary_color||'#0369a1' %>">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label class="font-weight-bold small">Warna Navbar</label>
-                                        <div class="d-flex align-items-center">
-                                            <input type="color" id="cp_navbar" name="navbar_bg" value="<%= settings.navbar_bg||'#ffffff' %>" style="width:44px;height:36px;border:none;border-radius:8px;cursor:pointer;margin-right:8px;">
-                                            <input type="text" class="form-control form-control-sm" id="navbar_hex" value="<%= settings.navbar_bg||'#ffffff' %>">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label class="font-weight-bold small">Warna Footer</label>
-                                        <div class="d-flex align-items-center">
-                                            <input type="color" id="cp_footer" name="footer_bg" value="<%= settings.footer_bg||'#0f172a' %>" style="width:44px;height:36px;border:none;border-radius:8px;cursor:pointer;margin-right:8px;">
-                                            <input type="text" class="form-control form-control-sm" id="footer_hex" value="<%= settings.footer_bg||'#0f172a' %>">
-                                        </div>
-                                    </div>
-                                </div>
+                                <div class="col-md-3"><div class="form-group"><label class="font-weight-bold small">Warna Utama</label><div class="d-flex align-items-center"><input type="color" id="cp_primary" name="primary_color" value="<%= settings.primary_color||'#0ea5e9' %>" style="width:44px;height:36px;border:none;border-radius:8px;cursor:pointer;margin-right:8px;"><input type="text" class="form-control form-control-sm" id="primary_hex" value="<%= settings.primary_color||'#0ea5e9' %>"></div></div></div>
+                                <div class="col-md-3"><div class="form-group"><label class="font-weight-bold small">Warna Sekunder</label><div class="d-flex align-items-center"><input type="color" id="cp_secondary" name="secondary_color" value="<%= settings.secondary_color||'#0369a1' %>" style="width:44px;height:36px;border:none;border-radius:8px;cursor:pointer;margin-right:8px;"><input type="text" class="form-control form-control-sm" id="secondary_hex" value="<%= settings.secondary_color||'#0369a1' %>"></div></div></div>
+                                <div class="col-md-3"><div class="form-group"><label class="font-weight-bold small">Warna Navbar</label><div class="d-flex align-items-center"><input type="color" id="cp_navbar" name="navbar_bg" value="<%= settings.navbar_bg||'#ffffff' %>" style="width:44px;height:36px;border:none;border-radius:8px;cursor:pointer;margin-right:8px;"><input type="text" class="form-control form-control-sm" id="navbar_hex" value="<%= settings.navbar_bg||'#ffffff' %>"></div></div></div>
+                                <div class="col-md-3"><div class="form-group"><label class="font-weight-bold small">Warna Footer</label><div class="d-flex align-items-center"><input type="color" id="cp_footer" name="footer_bg" value="<%= settings.footer_bg||'#0f172a' %>" style="width:44px;height:36px;border:none;border-radius:8px;cursor:pointer;margin-right:8px;"><input type="text" class="form-control form-control-sm" id="footer_hex" value="<%= settings.footer_bg||'#0f172a' %>"></div></div></div>
                             </div>
                             <div class="row mb-4">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label class="font-weight-bold small">Font Website</label>
-                                        <select class="form-control form-control-sm" name="font_family" id="sel_font">
-                                            <% ['Inter','Poppins','Nunito','Roboto','Lato','Montserrat','Open Sans','Raleway'].forEach(function(f){ %>
-                                            <option value="<%= f %>" <%= (settings.font_family||'Inter')===f?'selected':'' %>><%= f %></option>
-                                            <% }) %>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label class="font-weight-bold small">Sudut Kartu: <span id="br_val"><%= settings.border_radius||'16' %></span>px</label>
-                                        <input type="range" class="form-control-range" name="border_radius" id="br_range" min="0" max="32" value="<%= settings.border_radius||'16' %>">
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label class="font-weight-bold small">Mode Tampilan</label>
-                                        <div class="d-flex mt-1">
-                                            <div class="mr-3">
-                                                <input type="radio" name="theme_mode" id="mode_light" value="light" <%= (settings.theme_mode||'light')==='light'?'checked':'' %>>
-                                                <label for="mode_light" class="ml-1 small"><i class="fas fa-sun text-warning"></i> Terang</label>
-                                            </div>
-                                            <div>
-                                                <input type="radio" name="theme_mode" id="mode_dark" value="dark" <%= settings.theme_mode==='dark'?'checked':'' %>>
-                                                <label for="mode_dark" class="ml-1 small"><i class="fas fa-moon text-primary"></i> Gelap</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <div class="col-md-4"><div class="form-group"><label class="font-weight-bold small">Font Website</label><select class="form-control form-control-sm" name="font_family" id="sel_font"><% ['Inter','Poppins','Nunito','Roboto','Lato','Montserrat','Open Sans','Raleway'].forEach(function(f){ %><option value="<%= f %>" <%= (settings.font_family||'Inter')===f?'selected':'' %>><%= f %></option><% }) %></select></div></div>
+                                <div class="col-md-4"><div class="form-group"><label class="font-weight-bold small">Sudut Kartu: <span id="br_val"><%= settings.border_radius||'16' %></span>px</label><input type="range" class="form-control-range" name="border_radius" id="br_range" min="0" max="32" value="<%= settings.border_radius||'16' %>"></div></div>
+                                <div class="col-md-4"><div class="form-group"><label class="font-weight-bold small">Mode Tampilan</label><div class="d-flex mt-1"><div class="mr-3"><input type="radio" name="theme_mode" id="mode_light" value="light" <%= (settings.theme_mode||'light')==='light'?'checked':'' %>><label for="mode_light" class="ml-1 small"><i class="fas fa-sun text-warning"></i> Terang</label></div><div><input type="radio" name="theme_mode" id="mode_dark" value="dark" <%= settings.theme_mode==='dark'?'checked':'' %>><label for="mode_dark" class="ml-1 small"><i class="fas fa-moon text-primary"></i> Gelap</label></div></div></div></div>
                             </div>
                             <button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i>Simpan Tampilan</button>
                             <a href="/" target="_blank" class="btn btn-info ml-2"><i class="fas fa-eye mr-1"></i>Preview Website</a>
                         </form>
 
+                        <% } else if (activeTab === 'editorial') { %>
+                        <p class="text-muted small mb-4"><i class="fas fa-info-circle mr-1"></i>Kelola teks-teks yang tampil di halaman depan website tanpa perlu edit kode.</p>
+                        <form method="POST" action="/admin/kontrol-website/editorial">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <div class="ed-card card">
+                                <div class="card-header text-white d-flex align-items-center" style="background:linear-gradient(135deg,#4e73df,#224abe);padding:1rem 1.25rem;">
+                                    <div class="ed-icon"><i class="fas fa-align-left"></i></div>
+                                    <div><div class="font-weight-bold">Tagline Footer</div><small style="opacity:.8;">Teks di bawah nama sekolah pada footer</small></div>
+                                </div>
+                                <div class="card-body">
+                                    <textarea class="form-control" name="footer_tagline" rows="3"><%= settings.footer_tagline || 'Memberikan pendidikan berkualitas untuk menciptakan generasi yang cerdas, berkarakter, dan siap kerja.' %></textarea>
+                                    <small class="text-muted mt-1 d-block"><i class="fas fa-map-marker-alt mr-1"></i>Lokasi: Footer kolom pertama, di bawah nama sekolah</small>
+                                </div>
+                            </div>
+                            <div class="ed-card card">
+                                <div class="card-header text-white d-flex align-items-center" style="background:linear-gradient(135deg,#36b9cc,#1a8a9a);padding:1rem 1.25rem;">
+                                    <div class="ed-icon"><i class="fas fa-copyright"></i></div>
+                                    <div><div class="font-weight-bold">Teks Footer Bawah</div><small style="opacity:.8;">Copyright dan label di bagian paling bawah halaman</small></div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6"><div class="form-group"><label class="font-weight-bold small">Teks Setelah Copyright</label><input type="text" class="form-control" name="footer_copyright_suffix" value="<%= settings.footer_copyright_suffix || 'All rights reserved.' %>"><small class="text-muted">Tampil: &copy; 2026 SMKN 1 KRAS. <em>[teks ini]</em></small></div></div>
+                                        <div class="col-md-6"><div class="form-group"><label class="font-weight-bold small">Label Kanan Footer</label><input type="text" class="form-control" name="footer_label" value="<%= settings.footer_label || 'Website Resmi Sekolah' %>"><small class="text-muted">Tampil di pojok kanan bawah footer</small></div></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ed-card card">
+                                <div class="card-header text-white d-flex align-items-center" style="background:linear-gradient(135deg,#1cc88a,#13855c);padding:1rem 1.25rem;">
+                                    <div class="ed-icon"><i class="fas fa-film"></i></div>
+                                    <div><div class="font-weight-bold">Teks Ticker / Marquee</div><small style="opacity:.8;">Animasi teks berjalan di bawah hero halaman depan</small></div>
+                                </div>
+                                <div class="card-body">
+                                    <label class="font-weight-bold small">Item Ticker <span class="text-muted font-weight-normal">(pisahkan dengan koma)</span></label>
+                                    <textarea class="form-control mb-2" name="ticker_items" rows="3" id="tickerInput"><%= settings.ticker_items || 'Pendidikan Berkualitas,Fasilitas Modern,Guru Berpengalaman,Prestasi Gemilang,Karakter Unggul,Siap Kerja,Inovasi & Kreativitas,Lingkungan Kondusif' %></textarea>
+                                    <small class="text-muted">Contoh: <code>Pendidikan Berkualitas, Fasilitas Modern, Guru Berpengalaman</code></small>
+                                    <div style="background:#f8fafc;border-radius:8px;padding:.65rem 1rem;border:1px solid #e2e8f0;margin-top:.75rem;"><div class="small text-muted mb-1"><i class="fas fa-eye mr-1"></i>Preview:</div><div id="tickerPreview" style="font-size:.82rem;color:#4e73df;font-weight:600;"></div></div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success px-4"><i class="fas fa-save mr-2"></i>Simpan Teks Editorial</button>
+                        </form>
+
                         <% } else if (activeTab === 'halaman') { %>
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="mb-0">Kelola Halaman</h5>
-                            <a href="/admin/halaman/create" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Buat Halaman Baru</a>
-                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-3"><h5 class="mb-0">Kelola Halaman</h5><a href="/admin/halaman/create" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Buat Halaman Baru</a></div>
                         <div class="alert alert-info small"><i class="fas fa-info-circle"></i> Setelah membuat halaman, salin URL-nya (contoh: <code>/page/visi-misi</code>) dan gunakan sebagai URL di menu navigasi.</div>
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-hover">
-                                <thead class="thead-light"><tr><th>#</th><th>Judul</th><th>URL</th><th>Status</th><th>Aksi</th></tr></thead>
-                                <tbody>
-                                <% if (!halaman||halaman.length===0) { %>
-                                <tr><td colspan="5" class="text-center">Belum ada halaman</td></tr>
-                                <% } else { halaman.forEach(function(h,i){ %>
-                                <tr>
-                                    <td><%= i+1 %></td>
-                                    <td><%= h.judul %></td>
-                                    <td><a href="/page/<%= h.slug %>" target="_blank" class="text-primary">/page/<%= h.slug %></a></td>
-                                    <td><span class="badge badge-<%= h.status==='aktif'?'success':'secondary' %>"><%= h.status %></span></td>
-                                    <td>
-                                        <a href="/admin/halaman/edit/<%= h.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
-                                        <form method="POST" action="/admin/halaman/delete/<%= h.id %>" style="display:inline" onsubmit="return confirm('Hapus?')">
-                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                            <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                <% }) } %>
-                                </tbody>
-                            </table>
-                        </div>
+                        <div class="table-responsive"><table class="table table-bordered table-hover"><thead class="thead-light"><tr><th>#</th><th>Judul</th><th>URL</th><th>Status</th><th>Aksi</th></tr></thead><tbody>
+                        <% if (!halaman||halaman.length===0) { %><tr><td colspan="5" class="text-center">Belum ada halaman</td></tr><% } else { halaman.forEach(function(h,i){ %>
+                        <tr><td><%= i+1 %></td><td><%= h.judul %></td><td><a href="/page/<%= h.slug %>" target="_blank" class="text-primary">/page/<%= h.slug %></a></td><td><span class="badge badge-<%= h.status==='aktif'?'success':'secondary' %>"><%= h.status %></span></td><td><a href="/admin/halaman/edit/<%= h.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a><form method="POST" action="/admin/halaman/delete/<%= h.id %>" style="display:inline" onsubmit="return confirm('Hapus?')"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></form></td></tr>
+                        <% }) } %></tbody></table></div>
 
                         <% } else if (activeTab === 'menu') { %>
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="mb-0">Kelola Menu Navigasi</h5>
-                            <a href="/admin/menu/create" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Tambah Menu</a>
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-hover">
-                                <thead class="thead-light"><tr><th>#</th><th>Label</th><th>URL</th><th>Urutan</th><th>Status</th><th>Aksi</th></tr></thead>
-                                <tbody>
-                                <% if (!menus||menus.length===0) { %>
-                                <tr><td colspan="6" class="text-center">Belum ada menu</td></tr>
-                                <% } else { var no=0; menus.forEach(function(m){ no++; %>
-                                <tr class="table-light">
-                                    <td><strong><%= no %></strong></td>
-                                    <td><strong><i class="fas fa-bars mr-1 text-muted"></i><%= m.label %></strong></td>
-                                    <td><code><%= m.url %></code></td>
-                                    <td><%= m.urutan %></td>
-                                    <td><span class="badge badge-<%= m.status==='aktif'?'success':'secondary' %>"><%= m.status %></span></td>
-                                    <td>
-                                        <a href="/admin/menu/edit/<%= m.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
-                                        <form method="POST" action="/admin/menu/delete/<%= m.id %>" style="display:inline" onsubmit="return confirm('Hapus?')">
-                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                            <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                <% if(m.children&&m.children.length>0){ m.children.forEach(function(c){ %>
-                                <tr>
-                                    <td></td>
-                                    <td class="pl-4"><span class="text-muted mr-1">&#8627;</span><%= c.label %></td>
-                                    <td><code><%= c.url %></code></td>
-                                    <td><%= c.urutan %></td>
-                                    <td><span class="badge badge-<%= c.status==='aktif'?'success':'secondary' %>"><%= c.status %></span></td>
-                                    <td>
-                                        <a href="/admin/menu/edit/<%= c.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
-                                        <form method="POST" action="/admin/menu/delete/<%= c.id %>" style="display:inline" onsubmit="return confirm('Hapus?')">
-                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                            <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                <% if(c.children&&c.children.length>0){ c.children.forEach(function(g){ %>
-                                <tr>
-                                    <td></td>
-                                    <td style="padding-left:3rem;"><small class="text-muted">&#8627;&#8627;</small> <%= g.label %></td>
-                                    <td><code><%= g.url %></code></td>
-                                    <td><%= g.urutan %></td>
-                                    <td><span class="badge badge-<%= g.status==='aktif'?'success':'secondary' %>"><%= g.status %></span></td>
-                                    <td>
-                                        <a href="/admin/menu/edit/<%= g.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
-                                        <form method="POST" action="/admin/menu/delete/<%= g.id %>" style="display:inline" onsubmit="return confirm('Hapus?')">
-                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                            <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                <% })} }) } }) } %>
-                                </tbody>
-                            </table>
-                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-3"><h5 class="mb-0">Kelola Menu Navigasi</h5><a href="/admin/menu/create" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Tambah Menu</a></div>
+                        <div class="table-responsive"><table class="table table-bordered table-hover"><thead class="thead-light"><tr><th>#</th><th>Label</th><th>URL</th><th>Urutan</th><th>Status</th><th>Aksi</th></tr></thead><tbody>
+                        <% if (!menus||menus.length===0) { %><tr><td colspan="6" class="text-center">Belum ada menu</td></tr>
+                        <% } else { var no=0; menus.forEach(function(m){ no++; %>
+                        <tr class="table-light"><td><strong><%= no %></strong></td><td><strong><i class="fas fa-bars mr-1 text-muted"></i><%= m.label %></strong></td><td><code><%= m.url %></code></td><td><%= m.urutan %></td><td><span class="badge badge-<%= m.status==='aktif'?'success':'secondary' %>"><%= m.status %></span></td><td><a href="/admin/menu/edit/<%= m.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a><form method="POST" action="/admin/menu/delete/<%= m.id %>" style="display:inline" onsubmit="return confirm('Hapus?')"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></form></td></tr>
+                        <% if(m.children&&m.children.length>0){ m.children.forEach(function(c){ %>
+                        <tr><td></td><td class="pl-4"><span class="text-muted mr-1">&#8627;</span><%= c.label %></td><td><code><%= c.url %></code></td><td><%= c.urutan %></td><td><span class="badge badge-<%= c.status==='aktif'?'success':'secondary' %>"><%= c.status %></span></td><td><a href="/admin/menu/edit/<%= c.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a><form method="POST" action="/admin/menu/delete/<%= c.id %>" style="display:inline" onsubmit="return confirm('Hapus?')"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></form></td></tr>
+                        <% }) } }) } %></tbody></table></div>
 
                         <% } else if (activeTab === 'users') { %>
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="mb-0">Manajemen User</h5>
-                            <a href="/admin/users/create" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Tambah User</a>
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-hover">
-                                <thead class="thead-light"><tr><th>#</th><th>Username</th><th>Nama</th><th>Email</th><th>Role</th><th>Aksi</th></tr></thead>
-                                <tbody>
-                                <% if (!users||users.length===0) { %>
-                                <tr><td colspan="6" class="text-center">Belum ada user</td></tr>
-                                <% } else { users.forEach(function(u,i){ %>
-                                <tr>
-                                    <td><%= i+1 %></td>
-                                    <td><%= u.username %></td>
-                                    <td><%= u.nama_lengkap %></td>
-                                    <td><%= u.email||'-' %></td>
-                                    <td><span class="badge badge-<%= u.role==='admin'?'danger':'info' %>"><%= u.role %></span></td>
-                                    <td>
-                                        <a href="/admin/users/edit/<%= u.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
-                                        <% if(u.id!==user.userId){ %>
-                                        <form method="POST" action="/admin/users/delete/<%= u.id %>" style="display:inline" onsubmit="return confirm('Hapus?')">
-                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                            <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                                        </form>
-                                        <% } %>
-                                    </td>
-                                </tr>
-                                <% }) } %>
-                                </tbody>
-                            </table>
-                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-3"><h5 class="mb-0">Manajemen User</h5><a href="/admin/users/create" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Tambah User</a></div>
+                        <div class="table-responsive"><table class="table table-bordered table-hover"><thead class="thead-light"><tr><th>#</th><th>Username</th><th>Nama</th><th>Email</th><th>Role</th><th>Aksi</th></tr></thead><tbody>
+                        <% if (!users||users.length===0) { %><tr><td colspan="6" class="text-center">Belum ada user</td></tr>
+                        <% } else { users.forEach(function(u,i){ %>
+                        <tr><td><%= i+1 %></td><td><%= u.username %></td><td><%= u.nama_lengkap %></td><td><%= u.email||'-' %></td><td><span class="badge badge-<%= u.role==='admin'?'danger':'info' %>"><%= u.role %></span></td><td><a href="/admin/users/edit/<%= u.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a><% if(u.id!==user.userId){ %><form method="POST" action="/admin/users/delete/<%= u.id %>" style="display:inline" onsubmit="return confirm('Hapus?')"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></form><% } %></td></tr>
+                        <% }) } %></tbody></table></div>
                         <% } %>
 
                     </div>
@@ -300,22 +158,39 @@ document.querySelectorAll('.preset-card').forEach(function(card){
         document.querySelectorAll('.preset-card').forEach(function(c){c.classList.remove('selected');});
         this.classList.add('selected');
         var p=this.dataset.primary,s=this.dataset.secondary,nb=this.dataset.navbar,fb=this.dataset.footer,font=this.dataset.font,br=this.dataset.br,mode=this.dataset.mode;
-        document.getElementById('cp_primary').value=p; document.getElementById('primary_hex').value=p;
-        document.getElementById('cp_secondary').value=s; document.getElementById('secondary_hex').value=s;
-        document.getElementById('cp_navbar').value=nb; document.getElementById('navbar_hex').value=nb;
-        document.getElementById('cp_footer').value=fb; document.getElementById('footer_hex').value=fb;
+        document.getElementById('cp_primary').value=p;document.getElementById('primary_hex').value=p;
+        document.getElementById('cp_secondary').value=s;document.getElementById('secondary_hex').value=s;
+        document.getElementById('cp_navbar').value=nb;document.getElementById('navbar_hex').value=nb;
+        document.getElementById('cp_footer').value=fb;document.getElementById('footer_hex').value=fb;
         document.getElementById('sel_font').value=font;
-        document.getElementById('br_range').value=br; document.getElementById('br_val').textContent=br;
+        document.getElementById('br_range').value=br;document.getElementById('br_val').textContent=br;
         document.getElementById(mode==='dark'?'mode_dark':'mode_light').checked=true;
+        setTimeout(function(){document.querySelector('form[action="/admin/kontrol-website/tampilan"]').submit();},100);
     });
 });
 [['cp_primary','primary_hex'],['cp_secondary','secondary_hex'],['cp_navbar','navbar_hex'],['cp_footer','footer_hex']].forEach(function(pair){
     var cp=document.getElementById(pair[0]),tx=document.getElementById(pair[1]);
+    if(!cp||!tx)return;
     cp.addEventListener('input',function(){tx.value=cp.value;});
     tx.addEventListener('input',function(){cp.value=tx.value;});
 });
-document.getElementById('br_range').addEventListener('input',function(){document.getElementById('br_val').textContent=this.value;});
-document.querySelectorAll('.preset-card').forEach(function(c){c.addEventListener('click',function(){setTimeout(function(){document.querySelector('form[action="/admin/kontrol-website/tampilan"]').submit();},100);});});
+var brRange=document.getElementById('br_range');
+if(brRange)brRange.addEventListener('input',function(){document.getElementById('br_val').textContent=this.value;});
+document.querySelectorAll('.hero-bg-card').forEach(function(card){
+    card.addEventListener('click',function(){
+        document.querySelectorAll('.hero-bg-card').forEach(function(c){c.classList.remove('selected');c.style.borderColor='';c.style.background='';});
+        this.classList.add('selected');this.style.borderColor='#4e73df';this.style.background='#eef2ff';
+        document.getElementById('hero_bg_style_input').value=this.dataset.value;
+    });
+});
+var tickerInput=document.getElementById('tickerInput');
+var tickerPreview=document.getElementById('tickerPreview');
+function updateTickerPreview(){
+    if(!tickerInput||!tickerPreview)return;
+    var items=tickerInput.value.split(',').map(function(s){return s.trim();}).filter(Boolean);
+    tickerPreview.textContent=items.map(function(t){return '\u2756 '+t;}).join('   ');
+}
+if(tickerInput){tickerInput.addEventListener('input',updateTickerPreview);updateTickerPreview();}
 </script>
 </body>
 </html>

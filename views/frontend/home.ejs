@@ -1554,7 +1554,11 @@
     <!-- Colorful Ticker Strip -->
     <div class="ticker-section">
         <div class="ticker-track" id="tickerTrack">
-            <% const tickerItems = ['Pendidikan Berkualitas','Fasilitas Modern','Guru Berpengalaman','Prestasi Gemilang','Karakter Unggul','Siap Kerja','Inovasi & Kreativitas','Lingkungan Kondusif']; %>
+            <%
+            const defaultTicker = 'Pendidikan Berkualitas,Fasilitas Modern,Guru Berpengalaman,Prestasi Gemilang,Karakter Unggul,Siap Kerja,Inovasi & Kreativitas,Lingkungan Kondusif';
+            const tickerRaw = (typeof siteSettings !== 'undefined' && siteSettings.ticker_items) ? siteSettings.ticker_items : defaultTicker;
+            const tickerItems = tickerRaw.split(',').map(function(t){ return t.trim(); }).filter(Boolean);
+            %>
             <% tickerItems.forEach(t => { %><span class="ticker-item"><%= t %></span><% }) %>
             <% tickerItems.forEach(t => { %><span class="ticker-item"><%= t %></span><% }) %>
         </div>

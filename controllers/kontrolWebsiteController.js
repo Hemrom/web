@@ -59,6 +59,23 @@ exports.saveTampilan = async (req, res) => {
   }
 };
 
+exports.saveEditorial = async (req, res) => {
+  try {
+    const fields = ['footer_tagline','footer_copyright_suffix','footer_label','ticker_items'];
+    for (const key of fields) {
+      const value = req.body[key] !== undefined ? req.body[key] : '';
+      await db.query(
+        'INSERT INTO website_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?',
+        [key, value, value]
+      );
+    }
+    res.redirect('/admin/kontrol-website?tab=editorial&success=1');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Terjadi kesalahan');
+  }
+};
+
 exports.toggleMaintenance = async (req, res) => {
   try {
     const settings = await getSettings();

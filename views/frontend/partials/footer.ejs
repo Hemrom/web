@@ -7,7 +7,7 @@
                     <img src="/uploads/logo-sekolah.png" style="width:44px;height:44px;object-fit:contain;border-radius:8px;background:rgba(255,255,255,.1);padding:4px;" onerror="this.style.display='none'">
                     <h3 class="footer-title mb-0" style="font-size:1.1rem;"><%= (typeof profil !== 'undefined' && profil.nama_sekolah) ? profil.nama_sekolah : 'SMKN 1 Kras' %></h3>
                 </div>
-                <p style="font-size:.88rem;color:rgba(255,255,255,.75);line-height:1.6;margin-bottom:1rem;">Memberikan pendidikan berkualitas untuk menciptakan generasi yang cerdas, berkarakter, dan siap kerja.</p>
+                <p style="font-size:.88rem;color:rgba(255,255,255,.75);line-height:1.6;margin-bottom:1rem;"><%= (typeof siteSettings !== 'undefined' && siteSettings.footer_tagline) ? siteSettings.footer_tagline : 'Memberikan pendidikan berkualitas untuk menciptakan generasi yang cerdas, berkarakter, dan siap kerja.' %></p>
                 <div class="footer-sosmed">
                     <%
                         const sosmedList = [
@@ -95,8 +95,8 @@
         </div>
 
         <div class="footer-bottom" style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;">
-            <p style="margin:0;color:rgba(255,255,255,.5);font-size:.85rem;">&copy; <%= new Date().getFullYear() %> <%= (typeof profil !== 'undefined' && profil.nama_sekolah) ? profil.nama_sekolah : 'SMKN 1 Kras' %>. All rights reserved.</p>
-            <p style="margin:0;color:rgba(255,255,255,.4);font-size:.8rem;">Website Resmi Sekolah</p>
+            <p style="margin:0;color:rgba(255,255,255,.5);font-size:.85rem;">&copy; <%= new Date().getFullYear() %> <%= (typeof profil !== 'undefined' && profil.nama_sekolah) ? profil.nama_sekolah : 'SMKN 1 Kras' %>. <%= (typeof siteSettings !== 'undefined' && siteSettings.footer_copyright_suffix) ? siteSettings.footer_copyright_suffix : 'All rights reserved.' %></p>
+            <p style="margin:0;color:rgba(255,255,255,.4);font-size:.8rem;"><%= (typeof siteSettings !== 'undefined' && siteSettings.footer_label) ? siteSettings.footer_label : 'Website Resmi Sekolah' %></p>
         </div>
     </div>
 </footer>

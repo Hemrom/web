@@ -68,6 +68,8 @@ const getProfilKonten = async (tipe) => {
   return result;
 };
 
+const { getSettings } = require('./kontrolWebsiteController');
+
 // ── Frontend Controllers ──────────────────────────────────────────────────────
 
 exports.home = async (req, res) => {
@@ -86,7 +88,8 @@ exports.home = async (req, res) => {
       [fasilitasHome],
       [artikelHome],
       [fileDownloadHome],
-      [bkkHome]
+      [bkkHome],
+      siteSettings
     ] = await Promise.all([
       getProfilSekolah(),
       db.query('SELECT id, judul, slug, gambar, konten, kategori, created_at FROM berita WHERE status = "published" ORDER BY created_at DESC LIMIT 6'),
@@ -100,13 +103,14 @@ exports.home = async (req, res) => {
       db.query("SELECT f.*, (SELECT gambar FROM fasilitas_foto WHERE fasilitas_id=f.id ORDER BY urutan ASC, id ASC LIMIT 1) as cover FROM fasilitas f WHERE f.status='published' ORDER BY f.nama ASC LIMIT 8"),
       db.query('SELECT id, judul, slug, gambar, ringkasan, konten, kategori, penulis_nama, created_at FROM artikel WHERE status = "published" AND tampil_home = 1 ORDER BY created_at DESC LIMIT 4'),
       db.query('SELECT id, judul, tipe_file, ukuran_file, kategori, jumlah_download, created_at FROM file_download WHERE status = "aktif" AND tampil_home = 1 ORDER BY created_at DESC LIMIT 6'),
-      db.query("SELECT id, judul, slug, perusahaan, lokasi, kategori, gambar, deadline, kontak FROM bkk_lowongan WHERE status='aktif' ORDER BY created_at DESC LIMIT 6")
+      db.query("SELECT id, judul, slug, perusahaan, lokasi, kategori, gambar, deadline, kontak FROM bkk_lowongan WHERE status='aktif' ORDER BY created_at DESC LIMIT 6"),
+      getSettings()
     ]);
 
     res.render('frontend/home', {
       title: 'Beranda', currentPage: 'home',
       profil, berita: beritaTerbaru, galeri, slider, jurusan, menuItems, mediaSosialFooter, linkTerkait, alumniHome, fasilitasHome,
-      artikelHome, fileDownloadHome, bkkHome
+      artikelHome, fileDownloadHome, bkkHome, siteSettings
     });
   } catch (error) {
     console.error(error);
