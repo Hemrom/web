@@ -381,8 +381,10 @@ exports.adminPortalUserCreate = async (req, res) => {
   try {
     const { username, password, nama, role, jurusan } = req.body;
     const hash = await bcrypt.hash(password, 10);
+    // BKK dan OSIS tidak memiliki jurusan
+    const finalJurusan = (role === 'bkk' || role === 'osis') ? null : (jurusan || null);
     await db.query('INSERT INTO portal_users (username,password,nama,role,jurusan) VALUES (?,?,?,?,?)',
-      [username, hash, nama, role, jurusan||null]);
+      [username, hash, nama, role, finalJurusan]);
     res.redirect('/admin/portal-users?success=1');
   } catch (err) {
     if (err.code === 'ER_DUP_ENTRY') {
@@ -396,13 +398,16 @@ exports.adminPortalUserCreate = async (req, res) => {
 exports.adminPortalUserEdit = async (req, res) => {
   try {
     const { nama, username, role, jurusan, password } = req.body;
+    // BKK dan OSIS tidak memiliki jurusan
+    const finalJurusan = (role === 'bkk' || role === 'osis') ? null : (jurusan || null);
+    
     if (password && password.trim() !== '') {
       const hash = await bcrypt.hash(password, 10);
       await db.query('UPDATE portal_users SET nama=?,username=?,role=?,jurusan=?,password=? WHERE id=?',
-        [nama, username, role, jurusan||null, hash, req.params.id]);
+        [nama, username, role, finalJurusan, hash, req.params.id]);
     } else {
       await db.query('UPDATE portal_users SET nama=?,username=?,role=?,jurusan=? WHERE id=?',
-        [nama, username, role, jurusan||null, req.params.id]);
+        [nama, username, role, finalJurusan, req.params.id]);
     }
     res.redirect('/admin/portal-users?success=4');
   } catch (err) {
@@ -472,8 +477,10 @@ exports.adminPortalUserImport = async (req, res) => {
         if (!username || !nama || !['bkk','osis','jurusan'].includes(role)) { skipped++; continue; }
         try {
           const hash = await bcrypt.hash(pwd, 10);
+          // BKK dan OSIS tidak memiliki jurusan
+          const finalJurusan = (role === 'bkk' || role === 'osis') ? null : jurusan;
           await db.query('INSERT IGNORE INTO portal_users (username,password,nama,role,jurusan) VALUES (?,?,?,?,?)',
-            [username, hash, nama, role, jurusan]);
+            [username, hash, nama, role, finalJurusan]);
           imported++;
         } catch (e) { skipped++; }
       }
