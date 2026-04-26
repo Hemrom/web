@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { isAuthenticated, isAdmin } = require('../middleware/auth');
+const { isAuthenticated, isAdmin, isPengelola } = require('../middleware/auth');
 const adminController = require('../controllers/adminController');
 const beritaController = require('../controllers/beritaController');
 const galeriController = require('../controllers/galeriController');
@@ -164,13 +164,13 @@ router.post('/fasilitas/edit/:id', isAuthenticated, csrfProtect, validateIdParam
 router.post('/fasilitas/delete/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminFasilitasDelete);
 
 // Portal Users (BKK, OSIS, Jurusan)
-router.get('/portal-users', isAuthenticated, isAdmin, portalController.adminPortalUsers);
-router.post('/portal-users/create', isAuthenticated, isAdmin, csrfProtect, portalController.adminPortalUserCreate);
-router.post('/portal-users/edit/:id', isAuthenticated, isAdmin, csrfProtect, validateIdParam, portalController.adminPortalUserEdit);
-router.post('/portal-users/delete/:id', isAuthenticated, isAdmin, csrfProtect, validateIdParam, portalController.adminPortalUserDelete);
-router.post('/portal-users/toggle/:id', isAuthenticated, isAdmin, csrfProtect, validateIdParam, portalController.adminPortalUserToggle);
-router.get('/portal-users/export', isAuthenticated, isAdmin, portalController.adminPortalUserExport);
-router.post('/portal-users/import', isAuthenticated, isAdmin, csrfProtect, portalController.adminPortalUserImport);
+router.get('/portal-users', isAuthenticated, isPengelola, portalController.adminPortalUsers);
+router.post('/portal-users/create', isAuthenticated, isPengelola, csrfProtect, portalController.adminPortalUserCreate);
+router.post('/portal-users/edit/:id', isAuthenticated, isPengelola, csrfProtect, validateIdParam, portalController.adminPortalUserEdit);
+router.post('/portal-users/delete/:id', isAuthenticated, isPengelola, csrfProtect, validateIdParam, portalController.adminPortalUserDelete);
+router.post('/portal-users/toggle/:id', isAuthenticated, isPengelola, csrfProtect, validateIdParam, portalController.adminPortalUserToggle);
+router.get('/portal-users/export', isAuthenticated, isPengelola, portalController.adminPortalUserExport);
+router.post('/portal-users/import', isAuthenticated, isPengelola, csrfProtect, portalController.adminPortalUserImport);
 
 // Alumni
 router.get('/alumni', isAuthenticated, alumniController.adminIndex);

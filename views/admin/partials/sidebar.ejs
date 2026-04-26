@@ -89,11 +89,13 @@
             </div>
         </div>
     </li>
+    <% if (typeof user !== 'undefined' && ['admin', 'pengelola'].includes(user.role)) { %>
     <li class="nav-item">
         <a class="nav-link" href="/admin/portal-users">
             <i class="fas fa-fw fa-key"></i><span>Akun Portal</span>
         </a>
     </li>
+    <% } %>
     <hr class="sidebar-divider">
 
     <!-- Pengaturan -->
