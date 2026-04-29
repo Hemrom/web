@@ -1,5 +1,6 @@
 const express = require('express');
 const session = require('express-session');
+const MySQLStore = require('express-mysql-session')(session);
 const path = require('path');
 const compression = require('compression');
 require('dotenv').config();
@@ -37,10 +38,21 @@ app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ extended: true, limit: '5mb' }));
 app.use(xssSanitize);
 
+const sessionStore = new MySQLStore({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  clearExpired: true,
+  checkExpirationInterval: 900000,
+  expiration: 86400000
+});
+
 app.use(session({
   secret: process.env.SESSION_SECRET || 'ganti-dengan-secret-panjang-acak',
   resave: false,
   saveUninitialized: false,
+  store: sessionStore,
   name: 'sid',
   cookie: {
     maxAge: 24 * 60 * 60 * 1000,
