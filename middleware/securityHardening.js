@@ -7,7 +7,7 @@ const xssSanitize = (req, res, next) => {
     Object.keys(req.body).forEach(key => {
       if (typeof req.body[key] === 'string') {
         // Sanitize tapi jangan terlalu agresif untuk konten HTML editor
-        if (key === 'konten' || key === 'deskripsi') {
+        if (key === 'konten' || key === 'deskripsi' || key === 'deskripsi_lengkap') {
           // Untuk konten HTML, allow beberapa tag aman
           req.body[key] = xss(req.body[key], {
             whiteList: {
