@@ -185,7 +185,7 @@ exports.delete = async (req, res) => {
 // Mapping slug halaman progli ke keyword mata_pelajaran di tabel guru
 const PROGLI_SLUG_MAP = {
   'progli-tkj': 'Produktif TKJ',
-  'progli-tkro': 'Produktif TKRO',
+  'progli-TKR': 'Produktif TKR',
   'progli-kuliner': 'Produktif Kuliner',
   'progli-tptup': 'Produktif TPTUP',
 };
@@ -237,3 +237,4 @@ exports.show = async (req, res) => {
     res.status(500).send('Terjadi kesalahan');
   }
 };
+
