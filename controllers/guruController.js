@@ -152,7 +152,7 @@ exports.update = (req, res) => {
       let loginUpdate = '';
       const params = [nip || null, nama, mata_pelajaran, jabatan, email, telepon];
 
-      if (guru_username !== undefined) {
+      if (guru_username !== undefined && guru_username !== null && guru_username.trim() !== '') {
         loginUpdate += ', guru_username = ?';
         params.push(guru_username || null);
       }
