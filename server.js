@@ -1,6 +1,5 @@
 const express = require('express');
 const session = require('express-session');
-const MySQLStore = require('express-mysql-session')(session);
 const path = require('path');
 const compression = require('compression');
 require('dotenv').config();
@@ -17,12 +16,6 @@ app.get('/healthz', (req, res) => res.status(200).send('ok'));
 // Compression (gzip) — harus sebelum semua middleware lain
 app.use(compression({ level: 6, threshold: 1024 }));
 
-// Static files DULU sebelum security middleware — tidak perlu rate limit/xss untuk file statis
-const staticOpts = { maxAge: '7d', etag: true, lastModified: true };
-app.use(express.static('public', staticOpts));
-app.use('/assets', express.static('assets', staticOpts));
-app.use('/uploads', express.static('uploads', { maxAge: '30d', etag: true }));
-
 // Security middleware
 const { generalLimiter, helmetConfig, hpp } = require('./middleware/security');
 const { xssSanitize, secureHeaders } = require('./middleware/securityHardening');
@@ -38,21 +31,16 @@ app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ extended: true, limit: '5mb' }));
 app.use(xssSanitize);
 
-const sessionStore = new MySQLStore({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  clearExpired: true,
-  checkExpirationInterval: 900000,
-  expiration: 86400000
-});
+// Static files dengan cache headers
+const staticOpts = { maxAge: '7d', etag: true, lastModified: true };
+app.use(express.static('public', staticOpts));
+app.use('/assets', express.static('assets', staticOpts));
+app.use('/uploads', express.static('uploads', { maxAge: '1d', etag: true }));
 
 app.use(session({
   secret: process.env.SESSION_SECRET || 'ganti-dengan-secret-panjang-acak',
   resave: false,
   saveUninitialized: false,
-  store: sessionStore,
   name: 'sid',
   cookie: {
     maxAge: 24 * 60 * 60 * 1000,

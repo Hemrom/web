@@ -2,8 +2,8 @@ module.exports = {
   apps: [{
     name: 'smkn1kras',
     script: 'server.js',
-    instances: 4,
-    exec_mode: 'cluster',
+    instances: 1,
+    exec_mode: 'fork',
     autorestart: true,
     watch: false,
     max_memory_restart: '400M',
