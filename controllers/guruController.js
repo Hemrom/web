@@ -144,7 +144,7 @@ exports.update = (req, res) => {
     }
     await compressImage(req, res, () => {});
     try {
-      const { nip, nama, mata_pelajaran, jabatan, email, telepon, guru_username, guru_password } = req.body;
+      const { nip, nama, mata_pelajaran, jabatan, email, telepon, guru_username, guru_username_lama, guru_password } = req.body;
       const foto = req.file ? req.file.filename : null;
 
       // Siapkan update akun login
@@ -152,9 +152,12 @@ exports.update = (req, res) => {
       let loginUpdate = '';
       const params = [nip || null, nama, mata_pelajaran, jabatan, email, telepon];
 
-      if (guru_username !== undefined && guru_username !== null && guru_username.trim() !== '') {
+      // Hanya update username kalau benar-benar berubah dari nilai lama
+      const usernameBaruBersih = guru_username ? guru_username.trim() : '';
+      const usernameLamaBersih = guru_username_lama ? guru_username_lama.trim() : '';
+      if (usernameBaruBersih !== '' && usernameBaruBersih !== usernameLamaBersih) {
         loginUpdate += ', guru_username = ?';
-        params.push(guru_username || null);
+        params.push(usernameBaruBersih);
       }
       if (guru_password && guru_password.trim()) {
         const hash = await bcrypt.hash(guru_password.trim(), 10);

@@ -65,6 +65,7 @@
                                         <h6 class="font-weight-bold text-primary mb-3"><i class="fas fa-key mr-1"></i> Akun Login Portal Guru</h6>
                                         <div class="form-group">
                                             <label for="guru_username">Username Login</label>
+                                            <input type="hidden" name="guru_username_lama" value="<%= guru.guru_username || '' %>">
                                             <input type="text" class="form-control" id="guru_username" name="guru_username" value="<%= guru.guru_username || '' %>" placeholder="Kosongkan jika tidak ingin mengubah">
                                             <small class="form-text text-muted">Username saat ini: <strong><%= guru.guru_username || '(belum diset)' %></strong></small>
                                         </div>
