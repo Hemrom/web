@@ -360,7 +360,7 @@
                     </div>
                     <% } else { %>
                     <% berita.forEach(b => { %>
-                    <div class="berita-item">
+                    <a href="/osis/berita/<%= b.slug %>" class="berita-item" style="text-decoration:none;color:inherit;">
                         <% if (b.gambar) { %>
                         <img src="/uploads/<%= b.gambar %>" class="berita-thumb" alt="<%= b.judul %>" onerror="this.style.display='none'">
                         <% } else { %>
@@ -378,7 +378,7 @@
                                 <% if (b.penulis) { %> &nbsp;·&nbsp; <i class="fas fa-user me-1"></i><%= b.penulis %><% } %>
                             </div>
                         </div>
-                    </div>
+                    </a>
                     <% }) %>
                     <% } %>
                 </div>

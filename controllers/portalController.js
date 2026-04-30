@@ -92,6 +92,15 @@ exports.osisDetail = async (req, res) => {
   } catch (err) { res.status(500).send('Terjadi kesalahan'); }
 };
 
+exports.osisBeritaDetail = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [rows] = await db.query("SELECT * FROM osis_berita WHERE slug=? AND status='published'", [req.params.slug]);
+    if (!rows.length) return res.status(404).render('frontend/404', { title: '404', menuItems: common.menuItems });
+    res.render('frontend/osis-berita-detail', { title: rows[0].judul, berita: rows[0], ...common });
+  } catch (err) { res.status(500).send('Terjadi kesalahan'); }
+};
+
 // ── FRONTEND PRAMUKA ──────────────────────────────────────────────────────────
 exports.pramukaIndex = async (req, res) => {
   try {

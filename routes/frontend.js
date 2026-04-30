@@ -39,6 +39,7 @@ router.get('/prestasi/:slug', validateSlugParam, portalController.prestasiDetail
 router.get('/bkk', portalController.bkkIndex);
 router.get('/bkk/:slug', validateSlugParam, portalController.bkkDetail);
 router.get('/osis', portalController.osisIndex);
+router.get('/osis/berita/:slug', validateSlugParam, portalController.osisBeritaDetail);
 router.get('/osis/:slug', validateSlugParam, portalController.osisDetail);
 router.get('/pramuka', portalController.pramukaIndex);
 router.get('/pramuka/berita/:slug', validateSlugParam, portalController.pramukaBeritaDetail);
