@@ -37,6 +37,10 @@
         <li class="nav-item"><a class="nav-link" href="<%= dashUrl %>"><i class="fas fa-fw fa-campground"></i><span>Dashboard (Kegiatan)</span></a></li>
         <li class="nav-item"><a class="nav-link" href="/pramuka/berita"><i class="fas fa-fw fa-newspaper"></i><span>Berita & Informasi</span></a></li>
         <li class="nav-item"><a class="nav-link" href="/pramuka/galeri"><i class="fas fa-fw fa-images"></i><span>Galeri Pramuka</span></a></li>
+        <% } else if (portalLabel === 'OLAHRAGA') { %>
+        <li class="nav-item"><a class="nav-link" href="<%= dashUrl %>"><i class="fas fa-fw fa-running"></i><span>Dashboard (Kegiatan)</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/olahraga/berita"><i class="fas fa-fw fa-newspaper"></i><span>Berita & Informasi</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/olahraga/galeri"><i class="fas fa-fw fa-images"></i><span>Galeri Olahraga</span></a></li>
         <% } else { %>
         <li class="nav-item"><a class="nav-link" href="<%= dashUrl %>"><i class="fas fa-fw fa-tachometer-alt"></i><span>Dashboard (Prestasi)</span></a></li>
         <li class="nav-item"><a class="nav-link" href="/jurusan-portal/halaman"><i class="fas fa-fw fa-edit"></i><span>Edit Halaman Jurusan</span></a></li>

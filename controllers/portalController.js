@@ -132,6 +132,35 @@ exports.pramukaBeritaDetail = async (req, res) => {
   } catch (err) { res.status(500).send('Terjadi kesalahan'); }
 };
 
+// ── FRONTEND OLAHRAGA ─────────────────────────────────────────────────────────
+exports.olahragaIndex = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [[kegiatan], [berita], [galeri]] = await Promise.all([
+      db.query("SELECT * FROM olahraga_kegiatan WHERE status='published' ORDER BY created_at DESC"),
+      db.query("SELECT * FROM olahraga_berita WHERE status='published' ORDER BY created_at DESC"),
+      db.query("SELECT * FROM olahraga_galeri ORDER BY created_at DESC")
+    ]);
+    res.render('frontend/olahraga', { title: 'Olahraga', currentPage: 'olahraga', kegiatan, berita, galeri, ...common });
+  } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
+};
+exports.olahragaDetail = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [rows] = await db.query("SELECT * FROM olahraga_kegiatan WHERE slug=? AND status='published'", [req.params.slug]);
+    if (!rows.length) return res.status(404).render('frontend/404', { title: '404', menuItems: common.menuItems });
+    res.render('frontend/olahraga-detail', { title: rows[0].judul, kegiatan: rows[0], ...common });
+  } catch (err) { res.status(500).send('Terjadi kesalahan'); }
+};
+exports.olahragaBeritaDetail = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [rows] = await db.query("SELECT * FROM olahraga_berita WHERE slug=? AND status='published'", [req.params.slug]);
+    if (!rows.length) return res.status(404).render('frontend/404', { title: '404', menuItems: common.menuItems });
+    res.render('frontend/olahraga-berita-detail', { title: rows[0].judul, berita: rows[0], ...common });
+  } catch (err) { res.status(500).send('Terjadi kesalahan'); }
+};
+
 // ── PORTAL LOGIN (shared) ─────────────────────────────────────────────────────
 exports.portalLoginPage = (role, title) => (req, res) => {
   if (req.session.portalId && req.session.portalRole === role) return res.redirect(`/${role === 'jurusan' ? 'jurusan-portal' : role}/dashboard`);
@@ -444,6 +473,110 @@ exports.pramukaBeritaDelete = async (req, res) => {
   res.redirect('/pramuka/berita?success=3');
 };
 
+// ── PORTAL OLAHRAGA ───────────────────────────────────────────────────────────
+const uploadGaleriOlahraga = createUpload('olahraga-galeri', { maxFiles: 20 }).array('gambar', 20);
+
+exports.olahragaDashboard = async (req, res) => {
+  const [kegiatan] = await db.query('SELECT * FROM olahraga_kegiatan ORDER BY created_at DESC');
+  portalRender(res, req, 'portal/olahraga/dashboard', { title: 'Dashboard Olahraga', user: req.session, kegiatan, success: req.query.success });
+};
+exports.olahragaCreatePage = (req, res) => portalRender(res, req, 'portal/olahraga/create', { title: 'Tambah Kegiatan Olahraga', user: req.session });
+exports.olahragaCreate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return portalRender(res, req, 'portal/olahraga/create', { title: 'Tambah Kegiatan Olahraga', user: req.session, error: err.message });
+    try {
+      const { judul, konten, kategori, status } = req.body;
+      if (!judul) return portalRender(res, req, 'portal/olahraga/create', { title: 'Tambah Kegiatan Olahraga', user: req.session, error: 'Judul wajib diisi' });
+      const gambar = req.file ? req.file.filename : null;
+      const slug = createSlug(judul);
+      await db.query('INSERT INTO olahraga_kegiatan (judul,slug,konten,gambar,kategori,status,penulis) VALUES (?,?,?,?,?,?,?)',
+        [judul, slug, konten||null, gambar, kategori||'kegiatan', status||'published', req.session.portalNama]);
+      res.redirect('/olahraga/dashboard?success=1');
+    } catch (e) { console.error(e); portalRender(res, req, 'portal/olahraga/create', { title: 'Tambah Kegiatan Olahraga', user: req.session, error: e.message }); }
+  });
+};
+exports.olahragaEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM olahraga_kegiatan WHERE id=?', [req.params.id]);
+  if (!rows.length) return res.redirect('/olahraga/dashboard');
+  portalRender(res, req, 'portal/olahraga/edit', { title: 'Edit Kegiatan Olahraga', user: req.session, item: rows[0] });
+};
+exports.olahragaUpdate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/olahraga/dashboard');
+    const { judul, konten, kategori, status } = req.body;
+    const [rows] = await db.query('SELECT gambar FROM olahraga_kegiatan WHERE id=?', [req.params.id]);
+    const gambar = req.file ? req.file.filename : rows[0]?.gambar;
+    await db.query('UPDATE olahraga_kegiatan SET judul=?,konten=?,gambar=?,kategori=?,status=? WHERE id=?',
+      [judul, konten||null, gambar, kategori||'kegiatan', status||'published', req.params.id]);
+    res.redirect('/olahraga/dashboard?success=2');
+  });
+};
+exports.olahragaDelete = async (req, res) => {
+  await db.query('DELETE FROM olahraga_kegiatan WHERE id=?', [req.params.id]);
+  res.redirect('/olahraga/dashboard?success=3');
+};
+exports.olahragaGaleriIndex = async (req, res) => {
+  const [galeri] = await db.query('SELECT * FROM olahraga_galeri ORDER BY created_at DESC');
+  portalRender(res, req, 'portal/olahraga/galeri', { title: 'Galeri Olahraga', user: req.session, galeri, success: req.query.success, errorMsg: req.query.error || null });
+};
+exports.olahragaGaleriCreate = (req, res) => {
+  uploadGaleriOlahraga(req, res, async (err) => {
+    if (err) return res.redirect('/olahraga/galeri?error=' + encodeURIComponent(err.message));
+    try {
+      if (!req.files || req.files.length === 0) return res.redirect('/olahraga/galeri?error=Pilih+minimal+1+foto');
+      const { judul, keterangan } = req.body;
+      for (const file of req.files) {
+        await db.query('INSERT INTO olahraga_galeri (judul,gambar,keterangan) VALUES (?,?,?)',
+          [judul||'Galeri Olahraga', file.filename, keterangan||null]);
+      }
+      res.redirect('/olahraga/galeri?success=1');
+    } catch (e) { res.redirect('/olahraga/galeri?error=' + encodeURIComponent(e.message)); }
+  });
+};
+exports.olahragaGaleriDelete = async (req, res) => {
+  await db.query('DELETE FROM olahraga_galeri WHERE id=?', [req.params.id]);
+  res.redirect('/olahraga/galeri?success=3');
+};
+exports.olahragaBeritaIndex = async (req, res) => {
+  const [berita] = await db.query('SELECT * FROM olahraga_berita ORDER BY created_at DESC');
+  portalRender(res, req, 'portal/olahraga/berita', { title: 'Berita & Informasi Olahraga', user: req.session, berita, success: req.query.success });
+};
+exports.olahragaBeritaCreatePage = (req, res) => portalRender(res, req, 'portal/olahraga/berita-create', { title: 'Tambah Berita Olahraga', user: req.session });
+exports.olahragaBeritaCreate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return portalRender(res, req, 'portal/olahraga/berita-create', { title: 'Tambah Berita Olahraga', user: req.session, error: err.message });
+    try {
+      const { judul, konten, kategori, status } = req.body;
+      if (!judul) return portalRender(res, req, 'portal/olahraga/berita-create', { title: 'Tambah Berita Olahraga', user: req.session, error: 'Judul wajib diisi' });
+      const gambar = req.file ? req.file.filename : null;
+      const slug = createSlug(judul);
+      await db.query('INSERT INTO olahraga_berita (judul,slug,konten,gambar,kategori,status,penulis) VALUES (?,?,?,?,?,?,?)',
+        [judul, slug, konten||null, gambar, kategori||'berita', status||'published', req.session.portalNama]);
+      res.redirect('/olahraga/berita?success=1');
+    } catch (e) { portalRender(res, req, 'portal/olahraga/berita-create', { title: 'Tambah Berita Olahraga', user: req.session, error: e.message }); }
+  });
+};
+exports.olahragaBeritaEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM olahraga_berita WHERE id=?', [req.params.id]);
+  if (!rows.length) return res.redirect('/olahraga/berita');
+  portalRender(res, req, 'portal/olahraga/berita-edit', { title: 'Edit Berita Olahraga', user: req.session, item: rows[0] });
+};
+exports.olahragaBeritaUpdate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/olahraga/berita');
+    const { judul, konten, kategori, status } = req.body;
+    const [rows] = await db.query('SELECT gambar FROM olahraga_berita WHERE id=?', [req.params.id]);
+    const gambar = req.file ? req.file.filename : rows[0]?.gambar;
+    await db.query('UPDATE olahraga_berita SET judul=?,konten=?,gambar=?,kategori=?,status=? WHERE id=?',
+      [judul, konten||null, gambar, kategori||'berita', status||'published', req.params.id]);
+    res.redirect('/olahraga/berita?success=2');
+  });
+};
+exports.olahragaBeritaDelete = async (req, res) => {
+  await db.query('DELETE FROM olahraga_berita WHERE id=?', [req.params.id]);
+  res.redirect('/olahraga/berita?success=3');
+};
+
 // ── PORTAL JURUSAN DASHBOARD ──────────────────────────────────────────────────
 exports.jurusanDashboard = async (req, res) => {
   const jurusan = req.session.portalJurusan;
@@ -542,8 +675,8 @@ exports.adminPortalUserCreate = async (req, res) => {
   try {
     const { username, password, nama, role, jurusan } = req.body;
     const hash = await bcrypt.hash(password, 10);
-    // BKK, OSIS, dan Pramuka tidak memiliki jurusan
-    const finalJurusan = (role === 'bkk' || role === 'osis' || role === 'pramuka') ? null : (jurusan || null);
+    // BKK, OSIS, Pramuka, dan Olahraga tidak memiliki jurusan
+    const finalJurusan = (role === 'bkk' || role === 'osis' || role === 'pramuka' || role === 'olahraga') ? null : (jurusan || null);
     await db.query('INSERT INTO portal_users (username,password,nama,role,jurusan) VALUES (?,?,?,?,?)',
       [username, hash, nama, role, finalJurusan]);
     res.redirect('/admin/portal-users?success=1');
@@ -559,8 +692,8 @@ exports.adminPortalUserCreate = async (req, res) => {
 exports.adminPortalUserEdit = async (req, res) => {
   try {
     const { nama, username, role, jurusan, password } = req.body;
-    // BKK, OSIS, dan Pramuka tidak memiliki jurusan
-    const finalJurusan = (role === 'bkk' || role === 'osis' || role === 'pramuka') ? null : (jurusan || null);
+    // BKK, OSIS, Pramuka, dan Olahraga tidak memiliki jurusan
+    const finalJurusan = (role === 'bkk' || role === 'osis' || role === 'pramuka' || role === 'olahraga') ? null : (jurusan || null);
     
     if (password && password.trim() !== '') {
       const hash = await bcrypt.hash(password, 10);

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const ctrl = require('../controllers/portalController');
-const { isBKK, isOSIS, isJurusan, isPramuka } = require('../middleware/authPortal');
+const { isBKK, isOSIS, isJurusan, isPramuka, isOlahraga } = require('../middleware/authPortal');
 const { loginLimiter, formLimiter } = require('../middleware/security');
 const { csrfProtect } = require('../middleware/csrf');
 const { validateIdParam } = require('../middleware/securityHardening');
@@ -59,6 +59,26 @@ router.post('/pramuka/berita/create', isPramuka, csrfProtect, ctrl.pramukaBerita
 router.get('/pramuka/berita/edit/:id', isPramuka, validateIdParam, ctrl.pramukaBeritaEditPage);
 router.post('/pramuka/berita/edit/:id', isPramuka, csrfProtect, validateIdParam, ctrl.pramukaBeritaUpdate);
 router.post('/pramuka/berita/delete/:id', isPramuka, csrfProtect, validateIdParam, ctrl.pramukaBeritaDelete);
+
+// ── Olahraga Portal ───────────────────────────────────────────────────────────
+router.get('/olahraga/login', ctrl.portalLoginPage('olahraga', 'Login Portal Olahraga'));
+router.post('/olahraga/login', loginLimiter, csrfProtect, ctrl.portalLogin('olahraga'));
+router.get('/olahraga/logout', ctrl.portalLogout('olahraga'));
+router.get('/olahraga/dashboard', isOlahraga, ctrl.olahragaDashboard);
+router.get('/olahraga/create', isOlahraga, ctrl.olahragaCreatePage);
+router.post('/olahraga/create', isOlahraga, csrfProtect, ctrl.olahragaCreate);
+router.get('/olahraga/edit/:id', isOlahraga, validateIdParam, ctrl.olahragaEditPage);
+router.post('/olahraga/edit/:id', isOlahraga, csrfProtect, validateIdParam, ctrl.olahragaUpdate);
+router.post('/olahraga/delete/:id', isOlahraga, csrfProtect, validateIdParam, ctrl.olahragaDelete);
+router.get('/olahraga/berita', isOlahraga, ctrl.olahragaBeritaIndex);
+router.get('/olahraga/berita/create', isOlahraga, ctrl.olahragaBeritaCreatePage);
+router.post('/olahraga/berita/create', isOlahraga, csrfProtect, ctrl.olahragaBeritaCreate);
+router.get('/olahraga/berita/edit/:id', isOlahraga, validateIdParam, ctrl.olahragaBeritaEditPage);
+router.post('/olahraga/berita/edit/:id', isOlahraga, csrfProtect, validateIdParam, ctrl.olahragaBeritaUpdate);
+router.post('/olahraga/berita/delete/:id', isOlahraga, csrfProtect, validateIdParam, ctrl.olahragaBeritaDelete);
+router.get('/olahraga/galeri', isOlahraga, ctrl.olahragaGaleriIndex);
+router.post('/olahraga/galeri/upload', isOlahraga, ctrl.olahragaGaleriCreate);
+router.post('/olahraga/galeri/delete/:id', isOlahraga, csrfProtect, validateIdParam, ctrl.olahragaGaleriDelete);
 
 // ── Jurusan Portal ────────────────────────────────────────────────────────────
 router.post('/jurusan-portal/login', loginLimiter, csrfProtect, ctrl.portalLogin('jurusan'));

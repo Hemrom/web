@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Website Sekolah</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <link href="/assets/vendor/bootstrap5/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/vendor/fontawesome6/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/theme.css">
+    <style>
+        body{color:#334155;line-height:1.6;background:#f8fafc;}
+        .page-header{background:linear-gradient(135deg,#7c2d12,#f97316);padding:10rem 0 4rem;color:white;text-align:center;}
+        .content-section{padding:5rem 0;}
+        .content-card{background:white;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.06);padding:3rem;}
+    </style>
+</head>
+<body>
+    <%- include('partials/navbar') %>
+    <section class="page-header">
+        <div class="container">
+            <h1 style="font-size:2.5rem;font-weight:800;"><%= kegiatan.judul %></h1>
+            <p style="opacity:.85;margin-top:.5rem;"><%= new Date(kegiatan.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}) %></p>
+        </div>
+    </section>
+    <section class="content-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-9">
+                    <div class="content-card">
+                        <% if (kegiatan.gambar) { %><img src="/uploads/<%= kegiatan.gambar %>" style="width:100%;border-radius:12px;margin-bottom:2rem;" alt="<%= kegiatan.judul %>"><% } %>
+                        <div style="font-size:1rem;line-height:1.8;"><%- kegiatan.konten || '' %></div>
+                        <% shareTitle = kegiatan.judul; shareUrl = '/olahraga/' + kegiatan.slug; %>
+                        <%- include('partials/share-buttons') %>
+                        <div class="mt-4 pt-3" style="border-top:1px solid #f1f5f9;">
+                            <a href="/olahraga" style="color:#f97316;font-weight:600;text-decoration:none;"><i class="fas fa-arrow-left me-2"></i>Kembali ke Olahraga</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <%- include('partials/footer') %>
+    <script src="/assets/vendor/bootstrap5/bootstrap.bundle.min.js"></script>
+    <script src="/assets/vendor/jquery3/jquery.min.js"></script>
+    <script>$(window).scroll(function(){if($(window).scrollTop()>50)$('.navbar-modern').addClass('scrolled');else$('.navbar-modern').removeClass('scrolled');});</script>
+</body>
+</html>

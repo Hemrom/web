@@ -44,6 +44,9 @@ router.get('/osis/:slug', validateSlugParam, portalController.osisDetail);
 router.get('/pramuka', portalController.pramukaIndex);
 router.get('/pramuka/berita/:slug', validateSlugParam, portalController.pramukaBeritaDetail);
 router.get('/pramuka/:slug', validateSlugParam, portalController.pramukaDetail);
+router.get('/olahraga', portalController.olahragaIndex);
+router.get('/olahraga/berita/:slug', validateSlugParam, portalController.olahragaBeritaDetail);
+router.get('/olahraga/:slug', validateSlugParam, portalController.olahragaDetail);
 
 // Fasilitas
 router.get('/fasilitas', portalController.fasilitasIndex);
