@@ -96,11 +96,12 @@ exports.osisDetail = async (req, res) => {
 exports.pramukaIndex = async (req, res) => {
   try {
     const common = await getCommon();
-    const [[kegiatan], [galeri]] = await Promise.all([
+    const [[kegiatan], [berita], [galeri]] = await Promise.all([
       db.query("SELECT * FROM pramuka_kegiatan WHERE status='published' ORDER BY created_at DESC"),
+      db.query("SELECT * FROM pramuka_berita WHERE status='published' ORDER BY created_at DESC"),
       db.query("SELECT * FROM pramuka_galeri ORDER BY created_at DESC")
     ]);
-    res.render('frontend/pramuka', { title: 'Pramuka', currentPage: 'pramuka', kegiatan, galeri, ...common });
+    res.render('frontend/pramuka', { title: 'Pramuka', currentPage: 'pramuka', kegiatan, berita, galeri, ...common });
   } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
 };
 
