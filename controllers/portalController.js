@@ -114,6 +114,15 @@ exports.pramukaDetail = async (req, res) => {
   } catch (err) { res.status(500).send('Terjadi kesalahan'); }
 };
 
+exports.pramukaBeritaDetail = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [rows] = await db.query("SELECT * FROM pramuka_berita WHERE slug=? AND status='published'", [req.params.slug]);
+    if (!rows.length) return res.status(404).render('frontend/404', { title: '404', menuItems: common.menuItems });
+    res.render('frontend/pramuka-berita-detail', { title: rows[0].judul, berita: rows[0], ...common });
+  } catch (err) { res.status(500).send('Terjadi kesalahan'); }
+};
+
 // ── PORTAL LOGIN (shared) ─────────────────────────────────────────────────────
 exports.portalLoginPage = (role, title) => (req, res) => {
   if (req.session.portalId && req.session.portalRole === role) return res.redirect(`/${role === 'jurusan' ? 'jurusan-portal' : role}/dashboard`);

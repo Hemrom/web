@@ -176,7 +176,7 @@
                 </div>
                 <div class="col-lg-8">
                     <% berita.forEach(b => { %>
-                    <div class="berita-item">
+                    <a href="/pramuka/berita/<%= b.slug %>" class="berita-item" style="text-decoration:none;color:inherit;">
                         <% if (b.gambar) { %>
                         <img src="/uploads/<%= b.gambar %>" class="berita-thumb" alt="<%= b.judul %>" onerror="this.style.display='none'">
                         <% } else { %>
@@ -188,7 +188,7 @@
                             <% if (b.konten) { %><div class="berita-excerpt"><%- (b.konten||'').replace(/<[^>]*>/g,'').substring(0,100) %></div><% } %>
                             <div class="kegiatan-meta mt-1"><i class="fas fa-calendar me-1"></i><%= new Date(b.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}) %></div>
                         </div>
-                    </div>
+                    </a>
                     <% }) %>
                 </div>
             </div>
