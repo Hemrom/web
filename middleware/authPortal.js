@@ -5,9 +5,10 @@ const isPortalAuth = (role) => (req, res, next) => {
 
 const isBKK = isPortalAuth('bkk');
 const isOSIS = isPortalAuth('osis');
+const isPramuka = isPortalAuth('pramuka');
 const isJurusan = (req, res, next) => {
   if (req.session && req.session.portalId && req.session.portalRole === 'jurusan') return next();
   res.redirect('/jurusan-portal/login');
 };
 
-module.exports = { isBKK, isOSIS, isJurusan };
+module.exports = { isBKK, isOSIS, isJurusan, isPramuka };

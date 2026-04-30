@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const ctrl = require('../controllers/portalController');
-const { isBKK, isOSIS, isJurusan } = require('../middleware/authPortal');
+const { isBKK, isOSIS, isJurusan, isPramuka } = require('../middleware/authPortal');
 const { loginLimiter, formLimiter } = require('../middleware/security');
 const { csrfProtect } = require('../middleware/csrf');
 const { validateIdParam } = require('../middleware/securityHardening');
@@ -39,8 +39,28 @@ router.get('/osis/galeri', isOSIS, ctrl.osisGaleriIndex);
 router.post('/osis/galeri/upload', isOSIS, ctrl.osisGaleriCreate);
 router.post('/osis/galeri/delete/:id', isOSIS, csrfProtect, validateIdParam, ctrl.osisGaleriDelete);
 
+// ── Pramuka Portal ────────────────────────────────────────────────────────────
+router.get('/pramuka/login', ctrl.portalLoginPage('pramuka', 'Login Portal Pramuka'));
+router.post('/pramuka/login', loginLimiter, csrfProtect, ctrl.portalLogin('pramuka'));
+router.get('/pramuka/logout', ctrl.portalLogout('pramuka'));
+router.get('/pramuka/dashboard', isPramuka, ctrl.pramukaDashboard);
+router.get('/pramuka/create', isPramuka, ctrl.pramukaCreatePage);
+router.post('/pramuka/create', isPramuka, csrfProtect, ctrl.pramukaCreate);
+router.get('/pramuka/edit/:id', isPramuka, validateIdParam, ctrl.pramukaEditPage);
+router.post('/pramuka/edit/:id', isPramuka, csrfProtect, validateIdParam, ctrl.pramukaUpdate);
+router.post('/pramuka/delete/:id', isPramuka, csrfProtect, validateIdParam, ctrl.pramukaDelete);
+router.get('/pramuka/galeri', isPramuka, ctrl.pramukaGaleriIndex);
+router.post('/pramuka/galeri/upload', isPramuka, ctrl.pramukaGaleriCreate);
+router.post('/pramuka/galeri/delete/:id', isPramuka, csrfProtect, validateIdParam, ctrl.pramukaGaleriDelete);
+// Berita Pramuka
+router.get('/pramuka/berita', isPramuka, ctrl.pramukaBeritaIndex);
+router.get('/pramuka/berita/create', isPramuka, ctrl.pramukaBeritaCreatePage);
+router.post('/pramuka/berita/create', isPramuka, csrfProtect, ctrl.pramukaBeritaCreate);
+router.get('/pramuka/berita/edit/:id', isPramuka, validateIdParam, ctrl.pramukaBeritaEditPage);
+router.post('/pramuka/berita/edit/:id', isPramuka, csrfProtect, validateIdParam, ctrl.pramukaBeritaUpdate);
+router.post('/pramuka/berita/delete/:id', isPramuka, csrfProtect, validateIdParam, ctrl.pramukaBeritaDelete);
+
 // ── Jurusan Portal ────────────────────────────────────────────────────────────
-router.get('/jurusan-portal/login', ctrl.portalLoginPage('jurusan', 'Login Portal Jurusan'));
 router.post('/jurusan-portal/login', loginLimiter, csrfProtect, ctrl.portalLogin('jurusan'));
 router.get('/jurusan-portal/logout', ctrl.portalLogout('jurusan'));
 router.get('/jurusan-portal/dashboard', isJurusan, ctrl.jurusanDashboard);

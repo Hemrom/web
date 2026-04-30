@@ -92,6 +92,27 @@ exports.osisDetail = async (req, res) => {
   } catch (err) { res.status(500).send('Terjadi kesalahan'); }
 };
 
+// ── FRONTEND PRAMUKA ──────────────────────────────────────────────────────────
+exports.pramukaIndex = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [[kegiatan], [galeri]] = await Promise.all([
+      db.query("SELECT * FROM pramuka_kegiatan WHERE status='published' ORDER BY created_at DESC"),
+      db.query("SELECT * FROM pramuka_galeri ORDER BY created_at DESC")
+    ]);
+    res.render('frontend/pramuka', { title: 'Pramuka', currentPage: 'pramuka', kegiatan, galeri, ...common });
+  } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
+};
+
+exports.pramukaDetail = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [rows] = await db.query("SELECT * FROM pramuka_kegiatan WHERE slug=? AND status='published'", [req.params.slug]);
+    if (!rows.length) return res.status(404).render('frontend/404', { title: '404', menuItems: common.menuItems });
+    res.render('frontend/pramuka-detail', { title: rows[0].judul, kegiatan: rows[0], ...common });
+  } catch (err) { res.status(500).send('Terjadi kesalahan'); }
+};
+
 // ── PORTAL LOGIN (shared) ─────────────────────────────────────────────────────
 exports.portalLoginPage = (role, title) => (req, res) => {
   if (req.session.portalId && req.session.portalRole === role) return res.redirect(`/${role === 'jurusan' ? 'jurusan-portal' : role}/dashboard`);
@@ -283,6 +304,127 @@ exports.osisGaleriDelete = async (req, res) => {
   res.redirect('/osis/galeri?success=3');
 };
 
+// ── PORTAL PRAMUKA ────────────────────────────────────────────────────────────
+const uploadGaleriPramuka = createUpload('pramuka-galeri', { maxFiles: 20 }).array('gambar', 20);
+
+exports.pramukaDashboard = async (req, res) => {
+  const [kegiatan] = await db.query('SELECT * FROM pramuka_kegiatan ORDER BY created_at DESC');
+  portalRender(res, req, 'portal/pramuka/dashboard', { title: 'Dashboard Pramuka', user: req.session, kegiatan, success: req.query.success });
+};
+
+exports.pramukaCreatePage = (req, res) =>
+  portalRender(res, req, 'portal/pramuka/create', { title: 'Tambah Kegiatan Pramuka', user: req.session });
+
+exports.pramukaCreate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return portalRender(res, req, 'portal/pramuka/create', { title: 'Tambah Kegiatan Pramuka', user: req.session, error: err.message });
+    try {
+      const { judul, konten, kategori, status } = req.body;
+      if (!judul) return portalRender(res, req, 'portal/pramuka/create', { title: 'Tambah Kegiatan Pramuka', user: req.session, error: 'Judul wajib diisi' });
+      const gambar = req.file ? req.file.filename : null;
+      const slug = createSlug(judul);
+      await db.query('INSERT INTO pramuka_kegiatan (judul,slug,konten,gambar,kategori,status,penulis) VALUES (?,?,?,?,?,?,?)',
+        [judul, slug, konten||null, gambar, kategori||'kegiatan', status||'published', req.session.portalNama]);
+      res.redirect('/pramuka/dashboard?success=1');
+    } catch (e) { console.error(e); portalRender(res, req, 'portal/pramuka/create', { title: 'Tambah Kegiatan Pramuka', user: req.session, error: e.message }); }
+  });
+};
+
+exports.pramukaEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM pramuka_kegiatan WHERE id=?', [req.params.id]);
+  if (!rows.length) return res.redirect('/pramuka/dashboard');
+  portalRender(res, req, 'portal/pramuka/edit', { title: 'Edit Kegiatan Pramuka', user: req.session, item: rows[0] });
+};
+
+exports.pramukaUpdate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/pramuka/dashboard');
+    const { judul, konten, kategori, status } = req.body;
+    const [rows] = await db.query('SELECT gambar FROM pramuka_kegiatan WHERE id=?', [req.params.id]);
+    const gambar = req.file ? req.file.filename : rows[0]?.gambar;
+    await db.query('UPDATE pramuka_kegiatan SET judul=?,konten=?,gambar=?,kategori=?,status=? WHERE id=?',
+      [judul, konten||null, gambar, kategori||'kegiatan', status||'published', req.params.id]);
+    res.redirect('/pramuka/dashboard?success=2');
+  });
+};
+
+exports.pramukaDelete = async (req, res) => {
+  await db.query('DELETE FROM pramuka_kegiatan WHERE id=?', [req.params.id]);
+  res.redirect('/pramuka/dashboard?success=3');
+};
+
+exports.pramukaGaleriIndex = async (req, res) => {
+  const [galeri] = await db.query('SELECT * FROM pramuka_galeri ORDER BY created_at DESC');
+  portalRender(res, req, 'portal/pramuka/galeri', { title: 'Galeri Pramuka', user: req.session, galeri, success: req.query.success, errorMsg: req.query.error || null });
+};
+
+exports.pramukaGaleriCreate = (req, res) => {
+  uploadGaleriPramuka(req, res, async (err) => {
+    if (err) return res.redirect('/pramuka/galeri?error=' + encodeURIComponent(err.message));
+    try {
+      if (!req.files || req.files.length === 0) return res.redirect('/pramuka/galeri?error=Pilih+minimal+1+foto');
+      const { judul, keterangan } = req.body;
+      for (const file of req.files) {
+        await db.query('INSERT INTO pramuka_galeri (judul,gambar,keterangan) VALUES (?,?,?)',
+          [judul||'Galeri Pramuka', file.filename, keterangan||null]);
+      }
+      res.redirect('/pramuka/galeri?success=1');
+    } catch (e) { console.error(e); res.redirect('/pramuka/galeri?error=' + encodeURIComponent(e.message)); }
+  });
+};
+
+exports.pramukaGaleriDelete = async (req, res) => {
+  await db.query('DELETE FROM pramuka_galeri WHERE id=?', [req.params.id]);
+  res.redirect('/pramuka/galeri?success=3');
+};
+
+// ── PORTAL PRAMUKA: Berita ────────────────────────────────────────────────────
+exports.pramukaBeritaIndex = async (req, res) => {
+  const [berita] = await db.query('SELECT * FROM pramuka_berita ORDER BY created_at DESC');
+  portalRender(res, req, 'portal/pramuka/berita', { title: 'Berita & Informasi Pramuka', user: req.session, berita, success: req.query.success });
+};
+
+exports.pramukaBeritaCreatePage = (req, res) =>
+  portalRender(res, req, 'portal/pramuka/berita-create', { title: 'Tambah Berita Pramuka', user: req.session });
+
+exports.pramukaBeritaCreate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return portalRender(res, req, 'portal/pramuka/berita-create', { title: 'Tambah Berita Pramuka', user: req.session, error: err.message });
+    try {
+      const { judul, konten, kategori, status } = req.body;
+      if (!judul) return portalRender(res, req, 'portal/pramuka/berita-create', { title: 'Tambah Berita Pramuka', user: req.session, error: 'Judul wajib diisi' });
+      const gambar = req.file ? req.file.filename : null;
+      const slug = createSlug(judul);
+      await db.query('INSERT INTO pramuka_berita (judul,slug,konten,gambar,kategori,status,penulis) VALUES (?,?,?,?,?,?,?)',
+        [judul, slug, konten||null, gambar, kategori||'berita', status||'published', req.session.portalNama]);
+      res.redirect('/pramuka/berita?success=1');
+    } catch (e) { console.error(e); portalRender(res, req, 'portal/pramuka/berita-create', { title: 'Tambah Berita Pramuka', user: req.session, error: e.message }); }
+  });
+};
+
+exports.pramukaBeritaEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM pramuka_berita WHERE id=?', [req.params.id]);
+  if (!rows.length) return res.redirect('/pramuka/berita');
+  portalRender(res, req, 'portal/pramuka/berita-edit', { title: 'Edit Berita Pramuka', user: req.session, item: rows[0] });
+};
+
+exports.pramukaBeritaUpdate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/pramuka/berita');
+    const { judul, konten, kategori, status } = req.body;
+    const [rows] = await db.query('SELECT gambar FROM pramuka_berita WHERE id=?', [req.params.id]);
+    const gambar = req.file ? req.file.filename : rows[0]?.gambar;
+    await db.query('UPDATE pramuka_berita SET judul=?,konten=?,gambar=?,kategori=?,status=? WHERE id=?',
+      [judul, konten||null, gambar, kategori||'berita', status||'published', req.params.id]);
+    res.redirect('/pramuka/berita?success=2');
+  });
+};
+
+exports.pramukaBeritaDelete = async (req, res) => {
+  await db.query('DELETE FROM pramuka_berita WHERE id=?', [req.params.id]);
+  res.redirect('/pramuka/berita?success=3');
+};
+
 // ── PORTAL JURUSAN DASHBOARD ──────────────────────────────────────────────────
 exports.jurusanDashboard = async (req, res) => {
   const jurusan = req.session.portalJurusan;
@@ -381,8 +523,8 @@ exports.adminPortalUserCreate = async (req, res) => {
   try {
     const { username, password, nama, role, jurusan } = req.body;
     const hash = await bcrypt.hash(password, 10);
-    // BKK dan OSIS tidak memiliki jurusan
-    const finalJurusan = (role === 'bkk' || role === 'osis') ? null : (jurusan || null);
+    // BKK, OSIS, dan Pramuka tidak memiliki jurusan
+    const finalJurusan = (role === 'bkk' || role === 'osis' || role === 'pramuka') ? null : (jurusan || null);
     await db.query('INSERT INTO portal_users (username,password,nama,role,jurusan) VALUES (?,?,?,?,?)',
       [username, hash, nama, role, finalJurusan]);
     res.redirect('/admin/portal-users?success=1');
@@ -398,8 +540,8 @@ exports.adminPortalUserCreate = async (req, res) => {
 exports.adminPortalUserEdit = async (req, res) => {
   try {
     const { nama, username, role, jurusan, password } = req.body;
-    // BKK dan OSIS tidak memiliki jurusan
-    const finalJurusan = (role === 'bkk' || role === 'osis') ? null : (jurusan || null);
+    // BKK, OSIS, dan Pramuka tidak memiliki jurusan
+    const finalJurusan = (role === 'bkk' || role === 'osis' || role === 'pramuka') ? null : (jurusan || null);
     
     if (password && password.trim() !== '') {
       const hash = await bcrypt.hash(password, 10);
@@ -477,8 +619,8 @@ exports.adminPortalUserImport = async (req, res) => {
         if (!username || !nama || !['bkk','osis','jurusan'].includes(role)) { skipped++; continue; }
         try {
           const hash = await bcrypt.hash(pwd, 10);
-          // BKK dan OSIS tidak memiliki jurusan
-          const finalJurusan = (role === 'bkk' || role === 'osis') ? null : jurusan;
+          // BKK, OSIS, dan Pramuka tidak memiliki jurusan
+          const finalJurusan = (role === 'bkk' || role === 'osis' || role === 'pramuka') ? null : jurusan;
           await db.query('INSERT IGNORE INTO portal_users (username,password,nama,role,jurusan) VALUES (?,?,?,?,?)',
             [username, hash, nama, role, finalJurusan]);
           imported++;

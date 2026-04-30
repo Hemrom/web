@@ -11,6 +11,7 @@
         .role-badge { font-size:.75rem;padding:.3rem .7rem;border-radius:20px;font-weight:700; }
         .role-bkk { background:#d1fae5;color:#065f46; }
         .role-osis { background:#fef3c7;color:#92400e; }
+        .role-pramuka { background:#dcfce7;color:#15803d; }
         .role-jurusan { background:#dbeafe;color:#1e40af; }
         .action-btn { width:32px;height:32px;border-radius:8px;border:none;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s; }
         .action-btn:hover { transform:translateY(-1px);box-shadow:0 4px 10px rgba(0,0,0,.15); }
@@ -62,6 +63,7 @@
                                         <select class="form-control" name="role" id="roleSelect" onchange="toggleJurusan('jurusanField','roleSelect')">
                                             <option value="bkk">BKK</option>
                                             <option value="osis">OSIS</option>
+                                            <option value="pramuka">Pramuka</option>
                                             <option value="jurusan">Jurusan</option>
                                         </select>
                                     </div>
@@ -83,6 +85,7 @@
                                 <div class="small font-weight-bold text-info mb-2"><i class="fas fa-link mr-1"></i>URL Login Portal</div>
                                 <div class="small mb-1"><span class="badge badge-success mr-1">BKK</span><code>/bkk/login</code></div>
                                 <div class="small mb-1"><span class="badge badge-warning mr-1">OSIS</span><code>/osis/login</code></div>
+                                <div class="small mb-1"><span class="badge badge-success mr-1" style="background:#16a34a;">Pramuka</span><code>/pramuka/login</code></div>
                                 <div class="small"><span class="badge badge-info mr-1">Jurusan</span><code>/jurusan-portal/login</code></div>
                             </div>
                         </div>
@@ -108,7 +111,7 @@
                                             <td class="pl-3 font-weight-600"><%= u.nama %></td>
                                             <td><code class="text-primary"><%= u.username %></code></td>
                                             <td><span class="role-badge role-<%= u.role %>"><%= u.role.toUpperCase() %></span></td>
-                                            <td><small class="text-muted"><%= (u.role === 'bkk' || u.role === 'osis') ? '' : (u.jurusan||'-') %></small></td>
+                                            <td><small class="text-muted"><%= (u.role === 'bkk' || u.role === 'osis' || u.role === 'pramuka') ? '' : (u.jurusan||'-') %></small></td>
                                             <td><span class="badge badge-<%= u.aktif?'success':'secondary' %> px-2 py-1"><%= u.aktif?'Aktif':'Nonaktif' %></span></td>
                                             <td class="text-center">
                                                 <!-- Edit -->
@@ -163,7 +166,7 @@
                     <div class="form-group"><label class="font-weight-bold small">Password Baru <span class="text-muted font-weight-normal">(kosongkan jika tidak diubah)</span></label><input type="password" class="form-control" name="password" placeholder="Minimal 6 karakter" minlength="6"></div>
                     <div class="form-group"><label class="font-weight-bold small">Role</label>
                         <select class="form-control" name="role" id="edit_role" onchange="toggleJurusan('edit_jurusanField','edit_role')">
-                            <option value="bkk">BKK</option><option value="osis">OSIS</option><option value="jurusan">Jurusan</option>
+                            <option value="bkk">BKK</option><option value="osis">OSIS</option><option value="pramuka">Pramuka</option><option value="jurusan">Jurusan</option>
                         </select>
                     </div>
                     <div class="form-group" id="edit_jurusanField">

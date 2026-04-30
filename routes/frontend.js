@@ -40,6 +40,8 @@ router.get('/bkk', portalController.bkkIndex);
 router.get('/bkk/:slug', validateSlugParam, portalController.bkkDetail);
 router.get('/osis', portalController.osisIndex);
 router.get('/osis/:slug', validateSlugParam, portalController.osisDetail);
+router.get('/pramuka', portalController.pramukaIndex);
+router.get('/pramuka/:slug', validateSlugParam, portalController.pramukaDetail);
 
 // Fasilitas
 router.get('/fasilitas', portalController.fasilitasIndex);
