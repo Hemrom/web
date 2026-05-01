@@ -125,7 +125,7 @@
                                         <tr>
                                             <td class="pl-3 font-weight-600"><%= u.nama %></td>
                                             <td><code class="text-primary"><%= u.username %></code></td>
-                                            <td><span class="role-badge role-<%= u.role %>"><%= u.role.toUpperCase() %></span></td>
+                                            <td><span class="role-badge role-<%= u.role %>"><%= u.role === 'bahasa_asing' ? 'BAHASA ASING' : u.role.toUpperCase() %></span></td>
                                             <td><small class="text-muted"><%= (u.role === 'bkk' || u.role === 'osis' || u.role === 'pramuka' || u.role === 'olahraga' || u.role === 'paskibraka' || u.role === 'seni' || u.role === 'bahasa_asing' || u.role === 'rohis') ? '' : (u.jurusan||'-') %></small></td>
                                             <td><span class="badge badge-<%= u.aktif?'success':'secondary' %> px-2 py-1"><%= u.aktif?'Aktif':'Nonaktif' %></span></td>
                                             <td class="text-center">
