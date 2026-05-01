@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const ctrl = require('../controllers/portalController');
-const { isBKK, isOSIS, isJurusan, isPramuka, isOlahraga } = require('../middleware/authPortal');
+const { isBKK, isOSIS, isJurusan, isPramuka, isOlahraga, isPaskibraka, isSeni, isBahasaAsing, isRohis } = require('../middleware/authPortal');
 const { loginLimiter, formLimiter } = require('../middleware/security');
 const { csrfProtect } = require('../middleware/csrf');
 const { validateIdParam } = require('../middleware/securityHardening');
@@ -61,8 +61,7 @@ router.post('/pramuka/berita/edit/:id', isPramuka, csrfProtect, validateIdParam,
 router.post('/pramuka/berita/delete/:id', isPramuka, csrfProtect, validateIdParam, ctrl.pramukaBeritaDelete);
 
 // ── Olahraga Portal ───────────────────────────────────────────────────────────
-router.get('/olahraga/login', ctrl.portalLoginPage('olahraga', 'Login Portal Olahraga'));
-router.post('/olahraga/login', loginLimiter, csrfProtect, ctrl.portalLogin('olahraga'));
+router.get('/olahraga/login', ctrl.portalLoginPage('olahraga', 'Login Portal Olahraga'));router.post('/olahraga/login', loginLimiter, csrfProtect, ctrl.portalLogin('olahraga'));
 router.get('/olahraga/logout', ctrl.portalLogout('olahraga'));
 router.get('/olahraga/dashboard', isOlahraga, ctrl.olahragaDashboard);
 router.get('/olahraga/create', isOlahraga, ctrl.olahragaCreatePage);
@@ -80,8 +79,91 @@ router.get('/olahraga/galeri', isOlahraga, ctrl.olahragaGaleriIndex);
 router.post('/olahraga/galeri/upload', isOlahraga, ctrl.olahragaGaleriCreate);
 router.post('/olahraga/galeri/delete/:id', isOlahraga, csrfProtect, validateIdParam, ctrl.olahragaGaleriDelete);
 
-// ── Jurusan Portal ────────────────────────────────────────────────────────────
-router.post('/jurusan-portal/login', loginLimiter, csrfProtect, ctrl.portalLogin('jurusan'));
+// ── Paskibraka Portal ─────────────────────────────────────────────────────────
+router.get('/paskibraka/login', ctrl.portalLoginPage('paskibraka', 'Login Portal Paskibraka'));
+router.post('/paskibraka/login', loginLimiter, csrfProtect, ctrl.portalLogin('paskibraka'));
+router.get('/paskibraka/logout', ctrl.portalLogout('paskibraka'));
+router.get('/paskibraka/dashboard', isPaskibraka, ctrl.paskibrakaDashboard);
+router.get('/paskibraka/create', isPaskibraka, ctrl.paskibrakaCreatePage);
+router.post('/paskibraka/create', isPaskibraka, csrfProtect, ctrl.paskibrakaCreate);
+router.get('/paskibraka/edit/:id', isPaskibraka, validateIdParam, ctrl.paskibrakaEditPage);
+router.post('/paskibraka/edit/:id', isPaskibraka, csrfProtect, validateIdParam, ctrl.paskibrakaUpdate);
+router.post('/paskibraka/delete/:id', isPaskibraka, csrfProtect, validateIdParam, ctrl.paskibrakaDelete);
+router.get('/paskibraka/galeri', isPaskibraka, ctrl.paskibrakaGaleriIndex);
+router.post('/paskibraka/galeri/upload', isPaskibraka, ctrl.paskibrakaGaleriCreate);
+router.post('/paskibraka/galeri/delete/:id', isPaskibraka, csrfProtect, validateIdParam, ctrl.paskibrakaGaleriDelete);
+// Berita Paskibraka
+router.get('/paskibraka/berita', isPaskibraka, ctrl.paskibrakaBeritaIndex);
+router.get('/paskibraka/berita/create', isPaskibraka, ctrl.paskibrakaBeritaCreatePage);
+router.post('/paskibraka/berita/create', isPaskibraka, csrfProtect, ctrl.paskibrakaBeritaCreate);
+router.get('/paskibraka/berita/edit/:id', isPaskibraka, validateIdParam, ctrl.paskibrakaBeritaEditPage);
+router.post('/paskibraka/berita/edit/:id', isPaskibraka, csrfProtect, validateIdParam, ctrl.paskibrakaBeritaUpdate);
+router.post('/paskibraka/berita/delete/:id', isPaskibraka, csrfProtect, validateIdParam, ctrl.paskibrakaBeritaDelete);
+
+// ── Seni Portal ───────────────────────────────────────────────────────────────
+router.get('/seni/login', ctrl.portalLoginPage('seni', 'Login Portal Seni'));
+router.post('/seni/login', loginLimiter, csrfProtect, ctrl.portalLogin('seni'));
+router.get('/seni/logout', ctrl.portalLogout('seni'));
+router.get('/seni/dashboard', isSeni, ctrl.seniDashboard);
+router.get('/seni/create', isSeni, ctrl.seniCreatePage);
+router.post('/seni/create', isSeni, csrfProtect, ctrl.seniCreate);
+router.get('/seni/edit/:id', isSeni, validateIdParam, ctrl.seniEditPage);
+router.post('/seni/edit/:id', isSeni, csrfProtect, validateIdParam, ctrl.seniUpdate);
+router.post('/seni/delete/:id', isSeni, csrfProtect, validateIdParam, ctrl.seniDelete);
+router.get('/seni/galeri', isSeni, ctrl.seniGaleriIndex);
+router.post('/seni/galeri/upload', isSeni, ctrl.seniGaleriCreate);
+router.post('/seni/galeri/delete/:id', isSeni, csrfProtect, validateIdParam, ctrl.seniGaleriDelete);
+// Berita Seni
+router.get('/seni/berita', isSeni, ctrl.seniBeritaIndex);
+router.get('/seni/berita/create', isSeni, ctrl.seniBeritaCreatePage);
+router.post('/seni/berita/create', isSeni, csrfProtect, ctrl.seniBeritaCreate);
+router.get('/seni/berita/edit/:id', isSeni, validateIdParam, ctrl.seniBeritaEditPage);
+router.post('/seni/berita/edit/:id', isSeni, csrfProtect, validateIdParam, ctrl.seniBeritaUpdate);
+router.post('/seni/berita/delete/:id', isSeni, csrfProtect, validateIdParam, ctrl.seniBeritaDelete);
+
+// ── Bahasa Asing Portal ───────────────────────────────────────────────────────
+router.get('/bahasa-asing/login', ctrl.portalLoginPage('bahasa_asing', 'Login Portal Bahasa Asing'));
+router.post('/bahasa-asing/login', loginLimiter, csrfProtect, ctrl.portalLogin('bahasa_asing'));
+router.get('/bahasa-asing/logout', ctrl.portalLogout('bahasa_asing'));
+router.get('/bahasa-asing/dashboard', isBahasaAsing, ctrl.bahasaAsingDashboard);
+router.get('/bahasa-asing/create', isBahasaAsing, ctrl.bahasaAsingCreatePage);
+router.post('/bahasa-asing/create', isBahasaAsing, csrfProtect, ctrl.bahasaAsingCreate);
+router.get('/bahasa-asing/edit/:id', isBahasaAsing, validateIdParam, ctrl.bahasaAsingEditPage);
+router.post('/bahasa-asing/edit/:id', isBahasaAsing, csrfProtect, validateIdParam, ctrl.bahasaAsingUpdate);
+router.post('/bahasa-asing/delete/:id', isBahasaAsing, csrfProtect, validateIdParam, ctrl.bahasaAsingDelete);
+router.get('/bahasa-asing/galeri', isBahasaAsing, ctrl.bahasaAsingGaleriIndex);
+router.post('/bahasa-asing/galeri/upload', isBahasaAsing, ctrl.bahasaAsingGaleriCreate);
+router.post('/bahasa-asing/galeri/delete/:id', isBahasaAsing, csrfProtect, validateIdParam, ctrl.bahasaAsingGaleriDelete);
+// Berita Bahasa Asing
+router.get('/bahasa-asing/berita', isBahasaAsing, ctrl.bahasaAsingBeritaIndex);
+router.get('/bahasa-asing/berita/create', isBahasaAsing, ctrl.bahasaAsingBeritaCreatePage);
+router.post('/bahasa-asing/berita/create', isBahasaAsing, csrfProtect, ctrl.bahasaAsingBeritaCreate);
+router.get('/bahasa-asing/berita/edit/:id', isBahasaAsing, validateIdParam, ctrl.bahasaAsingBeritaEditPage);
+router.post('/bahasa-asing/berita/edit/:id', isBahasaAsing, csrfProtect, validateIdParam, ctrl.bahasaAsingBeritaUpdate);
+router.post('/bahasa-asing/berita/delete/:id', isBahasaAsing, csrfProtect, validateIdParam, ctrl.bahasaAsingBeritaDelete);
+
+// ── Rohis Portal ──────────────────────────────────────────────────────────────
+router.get('/rohis/login', ctrl.portalLoginPage('rohis', 'Login Portal ROHIS'));
+router.post('/rohis/login', loginLimiter, csrfProtect, ctrl.portalLogin('rohis'));
+router.get('/rohis/logout', ctrl.portalLogout('rohis'));
+router.get('/rohis/dashboard', isRohis, ctrl.rohisDashboard);
+router.get('/rohis/create', isRohis, ctrl.rohisCreatePage);
+router.post('/rohis/create', isRohis, csrfProtect, ctrl.rohisCreate);
+router.get('/rohis/edit/:id', isRohis, validateIdParam, ctrl.rohisEditPage);
+router.post('/rohis/edit/:id', isRohis, csrfProtect, validateIdParam, ctrl.rohisUpdate);
+router.post('/rohis/delete/:id', isRohis, csrfProtect, validateIdParam, ctrl.rohisDelete);
+router.get('/rohis/galeri', isRohis, ctrl.rohisGaleriIndex);
+router.post('/rohis/galeri/upload', isRohis, ctrl.rohisGaleriCreate);
+router.post('/rohis/galeri/delete/:id', isRohis, csrfProtect, validateIdParam, ctrl.rohisGaleriDelete);
+// Berita Rohis
+router.get('/rohis/berita', isRohis, ctrl.rohisBeritaIndex);
+router.get('/rohis/berita/create', isRohis, ctrl.rohisBeritaCreatePage);
+router.post('/rohis/berita/create', isRohis, csrfProtect, ctrl.rohisBeritaCreate);
+router.get('/rohis/berita/edit/:id', isRohis, validateIdParam, ctrl.rohisBeritaEditPage);
+router.post('/rohis/berita/edit/:id', isRohis, csrfProtect, validateIdParam, ctrl.rohisBeritaUpdate);
+router.post('/rohis/berita/delete/:id', isRohis, csrfProtect, validateIdParam, ctrl.rohisBeritaDelete);
+
+// ── Jurusan Portal ────────────────────────────────────────────────────────────router.post('/jurusan-portal/login', loginLimiter, csrfProtect, ctrl.portalLogin('jurusan'));
 router.get('/jurusan-portal/logout', ctrl.portalLogout('jurusan'));
 router.get('/jurusan-portal/dashboard', isJurusan, ctrl.jurusanDashboard);
 router.get('/jurusan-portal/create', isJurusan, ctrl.jurusanCreatePage);

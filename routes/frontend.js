@@ -47,6 +47,24 @@ router.get('/pramuka/:slug', validateSlugParam, portalController.pramukaDetail);
 router.get('/olahraga', portalController.olahragaIndex);
 router.get('/olahraga/berita/:slug', validateSlugParam, portalController.olahragaBeritaDetail);
 router.get('/olahraga/:slug', validateSlugParam, portalController.olahragaDetail);
+router.get('/paskibraka', portalController.paskibrakaIndex);
+router.get('/paskibraka/berita/:slug', validateSlugParam, portalController.paskibrakaBeritaDetail);
+router.get('/paskibraka/:slug', validateSlugParam, portalController.paskibrakaDetail);
+
+// Seni
+router.get('/seni', portalController.seniIndex);
+router.get('/seni/berita/:slug', validateSlugParam, portalController.seniBeritaDetail);
+router.get('/seni/:slug', validateSlugParam, portalController.seniDetail);
+
+// Bahasa Asing
+router.get('/bahasa-asing', portalController.bahasaAsingIndex);
+router.get('/bahasa-asing/berita/:slug', validateSlugParam, portalController.bahasaAsingBeritaDetail);
+router.get('/bahasa-asing/:slug', validateSlugParam, portalController.bahasaAsingDetail);
+
+// Rohis
+router.get('/rohis', portalController.rohisIndex);
+router.get('/rohis/berita/:slug', validateSlugParam, portalController.rohisBeritaDetail);
+router.get('/rohis/:slug', validateSlugParam, portalController.rohisDetail);
 
 // Fasilitas
 router.get('/fasilitas', portalController.fasilitasIndex);

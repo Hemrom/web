@@ -163,7 +163,8 @@ exports.olahragaBeritaDetail = async (req, res) => {
 
 // ── PORTAL LOGIN (shared) ─────────────────────────────────────────────────────
 exports.portalLoginPage = (role, title) => (req, res) => {
-  if (req.session.portalId && req.session.portalRole === role) return res.redirect(`/${role === 'jurusan' ? 'jurusan-portal' : role}/dashboard`);
+  const urlPrefix = role === 'jurusan' ? 'jurusan-portal' : role === 'bahasa_asing' ? 'bahasa-asing' : role;
+  if (req.session.portalId && req.session.portalRole === role) return res.redirect(`/${urlPrefix}/dashboard`);
   res.render('portal/login', { title, role, error: null });
 };
 
@@ -178,7 +179,7 @@ exports.portalLogin = (role) => async (req, res) => {
     req.session.portalRole = rows[0].role;
     req.session.portalNama = rows[0].nama;
     req.session.portalJurusan = rows[0].jurusan;
-    const redirect = role === 'jurusan' ? '/jurusan-portal/dashboard' : `/${role}/dashboard`;
+    const redirect = role === 'jurusan' ? '/jurusan-portal/dashboard' : role === 'bahasa_asing' ? '/bahasa-asing/dashboard' : `/${role}/dashboard`;
     res.redirect(redirect);
   } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
 };
@@ -187,7 +188,7 @@ exports.portalLogout = (role) => (req, res) => {
   req.session.portalId = null;
   req.session.portalRole = null;
   req.session.portalNama = null;
-  const redirect = role === 'jurusan' ? '/jurusan-portal/login' : `/${role}/login`;
+  const redirect = role === 'jurusan' ? '/jurusan-portal/login' : role === 'bahasa_asing' ? '/bahasa-asing/login' : `/${role}/login`;
   res.redirect(redirect);
 };
 
@@ -575,6 +576,462 @@ exports.olahragaBeritaUpdate = (req, res) => {
 exports.olahragaBeritaDelete = async (req, res) => {
   await db.query('DELETE FROM olahraga_berita WHERE id=?', [req.params.id]);
   res.redirect('/olahraga/berita?success=3');
+};
+
+// ── FRONTEND PASKIBRAKA ───────────────────────────────────────────────────────
+exports.paskibrakaIndex = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [[kegiatan], [berita], [galeri]] = await Promise.all([
+      db.query("SELECT * FROM paskibraka_kegiatan WHERE status='published' ORDER BY created_at DESC"),
+      db.query("SELECT * FROM paskibraka_berita WHERE status='published' ORDER BY created_at DESC"),
+      db.query("SELECT * FROM paskibraka_galeri ORDER BY created_at DESC")
+    ]);
+    res.render('frontend/paskibraka', { title: 'Paskibraka', currentPage: 'paskibraka', kegiatan, berita, galeri, ...common });
+  } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
+};
+
+exports.paskibrakaDetail = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [rows] = await db.query("SELECT * FROM paskibraka_kegiatan WHERE slug=? AND status='published'", [req.params.slug]);
+    if (!rows.length) return res.status(404).render('frontend/404', { title: '404', menuItems: common.menuItems });
+    res.render('frontend/paskibraka-detail', { title: rows[0].judul, kegiatan: rows[0], ...common });
+  } catch (err) { res.status(500).send('Terjadi kesalahan'); }
+};
+
+exports.paskibrakaBeritaDetail = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [rows] = await db.query("SELECT * FROM paskibraka_berita WHERE slug=? AND status='published'", [req.params.slug]);
+    if (!rows.length) return res.status(404).render('frontend/404', { title: '404', menuItems: common.menuItems });
+    res.render('frontend/paskibraka-berita-detail', { title: rows[0].judul, berita: rows[0], ...common });
+  } catch (err) { res.status(500).send('Terjadi kesalahan'); }
+};
+
+// ── PORTAL PASKIBRAKA ─────────────────────────────────────────────────────────
+const uploadGaleriPaskibraka = createUpload('paskibraka-galeri', { maxFiles: 20 }).array('gambar', 20);
+
+exports.paskibrakaDashboard = async (req, res) => {
+  const [kegiatan] = await db.query('SELECT * FROM paskibraka_kegiatan ORDER BY created_at DESC');
+  portalRender(res, req, 'portal/paskibraka/dashboard', { title: 'Dashboard Paskibraka', user: req.session, kegiatan, success: req.query.success });
+};
+
+exports.paskibrakaCreatePage = (req, res) =>
+  portalRender(res, req, 'portal/paskibraka/create', { title: 'Tambah Kegiatan Paskibraka', user: req.session });
+
+exports.paskibrakaCreate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return portalRender(res, req, 'portal/paskibraka/create', { title: 'Tambah Kegiatan Paskibraka', user: req.session, error: err.message });
+    try {
+      const { judul, konten, kategori, status } = req.body;
+      if (!judul) return portalRender(res, req, 'portal/paskibraka/create', { title: 'Tambah Kegiatan Paskibraka', user: req.session, error: 'Judul wajib diisi' });
+      const gambar = req.file ? req.file.filename : null;
+      const slug = createSlug(judul);
+      await db.query('INSERT INTO paskibraka_kegiatan (judul,slug,konten,gambar,kategori,status,penulis) VALUES (?,?,?,?,?,?,?)',
+        [judul, slug, konten||null, gambar, kategori||'kegiatan', status||'published', req.session.portalNama]);
+      res.redirect('/paskibraka/dashboard?success=1');
+    } catch (e) { console.error(e); portalRender(res, req, 'portal/paskibraka/create', { title: 'Tambah Kegiatan Paskibraka', user: req.session, error: e.message }); }
+  });
+};
+
+exports.paskibrakaEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM paskibraka_kegiatan WHERE id=?', [req.params.id]);
+  if (!rows.length) return res.redirect('/paskibraka/dashboard');
+  portalRender(res, req, 'portal/paskibraka/edit', { title: 'Edit Kegiatan Paskibraka', user: req.session, item: rows[0] });
+};
+
+exports.paskibrakaUpdate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/paskibraka/dashboard');
+    const { judul, konten, kategori, status } = req.body;
+    const [rows] = await db.query('SELECT gambar FROM paskibraka_kegiatan WHERE id=?', [req.params.id]);
+    const gambar = req.file ? req.file.filename : rows[0]?.gambar;
+    await db.query('UPDATE paskibraka_kegiatan SET judul=?,konten=?,gambar=?,kategori=?,status=? WHERE id=?',
+      [judul, konten||null, gambar, kategori||'kegiatan', status||'published', req.params.id]);
+    res.redirect('/paskibraka/dashboard?success=2');
+  });
+};
+
+exports.paskibrakaDelete = async (req, res) => {
+  await db.query('DELETE FROM paskibraka_kegiatan WHERE id=?', [req.params.id]);
+  res.redirect('/paskibraka/dashboard?success=3');
+};
+
+exports.paskibrakaGaleriIndex = async (req, res) => {
+  const [galeri] = await db.query('SELECT * FROM paskibraka_galeri ORDER BY created_at DESC');
+  portalRender(res, req, 'portal/paskibraka/galeri', { title: 'Galeri Paskibraka', user: req.session, galeri, success: req.query.success, errorMsg: req.query.error || null });
+};
+
+exports.paskibrakaGaleriCreate = (req, res) => {
+  uploadGaleriPaskibraka(req, res, async (err) => {
+    if (err) return res.redirect('/paskibraka/galeri?error=' + encodeURIComponent(err.message));
+    try {
+      if (!req.files || req.files.length === 0) return res.redirect('/paskibraka/galeri?error=Pilih+minimal+1+foto');
+      const { judul, keterangan } = req.body;
+      for (const file of req.files) {
+        await db.query('INSERT INTO paskibraka_galeri (judul,gambar,keterangan) VALUES (?,?,?)',
+          [judul||'Galeri Paskibraka', file.filename, keterangan||null]);
+      }
+      res.redirect('/paskibraka/galeri?success=1');
+    } catch (e) { console.error(e); res.redirect('/paskibraka/galeri?error=' + encodeURIComponent(e.message)); }
+  });
+};
+
+exports.paskibrakaGaleriDelete = async (req, res) => {
+  await db.query('DELETE FROM paskibraka_galeri WHERE id=?', [req.params.id]);
+  res.redirect('/paskibraka/galeri?success=3');
+};
+
+// ── PORTAL PASKIBRAKA: Berita ─────────────────────────────────────────────────
+exports.paskibrakaBeritaIndex = async (req, res) => {
+  const [berita] = await db.query('SELECT * FROM paskibraka_berita ORDER BY created_at DESC');
+  portalRender(res, req, 'portal/paskibraka/berita', { title: 'Berita & Informasi Paskibraka', user: req.session, berita, success: req.query.success });
+};
+
+exports.paskibrakaBeritaCreatePage = (req, res) =>
+  portalRender(res, req, 'portal/paskibraka/berita-create', { title: 'Tambah Berita Paskibraka', user: req.session });
+
+exports.paskibrakaBeritaCreate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return portalRender(res, req, 'portal/paskibraka/berita-create', { title: 'Tambah Berita Paskibraka', user: req.session, error: err.message });
+    try {
+      const { judul, konten, kategori, status } = req.body;
+      if (!judul) return portalRender(res, req, 'portal/paskibraka/berita-create', { title: 'Tambah Berita Paskibraka', user: req.session, error: 'Judul wajib diisi' });
+      const gambar = req.file ? req.file.filename : null;
+      const slug = createSlug(judul);
+      await db.query('INSERT INTO paskibraka_berita (judul,slug,konten,gambar,kategori,status,penulis) VALUES (?,?,?,?,?,?,?)',
+        [judul, slug, konten||null, gambar, kategori||'berita', status||'published', req.session.portalNama]);
+      res.redirect('/paskibraka/berita?success=1');
+    } catch (e) { console.error(e); portalRender(res, req, 'portal/paskibraka/berita-create', { title: 'Tambah Berita Paskibraka', user: req.session, error: e.message }); }
+  });
+};
+
+exports.paskibrakaBeritaEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM paskibraka_berita WHERE id=?', [req.params.id]);
+  if (!rows.length) return res.redirect('/paskibraka/berita');
+  portalRender(res, req, 'portal/paskibraka/berita-edit', { title: 'Edit Berita Paskibraka', user: req.session, item: rows[0] });
+};
+
+exports.paskibrakaBeritaUpdate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/paskibraka/berita');
+    const { judul, konten, kategori, status } = req.body;
+    const [rows] = await db.query('SELECT gambar FROM paskibraka_berita WHERE id=?', [req.params.id]);
+    const gambar = req.file ? req.file.filename : rows[0]?.gambar;
+    await db.query('UPDATE paskibraka_berita SET judul=?,konten=?,gambar=?,kategori=?,status=? WHERE id=?',
+      [judul, konten||null, gambar, kategori||'berita', status||'published', req.params.id]);
+    res.redirect('/paskibraka/berita?success=2');
+  });
+};
+
+exports.paskibrakaBeritaDelete = async (req, res) => {
+  await db.query('DELETE FROM paskibraka_berita WHERE id=?', [req.params.id]);
+  res.redirect('/paskibraka/berita?success=3');
+};
+
+// ── FRONTEND SENI ─────────────────────────────────────────────────────────────
+exports.seniIndex = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [[kegiatan], [berita], [galeri]] = await Promise.all([
+      db.query("SELECT * FROM seni_kegiatan WHERE status='published' ORDER BY created_at DESC"),
+      db.query("SELECT * FROM seni_berita WHERE status='published' ORDER BY created_at DESC"),
+      db.query("SELECT * FROM seni_galeri ORDER BY created_at DESC")
+    ]);
+    res.render('frontend/seni', { title: 'Seni', currentPage: 'seni', kegiatan, berita, galeri, ...common });
+  } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
+};
+
+exports.seniDetail = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [rows] = await db.query("SELECT * FROM seni_kegiatan WHERE slug=? AND status='published'", [req.params.slug]);
+    if (!rows.length) return res.status(404).render('frontend/404', { title: '404', menuItems: common.menuItems });
+    res.render('frontend/seni-detail', { title: rows[0].judul, kegiatan: rows[0], ...common });
+  } catch (err) { res.status(500).send('Terjadi kesalahan'); }
+};
+
+exports.seniBeritaDetail = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [rows] = await db.query("SELECT * FROM seni_berita WHERE slug=? AND status='published'", [req.params.slug]);
+    if (!rows.length) return res.status(404).render('frontend/404', { title: '404', menuItems: common.menuItems });
+    res.render('frontend/seni-berita-detail', { title: rows[0].judul, berita: rows[0], ...common });
+  } catch (err) { res.status(500).send('Terjadi kesalahan'); }
+};
+
+// ── PORTAL SENI ───────────────────────────────────────────────────────────────
+const uploadGaleriSeni = createUpload('seni-galeri', { maxFiles: 20 }).array('gambar', 20);
+
+exports.seniDashboard = async (req, res) => {
+  const [kegiatan] = await db.query('SELECT * FROM seni_kegiatan ORDER BY created_at DESC');
+  portalRender(res, req, 'portal/seni/dashboard', { title: 'Dashboard Seni', user: req.session, kegiatan, success: req.query.success });
+};
+
+exports.seniCreatePage = (req, res) =>
+  portalRender(res, req, 'portal/seni/create', { title: 'Tambah Kegiatan Seni', user: req.session });
+
+exports.seniCreate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return portalRender(res, req, 'portal/seni/create', { title: 'Tambah Kegiatan Seni', user: req.session, error: err.message });
+    try {
+      const { judul, konten, kategori, status } = req.body;
+      if (!judul) return portalRender(res, req, 'portal/seni/create', { title: 'Tambah Kegiatan Seni', user: req.session, error: 'Judul wajib diisi' });
+      const gambar = req.file ? req.file.filename : null;
+      const slug = createSlug(judul);
+      await db.query('INSERT INTO seni_kegiatan (judul,slug,konten,gambar,kategori,status,penulis) VALUES (?,?,?,?,?,?,?)',
+        [judul, slug, konten||null, gambar, kategori||'kegiatan', status||'published', req.session.portalNama]);
+      res.redirect('/seni/dashboard?success=1');
+    } catch (e) { console.error(e); portalRender(res, req, 'portal/seni/create', { title: 'Tambah Kegiatan Seni', user: req.session, error: e.message }); }
+  });
+};
+
+exports.seniEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM seni_kegiatan WHERE id=?', [req.params.id]);
+  if (!rows.length) return res.redirect('/seni/dashboard');
+  portalRender(res, req, 'portal/seni/edit', { title: 'Edit Kegiatan Seni', user: req.session, item: rows[0] });
+};
+
+exports.seniUpdate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/seni/dashboard');
+    const { judul, konten, kategori, status } = req.body;
+    const [rows] = await db.query('SELECT gambar FROM seni_kegiatan WHERE id=?', [req.params.id]);
+    const gambar = req.file ? req.file.filename : rows[0]?.gambar;
+    await db.query('UPDATE seni_kegiatan SET judul=?,konten=?,gambar=?,kategori=?,status=? WHERE id=?',
+      [judul, konten||null, gambar, kategori||'kegiatan', status||'published', req.params.id]);
+    res.redirect('/seni/dashboard?success=2');
+  });
+};
+
+exports.seniDelete = async (req, res) => {
+  await db.query('DELETE FROM seni_kegiatan WHERE id=?', [req.params.id]);
+  res.redirect('/seni/dashboard?success=3');
+};
+
+exports.seniGaleriIndex = async (req, res) => {
+  const [galeri] = await db.query('SELECT * FROM seni_galeri ORDER BY created_at DESC');
+  portalRender(res, req, 'portal/seni/galeri', { title: 'Galeri Seni', user: req.session, galeri, success: req.query.success, errorMsg: req.query.error || null });
+};
+
+exports.seniGaleriCreate = (req, res) => {
+  uploadGaleriSeni(req, res, async (err) => {
+    if (err) return res.redirect('/seni/galeri?error=' + encodeURIComponent(err.message));
+    try {
+      if (!req.files || req.files.length === 0) return res.redirect('/seni/galeri?error=Pilih+minimal+1+foto');
+      const { judul, keterangan } = req.body;
+      for (const file of req.files) {
+        await db.query('INSERT INTO seni_galeri (judul,gambar,keterangan) VALUES (?,?,?)',
+          [judul||'Galeri Seni', file.filename, keterangan||null]);
+      }
+      res.redirect('/seni/galeri?success=1');
+    } catch (e) { console.error(e); res.redirect('/seni/galeri?error=' + encodeURIComponent(e.message)); }
+  });
+};
+
+exports.seniGaleriDelete = async (req, res) => {
+  await db.query('DELETE FROM seni_galeri WHERE id=?', [req.params.id]);
+  res.redirect('/seni/galeri?success=3');
+};
+
+// ── PORTAL SENI: Berita ───────────────────────────────────────────────────────
+exports.seniBeritaIndex = async (req, res) => {
+  const [berita] = await db.query('SELECT * FROM seni_berita ORDER BY created_at DESC');
+  portalRender(res, req, 'portal/seni/berita', { title: 'Berita & Informasi Seni', user: req.session, berita, success: req.query.success });
+};
+
+exports.seniBeritaCreatePage = (req, res) =>
+  portalRender(res, req, 'portal/seni/berita-create', { title: 'Tambah Berita Seni', user: req.session });
+
+exports.seniBeritaCreate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return portalRender(res, req, 'portal/seni/berita-create', { title: 'Tambah Berita Seni', user: req.session, error: err.message });
+    try {
+      const { judul, konten, kategori, status } = req.body;
+      if (!judul) return portalRender(res, req, 'portal/seni/berita-create', { title: 'Tambah Berita Seni', user: req.session, error: 'Judul wajib diisi' });
+      const gambar = req.file ? req.file.filename : null;
+      const slug = createSlug(judul);
+      await db.query('INSERT INTO seni_berita (judul,slug,konten,gambar,kategori,status,penulis) VALUES (?,?,?,?,?,?,?)',
+        [judul, slug, konten||null, gambar, kategori||'berita', status||'published', req.session.portalNama]);
+      res.redirect('/seni/berita?success=1');
+    } catch (e) { console.error(e); portalRender(res, req, 'portal/seni/berita-create', { title: 'Tambah Berita Seni', user: req.session, error: e.message }); }
+  });
+};
+
+exports.seniBeritaEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM seni_berita WHERE id=?', [req.params.id]);
+  if (!rows.length) return res.redirect('/seni/berita');
+  portalRender(res, req, 'portal/seni/berita-edit', { title: 'Edit Berita Seni', user: req.session, item: rows[0] });
+};
+
+exports.seniBeritaUpdate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/seni/berita');
+    const { judul, konten, kategori, status } = req.body;
+    const [rows] = await db.query('SELECT gambar FROM seni_berita WHERE id=?', [req.params.id]);
+    const gambar = req.file ? req.file.filename : rows[0]?.gambar;
+    await db.query('UPDATE seni_berita SET judul=?,konten=?,gambar=?,kategori=?,status=? WHERE id=?',
+      [judul, konten||null, gambar, kategori||'berita', status||'published', req.params.id]);
+    res.redirect('/seni/berita?success=2');
+  });
+};
+
+exports.seniBeritaDelete = async (req, res) => {
+  await db.query('DELETE FROM seni_berita WHERE id=?', [req.params.id]);
+  res.redirect('/seni/berita?success=3');
+};
+
+// ── FRONTEND BAHASA ASING ─────────────────────────────────────────────────────
+exports.bahasaAsingIndex = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [[kegiatan], [berita], [galeri]] = await Promise.all([
+      db.query("SELECT * FROM bahasa_asing_kegiatan WHERE status='published' ORDER BY created_at DESC"),
+      db.query("SELECT * FROM bahasa_asing_berita WHERE status='published' ORDER BY created_at DESC"),
+      db.query("SELECT * FROM bahasa_asing_galeri ORDER BY created_at DESC")
+    ]);
+    res.render('frontend/bahasa-asing', { title: 'Bahasa Asing', currentPage: 'bahasa-asing', kegiatan, berita, galeri, ...common });
+  } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
+};
+
+exports.bahasaAsingDetail = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [rows] = await db.query("SELECT * FROM bahasa_asing_kegiatan WHERE slug=? AND status='published'", [req.params.slug]);
+    if (!rows.length) return res.status(404).render('frontend/404', { title: '404', menuItems: common.menuItems });
+    res.render('frontend/bahasa-asing-detail', { title: rows[0].judul, kegiatan: rows[0], ...common });
+  } catch (err) { res.status(500).send('Terjadi kesalahan'); }
+};
+
+exports.bahasaAsingBeritaDetail = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [rows] = await db.query("SELECT * FROM bahasa_asing_berita WHERE slug=? AND status='published'", [req.params.slug]);
+    if (!rows.length) return res.status(404).render('frontend/404', { title: '404', menuItems: common.menuItems });
+    res.render('frontend/bahasa-asing-berita-detail', { title: rows[0].judul, berita: rows[0], ...common });
+  } catch (err) { res.status(500).send('Terjadi kesalahan'); }
+};
+
+// ── PORTAL BAHASA ASING ───────────────────────────────────────────────────────
+const uploadGaleriBahasaAsing = createUpload('bahasa-asing-galeri', { maxFiles: 20 }).array('gambar', 20);
+
+exports.bahasaAsingDashboard = async (req, res) => {
+  const [kegiatan] = await db.query('SELECT * FROM bahasa_asing_kegiatan ORDER BY created_at DESC');
+  portalRender(res, req, 'portal/bahasa-asing/dashboard', { title: 'Dashboard Bahasa Asing', user: req.session, kegiatan, success: req.query.success });
+};
+
+exports.bahasaAsingCreatePage = (req, res) =>
+  portalRender(res, req, 'portal/bahasa-asing/create', { title: 'Tambah Kegiatan Bahasa Asing', user: req.session });
+
+exports.bahasaAsingCreate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return portalRender(res, req, 'portal/bahasa-asing/create', { title: 'Tambah Kegiatan Bahasa Asing', user: req.session, error: err.message });
+    try {
+      const { judul, konten, kategori, status } = req.body;
+      if (!judul) return portalRender(res, req, 'portal/bahasa-asing/create', { title: 'Tambah Kegiatan Bahasa Asing', user: req.session, error: 'Judul wajib diisi' });
+      const gambar = req.file ? req.file.filename : null;
+      const slug = createSlug(judul);
+      await db.query('INSERT INTO bahasa_asing_kegiatan (judul,slug,konten,gambar,kategori,status,penulis) VALUES (?,?,?,?,?,?,?)',
+        [judul, slug, konten||null, gambar, kategori||'kegiatan', status||'published', req.session.portalNama]);
+      res.redirect('/bahasa-asing/dashboard?success=1');
+    } catch (e) { console.error(e); portalRender(res, req, 'portal/bahasa-asing/create', { title: 'Tambah Kegiatan Bahasa Asing', user: req.session, error: e.message }); }
+  });
+};
+
+exports.bahasaAsingEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM bahasa_asing_kegiatan WHERE id=?', [req.params.id]);
+  if (!rows.length) return res.redirect('/bahasa-asing/dashboard');
+  portalRender(res, req, 'portal/bahasa-asing/edit', { title: 'Edit Kegiatan Bahasa Asing', user: req.session, item: rows[0] });
+};
+
+exports.bahasaAsingUpdate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/bahasa-asing/dashboard');
+    const { judul, konten, kategori, status } = req.body;
+    const [rows] = await db.query('SELECT gambar FROM bahasa_asing_kegiatan WHERE id=?', [req.params.id]);
+    const gambar = req.file ? req.file.filename : rows[0]?.gambar;
+    await db.query('UPDATE bahasa_asing_kegiatan SET judul=?,konten=?,gambar=?,kategori=?,status=? WHERE id=?',
+      [judul, konten||null, gambar, kategori||'kegiatan', status||'published', req.params.id]);
+    res.redirect('/bahasa-asing/dashboard?success=2');
+  });
+};
+
+exports.bahasaAsingDelete = async (req, res) => {
+  await db.query('DELETE FROM bahasa_asing_kegiatan WHERE id=?', [req.params.id]);
+  res.redirect('/bahasa-asing/dashboard?success=3');
+};
+
+exports.bahasaAsingGaleriIndex = async (req, res) => {
+  const [galeri] = await db.query('SELECT * FROM bahasa_asing_galeri ORDER BY created_at DESC');
+  portalRender(res, req, 'portal/bahasa-asing/galeri', { title: 'Galeri Bahasa Asing', user: req.session, galeri, success: req.query.success, errorMsg: req.query.error || null });
+};
+
+exports.bahasaAsingGaleriCreate = (req, res) => {
+  uploadGaleriBahasaAsing(req, res, async (err) => {
+    if (err) return res.redirect('/bahasa-asing/galeri?error=' + encodeURIComponent(err.message));
+    try {
+      if (!req.files || req.files.length === 0) return res.redirect('/bahasa-asing/galeri?error=Pilih+minimal+1+foto');
+      const { judul, keterangan } = req.body;
+      for (const file of req.files) {
+        await db.query('INSERT INTO bahasa_asing_galeri (judul,gambar,keterangan) VALUES (?,?,?)',
+          [judul||'Galeri Bahasa Asing', file.filename, keterangan||null]);
+      }
+      res.redirect('/bahasa-asing/galeri?success=1');
+    } catch (e) { console.error(e); res.redirect('/bahasa-asing/galeri?error=' + encodeURIComponent(e.message)); }
+  });
+};
+
+exports.bahasaAsingGaleriDelete = async (req, res) => {
+  await db.query('DELETE FROM bahasa_asing_galeri WHERE id=?', [req.params.id]);
+  res.redirect('/bahasa-asing/galeri?success=3');
+};
+
+// ── PORTAL BAHASA ASING: Berita ───────────────────────────────────────────────
+exports.bahasaAsingBeritaIndex = async (req, res) => {
+  const [berita] = await db.query('SELECT * FROM bahasa_asing_berita ORDER BY created_at DESC');
+  portalRender(res, req, 'portal/bahasa-asing/berita', { title: 'Berita & Informasi Bahasa Asing', user: req.session, berita, success: req.query.success });
+};
+
+exports.bahasaAsingBeritaCreatePage = (req, res) =>
+  portalRender(res, req, 'portal/bahasa-asing/berita-create', { title: 'Tambah Berita Bahasa Asing', user: req.session });
+
+exports.bahasaAsingBeritaCreate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return portalRender(res, req, 'portal/bahasa-asing/berita-create', { title: 'Tambah Berita Bahasa Asing', user: req.session, error: err.message });
+    try {
+      const { judul, konten, kategori, status } = req.body;
+      if (!judul) return portalRender(res, req, 'portal/bahasa-asing/berita-create', { title: 'Tambah Berita Bahasa Asing', user: req.session, error: 'Judul wajib diisi' });
+      const gambar = req.file ? req.file.filename : null;
+      const slug = createSlug(judul);
+      await db.query('INSERT INTO bahasa_asing_berita (judul,slug,konten,gambar,kategori,status,penulis) VALUES (?,?,?,?,?,?,?)',
+        [judul, slug, konten||null, gambar, kategori||'berita', status||'published', req.session.portalNama]);
+      res.redirect('/bahasa-asing/berita?success=1');
+    } catch (e) { console.error(e); portalRender(res, req, 'portal/bahasa-asing/berita-create', { title: 'Tambah Berita Bahasa Asing', user: req.session, error: e.message }); }
+  });
+};
+
+exports.bahasaAsingBeritaEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM bahasa_asing_berita WHERE id=?', [req.params.id]);
+  if (!rows.length) return res.redirect('/bahasa-asing/berita');
+  portalRender(res, req, 'portal/bahasa-asing/berita-edit', { title: 'Edit Berita Bahasa Asing', user: req.session, item: rows[0] });
+};
+
+exports.bahasaAsingBeritaUpdate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/bahasa-asing/berita');
+    const { judul, konten, kategori, status } = req.body;
+    const [rows] = await db.query('SELECT gambar FROM bahasa_asing_berita WHERE id=?', [req.params.id]);
+    const gambar = req.file ? req.file.filename : rows[0]?.gambar;
+    await db.query('UPDATE bahasa_asing_berita SET judul=?,konten=?,gambar=?,kategori=?,status=? WHERE id=?',
+      [judul, konten||null, gambar, kategori||'berita', status||'published', req.params.id]);
+    res.redirect('/bahasa-asing/berita?success=2');
+  });
+};
+
+exports.bahasaAsingBeritaDelete = async (req, res) => {
+  await db.query('DELETE FROM bahasa_asing_berita WHERE id=?', [req.params.id]);
+  res.redirect('/bahasa-asing/berita?success=3');
 };
 
 // ── PORTAL JURUSAN DASHBOARD ──────────────────────────────────────────────────
@@ -1207,4 +1664,156 @@ exports.adminFasilitasDelete = async (req, res) => {
   await db.query('DELETE FROM fasilitas_foto WHERE fasilitas_id=?', [req.params.id]);
   await db.query('DELETE FROM fasilitas WHERE id=?', [req.params.id]);
   res.redirect('/admin/fasilitas?success=3');
+};
+
+// ── FRONTEND ROHIS ────────────────────────────────────────────────────────────
+exports.rohisIndex = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [[kegiatan], [berita], [galeri]] = await Promise.all([
+      db.query("SELECT * FROM rohis_kegiatan WHERE status='published' ORDER BY created_at DESC"),
+      db.query("SELECT * FROM rohis_berita WHERE status='published' ORDER BY created_at DESC"),
+      db.query("SELECT * FROM rohis_galeri ORDER BY created_at DESC")
+    ]);
+    res.render('frontend/rohis', { title: 'ROHIS', currentPage: 'rohis', kegiatan, berita, galeri, ...common });
+  } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
+};
+
+exports.rohisDetail = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [rows] = await db.query("SELECT * FROM rohis_kegiatan WHERE slug=? AND status='published'", [req.params.slug]);
+    if (!rows.length) return res.status(404).render('frontend/404', { title: '404', menuItems: common.menuItems });
+    res.render('frontend/rohis-detail', { title: rows[0].judul, kegiatan: rows[0], ...common });
+  } catch (err) { res.status(500).send('Terjadi kesalahan'); }
+};
+
+exports.rohisBeritaDetail = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [rows] = await db.query("SELECT * FROM rohis_berita WHERE slug=? AND status='published'", [req.params.slug]);
+    if (!rows.length) return res.status(404).render('frontend/404', { title: '404', menuItems: common.menuItems });
+    res.render('frontend/rohis-berita-detail', { title: rows[0].judul, berita: rows[0], ...common });
+  } catch (err) { res.status(500).send('Terjadi kesalahan'); }
+};
+
+// ── PORTAL ROHIS ──────────────────────────────────────────────────────────────
+const uploadGaleriRohis = createUpload('rohis-galeri', { maxFiles: 20 }).array('gambar', 20);
+
+exports.rohisDashboard = async (req, res) => {
+  const [kegiatan] = await db.query('SELECT * FROM rohis_kegiatan ORDER BY created_at DESC');
+  portalRender(res, req, 'portal/rohis/dashboard', { title: 'Dashboard ROHIS', user: req.session, kegiatan, success: req.query.success });
+};
+
+exports.rohisCreatePage = (req, res) =>
+  portalRender(res, req, 'portal/rohis/create', { title: 'Tambah Kegiatan ROHIS', user: req.session });
+
+exports.rohisCreate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return portalRender(res, req, 'portal/rohis/create', { title: 'Tambah Kegiatan ROHIS', user: req.session, error: err.message });
+    try {
+      const { judul, konten, kategori, status } = req.body;
+      if (!judul) return portalRender(res, req, 'portal/rohis/create', { title: 'Tambah Kegiatan ROHIS', user: req.session, error: 'Judul wajib diisi' });
+      const gambar = req.file ? req.file.filename : null;
+      const slug = createSlug(judul);
+      await db.query('INSERT INTO rohis_kegiatan (judul,slug,konten,gambar,kategori,status,penulis) VALUES (?,?,?,?,?,?,?)',
+        [judul, slug, konten||null, gambar, kategori||'kegiatan', status||'published', req.session.portalNama]);
+      res.redirect('/rohis/dashboard?success=1');
+    } catch (e) { console.error(e); portalRender(res, req, 'portal/rohis/create', { title: 'Tambah Kegiatan ROHIS', user: req.session, error: e.message }); }
+  });
+};
+
+exports.rohisEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM rohis_kegiatan WHERE id=?', [req.params.id]);
+  if (!rows.length) return res.redirect('/rohis/dashboard');
+  portalRender(res, req, 'portal/rohis/edit', { title: 'Edit Kegiatan ROHIS', user: req.session, item: rows[0] });
+};
+
+exports.rohisUpdate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/rohis/dashboard');
+    const { judul, konten, kategori, status } = req.body;
+    const [rows] = await db.query('SELECT gambar FROM rohis_kegiatan WHERE id=?', [req.params.id]);
+    const gambar = req.file ? req.file.filename : rows[0]?.gambar;
+    await db.query('UPDATE rohis_kegiatan SET judul=?,konten=?,gambar=?,kategori=?,status=? WHERE id=?',
+      [judul, konten||null, gambar, kategori||'kegiatan', status||'published', req.params.id]);
+    res.redirect('/rohis/dashboard?success=2');
+  });
+};
+
+exports.rohisDelete = async (req, res) => {
+  await db.query('DELETE FROM rohis_kegiatan WHERE id=?', [req.params.id]);
+  res.redirect('/rohis/dashboard?success=3');
+};
+
+exports.rohisGaleriIndex = async (req, res) => {
+  const [galeri] = await db.query('SELECT * FROM rohis_galeri ORDER BY created_at DESC');
+  portalRender(res, req, 'portal/rohis/galeri', { title: 'Galeri ROHIS', user: req.session, galeri, success: req.query.success, errorMsg: req.query.error || null });
+};
+
+exports.rohisGaleriCreate = (req, res) => {
+  uploadGaleriRohis(req, res, async (err) => {
+    if (err) return res.redirect('/rohis/galeri?error=' + encodeURIComponent(err.message));
+    try {
+      if (!req.files || req.files.length === 0) return res.redirect('/rohis/galeri?error=Pilih+minimal+1+foto');
+      const { judul, keterangan } = req.body;
+      for (const file of req.files) {
+        await db.query('INSERT INTO rohis_galeri (judul,gambar,keterangan) VALUES (?,?,?)',
+          [judul||'Galeri ROHIS', file.filename, keterangan||null]);
+      }
+      res.redirect('/rohis/galeri?success=1');
+    } catch (e) { console.error(e); res.redirect('/rohis/galeri?error=' + encodeURIComponent(e.message)); }
+  });
+};
+
+exports.rohisGaleriDelete = async (req, res) => {
+  await db.query('DELETE FROM rohis_galeri WHERE id=?', [req.params.id]);
+  res.redirect('/rohis/galeri?success=3');
+};
+
+// ── PORTAL ROHIS: Berita ──────────────────────────────────────────────────────
+exports.rohisBeritaIndex = async (req, res) => {
+  const [berita] = await db.query('SELECT * FROM rohis_berita ORDER BY created_at DESC');
+  portalRender(res, req, 'portal/rohis/berita', { title: 'Berita & Informasi ROHIS', user: req.session, berita, success: req.query.success });
+};
+
+exports.rohisBeritaCreatePage = (req, res) =>
+  portalRender(res, req, 'portal/rohis/berita-create', { title: 'Tambah Berita ROHIS', user: req.session });
+
+exports.rohisBeritaCreate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return portalRender(res, req, 'portal/rohis/berita-create', { title: 'Tambah Berita ROHIS', user: req.session, error: err.message });
+    try {
+      const { judul, konten, kategori, status } = req.body;
+      if (!judul) return portalRender(res, req, 'portal/rohis/berita-create', { title: 'Tambah Berita ROHIS', user: req.session, error: 'Judul wajib diisi' });
+      const gambar = req.file ? req.file.filename : null;
+      const slug = createSlug(judul);
+      await db.query('INSERT INTO rohis_berita (judul,slug,konten,gambar,kategori,status,penulis) VALUES (?,?,?,?,?,?,?)',
+        [judul, slug, konten||null, gambar, kategori||'berita', status||'published', req.session.portalNama]);
+      res.redirect('/rohis/berita?success=1');
+    } catch (e) { console.error(e); portalRender(res, req, 'portal/rohis/berita-create', { title: 'Tambah Berita ROHIS', user: req.session, error: e.message }); }
+  });
+};
+
+exports.rohisBeritaEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM rohis_berita WHERE id=?', [req.params.id]);
+  if (!rows.length) return res.redirect('/rohis/berita');
+  portalRender(res, req, 'portal/rohis/berita-edit', { title: 'Edit Berita ROHIS', user: req.session, item: rows[0] });
+};
+
+exports.rohisBeritaUpdate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/rohis/berita');
+    const { judul, konten, kategori, status } = req.body;
+    const [rows] = await db.query('SELECT gambar FROM rohis_berita WHERE id=?', [req.params.id]);
+    const gambar = req.file ? req.file.filename : rows[0]?.gambar;
+    await db.query('UPDATE rohis_berita SET judul=?,konten=?,gambar=?,kategori=?,status=? WHERE id=?',
+      [judul, konten||null, gambar, kategori||'berita', status||'published', req.params.id]);
+    res.redirect('/rohis/berita?success=2');
+  });
+};
+
+exports.rohisBeritaDelete = async (req, res) => {
+  await db.query('DELETE FROM rohis_berita WHERE id=?', [req.params.id]);
+  res.redirect('/rohis/berita?success=3');
 };

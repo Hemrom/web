@@ -41,8 +41,23 @@
         <li class="nav-item"><a class="nav-link" href="<%= dashUrl %>"><i class="fas fa-fw fa-running"></i><span>Dashboard (Kegiatan)</span></a></li>
         <li class="nav-item"><a class="nav-link" href="/olahraga/berita"><i class="fas fa-fw fa-newspaper"></i><span>Berita & Informasi</span></a></li>
         <li class="nav-item"><a class="nav-link" href="/olahraga/galeri"><i class="fas fa-fw fa-images"></i><span>Galeri Olahraga</span></a></li>
-        <% } else { %>
-        <li class="nav-item"><a class="nav-link" href="<%= dashUrl %>"><i class="fas fa-fw fa-tachometer-alt"></i><span>Dashboard (Prestasi)</span></a></li>
+        <% } else if (portalLabel === 'PASKIBRAKA') { %>
+        <li class="nav-item"><a class="nav-link" href="<%= dashUrl %>"><i class="fas fa-fw fa-flag"></i><span>Dashboard (Kegiatan)</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/paskibraka/berita"><i class="fas fa-fw fa-newspaper"></i><span>Berita & Informasi</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/paskibraka/galeri"><i class="fas fa-fw fa-images"></i><span>Galeri Paskibraka</span></a></li>
+        <% } else if (portalLabel === 'SENI') { %>
+        <li class="nav-item"><a class="nav-link" href="<%= dashUrl %>"><i class="fas fa-fw fa-palette"></i><span>Dashboard (Kegiatan)</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/seni/berita"><i class="fas fa-fw fa-newspaper"></i><span>Berita & Informasi</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/seni/galeri"><i class="fas fa-fw fa-images"></i><span>Galeri Seni</span></a></li>
+        <% } else if (portalLabel === 'BAHASA ASING') { %>
+        <li class="nav-item"><a class="nav-link" href="<%= dashUrl %>"><i class="fas fa-fw fa-language"></i><span>Dashboard (Kegiatan)</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/bahasa-asing/berita"><i class="fas fa-fw fa-newspaper"></i><span>Berita & Informasi</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/bahasa-asing/galeri"><i class="fas fa-fw fa-images"></i><span>Galeri Bahasa Asing</span></a></li>
+        <% } else if (portalLabel === 'ROHIS') { %>
+        <li class="nav-item"><a class="nav-link" href="<%= dashUrl %>"><i class="fas fa-fw fa-mosque"></i><span>Dashboard (Kegiatan)</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/rohis/berita"><i class="fas fa-fw fa-newspaper"></i><span>Berita & Informasi</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/rohis/galeri"><i class="fas fa-fw fa-images"></i><span>Galeri ROHIS</span></a></li>
+        <% } else { %>        <li class="nav-item"><a class="nav-link" href="<%= dashUrl %>"><i class="fas fa-fw fa-tachometer-alt"></i><span>Dashboard (Prestasi)</span></a></li>
         <li class="nav-item"><a class="nav-link" href="/jurusan-portal/halaman"><i class="fas fa-fw fa-edit"></i><span>Edit Halaman Jurusan</span></a></li>
         <li class="nav-item"><a class="nav-link" href="/jurusan-portal/berita"><i class="fas fa-fw fa-newspaper"></i><span>Berita & Informasi</span></a></li>
         <li class="nav-item"><a class="nav-link" href="/jurusan-portal/galeri"><i class="fas fa-fw fa-images"></i><span>Galeri Jurusan</span></a></li>

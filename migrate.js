@@ -190,7 +190,7 @@ async function run() {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
 
     // Tambah role pramuka ke portal_users
-    `ALTER TABLE portal_users MODIFY COLUMN role ENUM('bkk','osis','jurusan','pramuka','olahraga') NOT NULL`,
+    `ALTER TABLE portal_users MODIFY COLUMN role ENUM('bkk','osis','jurusan','pramuka','olahraga','paskibraka') NOT NULL`,
 
     `CREATE TABLE IF NOT EXISTS olahraga_kegiatan (
       id INT AUTO_INCREMENT PRIMARY KEY,
@@ -225,6 +225,152 @@ async function run() {
       keterangan TEXT,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+
+    // Paskibraka tables
+    `CREATE TABLE IF NOT EXISTS paskibraka_kegiatan (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      judul VARCHAR(255) NOT NULL,
+      slug VARCHAR(255) UNIQUE,
+      konten TEXT,
+      gambar VARCHAR(255),
+      kategori ENUM('kegiatan','pengumuman','prestasi','lainnya') DEFAULT 'kegiatan',
+      status ENUM('draft','published') DEFAULT 'published',
+      penulis VARCHAR(100),
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+
+    `CREATE TABLE IF NOT EXISTS paskibraka_berita (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      judul VARCHAR(255) NOT NULL,
+      slug VARCHAR(255) UNIQUE,
+      konten TEXT,
+      gambar VARCHAR(255),
+      kategori ENUM('berita','pengumuman','kegiatan','lainnya') DEFAULT 'berita',
+      status ENUM('draft','published') DEFAULT 'published',
+      penulis VARCHAR(100),
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+
+    `CREATE TABLE IF NOT EXISTS paskibraka_galeri (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      judul VARCHAR(255) NOT NULL,
+      gambar VARCHAR(255) NOT NULL,
+      keterangan TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+
+    // Seni tables
+    `CREATE TABLE IF NOT EXISTS seni_kegiatan (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      judul VARCHAR(255) NOT NULL,
+      slug VARCHAR(255) UNIQUE,
+      konten TEXT,
+      gambar VARCHAR(255),
+      kategori ENUM('kegiatan','pengumuman','prestasi','lainnya') DEFAULT 'kegiatan',
+      status ENUM('draft','published') DEFAULT 'published',
+      penulis VARCHAR(100),
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+
+    `CREATE TABLE IF NOT EXISTS seni_berita (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      judul VARCHAR(255) NOT NULL,
+      slug VARCHAR(255) UNIQUE,
+      konten TEXT,
+      gambar VARCHAR(255),
+      kategori ENUM('berita','pengumuman','kegiatan','lainnya') DEFAULT 'berita',
+      status ENUM('draft','published') DEFAULT 'published',
+      penulis VARCHAR(100),
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+
+    `CREATE TABLE IF NOT EXISTS seni_galeri (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      judul VARCHAR(255) NOT NULL,
+      gambar VARCHAR(255) NOT NULL,
+      keterangan TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+
+    // Bahasa Asing tables
+    `CREATE TABLE IF NOT EXISTS bahasa_asing_kegiatan (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      judul VARCHAR(255) NOT NULL,
+      slug VARCHAR(255) UNIQUE,
+      konten TEXT,
+      gambar VARCHAR(255),
+      kategori ENUM('kegiatan','pengumuman','prestasi','lainnya') DEFAULT 'kegiatan',
+      status ENUM('draft','published') DEFAULT 'published',
+      penulis VARCHAR(100),
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+
+    `CREATE TABLE IF NOT EXISTS bahasa_asing_berita (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      judul VARCHAR(255) NOT NULL,
+      slug VARCHAR(255) UNIQUE,
+      konten TEXT,
+      gambar VARCHAR(255),
+      kategori ENUM('berita','pengumuman','kegiatan','lainnya') DEFAULT 'berita',
+      status ENUM('draft','published') DEFAULT 'published',
+      penulis VARCHAR(100),
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+
+    `CREATE TABLE IF NOT EXISTS bahasa_asing_galeri (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      judul VARCHAR(255) NOT NULL,
+      gambar VARCHAR(255) NOT NULL,
+      keterangan TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+
+    // Tambah role seni dan bahasa_asing ke portal_users
+    `ALTER TABLE portal_users MODIFY COLUMN role ENUM('bkk','osis','jurusan','pramuka','olahraga','paskibraka','seni','bahasa_asing') NOT NULL`,
+
+    // Rohis tables
+    `CREATE TABLE IF NOT EXISTS rohis_kegiatan (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      judul VARCHAR(255) NOT NULL,
+      slug VARCHAR(255) UNIQUE,
+      konten TEXT,
+      gambar VARCHAR(255),
+      kategori ENUM('kegiatan','pengumuman','prestasi','lainnya') DEFAULT 'kegiatan',
+      status ENUM('draft','published') DEFAULT 'published',
+      penulis VARCHAR(100),
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+
+    `CREATE TABLE IF NOT EXISTS rohis_berita (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      judul VARCHAR(255) NOT NULL,
+      slug VARCHAR(255) UNIQUE,
+      konten TEXT,
+      gambar VARCHAR(255),
+      kategori ENUM('berita','pengumuman','kegiatan','lainnya') DEFAULT 'berita',
+      status ENUM('draft','published') DEFAULT 'published',
+      penulis VARCHAR(100),
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+
+    `CREATE TABLE IF NOT EXISTS rohis_galeri (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      judul VARCHAR(255) NOT NULL,
+      gambar VARCHAR(255) NOT NULL,
+      keterangan TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+
+    // Tambah role rohis ke portal_users
+    `ALTER TABLE portal_users MODIFY COLUMN role ENUM('bkk','osis','jurusan','pramuka','olahraga','paskibraka','seni','bahasa_asing','rohis') NOT NULL`,
   ];
 
   let ok = 0, skip = 0;
