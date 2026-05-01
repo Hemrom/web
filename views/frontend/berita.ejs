@@ -142,6 +142,7 @@
             background: var(--gray-50);
         }
         .news-card {
+            cursor: pointer;
             background: white;
             border-radius: 20px;
             overflow: hidden;
@@ -322,7 +323,7 @@
                 <div class="row">
                     <% berita.forEach(b => { %>
                         <div class="col-lg-4 col-md-6">
-                            <div class="news-card">
+                            <a href="/berita/<%= b.slug %>" class="news-card" style="text-decoration:none;color:inherit;display:block;">
                                 <div class="news-image" style="background-image: url('<%= b.gambar ? '/uploads/' + b.gambar : '/assets/img/undraw_posting_photo.svg' %>')">
                                     <div class="news-badge"><%= b.kategori %></div>
                                 </div>
@@ -331,10 +332,10 @@
                                     <p class="news-excerpt"><%= (b.konten || '').replace(/<[^>]*>/g, '').substring(0, 150) %>...</p>
                                     <div class="news-meta">
                                         <span><i class="fas fa-calendar-alt mr-1"></i> <%= new Date(b.created_at).toLocaleDateString('id-ID') %></span>
-                                        <a href="/berita/<%= b.slug %>" class="read-more">Baca Selengkapnya</a>
+                                        <span class="read-more">Baca Selengkapnya</span>
                                     </div>
                                 </div>
-                            </div>
+                            </a>
                         </div>
                     <% }); %>
                 </div>
