@@ -163,7 +163,9 @@ router.get('/rohis/berita/edit/:id', isRohis, validateIdParam, ctrl.rohisBeritaE
 router.post('/rohis/berita/edit/:id', isRohis, csrfProtect, validateIdParam, ctrl.rohisBeritaUpdate);
 router.post('/rohis/berita/delete/:id', isRohis, csrfProtect, validateIdParam, ctrl.rohisBeritaDelete);
 
-// ── Jurusan Portal ────────────────────────────────────────────────────────────router.post('/jurusan-portal/login', loginLimiter, csrfProtect, ctrl.portalLogin('jurusan'));
+// ── Jurusan Portal ────────────────────────────────────────────────────────────
+router.get('/jurusan-portal/login', ctrl.portalLoginPage('jurusan', 'Login Portal Jurusan'));
+router.post('/jurusan-portal/login', loginLimiter, csrfProtect, ctrl.portalLogin('jurusan'));
 router.get('/jurusan-portal/logout', ctrl.portalLogout('jurusan'));
 router.get('/jurusan-portal/dashboard', isJurusan, ctrl.jurusanDashboard);
 router.get('/jurusan-portal/create', isJurusan, ctrl.jurusanCreatePage);
