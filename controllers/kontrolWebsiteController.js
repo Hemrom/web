@@ -196,6 +196,9 @@ body, p, h1, h2, h3, h4, h5, h6, span:not(.fa):not(.fas):not(.far):not(.fab):not
 body { background-color: ${bodyBg} !important; color: ${bodyColor} !important; }
 .navbar-modern { background: ${navbarBg}f5 !important; backdrop-filter: blur(12px); }
 .footer { background: ${footerBg} !important; }
+.footer-title { color: white !important; }
+.footer-link { color: rgba(255,255,255,.75) !important; }
+.footer-link:hover { color: white !important; }
 .news-card, .feature-card, .stat-card { background: ${cardBg} !important; border-radius: var(--border-radius-card) !important; }
 .stats-section, .news-section { background: ${gray50} !important; }
 .features-section, .gallery-section { background: ${cardBg} !important; }
