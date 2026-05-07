@@ -93,6 +93,9 @@ const fileDownloadController = require('../controllers/fileDownloadController');
 router.get('/file-download', fileDownloadController.frontendIndex);
 router.get('/file-download/:id', fileDownloadController.frontendDownload);
 
+// Halaman Ekstrakurikuler
+router.get('/ekstrakurikuler', portalController.ekstrakurikulerIndex);
+
 // SEO
 router.get('/robots.txt', (req, res) => {
   res.type('text/plain');

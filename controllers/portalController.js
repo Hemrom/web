@@ -28,6 +28,24 @@ const getCommon = async () => {
   return { profil, menuItems, mediaSosialFooter };
 };
 
+// ── FRONTEND EKSTRAKURIKULER ──────────────────────────────────────────────────
+exports.ekstrakurikulerIndex = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const ekskul = [
+      { nama: 'OSIS', deskripsi: 'Organisasi Siswa Intra Sekolah', url: '/osis', icon: 'fas fa-users', warna: '#f59e0b', foto: null },
+      { nama: 'Pramuka', deskripsi: 'Gerakan Pramuka SMKN 1 Kras', url: '/pramuka', icon: 'fas fa-campground', warna: '#16a34a', foto: null },
+      { nama: 'PMR', deskripsi: 'Palang Merah Remaja', url: '/pmr', icon: 'fas fa-first-aid', warna: '#dc2626', foto: null },
+      { nama: 'Paskibraka', deskripsi: 'Pasukan Pengibar Bendera', url: '/paskibraka', icon: 'fas fa-flag', warna: '#991b1b', foto: null },
+      { nama: 'Olahraga', deskripsi: 'Ekstrakurikuler Olahraga', url: '/olahraga', icon: 'fas fa-running', warna: '#c2410c', foto: null },
+      { nama: 'Seni', deskripsi: 'Ekstrakurikuler Seni', url: '/seni', icon: 'fas fa-palette', warna: '#7c3aed', foto: null },
+      { nama: 'Bahasa Asing', deskripsi: 'Ekstrakurikuler Bahasa Asing', url: '/bahasa-asing', icon: 'fas fa-language', warna: '#0f766e', foto: null },
+      { nama: 'Rohis', deskripsi: 'Rohani Islam SMKN 1 Kras', url: '/rohis', icon: 'fas fa-mosque', warna: '#065f46', foto: null },
+    ];
+    res.render('frontend/ekstrakurikuler', { title: 'Ekstrakurikuler', currentPage: 'ekstrakurikuler', ekskul, ...common });
+  } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
+};
+
 // ── FRONTEND PRESTASI ─────────────────────────────────────────────────────────
 exports.prestasiIndex = async (req, res) => {
   try {
