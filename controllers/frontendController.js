@@ -328,10 +328,15 @@ exports.sejarah = async (req, res) => {
 
 exports.sambutan = async (req, res) => {
   try {
-    const [profil, konten, menuItems, mediaSosialFooter, relatedBerita] = await Promise.all([
-      getProfilSekolah(), getProfilKonten('sambutan'), getMenuItems(), getMediaSosialFooter(), getRelatedBerita()
+    const [profil, [kepsekRows], menuItems, mediaSosialFooter, relatedBerita] = await Promise.all([
+      getProfilSekolah(),
+      db.query("SELECT * FROM profil_konten WHERE tipe = 'sambutan' LIMIT 1"),
+      getMenuItems(), getMediaSosialFooter(), getRelatedBerita()
     ]);
-    res.render('frontend/profil-konten', { title: 'Sambutan Kepala Sekolah', currentPage: 'profil', profil, konten, activeMenu: 'sambutan', menuItems, mediaSosialFooter, relatedBerita });
+    res.render('frontend/sambutan-kepsek', {
+      title: 'Sambutan Kepala Sekolah', currentPage: 'profil',
+      profil, kepsek: kepsekRows[0] || null, menuItems, mediaSosialFooter, relatedBerita
+    });
   } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
 };
 
