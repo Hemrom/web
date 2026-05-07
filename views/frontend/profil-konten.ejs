@@ -117,29 +117,8 @@
     <section class="content-section">
         <div class="container">
             <div class="row">
-                <!-- Sidebar sub-menu -->
-                <div class="col-lg-3 mb-4">
-                    <div class="profil-submenu">
-                        <a href="/profil" <%= activeMenu === 'profil' ? 'class="active"' : '' %>>
-                            <i class="fas fa-building me-2"></i> Profil Sekolah
-                        </a>
-                        <a href="/profil/visi-misi" <%= activeMenu === 'visi-misi' ? 'class="active"' : '' %>>
-                            <i class="fas fa-eye me-2"></i> Visi &amp; Misi
-                        </a>
-                        <a href="/profil/sejarah" <%= activeMenu === 'sejarah' ? 'class="active"' : '' %>>
-                            <i class="fas fa-history me-2"></i> Sejarah Sekolah
-                        </a>
-                        <a href="/guru" <%= activeMenu === 'guru' ? 'class="active"' : '' %>>
-                            <i class="fas fa-users me-2"></i> Guru &amp; Karyawan
-                        </a>
-                        <a href="/profil/sambutan" <%= activeMenu === 'sambutan' ? 'class="active"' : '' %>>
-                            <i class="fas fa-microphone me-2"></i> Sambutan Kepala Sekolah
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Konten utama -->
-                <div class="col-lg-9">
+                <!-- Konten utama - full width -->
+                <div class="col-lg-12">
                     <div class="content-card">
                         <% if (konten.tipe === 'sambutan') { %>
                         <!-- Layout sambutan: foto float kanan, teks full width -->
