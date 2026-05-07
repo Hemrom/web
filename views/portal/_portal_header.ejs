@@ -57,6 +57,10 @@
         <li class="nav-item"><a class="nav-link" href="<%= dashUrl %>"><i class="fas fa-fw fa-mosque"></i><span>Dashboard (Kegiatan)</span></a></li>
         <li class="nav-item"><a class="nav-link" href="/rohis/berita"><i class="fas fa-fw fa-newspaper"></i><span>Berita & Informasi</span></a></li>
         <li class="nav-item"><a class="nav-link" href="/rohis/galeri"><i class="fas fa-fw fa-images"></i><span>Galeri ROHIS</span></a></li>
+        <% } else if (portalLabel === 'PMR') { %>
+        <li class="nav-item"><a class="nav-link" href="<%= dashUrl %>"><i class="fas fa-fw fa-first-aid"></i><span>Dashboard (Kegiatan)</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/pmr/berita"><i class="fas fa-fw fa-newspaper"></i><span>Berita & Informasi</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/pmr/galeri"><i class="fas fa-fw fa-images"></i><span>Galeri PMR</span></a></li>
         <% } else { %>        <li class="nav-item"><a class="nav-link" href="<%= dashUrl %>"><i class="fas fa-fw fa-tachometer-alt"></i><span>Dashboard (Prestasi)</span></a></li>
         <li class="nav-item"><a class="nav-link" href="/jurusan-portal/halaman"><i class="fas fa-fw fa-edit"></i><span>Edit Halaman Jurusan</span></a></li>
         <li class="nav-item"><a class="nav-link" href="/jurusan-portal/berita"><i class="fas fa-fw fa-newspaper"></i><span>Berita & Informasi</span></a></li>

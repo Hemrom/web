@@ -1817,3 +1817,155 @@ exports.rohisBeritaDelete = async (req, res) => {
   await db.query('DELETE FROM rohis_berita WHERE id=?', [req.params.id]);
   res.redirect('/rohis/berita?success=3');
 };
+
+// ── FRONTEND PMR ──────────────────────────────────────────────────────────────
+exports.pmrIndex = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [[kegiatan], [berita], [galeri]] = await Promise.all([
+      db.query("SELECT * FROM pmr_kegiatan WHERE status='published' ORDER BY created_at DESC"),
+      db.query("SELECT * FROM pmr_berita WHERE status='published' ORDER BY created_at DESC"),
+      db.query("SELECT * FROM pmr_galeri ORDER BY created_at DESC")
+    ]);
+    res.render('frontend/pmr', { title: 'PMR', currentPage: 'pmr', kegiatan, berita, galeri, ...common });
+  } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
+};
+
+exports.pmrDetail = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [rows] = await db.query("SELECT * FROM pmr_kegiatan WHERE slug=? AND status='published'", [req.params.slug]);
+    if (!rows.length) return res.status(404).render('frontend/404', { title: '404', menuItems: common.menuItems });
+    res.render('frontend/pmr-detail', { title: rows[0].judul, kegiatan: rows[0], ...common });
+  } catch (err) { res.status(500).send('Terjadi kesalahan'); }
+};
+
+exports.pmrBeritaDetail = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [rows] = await db.query("SELECT * FROM pmr_berita WHERE slug=? AND status='published'", [req.params.slug]);
+    if (!rows.length) return res.status(404).render('frontend/404', { title: '404', menuItems: common.menuItems });
+    res.render('frontend/pmr-berita-detail', { title: rows[0].judul, berita: rows[0], ...common });
+  } catch (err) { res.status(500).send('Terjadi kesalahan'); }
+};
+
+// ── PORTAL PMR ────────────────────────────────────────────────────────────────
+const uploadGaleriPmr = createUpload('pmr-galeri', { maxFiles: 20 }).array('gambar', 20);
+
+exports.pmrDashboard = async (req, res) => {
+  const [kegiatan] = await db.query('SELECT * FROM pmr_kegiatan ORDER BY created_at DESC');
+  portalRender(res, req, 'portal/pmr/dashboard', { title: 'Dashboard PMR', user: req.session, kegiatan, success: req.query.success });
+};
+
+exports.pmrCreatePage = (req, res) =>
+  portalRender(res, req, 'portal/pmr/create', { title: 'Tambah Kegiatan PMR', user: req.session });
+
+exports.pmrCreate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return portalRender(res, req, 'portal/pmr/create', { title: 'Tambah Kegiatan PMR', user: req.session, error: err.message });
+    try {
+      const { judul, konten, kategori, status } = req.body;
+      if (!judul) return portalRender(res, req, 'portal/pmr/create', { title: 'Tambah Kegiatan PMR', user: req.session, error: 'Judul wajib diisi' });
+      const gambar = req.file ? req.file.filename : null;
+      const slug = createSlug(judul);
+      await db.query('INSERT INTO pmr_kegiatan (judul,slug,konten,gambar,kategori,status,penulis) VALUES (?,?,?,?,?,?,?)',
+        [judul, slug, konten||null, gambar, kategori||'kegiatan', status||'published', req.session.portalNama]);
+      res.redirect('/pmr/dashboard?success=1');
+    } catch (e) { console.error(e); portalRender(res, req, 'portal/pmr/create', { title: 'Tambah Kegiatan PMR', user: req.session, error: e.message }); }
+  });
+};
+
+exports.pmrEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM pmr_kegiatan WHERE id=?', [req.params.id]);
+  if (!rows.length) return res.redirect('/pmr/dashboard');
+  portalRender(res, req, 'portal/pmr/edit', { title: 'Edit Kegiatan PMR', user: req.session, item: rows[0] });
+};
+
+exports.pmrUpdate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/pmr/dashboard');
+    const { judul, konten, kategori, status } = req.body;
+    const [rows] = await db.query('SELECT gambar FROM pmr_kegiatan WHERE id=?', [req.params.id]);
+    const gambar = req.file ? req.file.filename : rows[0]?.gambar;
+    await db.query('UPDATE pmr_kegiatan SET judul=?,konten=?,gambar=?,kategori=?,status=? WHERE id=?',
+      [judul, konten||null, gambar, kategori||'kegiatan', status||'published', req.params.id]);
+    res.redirect('/pmr/dashboard?success=2');
+  });
+};
+
+exports.pmrDelete = async (req, res) => {
+  await db.query('DELETE FROM pmr_kegiatan WHERE id=?', [req.params.id]);
+  res.redirect('/pmr/dashboard?success=3');
+};
+
+exports.pmrGaleriIndex = async (req, res) => {
+  const [galeri] = await db.query('SELECT * FROM pmr_galeri ORDER BY created_at DESC');
+  portalRender(res, req, 'portal/pmr/galeri', { title: 'Galeri PMR', user: req.session, galeri, success: req.query.success, errorMsg: req.query.error || null });
+};
+
+exports.pmrGaleriCreate = (req, res) => {
+  uploadGaleriPmr(req, res, async (err) => {
+    if (err) return res.redirect('/pmr/galeri?error=' + encodeURIComponent(err.message));
+    try {
+      if (!req.files || req.files.length === 0) return res.redirect('/pmr/galeri?error=Pilih+minimal+1+foto');
+      const { judul, keterangan } = req.body;
+      for (const file of req.files) {
+        await db.query('INSERT INTO pmr_galeri (judul,gambar,keterangan) VALUES (?,?,?)',
+          [judul||'Galeri PMR', file.filename, keterangan||null]);
+      }
+      res.redirect('/pmr/galeri?success=1');
+    } catch (e) { console.error(e); res.redirect('/pmr/galeri?error=' + encodeURIComponent(e.message)); }
+  });
+};
+
+exports.pmrGaleriDelete = async (req, res) => {
+  await db.query('DELETE FROM pmr_galeri WHERE id=?', [req.params.id]);
+  res.redirect('/pmr/galeri?success=3');
+};
+
+// ── PORTAL PMR: Berita ────────────────────────────────────────────────────────
+exports.pmrBeritaIndex = async (req, res) => {
+  const [berita] = await db.query('SELECT * FROM pmr_berita ORDER BY created_at DESC');
+  portalRender(res, req, 'portal/pmr/berita', { title: 'Berita & Informasi PMR', user: req.session, berita, success: req.query.success });
+};
+
+exports.pmrBeritaCreatePage = (req, res) =>
+  portalRender(res, req, 'portal/pmr/berita-create', { title: 'Tambah Berita PMR', user: req.session });
+
+exports.pmrBeritaCreate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return portalRender(res, req, 'portal/pmr/berita-create', { title: 'Tambah Berita PMR', user: req.session, error: err.message });
+    try {
+      const { judul, konten, kategori, status } = req.body;
+      if (!judul) return portalRender(res, req, 'portal/pmr/berita-create', { title: 'Tambah Berita PMR', user: req.session, error: 'Judul wajib diisi' });
+      const gambar = req.file ? req.file.filename : null;
+      const slug = createSlug(judul);
+      await db.query('INSERT INTO pmr_berita (judul,slug,konten,gambar,kategori,status,penulis) VALUES (?,?,?,?,?,?,?)',
+        [judul, slug, konten||null, gambar, kategori||'berita', status||'published', req.session.portalNama]);
+      res.redirect('/pmr/berita?success=1');
+    } catch (e) { console.error(e); portalRender(res, req, 'portal/pmr/berita-create', { title: 'Tambah Berita PMR', user: req.session, error: e.message }); }
+  });
+};
+
+exports.pmrBeritaEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM pmr_berita WHERE id=?', [req.params.id]);
+  if (!rows.length) return res.redirect('/pmr/berita');
+  portalRender(res, req, 'portal/pmr/berita-edit', { title: 'Edit Berita PMR', user: req.session, item: rows[0] });
+};
+
+exports.pmrBeritaUpdate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/pmr/berita');
+    const { judul, konten, kategori, status } = req.body;
+    const [rows] = await db.query('SELECT gambar FROM pmr_berita WHERE id=?', [req.params.id]);
+    const gambar = req.file ? req.file.filename : rows[0]?.gambar;
+    await db.query('UPDATE pmr_berita SET judul=?,konten=?,gambar=?,kategori=?,status=? WHERE id=?',
+      [judul, konten||null, gambar, kategori||'berita', status||'published', req.params.id]);
+    res.redirect('/pmr/berita?success=2');
+  });
+};
+
+exports.pmrBeritaDelete = async (req, res) => {
+  await db.query('DELETE FROM pmr_berita WHERE id=?', [req.params.id]);
+  res.redirect('/pmr/berita?success=3');
+};

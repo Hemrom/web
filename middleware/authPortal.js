@@ -18,5 +18,6 @@ const isJurusan = (req, res, next) => {
   res.redirect('/jurusan-portal/login');
 };
 const isRohis = isPortalAuth('rohis');
+const isPmr = isPortalAuth('pmr');
 
-module.exports = { isBKK, isOSIS, isJurusan, isPramuka, isOlahraga, isPaskibraka, isSeni, isBahasaAsing, isRohis };
+module.exports = { isBKK, isOSIS, isJurusan, isPramuka, isOlahraga, isPaskibraka, isSeni, isBahasaAsing, isRohis, isPmr };

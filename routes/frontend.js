@@ -66,6 +66,11 @@ router.get('/rohis', portalController.rohisIndex);
 router.get('/rohis/berita/:slug', validateSlugParam, portalController.rohisBeritaDetail);
 router.get('/rohis/:slug', validateSlugParam, portalController.rohisDetail);
 
+// PMR
+router.get('/pmr', portalController.pmrIndex);
+router.get('/pmr/berita/:slug', validateSlugParam, portalController.pmrBeritaDetail);
+router.get('/pmr/:slug', validateSlugParam, portalController.pmrDetail);
+
 // Fasilitas
 router.get('/fasilitas', portalController.fasilitasIndex);
 

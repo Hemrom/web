@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const ctrl = require('../controllers/portalController');
-const { isBKK, isOSIS, isJurusan, isPramuka, isOlahraga, isPaskibraka, isSeni, isBahasaAsing, isRohis } = require('../middleware/authPortal');
+const { isBKK, isOSIS, isJurusan, isPramuka, isOlahraga, isPaskibraka, isSeni, isBahasaAsing, isRohis, isPmr } = require('../middleware/authPortal');
 const { loginLimiter, formLimiter } = require('../middleware/security');
 const { csrfProtect } = require('../middleware/csrf');
 const { validateIdParam } = require('../middleware/securityHardening');
@@ -162,6 +162,27 @@ router.post('/rohis/berita/create', isRohis, csrfProtect, ctrl.rohisBeritaCreate
 router.get('/rohis/berita/edit/:id', isRohis, validateIdParam, ctrl.rohisBeritaEditPage);
 router.post('/rohis/berita/edit/:id', isRohis, csrfProtect, validateIdParam, ctrl.rohisBeritaUpdate);
 router.post('/rohis/berita/delete/:id', isRohis, csrfProtect, validateIdParam, ctrl.rohisBeritaDelete);
+
+// ── PMR Portal ────────────────────────────────────────────────────────────────
+router.get('/pmr/login', ctrl.portalLoginPage('pmr', 'Login Portal PMR'));
+router.post('/pmr/login', loginLimiter, csrfProtect, ctrl.portalLogin('pmr'));
+router.get('/pmr/logout', ctrl.portalLogout('pmr'));
+router.get('/pmr/dashboard', isPmr, ctrl.pmrDashboard);
+router.get('/pmr/create', isPmr, ctrl.pmrCreatePage);
+router.post('/pmr/create', isPmr, csrfProtect, ctrl.pmrCreate);
+router.get('/pmr/edit/:id', isPmr, validateIdParam, ctrl.pmrEditPage);
+router.post('/pmr/edit/:id', isPmr, csrfProtect, validateIdParam, ctrl.pmrUpdate);
+router.post('/pmr/delete/:id', isPmr, csrfProtect, validateIdParam, ctrl.pmrDelete);
+router.get('/pmr/galeri', isPmr, ctrl.pmrGaleriIndex);
+router.post('/pmr/galeri/upload', isPmr, ctrl.pmrGaleriCreate);
+router.post('/pmr/galeri/delete/:id', isPmr, csrfProtect, validateIdParam, ctrl.pmrGaleriDelete);
+// Berita PMR
+router.get('/pmr/berita', isPmr, ctrl.pmrBeritaIndex);
+router.get('/pmr/berita/create', isPmr, ctrl.pmrBeritaCreatePage);
+router.post('/pmr/berita/create', isPmr, csrfProtect, ctrl.pmrBeritaCreate);
+router.get('/pmr/berita/edit/:id', isPmr, validateIdParam, ctrl.pmrBeritaEditPage);
+router.post('/pmr/berita/edit/:id', isPmr, csrfProtect, validateIdParam, ctrl.pmrBeritaUpdate);
+router.post('/pmr/berita/delete/:id', isPmr, csrfProtect, validateIdParam, ctrl.pmrBeritaDelete);
 
 // ── Jurusan Portal ────────────────────────────────────────────────────────────
 router.get('/jurusan-portal/login', ctrl.portalLoginPage('jurusan', 'Login Portal Jurusan'));
