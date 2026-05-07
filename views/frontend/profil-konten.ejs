@@ -124,22 +124,43 @@
                         <!-- Layout sambutan modern: 2 kolom -->
                         <style>
                             .sambutan-wrap { display: flex; gap: 3rem; align-items: flex-start; }
-                            .sambutan-foto-col { flex-shrink: 0; width: 280px; }
+                            .sambutan-foto-col { flex-shrink: 0; width: 320px; }
+                            .sambutan-foto-outer {
+                                position: relative;
+                                padding: 16px 16px 0 0;
+                            }
+                            .sambutan-foto-outer::before {
+                                content: '';
+                                position: absolute;
+                                top: 0; right: 0;
+                                width: 85%; height: 85%;
+                                background: linear-gradient(135deg, #bfdbfe, #e0f2fe);
+                                border-radius: 24px;
+                                z-index: 0;
+                            }
                             .sambutan-foto-frame {
                                 position: relative;
+                                z-index: 1;
                                 border-radius: 20px;
                                 overflow: hidden;
-                                box-shadow: 0 20px 60px rgba(14,165,233,.2);
+                                box-shadow: 0 24px 60px rgba(14,165,233,.25);
                             }
-                            .sambutan-foto-frame img { width: 100%; display: block; object-fit: cover; object-position: top; }
+                            .sambutan-foto-frame img {
+                                width: 100%;
+                                display: block;
+                                object-fit: cover;
+                                object-position: top center;
+                                min-height: 380px;
+                                max-height: 460px;
+                            }
                             .sambutan-foto-badge {
                                 position: absolute; bottom: 0; left: 0; right: 0;
-                                background: linear-gradient(to top, rgba(3,105,161,.95), transparent);
-                                padding: 1.5rem 1rem 1rem;
+                                background: linear-gradient(to top, rgba(3,105,161,.95) 0%, rgba(14,165,233,.6) 60%, transparent 100%);
+                                padding: 2.5rem 1.25rem 1.25rem;
                                 color: white;
                             }
-                            .sambutan-foto-badge .nama { font-weight: 800; font-size: 1rem; line-height: 1.3; }
-                            .sambutan-foto-badge .jabatan { font-size: .8rem; opacity: .85; margin-top: .2rem; }
+                            .sambutan-foto-badge .nama { font-weight: 800; font-size: 1.15rem; line-height: 1.3; text-shadow: 0 1px 4px rgba(0,0,0,.3); }
+                            .sambutan-foto-badge .jabatan { font-size: .85rem; opacity: .9; margin-top: .3rem; }
                             .sambutan-konten-col { flex: 1; min-width: 0; }
                             .sambutan-quote {
                                 background: linear-gradient(135deg, #e0f2fe, #f0f9ff);
@@ -157,24 +178,26 @@
                             .sambutan-profil-table tbody tr:nth-child(even) { background: #f8fafc; }
                             @media (max-width: 768px) {
                                 .sambutan-wrap { flex-direction: column; gap: 1.5rem; }
-                                .sambutan-foto-col { width: 100%; max-width: 280px; margin: 0 auto; }
+                                .sambutan-foto-col { width: 100%; max-width: 320px; margin: 0 auto; }
                             }
                         </style>
 
                         <div class="sambutan-wrap">
                             <!-- Foto -->
                             <div class="sambutan-foto-col">
-                                <div class="sambutan-foto-frame">
-                                    <% if (konten.foto) { %>
-                                    <img src="/uploads/<%= konten.foto %>" alt="<%= konten.judul %>">
-                                    <% } else { %>
-                                    <div style="height:320px;background:var(--light-blue,#e0f2fe);display:flex;align-items:center;justify-content:center;">
-                                        <i class="fas fa-user-tie fa-5x" style="color:var(--primary-blue,#0ea5e9)"></i>
-                                    </div>
-                                    <% } %>
-                                    <div class="sambutan-foto-badge">
-                                        <div class="nama"><%= konten.judul || 'Kepala Sekolah' %></div>
-                                        <div class="jabatan">Kepala <%= profil.nama_sekolah || 'Sekolah' %></div>
+                                <div class="sambutan-foto-outer">
+                                    <div class="sambutan-foto-frame">
+                                        <% if (konten.foto) { %>
+                                        <img src="/uploads/<%= konten.foto %>" alt="<%= konten.judul %>">
+                                        <% } else { %>
+                                        <div style="min-height:380px;background:linear-gradient(135deg,#e0f2fe,#bfdbfe);display:flex;align-items:center;justify-content:center;">
+                                            <i class="fas fa-user-tie fa-6x" style="color:#0ea5e9"></i>
+                                        </div>
+                                        <% } %>
+                                        <div class="sambutan-foto-badge">
+                                            <div class="nama"><%= konten.judul || 'Kepala Sekolah' %></div>
+                                            <div class="jabatan">Kepala <%= profil.nama_sekolah || 'Sekolah' %></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
