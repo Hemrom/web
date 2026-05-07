@@ -3,7 +3,23 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title><%= title %> - Website Sekolah</title>
+    <title><%= typeof profil !== 'undefined' && profil && profil.nama_sekolah ? profil.nama_sekolah : 'SMKN 1 Kras' %> - Website Resmi</title>
+    <meta name="description" content="Website resmi <%= typeof profil !== 'undefined' && profil && profil.nama_sekolah ? profil.nama_sekolah : 'SMK Negeri 1 Kras' %>, Kediri, Jawa Timur. Informasi sekolah, berita, galeri, dan program keahlian.">
+    <meta name="keywords" content="SMKN 1 Kras, SMK Negeri 1 Kras, Kediri, sekolah kejuruan, TKJ, TKRO, Kuliner, TPTUP">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="<%= typeof profil !== 'undefined' && profil && profil.nama_sekolah ? profil.nama_sekolah : 'SMKN 1 Kras' %>">
+    <link rel="canonical" href="https://smknegeri1kras.sch.id/">
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://smknegeri1kras.sch.id/">
+    <meta property="og:title" content="<%= typeof profil !== 'undefined' && profil && profil.nama_sekolah ? profil.nama_sekolah : 'SMKN 1 Kras' %> - Website Resmi">
+    <meta property="og:description" content="Website resmi SMK Negeri 1 Kras, Kediri, Jawa Timur.">
+    <meta property="og:image" content="https://smknegeri1kras.sch.id/uploads/<%= typeof profil !== 'undefined' && profil && profil.logo ? profil.logo : 'logo-sekolah.png' %>">
+    <meta property="og:site_name" content="<%= typeof profil !== 'undefined' && profil && profil.nama_sekolah ? profil.nama_sekolah : 'SMKN 1 Kras' %>">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<%= typeof profil !== 'undefined' && profil && profil.nama_sekolah ? profil.nama_sekolah : 'SMKN 1 Kras' %>">
+    <meta name="twitter:description" content="Website resmi SMK Negeri 1 Kras, Kediri, Jawa Timur.">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
