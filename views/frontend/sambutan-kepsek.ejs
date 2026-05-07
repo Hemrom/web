@@ -6,72 +6,107 @@
     <title><%= title %> - Website Sekolah</title>
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
     <link href="/assets/vendor/bootstrap5/bootstrap.min.css" rel="stylesheet">
-    <link href="/assets/vendor/fontawesome6/all.min.css" rel="stylesheet">    <style>
-        :root {
-            --primary-blue: #0ea5e9;
-            --secondary-blue: #0369a1;
-            --light-blue: #e0f2fe;
-            --gray-50: #f8fafc;
-            --gray-700: #334155;
-            --gray-800: #1e293b;
-            --gray-900: #0f172a;
-            --gray-300: #cbd5e1;
-            --accent-blue: #7dd3fc;
-        }
-        * { font-family: 'Inter', sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
-        body { line-height: 1.6; color: var(--gray-700); }
+    <link href="/assets/vendor/fontawesome6/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/theme.css">
+    <style>
+        body { color: #334155; background: #f8fafc; }
         .page-header {
-            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
-            padding: 10rem 0 4rem;
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+            padding: 9rem 0 4rem;
             color: white;
             text-align: center;
         }
-        .page-title { font-size: 3rem; font-weight: 800; margin-bottom: 0.5rem; }
-        .content-section { padding: 5rem 0; background: var(--gray-50); }
-        .kepsek-card {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 4px 20px rgba(14,165,233,0.08);
-            padding: 3rem;
-        }
-        .kepsek-foto {
-            width: 200px;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 50%;
-            border: 4px solid var(--light-blue);
-            box-shadow: 0 4px 20px rgba(14,165,233,0.2);
-        }
-        .kepsek-nama {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--gray-800);
-            margin-top: 1rem;
-        }
-        .kepsek-jabatan {
-            color: var(--primary-blue);
-            font-weight: 500;
+        .section { padding: 5rem 0; }
+
+        /* Konten sambutan */
+        .sambutan-nama {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #1e293b;
             margin-bottom: 1.5rem;
+            border-bottom: 3px solid #6d28d9;
+            padding-bottom: .75rem;
         }
-        .sambutan-text {
-            font-size: 1.05rem;
-            line-height: 1.9;
+        .sambutan-body {
+            font-size: 1rem;
+            line-height: 1.85;
             text-align: justify;
-            color: var(--gray-700);
+            color: #334155;
         }
-        .sambutan-text p { margin-bottom: 1.2rem; }
-        .quote-mark {
-            font-size: 5rem;
-            color: var(--light-blue);
-            line-height: 0.5;
-            font-family: Georgia, serif;
+        .sambutan-body p { margin-bottom: 1.1rem; }
+        .sambutan-body .salam { font-weight: 700; }
+        .ttd-nama { font-weight: 700; margin-top: .25rem; }
+        .ttd-nip { color: #64748b; font-size: .95rem; }
+
+        /* Foto kepsek */
+        .foto-wrapper {
+            position: relative;
+            display: inline-block;
         }
-        .footer { background: var(--gray-900); color: white; padding: 4rem 0 2rem; }
-        .footer-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem; }
-        .footer-link { color: var(--gray-300); text-decoration: none; margin-bottom: 0.5rem; display: block; }
-        .footer-link:hover { color: var(--accent-blue); }
-        .footer-bottom { border-top: 1px solid #334155; margin-top: 3rem; padding-top: 2rem; text-align: center; color: #94a3b8; }
-        @media (max-width: 991px) { .page-title { font-size: 2rem; } }
+        .foto-frame {
+            position: relative;
+            width: 100%;
+            max-width: 320px;
+            margin: 0 auto;
+        }
+        /* Dekorasi sudut bawah kiri */
+        .foto-frame::before {
+            content: '';
+            position: absolute;
+            bottom: -14px;
+            left: -14px;
+            width: 60%;
+            height: 60%;
+            border-left: 5px solid #6d28d9;
+            border-bottom: 5px solid #6d28d9;
+            border-radius: 0 0 0 8px;
+            z-index: 0;
+        }
+        /* Dekorasi sudut atas kanan */
+        .foto-frame::after {
+            content: '';
+            position: absolute;
+            top: -14px;
+            right: -14px;
+            width: 60%;
+            height: 60%;
+            border-right: 5px solid #6d28d9;
+            border-top: 5px solid #6d28d9;
+            border-radius: 0 8px 0 0;
+            z-index: 0;
+        }
+        .foto-img {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 320px;
+            height: 400px;
+            object-fit: cover;
+            object-position: top;
+            border-radius: 8px;
+            display: block;
+            background: #e2e8f0;
+        }
+        /* Background dekoratif daun/motif di belakang foto */
+        .foto-bg-deco {
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 0;
+            background: linear-gradient(135deg, #ddd6fe 0%, #bfdbfe 100%);
+            border-radius: 8px;
+            z-index: 0;
+        }
+        .foto-placeholder {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 320px;
+            height: 400px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #ddd6fe 0%, #bfdbfe 100%);
+        }
     </style>
 </head>
 <body>
@@ -79,42 +114,52 @@
 
     <section class="page-header">
         <div class="container">
-            <h1 class="page-title">Sambutan Kepala Sekolah</h1>
-            <p style="opacity:0.9">Pesan dan harapan dari pimpinan sekolah</p>
+            <div style="display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#bfdbfe;padding:.4rem 1.2rem;border-radius:50px;font-size:.85rem;font-weight:700;margin-bottom:1.5rem;">
+                <i class="fas fa-user-tie"></i> SMKN 1 KRAS
+            </div>
+            <h1 style="font-size:clamp(2rem,5vw,3rem);font-weight:900;margin-bottom:.75rem;">Sambutan Kepala Sekolah</h1>
+            <p style="opacity:.8;font-size:1rem;">Pesan dan harapan dari pimpinan sekolah</p>
         </div>
     </section>
 
-    <section class="content-section">
+    <section class="section">
         <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-9">
-                    <div class="kepsek-card">
-                        <div class="row align-items-start">
-                            <div class="col-md-3 text-center mb-4 mb-md-0">
-                                <% if (kepsek && kepsek.foto) { %>
-                                <img src="/uploads/<%= kepsek.foto %>" class="kepsek-foto" alt="Kepala Sekolah">
-                                <% } else { %>
-                                <div class="kepsek-foto d-flex align-items-center justify-content-center mx-auto" style="background:var(--light-blue);">
-                                    <i class="fas fa-user-tie fa-4x" style="color:var(--primary-blue)"></i>
-                                </div>
-                                <% } %>
-                                <div class="kepsek-nama"><%= kepsek && kepsek.judul ? kepsek.judul : 'Kepala Sekolah' %></div>
-                                <div class="kepsek-jabatan">Kepala Sekolah</div>
-                                <div style="font-size:0.9rem;color:#64748b"><%= profil.nama_sekolah || '' %></div>
+            <div class="row g-5 align-items-start">
+
+                <!-- Kolom Teks (kiri) -->
+                <div class="col-lg-7">
+                    <h2 class="sambutan-nama">
+                        <%= kepsek && kepsek.judul ? kepsek.judul : 'Kepala Sekolah' %>
+                    </h2>
+                    <div class="sambutan-body">
+                        <% if (kepsek && kepsek.konten && kepsek.konten.trim()) { %>
+                            <%- kepsek.konten %>
+                        <% } else { %>
+                            <p class="salam">Assalamu'alaikum Wr. Wb.</p>
+                            <p>Puji syukur kita panjatkan kehadirat Allah SWT, yang senantiasa memberikan rahmat dan hidayah-Nya kepada kita semua. Shalawat serta salam semoga tetap tercurahkan kepada junjungan kita Nabi Muhammad SAW, keluarga, sahabat, dan seluruh umat Islam yang senantiasa mengikuti petunjuk-Nya.</p>
+                            <p>Sambutan kepala sekolah belum tersedia. Silakan tambahkan konten melalui panel admin.</p>
+                            <p class="salam">Wassalamu'alaikum Wr. Wb.</p>
+                            <div class="mt-3">
+                                <div class="ttd-nama"><%= kepsek && kepsek.judul ? kepsek.judul.toUpperCase() : 'KEPALA SEKOLAH' %></div>
+                                <div class="ttd-nip">NIP. -</div>
                             </div>
-                            <div class="col-md-9">
-                                <div class="quote-mark">"</div>
-                                <div class="sambutan-text">
-                                    <% if (kepsek && kepsek.konten && kepsek.konten.trim()) { %>
-                                        <%- kepsek.konten %>
-                                    <% } else { %>
-                                        <p class="text-muted text-center py-4">Sambutan kepala sekolah belum tersedia.</p>
-                                    <% } %>
-                                </div>
-                            </div>
-                        </div>
+                        <% } %>
                     </div>
                 </div>
+
+                <!-- Kolom Foto (kanan) -->
+                <div class="col-lg-5 d-flex justify-content-center justify-content-lg-end pt-3">
+                    <div class="foto-frame">
+                        <% if (kepsek && kepsek.foto) { %>
+                            <img src="/uploads/<%= kepsek.foto %>" class="foto-img" alt="<%= kepsek.judul || 'Kepala Sekolah' %>">
+                        <% } else { %>
+                            <div class="foto-placeholder">
+                                <i class="fas fa-user-tie fa-5x" style="color:#6d28d9;opacity:.4;"></i>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+
             </div>
         </div>
     </section>
@@ -125,12 +170,10 @@
     <script src="/assets/vendor/bootstrap5/bootstrap.bundle.min.js"></script>
     <script src="/assets/vendor/jquery3/jquery.min.js"></script>
     <script>
-        $(window).scroll(function() {
-            if ($(window).scrollTop() > 50) $('.navbar-modern').css('box-shadow','0 4px 30px rgba(14,165,233,0.15)');
-            else $('.navbar-modern').css('box-shadow','0 2px 20px rgba(14,165,233,0.1)');
+        $(window).scroll(function(){
+            if($(window).scrollTop()>50) $('.navbar-modern').addClass('scrolled');
+            else $('.navbar-modern').removeClass('scrolled');
         });
     </script>
 </body>
 </html>
-
-
