@@ -45,14 +45,6 @@
                         <i class="fas fa-chevron-right" style="font-size:0.65rem;color:var(--primary-blue,#0ea5e9);"></i>
                         <%= m.label %>
                     </a>
-                    <% if (m.children && m.children.length > 0) { %>
-                    <% m.children.forEach(function(c) { %>
-                    <a href="<%= c.url %>" style="display:flex;align-items:center;gap:0.5rem;color:#64748b;text-decoration:none;font-size:0.85rem;padding:0.25rem 0 0.25rem 1.2rem;transition:color 0.2s;" onmouseover="this.style.color='var(--primary-blue,#0ea5e9)'" onmouseout="this.style.color='#64748b'">
-                        <i class="fas fa-minus" style="font-size:0.6rem;color:#cbd5e1;"></i>
-                        <%= c.label %>
-                    </a>
-                    <% }) %>
-                    <% } %>
                 </div>
                 <% }) %>
                 <% } %>
