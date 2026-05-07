@@ -146,14 +146,7 @@
                                 object-position: top center;
                                 min-height: 420px;
                             }
-                            .kepsek-card-accent {
-                                position: absolute;
-                                bottom: -4px; right: -4px;
-                                width: 40%; height: 30%;
-                                background: #0369a1;
-                                border-radius: 16px 0 24px 0;
-                                z-index: 0;
-                            }
+                            .kepsek-card-accent { display: none; }
                             .kepsek-card-badge {
                                 position: absolute; bottom: 0; left: 0; right: 0;
                                 background: linear-gradient(to top, rgba(3,105,161,.95) 0%, rgba(14,165,233,.5) 60%, transparent 100%);
@@ -223,8 +216,7 @@
                                         <i class="fas fa-user-tie fa-6x" style="color:#0ea5e9"></i>
                                     </div>
                                     <% } %>
-                                    <!-- Aksen teal pojok kanan bawah -->
-                                    <div class="kepsek-card-accent"></div>
+                                    <!-- Aksen teal pojok kanan bawah - dihapus -->
                                     <!-- Badge nama -->
                                     <div class="kepsek-card-badge">
                                         <div class="nama"><%= konten.judul || 'Kepala Sekolah' %></div>
