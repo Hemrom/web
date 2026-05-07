@@ -1996,7 +1996,7 @@
             </div>
             <% if (galeri && galeri.length > 0) { %>
             <div class="gallery-masonry">
-                <% galeri.forEach(function(album, idx) { %>
+                <% galeri.slice(0, 5).forEach(function(album, idx) { %>
                 <div class="g-item" onclick="window.location='/galeri'" title="<%= album.judul %>">
                     <img src="/uploads/<%= album.gambar %>" alt="<%= album.judul %>" onerror="this.src='/assets/img/undraw_posting_photo.svg'">
                     <% if (album.jumlah > 1) { %>
