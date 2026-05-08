@@ -155,7 +155,7 @@ exports.frontendDetail = async (req, res) => {
     ]);
     const [artikel] = await db.query("SELECT id, judul, slug, gambar, kategori, created_at FROM artikel WHERE status='published' ORDER BY created_at DESC LIMIT 4");
     const [beritaSlider] = await db.query("SELECT id, judul, slug, gambar, kategori, created_at FROM berita WHERE status='published' ORDER BY created_at DESC LIMIT 5");
-    const [agendaLain] = await db.query("SELECT * FROM agenda WHERE status='aktif' AND id != ? ORDER BY tanggal_mulai DESC LIMIT 4", [agendaItem.id]);
+    const [agendaLain] = await db.query("SELECT * FROM agenda WHERE status='aktif' ORDER BY tanggal_mulai DESC LIMIT 5", []);
     res.render('frontend/agenda-detail', { title: agendaItem.judul, currentPage: 'agenda', agenda: agendaItem, profil, menuItems, mediaSosialFooter, artikel, beritaSlider, agendaLain, formatTanggal });
   } catch (err) {
     console.error(err);
