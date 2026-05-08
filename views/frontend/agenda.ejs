@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Agenda Sekolah - <%= typeof profil !== 'undefined' && profil && profil.nama_sekolah ? profil.nama_sekolah : 'SMKN 1 Kras' %></title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <link href="/assets/vendor/bootstrap5/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/vendor/fontawesome6/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/theme.css">
+    <style>
+        :root {
+            --primary-blue: #0ea5e9; --primary-blue-dark: #0284c7;
+            --secondary-blue: #0369a1; --light-blue: #e0f2fe;
+            --gray-50: #f8fafc; --gray-100: #f1f5f9; --gray-200: #e2e8f0;
+            --gray-500: #64748b; --gray-600: #475569; --gray-700: #334155;
+            --gray-800: #1e293b; --gray-900: #0f172a;
+        }
+        * { font-family: 'Inter', sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
+        body { line-height: 1.6; color: var(--gray-700); }
+
+        .navbar-modern { background: rgba(255,255,255,.95) !important; backdrop-filter: blur(10px); box-shadow: 0 2px 20px rgba(14,165,233,.1); padding: 1rem 0; transition: all .3s ease; }
+        .navbar-modern.scrolled { background: rgba(255,255,255,.98) !important; box-shadow: 0 4px 30px rgba(14,165,233,.15); }
+        .navbar-brand { font-weight: 700; color: var(--primary-blue) !important; font-size: 1.5rem; text-decoration: none; }
+        .nav-link { font-weight: 500; color: var(--gray-600) !important; padding: .75rem 1rem !important; border-radius: 8px; transition: all .3s ease; }
+        .nav-link:hover, .nav-link.active { color: var(--primary-blue) !important; background-color: var(--light-blue); }
+
+        .page-header {
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #1a1a3e 100%);
+            padding: 9rem 0 5rem; color: white; text-align: center; position: relative; overflow: hidden;
+        }
+        .page-header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 60% at 20% 40%, rgba(99,102,241,.4) 0%, transparent 60%), radial-gradient(ellipse 60% 70% at 80% 60%, rgba(14,165,233,.35) 0%, transparent 60%); }
+        .page-header .container { position: relative; z-index: 1; }
+        .page-title { font-size: 3rem; font-weight: 900; margin-bottom: .75rem; }
+        .page-subtitle { font-size: 1.1rem; opacity: .85; }
+
+        /* Agenda Grid */
+        .agenda-section { padding: 5rem 0; background: var(--gray-50); }
+        .agenda-card {
+            background: white; border-radius: 20px; overflow: hidden;
+            box-shadow: 0 4px 20px rgba(14,165,233,.08); border: 1px solid var(--gray-100);
+            transition: all .35s ease; height: 100%;
+        }
+        .agenda-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(14,165,233,.16); border-color: #bfdbfe; }
+        .agenda-img {
+            height: 220px; background-size: cover; background-position: center;
+            position: relative; overflow: hidden;
+        }
+        .agenda-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,.45) 0%, transparent 60%); }
+        .agenda-date-badge {
+            position: absolute; top: 1rem; left: 1rem; z-index: 1;
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            color: white; padding: .4rem 1rem; border-radius: 50px;
+            font-size: .78rem; font-weight: 700; display: flex; align-items: center; gap: .4rem;
+        }
+        .agenda-body { padding: 1.5rem; }
+        .agenda-title { font-size: 1.05rem; font-weight: 700; color: var(--gray-800); margin-bottom: .75rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .agenda-meta { font-size: .82rem; color: var(--gray-500); display: flex; flex-direction: column; gap: .3rem; margin-bottom: 1rem; }
+        .agenda-meta span { display: flex; align-items: center; gap: .4rem; }
+        .agenda-meta i { color: var(--primary-blue); width: 14px; }
+        .btn-agenda { display: inline-flex; align-items: center; gap: .4rem; background: var(--light-blue); color: var(--primary-blue); padding: .45rem 1.1rem; border-radius: 50px; font-size: .82rem; font-weight: 700; text-decoration: none; transition: all .2s; }
+        .btn-agenda:hover { background: var(--primary-blue); color: white; text-decoration: none; }
+
+        /* Sidebar */
+        .sidebar-widget { background: white; border-radius: 20px; padding: 1.5rem; box-shadow: 0 4px 20px rgba(14,165,233,.08); border: 1px solid var(--gray-100); margin-bottom: 1.5rem; }
+        .widget-title { font-size: 1.1rem; font-weight: 800; color: var(--gray-800); margin-bottom: 1.25rem; padding-bottom: .75rem; border-bottom: 2px solid var(--light-blue); display: flex; align-items: center; gap: .5rem; }
+        .widget-title span { color: var(--primary-blue); }
+
+        /* Artikel slider */
+        .artikel-item { display: flex; gap: .75rem; padding: .75rem 0; border-bottom: 1px solid var(--gray-100); text-decoration: none; color: inherit; transition: all .2s; }
+        .artikel-item:last-child { border-bottom: none; }
+        .artikel-item:hover { color: var(--primary-blue); }
+        .artikel-item img { width: 70px; height: 55px; object-fit: cover; border-radius: 10px; flex-shrink: 0; }
+        .artikel-item-placeholder { width: 70px; height: 55px; border-radius: 10px; background: var(--light-blue); display: flex; align-items: center; justify-content: center; color: var(--primary-blue); font-size: 1.2rem; flex-shrink: 0; }
+        .artikel-item-title { font-size: .85rem; font-weight: 600; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .artikel-item-date { font-size: .75rem; color: var(--gray-500); margin-top: .2rem; }
+
+        /* Berita slider */
+        .berita-slider-wrap { position: relative; overflow: hidden; border-radius: 16px; }
+        .berita-slider-track { display: flex; transition: transform .4s ease; }
+        .berita-slide { flex: 0 0 100%; position: relative; }
+        .berita-slide img { width: 100%; height: 180px; object-fit: cover; display: block; }
+        .berita-slide-placeholder { width: 100%; height: 180px; background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue)); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem; }
+        .berita-slide-caption { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,.75) 0%, transparent 100%); padding: 1rem .75rem .75rem; }
+        .berita-slide-caption a { color: white; font-size: .82rem; font-weight: 600; text-decoration: none; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .berita-slide-caption a:hover { color: #bfdbfe; }
+        .berita-slide-date { font-size: .72rem; color: rgba(255,255,255,.75); margin-top: .2rem; }
+        .slider-dots { display: flex; justify-content: center; gap: 6px; margin-top: .75rem; }
+        .slider-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gray-200); cursor: pointer; transition: all .2s; border: none; padding: 0; }
+        .slider-dot.active { background: var(--primary-blue); transform: scale(1.3); }
+
+        /* Footer */
+        .footer { background: var(--gray-900); color: white; padding: 4rem 0 2rem; }
+        .footer-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 1.25rem; color: white; }
+        .footer-link { color: rgba(255,255,255,.7); text-decoration: none; margin-bottom: .4rem; display: block; transition: color .3s; font-size: .9rem; }
+        .footer-link:hover { color: #7dd3fc; text-decoration: none; }
+        .footer-bottom { border-top: 1px solid rgba(255,255,255,.1); margin-top: 2.5rem; padding-top: 1.5rem; text-align: center; color: rgba(255,255,255,.5); font-size: .85rem; }
+        .footer-sosmed { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .75rem; }
+        .footer-sosmed-btn { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; font-size: .85rem; transition: transform .2s; }
+        .footer-sosmed-btn:hover { transform: scale(1.15); color: white; }
+        .footer-sosmed-btn.inactive { opacity: .35; pointer-events: none; }
+
+        @media (max-width: 991px) {
+            .navbar-collapse { background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,.1); margin-top: 1rem; padding: 1rem; }
+            .page-title { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/navbar') %>
+
+    <section class="page-header">
+        <div class="container">
+            <div style="display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.9);padding:.4rem 1.1rem;border-radius:50px;font-size:.78rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;margin-bottom:1rem;backdrop-filter:blur(8px);">
+                <i class="fas fa-calendar-alt"></i> Agenda Sekolah
+            </div>
+            <h1 class="page-title">Agenda & Kegiatan</h1>
+            <p class="page-subtitle">Jadwal kegiatan dan acara terbaru dari <%= typeof profil !== 'undefined' && profil && profil.nama_sekolah ? profil.nama_sekolah : 'sekolah kami' %></p>
+        </div>
+    </section>
+
+    <section class="agenda-section">
+        <div class="container">
+            <div class="row g-4">
+                <!-- Agenda List -->
+                <div class="col-lg-8">
+                    <% if (!agenda || agenda.length === 0) { %>
+                    <div class="text-center py-5">
+                        <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">Belum ada agenda</h5>
+                        <p class="text-muted">Agenda kegiatan sekolah akan segera hadir.</p>
+                    </div>
+                    <% } else { %>
+                    <div class="row g-4">
+                        <% agenda.forEach(item => { %>
+                        <div class="col-md-6">
+                            <div class="agenda-card">
+                                <div class="agenda-img" style="background-image:url('<%= item.gambar ? '/uploads/' + item.gambar : '/assets/img/undraw_posting_photo.svg' %>')">
+                                    <div class="agenda-date-badge">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        <%= new Date(item.tanggal_mulai).toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'}) %>
+                                    </div>
+                                </div>
+                                <div class="agenda-body">
+                                    <h3 class="agenda-title"><%= item.judul %></h3>
+                                    <div class="agenda-meta">
+                                        <% if (item.waktu_mulai) { %>
+                                        <span><i class="fas fa-clock"></i> <%= item.waktu_mulai.substring(0,5) %><% if (item.waktu_selesai) { %> - <%= item.waktu_selesai.substring(0,5) %><% } else { %> - Selesai<% } %></span>
+                                        <% } %>
+                                        <% if (item.lokasi) { %>
+                                        <span><i class="fas fa-map-marker-alt"></i> <%= item.lokasi %></span>
+                                        <% } %>
+                                    </div>
+                                    <a href="/agenda/<%= item.slug %>" class="btn-agenda">Lihat Detail <i class="fas fa-arrow-right"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <% }) %>
+                    </div>
+                    <% } %>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    <!-- Artikel Sekolah -->
+                    <% if (typeof artikel !== 'undefined' && artikel && artikel.length > 0) { %>
+                    <div class="sidebar-widget">
+                        <div class="widget-title"><i class="fas fa-pen-nib" style="color:var(--primary-blue)"></i> Artikel <span>Sekolah</span></div>
+                        <% artikel.forEach(a => { %>
+                        <a href="/artikel/<%= a.slug %>" class="artikel-item">
+                            <% if (a.gambar) { %>
+                            <img src="/uploads/<%= a.gambar %>" alt="<%= a.judul %>">
+                            <% } else { %>
+                            <div class="artikel-item-placeholder"><i class="fas fa-pen-nib"></i></div>
+                            <% } %>
+                            <div>
+                                <div class="artikel-item-title"><%= a.judul %></div>
+                                <div class="artikel-item-date"><i class="fas fa-calendar-alt me-1"></i><%= new Date(a.created_at).toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric'}) %></div>
+                            </div>
+                        </a>
+                        <% }) %>
+                        <div class="text-center mt-3">
+                            <a href="/artikel" style="font-size:.82rem;color:var(--primary-blue);font-weight:700;text-decoration:none;">Lihat Semua Artikel <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    <% } %>
+
+                    <!-- Berita Slider -->
+                    <% if (typeof beritaSlider !== 'undefined' && beritaSlider && beritaSlider.length > 0) { %>
+                    <div class="sidebar-widget">
+                        <div class="widget-title"><i class="fas fa-newspaper" style="color:var(--primary-blue)"></i> Berita <span>Terbaru</span></div>
+                        <div class="berita-slider-wrap">
+                            <div class="berita-slider-track" id="beritaTrack">
+                                <% beritaSlider.forEach(b => { %>
+                                <div class="berita-slide">
+                                    <% if (b.gambar) { %>
+                                    <img src="/uploads/<%= b.gambar %>" alt="<%= b.judul %>">
+                                    <% } else { %>
+                                    <div class="berita-slide-placeholder"><i class="fas fa-newspaper"></i></div>
+                                    <% } %>
+                                    <div class="berita-slide-caption">
+                                        <a href="/berita/<%= b.slug %>"><%= b.judul %></a>
+                                        <div class="berita-slide-date"><i class="fas fa-calendar-alt me-1"></i><%= new Date(b.created_at).toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric'}) %></div>
+                                    </div>
+                                </div>
+                                <% }) %>
+                            </div>
+                            <div class="slider-dots" id="beritaDots">
+                                <% beritaSlider.forEach((b, i) => { %>
+                                <button class="slider-dot <%= i === 0 ? 'active' : '' %>" onclick="goToSlide(<%= i %>)"></button>
+                                <% }) %>
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="/berita" style="font-size:.82rem;color:var(--primary-blue);font-weight:700;text-decoration:none;">Lihat Semua Berita <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <%- include('partials/related') %>
+    <%- include('partials/footer') %>
+
+    <script src="/assets/vendor/bootstrap5/bootstrap.bundle.min.js"></script>
+    <script src="/assets/vendor/jquery3/jquery.min.js"></script>
+    <script>
+        // Navbar scroll
+        $(window).scroll(function() {
+            if ($(window).scrollTop() > 50) $('.navbar-modern').addClass('scrolled');
+            else $('.navbar-modern').removeClass('scrolled');
+        });
+
+        // Berita slider
+        let currentSlide = 0;
+        const totalSlides = <%= typeof beritaSlider !== 'undefined' ? beritaSlider.length : 0 %>;
+
+        function goToSlide(n) {
+            currentSlide = n;
+            document.getElementById('beritaTrack').style.transform = 'translateX(-' + (n * 100) + '%)';
+            document.querySelectorAll('.slider-dot').forEach((d, i) => d.classList.toggle('active', i === n));
+        }
+
+        if (totalSlides > 1) {
+            setInterval(function() {
+                goToSlide((currentSlide + 1) % totalSlides);
+            }, 4000);
+        }
+    </script>
+</body>
+</html>

@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Tambah Kegiatan OSIS - Admin Panel</title>
+    <title>Tambah Berita PRAMUKA - Admin Panel</title>
     <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
     <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
     <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
@@ -11,19 +11,7 @@
 </head>
 <body id="page-top">
 <div id="wrapper">
-    <ul class="navbar-nav bg-gradient-warning sidebar sidebar-dark accordion" id="accordionSidebar">
-        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/admin/osis">
-            <div class="sidebar-brand-icon"><img src="/uploads/logo-sekolah.png" style="width:36px;height:36px;object-fit:contain;border-radius:6px;" onerror="this.style.display='none'"></div>
-            <div class="sidebar-brand-text mx-3">Portal OSIS</div>
-        </a>
-        <hr class="sidebar-divider my-0">
-        <li class="nav-item"><a class="nav-link" href="/admin/osis"><i class="fas fa-fw fa-users"></i><span>Dashboard (Kegiatan)</span></a></li>
-        <li class="nav-item"><a class="nav-link" href="/admin/osis/berita"><i class="fas fa-fw fa-newspaper"></i><span>Berita & Informasi</span></a></li>
-        <li class="nav-item"><a class="nav-link" href="/admin/osis/galeri"><i class="fas fa-fw fa-images"></i><span>Galeri OSIS</span></a></li>
-        <hr class="sidebar-divider">
-        <li class="nav-item"><a class="nav-link" href="/admin/dashboard"><i class="fas fa-fw fa-arrow-left"></i><span>Kembali ke Admin</span></a></li>
-        <li class="nav-item"><a class="nav-link" href="/"><i class="fas fa-fw fa-globe"></i><span>Lihat Website</span></a></li>
-    </ul>
+    <%- include('./_sidebar') %>
     <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
             <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
@@ -35,12 +23,13 @@
             </nav>
             <div class="container-fluid">
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800">Tambah Kegiatan OSIS</h1>
-                    <a href="/admin/osis" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left fa-sm"></i> Kembali</a>
+                    <h1 class="h3 mb-0 text-gray-800">Tambah Berita PRAMUKA</h1>
+                    <a href="/admin/pramuka/berita" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left fa-sm"></i> Kembali</a>
                 </div>
                 <div class="card shadow mb-4">
                     <div class="card-body">
-                        <form method="POST" action="/admin/osis/create" enctype="multipart/form-data">
+                        <% if (typeof error !== 'undefined' && error) { %><div class="alert alert-danger"><%= error %></div><% } %>
+                        <form method="POST" action="/admin/pramuka/berita/create" enctype="multipart/form-data">
                             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                             <div class="row">
                                 <div class="col-md-8">
@@ -50,9 +39,9 @@
                                 <div class="col-md-4">
                                     <div class="form-group"><label>Kategori</label>
                                         <select class="form-control" name="kategori">
-                                            <option value="kegiatan">Kegiatan</option>
+                                            <option value="berita">Berita</option>
                                             <option value="pengumuman">Pengumuman</option>
-                                            <option value="prestasi">Prestasi</option>
+                                            <option value="kegiatan">Kegiatan</option>
                                             <option value="lainnya">Lainnya</option>
                                         </select>
                                     </div>
@@ -65,17 +54,15 @@
                                     <div class="form-group"><label>Gambar</label><input type="file" class="form-control-file" name="gambar" accept=".jpg,.jpeg,.png,.webp"></div>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-warning"><i class="fas fa-save mr-1"></i>Simpan</button>
-                            <a href="/admin/osis" class="btn btn-secondary ml-2">Batal</a>
+                            <button type="submit" class="btn btn-success"><i class="fas fa-save mr-1"></i>Simpan</button>
+                            <a href="/admin/pramuka/berita" class="btn btn-secondary ml-2">Batal</a>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
         <footer class="sticky-footer bg-white">
-            <div class="container my-auto">
-                <div class="copyright text-center my-auto"><span>Portal OSIS &copy; <%= new Date().getFullYear() %></span></div>
-            </div>
+            <div class="container my-auto"><div class="copyright text-center my-auto"><span>Portal PRAMUKA &copy; <%= new Date().getFullYear() %></span></div></div>
         </footer>
     </div>
 </div>

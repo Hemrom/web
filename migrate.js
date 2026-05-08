@@ -409,6 +409,29 @@ async function run() {
 
     // Tambah role pmr ke portal_users
     `ALTER TABLE portal_users MODIFY COLUMN role ENUM('bkk','osis','jurusan','pramuka','olahraga','paskibraka','seni','bahasa_asing','rohis','pmr') NOT NULL`,
+
+    // Agenda
+    `CREATE TABLE IF NOT EXISTS agenda (
+      id INT(11) NOT NULL AUTO_INCREMENT,
+      judul VARCHAR(255) NOT NULL,
+      slug VARCHAR(255) DEFAULT NULL,
+      deskripsi TEXT DEFAULT NULL,
+      gambar VARCHAR(255) DEFAULT NULL,
+      tanggal_mulai DATE NOT NULL,
+      tanggal_selesai DATE DEFAULT NULL,
+      waktu_mulai TIME DEFAULT NULL,
+      waktu_selesai TIME DEFAULT NULL,
+      lokasi VARCHAR(255) DEFAULT NULL,
+      koordinator_nama VARCHAR(150) DEFAULT NULL,
+      koordinator_email VARCHAR(150) DEFAULT NULL,
+      koordinator_telp VARCHAR(50) DEFAULT NULL,
+      status ENUM('aktif','nonaktif') DEFAULT 'aktif',
+      tampil_home TINYINT(1) DEFAULT 1,
+      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      PRIMARY KEY (id),
+      UNIQUE KEY slug (slug)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
   ];
 
   let ok = 0, skip = 0;

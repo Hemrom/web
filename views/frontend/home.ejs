@@ -1825,6 +1825,56 @@
         </div>
     </section>
 
+    <!-- Agenda Section -->
+    <% if (typeof agendaHome !== 'undefined' && agendaHome && agendaHome.length > 0) { %>
+    <section style="padding:5rem 0;background:linear-gradient(135deg,#f8fafc 0%,#f0f9ff 100%);position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#f59e0b,#ef4444,#ec4899,#6366f1);"></div>
+        <div class="container" style="position:relative;z-index:1;">
+            <div class="text-center mb-5 reveal">
+                <span style="display:inline-flex;align-items:center;gap:.5rem;background:#fef3c7;color:#92400e;padding:.4rem 1.1rem;border-radius:50px;font-size:.78rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;margin-bottom:1rem;">
+                    <i class="fas fa-calendar-alt"></i> Jadwal Kegiatan
+                </span>
+                <h2 style="font-size:2.25rem;font-weight:800;color:#1e293b;margin-bottom:.6rem;">Agenda Sekolah</h2>
+                <p style="color:#64748b;font-size:1rem;max-width:520px;margin:0 auto;">Jadwal kegiatan dan acara terbaru dari sekolah kami</p>
+            </div>
+
+            <div class="row g-4">
+                <% agendaHome.forEach((item, idx) => { %>
+                <div class="col-lg-4 col-md-6 reveal reveal-delay-<%= idx + 1 %>">
+                    <a href="/agenda/<%= item.slug %>" style="text-decoration:none;display:block;height:100%;">
+                    <div style="background:white;border-radius:20px;overflow:hidden;box-shadow:0 4px 20px rgba(245,158,11,.1);border:1px solid #fef3c7;transition:all .35s ease;height:100%;" onmouseover="this.style.transform='translateY(-8px)';this.style.boxShadow='0 20px 40px rgba(245,158,11,.2)';this.style.borderColor='#fde68a'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 20px rgba(245,158,11,.1)';this.style.borderColor='#fef3c7'">
+                        <div style="height:210px;background:url('<%= item.gambar ? '/uploads/' + item.gambar : '/assets/img/undraw_posting_photo.svg' %>') center/cover;position:relative;overflow:hidden;">
+                            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.45) 0%,transparent 60%);"></div>
+                            <div style="position:absolute;top:1rem;left:1rem;background:linear-gradient(135deg,#f59e0b,#ef4444);color:white;padding:.4rem 1rem;border-radius:50px;font-size:.78rem;font-weight:700;display:flex;align-items:center;gap:.4rem;z-index:1;">
+                                <i class="fas fa-calendar-alt"></i>
+                                <%= new Date(item.tanggal_mulai).toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'}) %>
+                            </div>
+                        </div>
+                        <div style="padding:1.5rem;">
+                            <h3 style="font-size:1.05rem;font-weight:700;color:#1e293b;margin-bottom:.75rem;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;"><%= item.judul %></h3>
+                            <div style="display:flex;flex-direction:column;gap:.3rem;margin-bottom:1rem;">
+                                <% if (item.waktu_mulai) { %>
+                                <span style="font-size:.82rem;color:#64748b;display:flex;align-items:center;gap:.4rem;"><i class="fas fa-clock" style="color:#0ea5e9;width:14px;"></i> <%= item.waktu_mulai.substring(0,5) %><% if (item.waktu_selesai) { %> - <%= item.waktu_selesai.substring(0,5) %><% } else { %> - Selesai<% } %></span>
+                                <% } %>
+                                <% if (item.lokasi) { %>
+                                <span style="font-size:.82rem;color:#64748b;display:flex;align-items:center;gap:.4rem;"><i class="fas fa-map-marker-alt" style="color:#0ea5e9;width:14px;"></i> <%= item.lokasi %></span>
+                                <% } %>
+                            </div>
+                            <span style="display:inline-flex;align-items:center;gap:.4rem;background:#fef3c7;color:#92400e;padding:.4rem 1rem;border-radius:50px;font-size:.8rem;font-weight:700;">Lihat Detail <i class="fas fa-arrow-right"></i></span>
+                        </div>
+                    </div>
+                    </a>
+                </div>
+                <% }) %>
+            </div>
+
+            <div class="text-center mt-5">
+                <a href="/agenda" class="btn btn-warning btn-lg" style="border-radius:50px;padding:.85rem 2.5rem;font-weight:700;color:white;background:linear-gradient(135deg,#f59e0b,#ef4444);border:none;box-shadow:0 8px 25px rgba(245,158,11,.4);"><i class="fas fa-calendar-alt me-2"></i>Lihat Semua Agenda</a>
+            </div>
+        </div>
+    </section>
+    <% } %>
+
     <!-- Artikel & File Download Section -->
     <% if ((typeof artikelHome !== 'undefined' && artikelHome && artikelHome.length > 0) || (typeof fileDownloadHome !== 'undefined' && fileDownloadHome && fileDownloadHome.length > 0)) { %>
     <section style="padding:6rem 0;background:linear-gradient(135deg,#0f0c29 0%,#1e1b4b 40%,#1a1a3e 100%);position:relative;overflow:hidden;">

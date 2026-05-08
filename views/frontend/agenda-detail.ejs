@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= agenda.judul %> - <%= typeof profil !== 'undefined' && profil && profil.nama_sekolah ? profil.nama_sekolah : 'SMKN 1 Kras' %></title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <link href="/assets/vendor/bootstrap5/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/vendor/fontawesome6/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/theme.css">
+    <style>
+        :root {
+            --primary-blue: #0ea5e9; --primary-blue-dark: #0284c7;
+            --secondary-blue: #0369a1; --light-blue: #e0f2fe;
+            --gray-50: #f8fafc; --gray-100: #f1f5f9; --gray-200: #e2e8f0;
+            --gray-500: #64748b; --gray-600: #475569; --gray-700: #334155;
+            --gray-800: #1e293b; --gray-900: #0f172a;
+        }
+        * { font-family: 'Inter', sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
+        body { line-height: 1.6; color: var(--gray-700); }
+
+        .navbar-modern { background: rgba(255,255,255,.95) !important; backdrop-filter: blur(10px); box-shadow: 0 2px 20px rgba(14,165,233,.1); padding: 1rem 0; transition: all .3s ease; }
+        .navbar-modern.scrolled { background: rgba(255,255,255,.98) !important; }
+        .navbar-brand { font-weight: 700; color: var(--primary-blue) !important; font-size: 1.5rem; text-decoration: none; }
+        .nav-link { font-weight: 500; color: var(--gray-600) !important; padding: .75rem 1rem !important; border-radius: 8px; transition: all .3s ease; }
+        .nav-link:hover, .nav-link.active { color: var(--primary-blue) !important; background-color: var(--light-blue); }
+
+        .content-section { padding: 7rem 0 5rem; background: var(--gray-50); }
+
+        /* Main content */
+        .agenda-main { background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 4px 30px rgba(14,165,233,.1); }
+        .agenda-hero-img { width: 100%; max-height: 420px; object-fit: cover; display: block; }
+        .agenda-hero-placeholder { width: 100%; height: 320px; background: linear-gradient(135deg, #0f0c29, #302b63); display: flex; align-items: center; justify-content: center; color: white; font-size: 4rem; }
+        .agenda-content-body { padding: 2.5rem; }
+        .agenda-main-title { font-size: 2rem; font-weight: 900; color: var(--gray-800); margin-bottom: 1.25rem; line-height: 1.3; }
+
+        .agenda-info-bar {
+            display: flex; flex-wrap: wrap; gap: 1rem;
+            background: var(--gray-50); border-radius: 16px; padding: 1.25rem 1.5rem;
+            margin-bottom: 2rem; border: 1px solid var(--gray-200);
+        }
+        .agenda-info-item { display: flex; align-items: center; gap: .5rem; font-size: .9rem; color: var(--gray-600); }
+        .agenda-info-item i { color: var(--primary-blue); font-size: 1rem; width: 18px; }
+        .agenda-info-item strong { color: var(--gray-800); }
+
+        .agenda-desc { font-size: 1rem; line-height: 1.85; color: var(--gray-700); text-align: justify; }
+        .agenda-desc p:first-child::first-letter { font-size: 3.5rem; font-weight: 900; float: left; line-height: .85; margin-right: .15em; color: var(--primary-blue); }
+
+        .koordinator-box { background: var(--light-blue); border-radius: 16px; padding: 1.5rem; margin-top: 2rem; border-left: 4px solid var(--primary-blue); }
+        .koordinator-box h5 { font-size: 1rem; font-weight: 800; color: var(--secondary-blue); margin-bottom: 1rem; }
+        .koordinator-item { display: flex; align-items: center; gap: .6rem; font-size: .9rem; color: var(--gray-700); margin-bottom: .5rem; }
+        .koordinator-item i { color: var(--primary-blue); width: 16px; }
+
+        /* Sidebar */
+        .sidebar-widget { background: white; border-radius: 20px; padding: 1.5rem; box-shadow: 0 4px 20px rgba(14,165,233,.08); border: 1px solid var(--gray-100); margin-bottom: 1.5rem; }
+        .widget-title { font-size: 1.1rem; font-weight: 800; color: var(--gray-800); margin-bottom: 1.25rem; padding-bottom: .75rem; border-bottom: 2px solid var(--light-blue); display: flex; align-items: center; gap: .5rem; }
+        .widget-title span { color: var(--primary-blue); }
+
+        /* Artikel */
+        .artikel-item { display: flex; gap: .75rem; padding: .75rem 0; border-bottom: 1px solid var(--gray-100); text-decoration: none; color: inherit; transition: all .2s; }
+        .artikel-item:last-child { border-bottom: none; }
+        .artikel-item:hover { color: var(--primary-blue); }
+        .artikel-item img { width: 70px; height: 55px; object-fit: cover; border-radius: 10px; flex-shrink: 0; }
+        .artikel-item-placeholder { width: 70px; height: 55px; border-radius: 10px; background: var(--light-blue); display: flex; align-items: center; justify-content: center; color: var(--primary-blue); font-size: 1.2rem; flex-shrink: 0; }
+        .artikel-item-title { font-size: .85rem; font-weight: 600; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .artikel-item-date { font-size: .75rem; color: var(--gray-500); margin-top: .2rem; }
+
+        /* Berita slider */
+        .berita-slider-wrap { position: relative; overflow: hidden; border-radius: 16px; }
+        .berita-slider-track { display: flex; transition: transform .4s ease; }
+        .berita-slide { flex: 0 0 100%; position: relative; }
+        .berita-slide img { width: 100%; height: 180px; object-fit: cover; display: block; }
+        .berita-slide-placeholder { width: 100%; height: 180px; background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue)); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem; }
+        .berita-slide-caption { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,.75) 0%, transparent 100%); padding: 1rem .75rem .75rem; }
+        .berita-slide-caption a { color: white; font-size: .82rem; font-weight: 600; text-decoration: none; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .berita-slide-caption a:hover { color: #bfdbfe; }
+        .berita-slide-date { font-size: .72rem; color: rgba(255,255,255,.75); margin-top: .2rem; }
+        .slider-dots { display: flex; justify-content: center; gap: 6px; margin-top: .75rem; }
+        .slider-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gray-200); cursor: pointer; transition: all .2s; border: none; padding: 0; }
+        .slider-dot.active { background: var(--primary-blue); transform: scale(1.3); }
+
+        /* Agenda lain */
+        .agenda-lain-item { display: flex; gap: .75rem; padding: .75rem 0; border-bottom: 1px solid var(--gray-100); text-decoration: none; color: inherit; transition: all .2s; }
+        .agenda-lain-item:last-child { border-bottom: none; }
+        .agenda-lain-item:hover { color: var(--primary-blue); }
+        .agenda-lain-img { width: 70px; height: 55px; object-fit: cover; border-radius: 10px; flex-shrink: 0; }
+        .agenda-lain-placeholder { width: 70px; height: 55px; border-radius: 10px; background: linear-gradient(135deg, #fef3c7, #fde68a); display: flex; align-items: center; justify-content: center; color: #92400e; font-size: 1.2rem; flex-shrink: 0; }
+        .agenda-lain-title { font-size: .85rem; font-weight: 600; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .agenda-lain-date { font-size: .75rem; color: var(--gray-500); margin-top: .2rem; }
+
+        /* Footer */
+        .footer { background: var(--gray-900); color: white; padding: 4rem 0 2rem; }
+        .footer-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 1.25rem; color: white; }
+        .footer-link { color: rgba(255,255,255,.7); text-decoration: none; margin-bottom: .4rem; display: block; transition: color .3s; font-size: .9rem; }
+        .footer-link:hover { color: #7dd3fc; text-decoration: none; }
+        .footer-bottom { border-top: 1px solid rgba(255,255,255,.1); margin-top: 2.5rem; padding-top: 1.5rem; text-align: center; color: rgba(255,255,255,.5); font-size: .85rem; }
+        .footer-sosmed { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .75rem; }
+        .footer-sosmed-btn { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; font-size: .85rem; transition: transform .2s; }
+        .footer-sosmed-btn:hover { transform: scale(1.15); color: white; }
+        .footer-sosmed-btn.inactive { opacity: .35; pointer-events: none; }
+
+        @media (max-width: 991px) {
+            .navbar-collapse { background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,.1); margin-top: 1rem; padding: 1rem; }
+            .agenda-main-title { font-size: 1.5rem; }
+            .agenda-content-body { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/navbar') %>
+
+    <section class="content-section">
+        <div class="container">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" style="margin-bottom:1.5rem;">
+                <ol class="breadcrumb" style="background:none;padding:0;font-size:.85rem;">
+                    <li class="breadcrumb-item"><a href="/" style="color:var(--primary-blue);text-decoration:none;">Beranda</a></li>
+                    <li class="breadcrumb-item"><a href="/agenda" style="color:var(--primary-blue);text-decoration:none;">Agenda</a></li>
+                    <li class="breadcrumb-item active" style="color:var(--gray-500);">Detail</li>
+                </ol>
+            </nav>
+
+            <div class="row g-4">
+                <!-- Main Content -->
+                <div class="col-lg-8">
+                    <div class="agenda-main">
+                        <% if (agenda.gambar) { %>
+                        <img src="/uploads/<%= agenda.gambar %>" alt="<%= agenda.judul %>" class="agenda-hero-img">
+                        <% } else { %>
+                        <div class="agenda-hero-placeholder"><i class="fas fa-calendar-alt"></i></div>
+                        <% } %>
+
+                        <div class="agenda-content-body">
+                            <h1 class="agenda-main-title"><%= agenda.judul %></h1>
+
+                            <div class="agenda-info-bar">
+                                <div class="agenda-info-item">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <div><strong>Pelaksanaan:</strong> <%= new Date(agenda.tanggal_mulai).toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'}) %><% if (agenda.tanggal_selesai && agenda.tanggal_selesai !== agenda.tanggal_mulai) { %> s/d <%= new Date(agenda.tanggal_selesai).toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'}) %><% } %></div>
+                                </div>
+                                <% if (agenda.waktu_mulai) { %>
+                                <div class="agenda-info-item">
+                                    <i class="fas fa-clock"></i>
+                                    <div><strong>Waktu:</strong> <%= agenda.waktu_mulai.substring(0,5) %><% if (agenda.waktu_selesai) { %> - <%= agenda.waktu_selesai.substring(0,5) %><% } else { %> - Selesai<% } %></div>
+                                </div>
+                                <% } %>
+                                <% if (agenda.lokasi) { %>
+                                <div class="agenda-info-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <div><strong>Lokasi:</strong> <%= agenda.lokasi %></div>
+                                </div>
+                                <% } %>
+                            </div>
+
+                            <% if (agenda.deskripsi) { %>
+                            <div class="agenda-desc">
+                                <p><%= agenda.deskripsi %></p>
+                            </div>
+                            <% } %>
+
+                            <% if (agenda.koordinator_nama || agenda.koordinator_email || agenda.koordinator_telp) { %>
+                            <div class="koordinator-box">
+                                <h5><i class="fas fa-user-tie me-2"></i>Koordinator</h5>
+                                <% if (agenda.koordinator_nama) { %>
+                                <div class="koordinator-item"><i class="fas fa-user"></i> <span>Nama : <%= agenda.koordinator_nama %></span></div>
+                                <% } %>
+                                <% if (agenda.koordinator_email) { %>
+                                <div class="koordinator-item"><i class="fas fa-envelope"></i> <span>Email : <%= agenda.koordinator_email %></span></div>
+                                <% } %>
+                                <% if (agenda.koordinator_telp) { %>
+                                <div class="koordinator-item"><i class="fas fa-phone"></i> <span>Telp : <%= agenda.koordinator_telp %></span></div>
+                                <% } %>
+                            </div>
+                            <% } %>
+
+                            <div style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--gray-200);">
+                                <a href="/agenda" style="display:inline-flex;align-items:center;gap:.5rem;background:var(--light-blue);color:var(--primary-blue);padding:.6rem 1.4rem;border-radius:50px;font-weight:700;text-decoration:none;font-size:.9rem;transition:all .2s;" onmouseover="this.style.background='var(--primary-blue)';this.style.color='white'" onmouseout="this.style.background='var(--light-blue)';this.style.color='var(--primary-blue)'">
+                                    <i class="fas fa-arrow-left"></i> Kembali ke Agenda
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    <!-- Artikel Sekolah -->
+                    <% if (typeof artikel !== 'undefined' && artikel && artikel.length > 0) { %>
+                    <div class="sidebar-widget">
+                        <div class="widget-title"><i class="fas fa-pen-nib" style="color:var(--primary-blue)"></i> Artikel <span>Sekolah</span></div>
+                        <% artikel.forEach(a => { %>
+                        <a href="/artikel/<%= a.slug %>" class="artikel-item">
+                            <% if (a.gambar) { %>
+                            <img src="/uploads/<%= a.gambar %>" alt="<%= a.judul %>">
+                            <% } else { %>
+                            <div class="artikel-item-placeholder"><i class="fas fa-pen-nib"></i></div>
+                            <% } %>
+                            <div>
+                                <div class="artikel-item-title"><%= a.judul %></div>
+                                <div class="artikel-item-date"><i class="fas fa-calendar-alt me-1"></i><%= new Date(a.created_at).toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric'}) %></div>
+                            </div>
+                        </a>
+                        <% }) %>
+                        <div class="text-center mt-3">
+                            <a href="/artikel" style="font-size:.82rem;color:var(--primary-blue);font-weight:700;text-decoration:none;">Lihat Semua Artikel <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    <% } %>
+
+                    <!-- Berita Slider -->
+                    <% if (typeof beritaSlider !== 'undefined' && beritaSlider && beritaSlider.length > 0) { %>
+                    <div class="sidebar-widget">
+                        <div class="widget-title"><i class="fas fa-newspaper" style="color:var(--primary-blue)"></i> Berita <span>Terbaru</span></div>
+                        <div class="berita-slider-wrap">
+                            <div class="berita-slider-track" id="beritaTrack">
+                                <% beritaSlider.forEach(b => { %>
+                                <div class="berita-slide">
+                                    <% if (b.gambar) { %>
+                                    <img src="/uploads/<%= b.gambar %>" alt="<%= b.judul %>">
+                                    <% } else { %>
+                                    <div class="berita-slide-placeholder"><i class="fas fa-newspaper"></i></div>
+                                    <% } %>
+                                    <div class="berita-slide-caption">
+                                        <a href="/berita/<%= b.slug %>"><%= b.judul %></a>
+                                        <div class="berita-slide-date"><i class="fas fa-calendar-alt me-1"></i><%= new Date(b.created_at).toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric'}) %></div>
+                                    </div>
+                                </div>
+                                <% }) %>
+                            </div>
+                            <div class="slider-dots" id="beritaDots">
+                                <% beritaSlider.forEach((b, i) => { %>
+                                <button class="slider-dot <%= i === 0 ? 'active' : '' %>" onclick="goToSlide(<%= i %>)"></button>
+                                <% }) %>
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="/berita" style="font-size:.82rem;color:var(--primary-blue);font-weight:700;text-decoration:none;">Lihat Semua Berita <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    <% } %>
+
+                    <!-- Agenda Lainnya -->
+                    <% if (typeof agendaLain !== 'undefined' && agendaLain && agendaLain.length > 0) { %>
+                    <div class="sidebar-widget">
+                        <div class="widget-title"><i class="fas fa-calendar-check" style="color:var(--primary-blue)"></i> Agenda <span>Lainnya</span></div>
+                        <% agendaLain.forEach(a => { %>
+                        <a href="/agenda/<%= a.slug %>" class="agenda-lain-item">
+                            <% if (a.gambar) { %>
+                            <img src="/uploads/<%= a.gambar %>" alt="<%= a.judul %>" class="agenda-lain-img">
+                            <% } else { %>
+                            <div class="agenda-lain-placeholder"><i class="fas fa-calendar-alt"></i></div>
+                            <% } %>
+                            <div>
+                                <div class="agenda-lain-title"><%= a.judul %></div>
+                                <div class="agenda-lain-date"><i class="fas fa-calendar-alt me-1"></i><%= new Date(a.tanggal_mulai).toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric'}) %></div>
+                            </div>
+                        </a>
+                        <% }) %>
+                    </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <%- include('partials/related') %>
+    <%- include('partials/footer') %>
+
+    <script src="/assets/vendor/bootstrap5/bootstrap.bundle.min.js"></script>
+    <script src="/assets/vendor/jquery3/jquery.min.js"></script>
+    <script>
+        $(window).scroll(function() {
+            if ($(window).scrollTop() > 50) $('.navbar-modern').addClass('scrolled');
+            else $('.navbar-modern').removeClass('scrolled');
+        });
+
+        let currentSlide = 0;
+        const totalSlides = <%= typeof beritaSlider !== 'undefined' ? beritaSlider.length : 0 %>;
+
+        function goToSlide(n) {
+            currentSlide = n;
+            document.getElementById('beritaTrack').style.transform = 'translateX(-' + (n * 100) + '%)';
+            document.querySelectorAll('.slider-dot').forEach((d, i) => d.classList.toggle('active', i === n));
+        }
+
+        if (totalSlides > 1) {
+            setInterval(function() {
+                goToSlide((currentSlide + 1) % totalSlides);
+            }, 4000);
+        }
+    </script>
+</body>
+</html>

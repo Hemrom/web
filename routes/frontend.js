@@ -88,6 +88,11 @@ const artikelController = require('../controllers/artikelController');
 router.get('/artikel', artikelController.frontendIndex);
 router.get('/artikel/:slug', validateSlugParam, artikelController.frontendDetail);
 
+// Agenda
+const agendaController = require('../controllers/agendaController');
+router.get('/agenda', agendaController.frontendIndex);
+router.get('/agenda/:slug', validateSlugParam, agendaController.frontendDetail);
+
 // File Download
 const fileDownloadController = require('../controllers/fileDownloadController');
 router.get('/file-download', fileDownloadController.frontendIndex);

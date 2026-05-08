@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Admin Panel</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <%- include('../partials/sidebar') %>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <%- include('../partials/topbar', { user }) %>
+            <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Tambah Agenda</h1>
+                    <a href="/admin/agenda" class="btn btn-sm btn-secondary shadow-sm"><i class="fas fa-arrow-left fa-sm"></i> Kembali</a>
+                </div>
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <form action="/admin/agenda/create" method="POST" enctype="multipart/form-data">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label>Judul Agenda <span class="text-danger">*</span></label>
+                                        <input type="text" name="judul" class="form-control" required placeholder="Masukkan judul agenda">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Deskripsi</label>
+                                        <textarea name="deskripsi" class="form-control" rows="6" placeholder="Deskripsi lengkap agenda..."></textarea>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Tanggal Mulai <span class="text-danger">*</span></label>
+                                                <input type="date" name="tanggal_mulai" class="form-control" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Tanggal Selesai</label>
+                                                <input type="date" name="tanggal_selesai" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Waktu Mulai</label>
+                                                <input type="time" name="waktu_mulai" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Waktu Selesai</label>
+                                                <input type="time" name="waktu_selesai" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Lokasi</label>
+                                        <input type="text" name="lokasi" class="form-control" placeholder="Contoh: Aula Sekolah">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Gambar</label>
+                                        <input type="file" name="gambar" class="form-control-file" accept="image/*" onchange="previewImg(this)">
+                                        <img id="imgPreview" src="" style="display:none;width:100%;margin-top:10px;border-radius:8px;max-height:200px;object-fit:cover;">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Status</label>
+                                        <select name="status" class="form-control">
+                                            <option value="aktif">Aktif</option>
+                                            <option value="nonaktif">Nonaktif</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="tampil_home" name="tampil_home" value="1" checked>
+                                            <label class="custom-control-label" for="tampil_home">Tampilkan di Beranda</label>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <h6 class="font-weight-bold text-primary">Koordinator</h6>
+                                    <div class="form-group">
+                                        <label>Nama Koordinator</label>
+                                        <input type="text" name="koordinator_nama" class="form-control" placeholder="Nama koordinator">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="email" name="koordinator_email" class="form-control" placeholder="email@sekolah.com">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Telepon</label>
+                                        <input type="text" name="koordinator_telp" class="form-control" placeholder="08xx-xxxx-xxxx">
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i> Simpan Agenda</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%- include('../partials/footer') %>
+    </div>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/js/sb-admin-2.min.js"></script>
+<script>
+function previewImg(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('imgPreview').src = e.target.result;
+            document.getElementById('imgPreview').style.display = 'block';
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
+</body>
+</html>

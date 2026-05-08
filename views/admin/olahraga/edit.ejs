@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Tambah Kegiatan OSIS - Admin Panel</title>
+    <title>Edit Kegiatan OLAHRAGA - Admin Panel</title>
     <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
     <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
     <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
@@ -11,15 +11,15 @@
 </head>
 <body id="page-top">
 <div id="wrapper">
-    <ul class="navbar-nav bg-gradient-warning sidebar sidebar-dark accordion" id="accordionSidebar">
-        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/admin/osis">
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/admin/olahraga">
             <div class="sidebar-brand-icon"><img src="/uploads/logo-sekolah.png" style="width:36px;height:36px;object-fit:contain;border-radius:6px;" onerror="this.style.display='none'"></div>
-            <div class="sidebar-brand-text mx-3">Portal OSIS</div>
+            <div class="sidebar-brand-text mx-3">Portal OLAHRAGA</div>
         </a>
         <hr class="sidebar-divider my-0">
-        <li class="nav-item"><a class="nav-link" href="/admin/osis"><i class="fas fa-fw fa-users"></i><span>Dashboard (Kegiatan)</span></a></li>
-        <li class="nav-item"><a class="nav-link" href="/admin/osis/berita"><i class="fas fa-fw fa-newspaper"></i><span>Berita & Informasi</span></a></li>
-        <li class="nav-item"><a class="nav-link" href="/admin/osis/galeri"><i class="fas fa-fw fa-images"></i><span>Galeri OSIS</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/admin/olahraga"><i class="fas fa-fw fa-users"></i><span>Dashboard (Kegiatan)</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/admin/olahraga/berita"><i class="fas fa-fw fa-newspaper"></i><span>Berita & Informasi</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/admin/olahraga/galeri"><i class="fas fa-fw fa-images"></i><span>Galeri OLAHRAGA</span></a></li>
         <hr class="sidebar-divider">
         <li class="nav-item"><a class="nav-link" href="/admin/dashboard"><i class="fas fa-fw fa-arrow-left"></i><span>Kembali ke Admin</span></a></li>
         <li class="nav-item"><a class="nav-link" href="/"><i class="fas fa-fw fa-globe"></i><span>Lihat Website</span></a></li>
@@ -35,38 +35,38 @@
             </nav>
             <div class="container-fluid">
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800">Tambah Kegiatan OSIS</h1>
-                    <a href="/admin/osis" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left fa-sm"></i> Kembali</a>
+                    <h1 class="h3 mb-0 text-gray-800">Edit Kegiatan OLAHRAGA</h1>
+                    <a href="/admin/olahraga" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left fa-sm"></i> Kembali</a>
                 </div>
                 <div class="card shadow mb-4">
                     <div class="card-body">
-                        <form method="POST" action="/admin/osis/create" enctype="multipart/form-data">
+                        <form method="POST" action="/admin/olahraga/edit/<%= item.id %>" enctype="multipart/form-data">
                             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                             <div class="row">
                                 <div class="col-md-8">
-                                    <div class="form-group"><label>Judul *</label><input type="text" class="form-control" name="judul" required></div>
-                                    <div class="form-group"><label>Konten</label><textarea class="form-control" name="konten" id="editor" rows="10"></textarea></div>
+                                    <div class="form-group"><label>Judul *</label><input type="text" class="form-control" name="judul" value="<%= item.judul %>" required></div>
+                                    <div class="form-group"><label>Konten</label><textarea class="form-control" name="konten" id="editor" rows="10"><%- item.konten||'' %></textarea></div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group"><label>Kategori</label>
                                         <select class="form-control" name="kategori">
-                                            <option value="kegiatan">Kegiatan</option>
-                                            <option value="pengumuman">Pengumuman</option>
-                                            <option value="prestasi">Prestasi</option>
-                                            <option value="lainnya">Lainnya</option>
+                                            <% ['kegiatan','pengumuman','prestasi','lainnya'].forEach(k=>{ %><option value="<%= k %>" <%= item.kategori===k?'selected':'' %>><%= k %></option><% }) %>
                                         </select>
                                     </div>
                                     <div class="form-group"><label>Status</label>
                                         <select class="form-control" name="status">
-                                            <option value="published">Published</option>
-                                            <option value="draft">Draft</option>
+                                            <option value="published" <%= item.status==='published'?'selected':'' %>>Published</option>
+                                            <option value="draft" <%= item.status==='draft'?'selected':'' %>>Draft</option>
                                         </select>
                                     </div>
-                                    <div class="form-group"><label>Gambar</label><input type="file" class="form-control-file" name="gambar" accept=".jpg,.jpeg,.png,.webp"></div>
+                                    <div class="form-group"><label>Gambar</label>
+                                        <% if (item.gambar) { %><div class="mb-2"><img src="/uploads/<%= item.gambar %>" style="max-width:150px;border-radius:8px;"></div><% } %>
+                                        <input type="file" class="form-control-file" name="gambar" accept=".jpg,.jpeg,.png,.webp">
+                                    </div>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-warning"><i class="fas fa-save mr-1"></i>Simpan</button>
-                            <a href="/admin/osis" class="btn btn-secondary ml-2">Batal</a>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i>Update</button>
+                            <a href="/admin/olahraga" class="btn btn-secondary ml-2">Batal</a>
                         </form>
                     </div>
                 </div>
@@ -74,7 +74,7 @@
         </div>
         <footer class="sticky-footer bg-white">
             <div class="container my-auto">
-                <div class="copyright text-center my-auto"><span>Portal OSIS &copy; <%= new Date().getFullYear() %></span></div>
+                <div class="copyright text-center my-auto"><span>Portal OLAHRAGA &copy; <%= new Date().getFullYear() %></span></div>
             </div>
         </footer>
     </div>

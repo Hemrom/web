@@ -89,7 +89,8 @@ exports.home = async (req, res) => {
       [artikelHome],
       [fileDownloadHome],
       [bkkHome],
-      siteSettings
+      siteSettings,
+      [agendaHome]
     ] = await Promise.all([
       getProfilSekolah(),
       db.query('SELECT id, judul, slug, gambar, konten, kategori, created_at FROM berita WHERE status = "published" ORDER BY created_at DESC LIMIT 6'),
@@ -104,13 +105,14 @@ exports.home = async (req, res) => {
       db.query('SELECT id, judul, slug, gambar, ringkasan, konten, kategori, penulis_nama, created_at FROM artikel WHERE status = "published" AND tampil_home = 1 ORDER BY created_at DESC LIMIT 4'),
       db.query('SELECT id, judul, tipe_file, ukuran_file, kategori, jumlah_download, created_at FROM file_download WHERE status = "aktif" AND tampil_home = 1 ORDER BY created_at DESC LIMIT 6'),
       db.query("SELECT id, judul, slug, perusahaan, lokasi, kategori, gambar, deadline, kontak FROM bkk_lowongan WHERE status='aktif' ORDER BY created_at DESC LIMIT 6"),
-      getSettings()
+      getSettings(),
+      db.query("SELECT id, judul, slug, gambar, tanggal_mulai, tanggal_selesai, waktu_mulai, waktu_selesai, lokasi FROM agenda WHERE status='aktif' AND tampil_home=1 ORDER BY tanggal_mulai DESC LIMIT 3")
     ]);
 
     res.render('frontend/home', {
       title: 'Beranda', currentPage: 'home',
       profil, berita: beritaTerbaru, galeri, slider, jurusan, menuItems, mediaSosialFooter, linkTerkait, alumniHome, fasilitasHome,
-      artikelHome, fileDownloadHome, bkkHome, siteSettings
+      artikelHome, fileDownloadHome, bkkHome, siteSettings, agendaHome
     });
   } catch (error) {
     console.error(error);

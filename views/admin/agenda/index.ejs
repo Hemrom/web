@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Admin Panel</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="/assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <%- include('../partials/sidebar') %>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <%- include('../partials/topbar', { user }) %>
+            <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Kelola Agenda</h1>
+                    <a href="/admin/agenda/create" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                        <i class="fas fa-plus fa-sm text-white-50"></i> Tambah Agenda
+                    </a>
+                </div>
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Data Agenda</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Gambar</th>
+                                        <th>Judul</th>
+                                        <th>Tanggal</th>
+                                        <th>Lokasi</th>
+                                        <th>Status</th>
+                                        <th>Home</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (!agenda.length) { %>
+                                    <tr><td colspan="8" class="text-center">Belum ada agenda</td></tr>
+                                    <% } else { %>
+                                    <% agenda.forEach((item, i) => { %>
+                                    <tr>
+                                        <td><%= i + 1 %></td>
+                                        <td>
+                                            <% if (item.gambar) { %>
+                                            <img src="/uploads/<%= item.gambar %>" style="width:60px;height:40px;object-fit:cover;border-radius:5px;">
+                                            <% } else { %><span class="text-muted">-</span><% } %>
+                                        </td>
+                                        <td><%= item.judul %></td>
+                                        <td>
+                                            <%= new Date(item.tanggal_mulai).toLocaleDateString('id-ID', {day:'numeric',month:'long',year:'numeric'}) %>
+                                            <% if (item.waktu_mulai) { %><br><small class="text-muted"><i class="fas fa-clock"></i> <%= item.waktu_mulai.substring(0,5) %><% if (item.waktu_selesai) { %> - <%= item.waktu_selesai.substring(0,5) %><% } %></small><% } %>
+                                        </td>
+                                        <td><%= item.lokasi || '-' %></td>
+                                        <td><span class="badge badge-<%= item.status === 'aktif' ? 'success' : 'secondary' %>"><%= item.status %></span></td>
+                                        <td><span class="badge badge-<%= item.tampil_home ? 'warning' : 'light' %>"><%= item.tampil_home ? 'Ya' : 'Tidak' %></span></td>
+                                        <td>
+                                            <a href="/admin/agenda/edit/<%= item.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                                            <form action="/admin/agenda/delete/<%= item.id %>" method="POST" style="display:inline;" onsubmit="return confirm('Hapus agenda ini?')">
+                                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%- include('../partials/footer') %>
+    </div>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="/assets/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+<script src="/assets/js/sb-admin-2.min.js"></script>
+<script>$(document).ready(function(){ $('#dataTable').DataTable({ language: { url: '' }, order: [[3,'desc']] }); });</script>
+</body>
+</html>
