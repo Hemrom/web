@@ -164,30 +164,39 @@
 
                 <!-- Sidebar -->
                 <div class="col-lg-4">
-                    <!-- Artikel Sekolah -->
+                    <!-- Slider Artikel -->
                     <% if (typeof artikel !== 'undefined' && artikel && artikel.length > 0) { %>
                     <div class="sidebar-widget">
                         <div class="widget-title"><i class="fas fa-pen-nib" style="color:var(--primary-blue)"></i> Artikel <span>Sekolah</span></div>
-                        <% artikel.forEach(a => { %>
-                        <a href="/artikel/<%= a.slug %>" class="artikel-item">
-                            <% if (a.gambar) { %>
-                            <img src="/uploads/<%= a.gambar %>" alt="<%= a.judul %>">
-                            <% } else { %>
-                            <div class="artikel-item-placeholder"><i class="fas fa-pen-nib"></i></div>
-                            <% } %>
-                            <div>
-                                <div class="artikel-item-title"><%= a.judul %></div>
-                                <div class="artikel-item-date"><i class="fas fa-calendar-alt me-1"></i><%= new Date(a.created_at).toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric'}) %></div>
+                        <div class="berita-slider-wrap">
+                            <div class="berita-slider-track" id="artikelTrack">
+                                <% artikel.forEach(a => { %>
+                                <div class="berita-slide">
+                                    <% if (a.gambar) { %>
+                                    <img src="/uploads/<%= a.gambar %>" alt="<%= a.judul %>">
+                                    <% } else { %>
+                                    <div class="berita-slide-placeholder" style="background:linear-gradient(135deg,#6366f1,#818cf8);"><i class="fas fa-pen-nib"></i></div>
+                                    <% } %>
+                                    <div class="berita-slide-caption">
+                                        <a href="/artikel/<%= a.slug %>"><%= a.judul %></a>
+                                        <div class="berita-slide-date"><i class="fas fa-calendar-alt me-1"></i><%= new Date(a.created_at).toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric'}) %></div>
+                                    </div>
+                                </div>
+                                <% }) %>
                             </div>
-                        </a>
-                        <% }) %>
+                            <div class="slider-dots" id="artikelDots">
+                                <% artikel.forEach((a, i) => { %>
+                                <button class="slider-dot <%= i === 0 ? 'active' : '' %>" onclick="goToArtikel(<%= i %>)"></button>
+                                <% }) %>
+                            </div>
+                        </div>
                         <div class="text-center mt-3">
                             <a href="/artikel" style="font-size:.82rem;color:var(--primary-blue);font-weight:700;text-decoration:none;">Lihat Semua Artikel <i class="fas fa-arrow-right"></i></a>
                         </div>
                     </div>
                     <% } %>
 
-                    <!-- Berita Slider -->
+                    <!-- Slider Berita -->
                     <% if (typeof beritaSlider !== 'undefined' && beritaSlider && beritaSlider.length > 0) { %>
                     <div class="sidebar-widget">
                         <div class="widget-title"><i class="fas fa-newspaper" style="color:var(--primary-blue)"></i> Berita <span>Terbaru</span></div>
@@ -209,7 +218,7 @@
                             </div>
                             <div class="slider-dots" id="beritaDots">
                                 <% beritaSlider.forEach((b, i) => { %>
-                                <button class="slider-dot <%= i === 0 ? 'active' : '' %>" onclick="goToSlide(<%= i %>)"></button>
+                                <button class="slider-dot <%= i === 0 ? 'active' : '' %>" onclick="goToBerita(<%= i %>)"></button>
                                 <% }) %>
                             </div>
                         </div>
@@ -229,27 +238,28 @@
     <script src="/assets/vendor/bootstrap5/bootstrap.bundle.min.js"></script>
     <script src="/assets/vendor/jquery3/jquery.min.js"></script>
     <script>
-        // Navbar scroll
         $(window).scroll(function() {
             if ($(window).scrollTop() > 50) $('.navbar-modern').addClass('scrolled');
             else $('.navbar-modern').removeClass('scrolled');
         });
 
-        // Berita slider
-        let currentSlide = 0;
-        const totalSlides = <%= typeof beritaSlider !== 'undefined' ? beritaSlider.length : 0 %>;
-
-        function goToSlide(n) {
-            currentSlide = n;
-            document.getElementById('beritaTrack').style.transform = 'translateX(-' + (n * 100) + '%)';
-            document.querySelectorAll('.slider-dot').forEach((d, i) => d.classList.toggle('active', i === n));
+        function makeSlider(trackId, dotsSelector, total, interval) {
+            let cur = 0;
+            function go(n) {
+                cur = n;
+                const track = document.getElementById(trackId);
+                if (track) track.style.transform = 'translateX(-' + (n * 100) + '%)';
+                document.querySelectorAll(dotsSelector).forEach((d, i) => d.classList.toggle('active', i === n));
+            }
+            if (total > 1) setInterval(() => go((cur + 1) % total), interval);
+            return go;
         }
 
-        if (totalSlides > 1) {
-            setInterval(function() {
-                goToSlide((currentSlide + 1) % totalSlides);
-            }, 4000);
-        }
+        const totalArtikel = <%= typeof artikel !== 'undefined' ? artikel.length : 0 %>;
+        const totalBerita  = <%= typeof beritaSlider !== 'undefined' ? beritaSlider.length : 0 %>;
+
+        const goToArtikel = makeSlider('artikelTrack', '#artikelDots .slider-dot', totalArtikel, 4000);
+        const goToBerita  = makeSlider('beritaTrack',  '#beritaDots .slider-dot',  totalBerita,  5000);
     </script>
 </body>
 </html>
