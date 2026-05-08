@@ -13,6 +13,7 @@ const pool = mysql.createPool({
   enableKeepAlive: true,
   keepAliveInitialDelay: 10000,
   timezone: '+07:00',
+  dateStrings: true,          // Kembalikan DATE/DATETIME sebagai string, bukan Date object
   charset: 'utf8mb4'
 });
 
