@@ -123,94 +123,40 @@
 
     <section class="agenda-section">
         <div class="container">
-            <div class="row g-4">
-                <!-- Agenda List -->
-                <div class="col-lg-8">
-                    <% if (!agenda || agenda.length === 0) { %>
-                    <div class="text-center py-5">
-                        <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
-                        <h5 class="text-muted">Belum ada agenda</h5>
-                        <p class="text-muted">Agenda kegiatan sekolah akan segera hadir.</p>
-                    </div>
-                    <% } else { %>
-                    <div class="row g-4">
-                        <% agenda.forEach(item => { %>
-                        <div class="col-md-6">
-                            <div class="agenda-card">
-                                <div class="agenda-img" style="background-image:url('<%= item.gambar ? '/uploads/' + item.gambar : '/assets/img/undraw_posting_photo.svg' %>')">
-                                    <div class="agenda-date-badge">
-                                        <i class="fas fa-calendar-alt"></i>
-                                        <%= formatTanggal(item.tanggal_mulai) %>
-                                    </div>
-                                </div>
-                                <div class="agenda-body">
-                                    <h3 class="agenda-title"><%= item.judul %></h3>
-                                    <div class="agenda-meta">
-                                        <% if (item.waktu_mulai) { %>
-                                        <span><i class="fas fa-clock"></i> <%= item.waktu_mulai.substring(0,5) %><% if (item.waktu_selesai) { %> - <%= item.waktu_selesai.substring(0,5) %><% } else { %> - Selesai<% } %></span>
-                                        <% } %>
-                                        <% if (item.lokasi) { %>
-                                        <span><i class="fas fa-map-marker-alt"></i> <%= item.lokasi %></span>
-                                        <% } %>
-                                    </div>
-                                    <a href="/agenda/<%= item.slug %>" class="btn-agenda">Lihat Detail <i class="fas fa-arrow-right"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                        <% }) %>
-                    </div>
-                    <% } %>
-                </div>
-
-                <!-- Sidebar -->
-                <div class="col-lg-4">
-                    <!-- Artikel Sekolah -->
-                    <% if (typeof artikel !== 'undefined' && artikel && artikel.length > 0) { %>
-                    <div class="sidebar-widget">
-                        <div class="widget-title"><i class="fas fa-pen-nib" style="color:var(--primary-blue)"></i> Artikel <span>Sekolah</span></div>
-                        <% artikel.forEach(a => { %>
-                        <a href="/artikel/<%= a.slug %>" class="artikel-item">
-                            <% if (a.gambar) { %>
-                            <img src="/uploads/<%= a.gambar %>" alt="<%= a.judul %>">
-                            <% } else { %>
-                            <div class="artikel-item-placeholder"><i class="fas fa-pen-nib"></i></div>
-                            <% } %>
-                            <div>
-                                <div class="artikel-item-title"><%= a.judul %></div>
-                                <div class="artikel-item-date"><i class="fas fa-calendar-alt me-1"></i><%= new Date(a.created_at).toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric'}) %></div>
-                            </div>
-                        </a>
-                        <% }) %>
-                        <div class="text-center mt-3">
-                            <a href="/artikel" style="font-size:.82rem;color:var(--primary-blue);font-weight:700;text-decoration:none;">Lihat Semua Artikel <i class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </div>
-                    <% } %>
-
-                    <!-- Berita Terbaru -->
-                    <% if (typeof beritaSlider !== 'undefined' && beritaSlider && beritaSlider.length > 0) { %>
-                    <div class="sidebar-widget">
-                        <div class="widget-title"><i class="fas fa-newspaper" style="color:var(--primary-blue)"></i> Berita <span>Terbaru</span></div>
-                        <% beritaSlider.forEach(b => { %>
-                        <a href="/berita/<%= b.slug %>" class="artikel-item">
-                            <% if (b.gambar) { %>
-                            <img src="/uploads/<%= b.gambar %>" alt="<%= b.judul %>">
-                            <% } else { %>
-                            <div class="artikel-item-placeholder"><i class="fas fa-newspaper"></i></div>
-                            <% } %>
-                            <div>
-                                <div class="artikel-item-title"><%= b.judul %></div>
-                                <div class="artikel-item-date"><i class="fas fa-calendar-alt me-1"></i><%= new Date(b.created_at).toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric'}) %></div>
-                            </div>
-                        </a>
-                        <% }) %>
-                        <div class="text-center mt-3">
-                            <a href="/berita" style="font-size:.82rem;color:var(--primary-blue);font-weight:700;text-decoration:none;">Lihat Semua Berita <i class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </div>
-                    <% } %>
-                </div>
+            <% if (!agenda || agenda.length === 0) { %>
+            <div class="text-center py-5">
+                <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">Belum ada agenda</h5>
+                <p class="text-muted">Agenda kegiatan sekolah akan segera hadir.</p>
             </div>
+            <% } else { %>
+            <div class="row g-4">
+                <% agenda.forEach(item => { %>
+                <div class="col-lg-4 col-md-6">
+                    <div class="agenda-card">
+                        <div class="agenda-img" style="background-image:url('<%= item.gambar ? '/uploads/' + item.gambar : '/assets/img/undraw_posting_photo.svg' %>')">
+                            <div class="agenda-date-badge">
+                                <i class="fas fa-calendar-alt"></i>
+                                <%= formatTanggal(item.tanggal_mulai) %>
+                            </div>
+                        </div>
+                        <div class="agenda-body">
+                            <h3 class="agenda-title"><%= item.judul %></h3>
+                            <div class="agenda-meta">
+                                <% if (item.waktu_mulai) { %>
+                                <span><i class="fas fa-clock"></i> <%= item.waktu_mulai.substring(0,5) %><% if (item.waktu_selesai) { %> - <%= item.waktu_selesai.substring(0,5) %><% } else { %> - Selesai<% } %></span>
+                                <% } %>
+                                <% if (item.lokasi) { %>
+                                <span><i class="fas fa-map-marker-alt"></i> <%= item.lokasi %></span>
+                                <% } %>
+                            </div>
+                            <a href="/agenda/<%= item.slug %>" class="btn-agenda">Lihat Detail <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <% }) %>
+            </div>
+            <% } %>
         </div>
     </section>
 
