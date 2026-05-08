@@ -140,7 +140,7 @@
                                 <div class="agenda-img" style="background-image:url('<%= item.gambar ? '/uploads/' + item.gambar : '/assets/img/undraw_posting_photo.svg' %>')">
                                     <div class="agenda-date-badge">
                                         <i class="fas fa-calendar-alt"></i>
-                                        <%= new Date(item.tanggal_mulai).toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'}) %>
+                                        <%= formatTanggal(item.tanggal_mulai) %>
                                     </div>
                                 </div>
                                 <div class="agenda-body">

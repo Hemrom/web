@@ -12,12 +12,39 @@ const createSlug = (text) => {
     .trim();
 };
 
+// Format tanggal aman tanpa konversi timezone
+// MySQL DATE field datang sebagai '2026-06-02T00:00:00.000Z' atau Date object
+// Ambil langsung bagian tanggal tanpa new Date() agar tidak geser
+const formatTanggal = (val, opts = {}) => {
+  if (!val) return '';
+  // Ambil string YYYY-MM-DD
+  const str = typeof val === 'string' ? val : val.toISOString();
+  const [y, m, d] = str.substring(0, 10).split('-').map(Number);
+  const bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  const hari = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+  let result = '';
+  if (opts.weekday) {
+    // Hitung hari menggunakan Date UTC agar tidak geser
+    const dow = new Date(Date.UTC(y, m - 1, d)).getDay();
+    result += hari[dow] + ', ';
+  }
+  result += `${d} ${bulan[m - 1]} ${y}`;
+  return result;
+};
+
+// Ambil string YYYY-MM-DD dari nilai DB untuk value input[type=date]
+const toDateInput = (val) => {
+  if (!val) return '';
+  const str = typeof val === 'string' ? val : val.toISOString();
+  return str.substring(0, 10);
+};
+
 // ── ADMIN ─────────────────────────────────────────────────────────────────────
 
 exports.adminIndex = async (req, res) => {
   try {
     const [agenda] = await db.query('SELECT * FROM agenda ORDER BY tanggal_mulai DESC');
-    res.render('admin/agenda/index', { title: 'Kelola Agenda', user: req.session, agenda });
+    res.render('admin/agenda/index', { title: 'Kelola Agenda', user: req.session, agenda, formatTanggal });
   } catch (err) {
     console.error(err);
     res.status(500).send('Terjadi kesalahan');
@@ -54,7 +81,7 @@ exports.adminEditPage = async (req, res) => {
   try {
     const [rows] = await db.query('SELECT * FROM agenda WHERE id = ?', [req.params.id]);
     if (!rows.length) return res.status(404).send('Agenda tidak ditemukan');
-    res.render('admin/agenda/edit', { title: 'Edit Agenda', user: req.session, agenda: rows[0] });
+    res.render('admin/agenda/edit', { title: 'Edit Agenda', user: req.session, agenda: rows[0], toDateInput });
   } catch (err) {
     console.error(err);
     res.status(500).send('Terjadi kesalahan');
@@ -105,7 +132,7 @@ exports.frontendIndex = async (req, res) => {
     ]);
     const [artikel] = await db.query("SELECT id, judul, slug, gambar, kategori, created_at FROM artikel WHERE status='published' ORDER BY created_at DESC LIMIT 4");
     const [beritaSlider] = await db.query("SELECT id, judul, slug, gambar, kategori, created_at FROM berita WHERE status='published' ORDER BY created_at DESC LIMIT 5");
-    res.render('frontend/agenda', { title: 'Agenda Sekolah', currentPage: 'agenda', agenda, profil, menuItems, mediaSosialFooter, artikel, beritaSlider });
+    res.render('frontend/agenda', { title: 'Agenda Sekolah', currentPage: 'agenda', agenda, profil, menuItems, mediaSosialFooter, artikel, beritaSlider, formatTanggal });
   } catch (err) {
     console.error(err);
     res.status(500).send('Terjadi kesalahan');
@@ -129,7 +156,7 @@ exports.frontendDetail = async (req, res) => {
     const [artikel] = await db.query("SELECT id, judul, slug, gambar, kategori, created_at FROM artikel WHERE status='published' ORDER BY created_at DESC LIMIT 4");
     const [beritaSlider] = await db.query("SELECT id, judul, slug, gambar, kategori, created_at FROM berita WHERE status='published' ORDER BY created_at DESC LIMIT 5");
     const [agendaLain] = await db.query("SELECT * FROM agenda WHERE status='aktif' AND id != ? ORDER BY tanggal_mulai DESC LIMIT 4", [agendaItem.id]);
-    res.render('frontend/agenda-detail', { title: agendaItem.judul, currentPage: 'agenda', agenda: agendaItem, profil, menuItems, mediaSosialFooter, artikel, beritaSlider, agendaLain });
+    res.render('frontend/agenda-detail', { title: agendaItem.judul, currentPage: 'agenda', agenda: agendaItem, profil, menuItems, mediaSosialFooter, artikel, beritaSlider, agendaLain, formatTanggal });
   } catch (err) {
     console.error(err);
     res.status(500).send('Terjadi kesalahan');

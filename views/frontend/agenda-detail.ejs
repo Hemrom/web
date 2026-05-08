@@ -138,7 +138,7 @@
                             <div class="agenda-info-bar">
                                 <div class="agenda-info-item">
                                     <i class="fas fa-calendar-alt"></i>
-                                    <div><strong>Pelaksanaan:</strong> <%= new Date(agenda.tanggal_mulai).toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'}) %><% if (agenda.tanggal_selesai && agenda.tanggal_selesai !== agenda.tanggal_mulai) { %> s/d <%= new Date(agenda.tanggal_selesai).toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'}) %><% } %></div>
+                                    <div><strong>Pelaksanaan:</strong> <%= formatTanggal(agenda.tanggal_mulai, {weekday:true}) %><% if (agenda.tanggal_selesai && String(agenda.tanggal_selesai).substring(0,10) !== String(agenda.tanggal_mulai).substring(0,10)) { %> s/d <%= formatTanggal(agenda.tanggal_selesai) %><% } %></div>
                                 </div>
                                 <% if (agenda.waktu_mulai) { %>
                                 <div class="agenda-info-item">
@@ -254,7 +254,7 @@
                             <% } %>
                             <div>
                                 <div class="agenda-lain-title"><%= a.judul %></div>
-                                <div class="agenda-lain-date"><i class="fas fa-calendar-alt me-1"></i><%= new Date(a.tanggal_mulai).toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric'}) %></div>
+                                <div class="agenda-lain-date"><i class="fas fa-calendar-alt me-1"></i><%= formatTanggal(a.tanggal_mulai) %></div>
                             </div>
                         </a>
                         <% }) %>

@@ -55,7 +55,7 @@
                                         </td>
                                         <td><%= item.judul %></td>
                                         <td>
-                                            <%= new Date(item.tanggal_mulai).toLocaleDateString('id-ID', {day:'numeric',month:'long',year:'numeric'}) %>
+                                            <%= formatTanggal(item.tanggal_mulai) %>
                                             <% if (item.waktu_mulai) { %><br><small class="text-muted"><i class="fas fa-clock"></i> <%= item.waktu_mulai.substring(0,5) %><% if (item.waktu_selesai) { %> - <%= item.waktu_selesai.substring(0,5) %><% } %></small><% } %>
                                         </td>
                                         <td><%= item.lokasi || '-' %></td>

@@ -37,13 +37,13 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Tanggal Mulai <span class="text-danger">*</span></label>
-                                                <input type="date" name="tanggal_mulai" class="form-control" required value="<%= agenda.tanggal_mulai ? new Date(agenda.tanggal_mulai).toISOString().split('T')[0] : '' %>">
+                                                <input type="date" name="tanggal_mulai" class="form-control" required value="<%= toDateInput(agenda.tanggal_mulai) %>">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Tanggal Selesai</label>
-                                                <input type="date" name="tanggal_selesai" class="form-control" value="<%= agenda.tanggal_selesai ? new Date(agenda.tanggal_selesai).toISOString().split('T')[0] : '' %>">
+                                                <input type="date" name="tanggal_selesai" class="form-control" value="<%= toDateInput(agenda.tanggal_selesai) %>">
                                             </div>
                                         </div>
                                     </div>
@@ -51,13 +51,15 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Waktu Mulai</label>
-                                                <input type="time" name="waktu_mulai" class="form-control" value="<%= agenda.waktu_mulai ? agenda.waktu_mulai.substring(0,5) : '' %>">
+                                                <input type="time" name="waktu_mulai" class="form-control" value="<%= agenda.waktu_mulai ? agenda.waktu_mulai.substring(0,5) : '' %>" style="font-variant-numeric:tabular-nums;">
+                                                <small class="text-muted">Format 24 jam (contoh: 07:30)</small>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Waktu Selesai</label>
-                                                <input type="time" name="waktu_selesai" class="form-control" value="<%= agenda.waktu_selesai ? agenda.waktu_selesai.substring(0,5) : '' %>">
+                                                <input type="time" name="waktu_selesai" class="form-control" value="<%= agenda.waktu_selesai ? agenda.waktu_selesai.substring(0,5) : '' %>" style="font-variant-numeric:tabular-nums;">
+                                                <small class="text-muted">Format 24 jam (contoh: 12:00)</small>
                                             </div>
                                         </div>
                                     </div>
