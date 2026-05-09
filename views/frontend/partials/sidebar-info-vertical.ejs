@@ -1,0 +1,101 @@
+<%
+  // Sidebar vertikal - untuk halaman sambutan kepsek
+  // Widget ditumpuk ke bawah (tidak dalam row)
+%>
+
+<!-- Share -->
+<div class="sidebar-widget">
+    <div class="widget-title"><i class="fas fa-share-alt" style="color:#0ea5e9"></i> Bagikan <span>Halaman</span></div>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+        <a href="https://wa.me/?text=<%= encodeURIComponent(typeof title !== 'undefined' ? title : 'Info Sekolah') %>%20<%= encodeURIComponent('https://smknegeri1kras.sch.id' + (typeof reqUrl !== 'undefined' ? reqUrl : '')) %>" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .9rem;border-radius:50px;font-size:.78rem;font-weight:700;text-decoration:none;background:#25D366;color:white;"><i class="fab fa-whatsapp"></i> WA</a>
+        <a href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent('https://smknegeri1kras.sch.id' + (typeof reqUrl !== 'undefined' ? reqUrl : '')) %>" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .9rem;border-radius:50px;font-size:.78rem;font-weight:700;text-decoration:none;background:#1877F2;color:white;"><i class="fab fa-facebook-f"></i> FB</a>
+        <a href="https://twitter.com/intent/tweet?text=<%= encodeURIComponent(typeof title !== 'undefined' ? title : 'Info Sekolah') %>&url=<%= encodeURIComponent('https://smknegeri1kras.sch.id' + (typeof reqUrl !== 'undefined' ? reqUrl : '')) %>" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .9rem;border-radius:50px;font-size:.78rem;font-weight:700;text-decoration:none;background:#000;color:white;"><span style="font-weight:900;">X</span></a>
+        <button onclick="navigator.clipboard.writeText(window.location.href).then(function(){alert('Link disalin!')})" style="display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .9rem;border-radius:50px;font-size:.78rem;font-weight:700;background:#f1f5f9;color:#475569;border:none;cursor:pointer;"><i class="fas fa-link"></i> Salin</button>
+    </div>
+</div>
+
+<!-- Slider Berita -->
+<% if (typeof beritaSidebar !== 'undefined' && beritaSidebar && beritaSidebar.length > 0) { %>
+<div class="sidebar-widget">
+    <div class="widget-title"><i class="fas fa-newspaper" style="color:#0ea5e9"></i> Berita <span>Terbaru</span></div>
+    <div class="berita-slider-wrap">
+        <div class="berita-slider-track" id="swvBeritaTrack">
+            <% beritaSidebar.forEach(function(b) { %>
+            <div class="berita-slide">
+                <% if (b.gambar) { %><img src="/uploads/<%= b.gambar %>" alt="<%= b.judul %>" loading="lazy">
+                <% } else { %><div class="berita-slide-placeholder"><i class="fas fa-newspaper"></i></div><% } %>
+                <div class="berita-slide-caption">
+                    <a href="/berita/<%= b.slug %>"><%= b.judul %></a>
+                    <div class="berita-slide-date"><i class="fas fa-calendar-alt me-1"></i><%= new Date(b.created_at).toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric'}) %></div>
+                </div>
+            </div>
+            <% }) %>
+        </div>
+        <div class="slider-dots" id="swvBeritaDots">
+            <% beritaSidebar.forEach(function(b, i) { %><button class="slider-dot <%= i===0?'active':'' %>" onclick="swvGoBerita(<%= i %>)"></button><% }) %>
+        </div>
+    </div>
+    <div class="text-center mt-3"><a href="/berita" style="font-size:.82rem;color:#0ea5e9;font-weight:700;text-decoration:none;">Lihat Semua Berita <i class="fas fa-arrow-right"></i></a></div>
+</div>
+<% } %>
+
+<!-- Slider Agenda -->
+<% if (typeof agendaSidebar !== 'undefined' && agendaSidebar && agendaSidebar.length > 0) { %>
+<div class="sidebar-widget">
+    <div class="widget-title"><i class="fas fa-calendar-check" style="color:#0ea5e9"></i> Agenda <span>Sekolah</span></div>
+    <div class="berita-slider-wrap">
+        <div class="berita-slider-track" id="swvAgendaTrack">
+            <% agendaSidebar.forEach(function(a) { %>
+            <div class="berita-slide">
+                <% if (a.gambar) { %><img src="/uploads/<%= a.gambar %>" alt="<%= a.judul %>" loading="lazy">
+                <% } else { %><div class="berita-slide-placeholder" style="background:linear-gradient(135deg,#f59e0b,#ef4444);"><i class="fas fa-calendar-alt"></i></div><% } %>
+                <div class="berita-slide-caption">
+                    <a href="/agenda/<%= a.slug %>"><%= a.judul %></a>
+                    <div class="berita-slide-date"><i class="fas fa-calendar-alt me-1"></i><%= a.tanggal_mulai ? a.tanggal_mulai.toString().substring(0,10) : '' %></div>
+                </div>
+            </div>
+            <% }) %>
+        </div>
+        <div class="slider-dots" id="swvAgendaDots">
+            <% agendaSidebar.forEach(function(a, i) { %><button class="slider-dot <%= i===0?'active':'' %>" onclick="swvGoAgenda(<%= i %>)"></button><% }) %>
+        </div>
+    </div>
+    <div class="text-center mt-3"><a href="/agenda" style="font-size:.82rem;color:#0ea5e9;font-weight:700;text-decoration:none;">Lihat Semua Agenda <i class="fas fa-arrow-right"></i></a></div>
+</div>
+<% } %>
+
+<!-- List Artikel -->
+<% if (typeof artikelSidebar !== 'undefined' && artikelSidebar && artikelSidebar.length > 0) { %>
+<div class="sidebar-widget">
+    <div class="widget-title"><i class="fas fa-pen-nib" style="color:#0ea5e9"></i> Artikel <span>Sekolah</span></div>
+    <% artikelSidebar.forEach(function(a) { %>
+    <a href="/artikel/<%= a.slug %>" class="artikel-item">
+        <% if (a.gambar) { %><img src="/uploads/<%= a.gambar %>" alt="<%= a.judul %>" loading="lazy">
+        <% } else { %><div class="artikel-item-placeholder"><i class="fas fa-pen-nib"></i></div><% } %>
+        <div>
+            <div class="artikel-item-title"><%= a.judul %></div>
+            <div class="artikel-item-date"><i class="fas fa-calendar-alt me-1"></i><%= new Date(a.created_at).toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric'}) %></div>
+        </div>
+    </a>
+    <% }) %>
+    <div class="text-center mt-3"><a href="/artikel" style="font-size:.82rem;color:#0ea5e9;font-weight:700;text-decoration:none;">Lihat Semua Artikel <i class="fas fa-arrow-right"></i></a></div>
+</div>
+<% } %>
+
+<script>
+(function(){
+    var _bCur = 0, _aCur = 0;
+    function _go(trackId, dotsId, n) {
+        var t = document.getElementById(trackId);
+        if (t) t.style.transform = 'translateX(-' + (n*100) + '%)';
+        var d = document.getElementById(dotsId);
+        if (d) d.querySelectorAll('.slider-dot').forEach(function(el,i){ el.classList.toggle('active', i===n); });
+    }
+    window.swvGoBerita = function(n){ _bCur = n; _go('swvBeritaTrack','swvBeritaDots',n); };
+    window.swvGoAgenda = function(n){ _aCur = n; _go('swvAgendaTrack','swvAgendaDots',n); };
+    var bTotal = <%= typeof beritaSidebar !== 'undefined' && beritaSidebar ? beritaSidebar.length : 0 %>;
+    var aTotal = <%= typeof agendaSidebar !== 'undefined' && agendaSidebar ? agendaSidebar.length : 0 %>;
+    if (bTotal > 1) setInterval(function(){ _bCur = (_bCur+1)%bTotal; window.swvGoBerita(_bCur); }, 4000);
+    if (aTotal > 1) setInterval(function(){ _aCur = (_aCur+1)%aTotal; window.swvGoAgenda(_aCur); }, 5000);
+})();
+</script>
