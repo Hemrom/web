@@ -50,8 +50,11 @@
     </div>
 </div>
 
+<div class="row g-4">
+
 <!-- Slider Berita -->
 <% if (typeof beritaSidebar !== 'undefined' && beritaSidebar && beritaSidebar.length > 0) { %>
+<div class="col-lg-4 col-md-6">
 <div class="sidebar-widget">
     <div class="widget-title"><i class="fas fa-newspaper" style="color:#0ea5e9"></i> Berita <span>Terbaru</span></div>
     <div class="sw-slider-wrap">
@@ -73,10 +76,12 @@
     </div>
     <div class="text-center mt-3"><a href="/berita" style="font-size:.82rem;color:#0ea5e9;font-weight:700;text-decoration:none;">Lihat Semua Berita <i class="fas fa-arrow-right"></i></a></div>
 </div>
+</div>
 <% } %>
 
 <!-- Slider Agenda -->
 <% if (typeof agendaSidebar !== 'undefined' && agendaSidebar && agendaSidebar.length > 0) { %>
+<div class="col-lg-4 col-md-6">
 <div class="sidebar-widget">
     <div class="widget-title"><i class="fas fa-calendar-check" style="color:#0ea5e9"></i> Agenda <span>Sekolah</span></div>
     <div class="sw-slider-wrap">
@@ -98,10 +103,12 @@
     </div>
     <div class="text-center mt-3"><a href="/agenda" style="font-size:.82rem;color:#0ea5e9;font-weight:700;text-decoration:none;">Lihat Semua Agenda <i class="fas fa-arrow-right"></i></a></div>
 </div>
+</div>
 <% } %>
 
 <!-- List Artikel -->
 <% if (typeof artikelSidebar !== 'undefined' && artikelSidebar && artikelSidebar.length > 0) { %>
+<div class="col-lg-4 col-md-6">
 <div class="sidebar-widget">
     <div class="widget-title"><i class="fas fa-pen-nib" style="color:#0ea5e9"></i> Artikel <span>Sekolah</span></div>
     <% artikelSidebar.forEach(function(a) { %>
@@ -116,7 +123,10 @@
     <% }) %>
     <div class="text-center mt-3"><a href="/artikel" style="font-size:.82rem;color:#0ea5e9;font-weight:700;text-decoration:none;">Lihat Semua Artikel <i class="fas fa-arrow-right"></i></a></div>
 </div>
+</div>
 <% } %>
+
+</div><!-- end row -->
 
 <script>
 (function(){
