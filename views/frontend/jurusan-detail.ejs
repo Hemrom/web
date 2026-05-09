@@ -78,7 +78,7 @@
                             <div class="col-6 col-md-4 col-lg-3">
                                 <div class="guru-card">
                                     <% if (g.foto) { %>
-                                    <img src="/uploads/<%= g.foto % loading="lazy">" class="guru-foto" alt="<%= g.nama %>">
+                                    <img src="/uploads/<%= g.foto %>" class="guru-foto" alt="<%= g.nama %>">
                                     <% } else { %>
                                     <div class="guru-foto-placeholder" style="background:<%= jWarna %>;"><i class="fas fa-user"></i></div>
                                     <% } %>
@@ -103,7 +103,7 @@
                         <% jurusanBerita.forEach(function(b){ %>
                         <a href="/jurusan/<%= jurusan.kode.toLowerCase() %>/berita/<%= b.slug %>" style="display:flex;gap:1rem;padding:.75rem 0;border-bottom:1px solid var(--gray-100);text-decoration:none;color:inherit;">
                             <% if (b.gambar) { %>
-                            <img src="/uploads/<%= b.gambar % loading="lazy">" style="width:70px;height:55px;object-fit:cover;border-radius:8px;flex-shrink:0;">
+                            <img src="/uploads/<%= b.gambar %>" style="width:70px;height:55px;object-fit:cover;border-radius:8px;flex-shrink:0;">
                             <% } else { %>
                             <div style="width:70px;height:55px;background:var(--gray-100);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fas fa-newspaper" style="color:var(--gray-400);"></i></div>
                             <% } %>
@@ -128,7 +128,7 @@
                             <% galeriJurusan.forEach(function(g){ %>
                             <div class="col-6 col-md-3">
                                 <a href="/uploads/<%= g.gambar %>" data-lightbox="galeri-jurusan" data-title="<%= g.judul %>" class="galeri-item d-block">
-                                    <img src="/uploads/<%= g.gambar % loading="lazy">" alt="<%= g.judul %>" onerror="this.parentElement.style.display='none'">
+                                    <img src="/uploads/<%= g.gambar %>" alt="<%= g.judul %>" onerror="this.parentElement.style.display='none'">
                                 </a>
                             </div>
                             <% }) %>
@@ -176,7 +176,7 @@
                             <div class="prestasi-icon" style="background:<%= jWarna %>;"><i class="fas fa-medal"></i></div>
                             <div>
                                 <div style="font-weight:600;font-size:.85rem;color:var(--gray-800);line-height:1.3;"><%= p.judul %></div>
-                                <div style="font-size:.75rem;color:var(--gray-600);margin-top:.2rem;"><%= p.tingkat %> · <%= p.tahun %></div>
+                                <div style="font-size:.75rem;color:var(--gray-600);margin-top:.2rem;"><%= p.tingkat %> ï¿½ <%= p.tahun %></div>
                             </div>
                         </div>
                         <% }) %>
@@ -225,7 +225,7 @@
                             <% galeri.slice(0,4).forEach((g,idx)=>{ %>
                             <div class="col-6">
                                 <a href="/uploads/<%= g.gambar %>" data-lightbox="sidebar-galeri" data-title="<%= g.judul %>">
-                                    <img src="/uploads/<%= g.gambar % loading="lazy">" alt="<%= g.judul %>"
+                                    <img src="/uploads/<%= g.gambar %>" alt="<%= g.judul %>"
                                          style="width:100%;height:80px;object-fit:cover;border-radius:8px;transition:transform .2s;"
                                          onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'"
                                          onerror="this.parentElement.style.display='none'">

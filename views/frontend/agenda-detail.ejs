@@ -127,7 +127,7 @@
                 <div class="col-lg-8">
                     <div class="agenda-main">
                         <% if (agenda.gambar) { %>
-                        <img src="/uploads/<%= agenda.gambar % loading="lazy">" alt="<%= agenda.judul %>" class="agenda-hero-img">
+                        <img src="/uploads/<%= agenda.gambar %>" alt="<%= agenda.judul %>" class="agenda-hero-img">
                         <% } else { %>
                         <div class="agenda-hero-placeholder"><i class="fas fa-calendar-alt"></i></div>
                         <% } %>
@@ -196,7 +196,7 @@
                                 <% artikel.forEach(a => { %>
                                 <div class="berita-slide">
                                     <% if (a.gambar) { %>
-                                    <img src="/uploads/<%= a.gambar % loading="lazy">" alt="<%= a.judul %>">
+                                    <img src="/uploads/<%= a.gambar %>" alt="<%= a.judul %>">
                                     <% } else { %>
                                     <div class="berita-slide-placeholder" style="background:linear-gradient(135deg,#6366f1,#818cf8);"><i class="fas fa-pen-nib"></i></div>
                                     <% } %>
@@ -228,7 +228,7 @@
                                 <% beritaSlider.forEach(b => { %>
                                 <div class="berita-slide">
                                     <% if (b.gambar) { %>
-                                    <img src="/uploads/<%= b.gambar % loading="lazy">" alt="<%= b.judul %>">
+                                    <img src="/uploads/<%= b.gambar %>" alt="<%= b.judul %>">
                                     <% } else { %>
                                     <div class="berita-slide-placeholder"><i class="fas fa-newspaper"></i></div>
                                     <% } %>
@@ -260,7 +260,7 @@
                                 <% agendaLain.forEach(a => { %>
                                 <div class="berita-slide">
                                     <% if (a.gambar) { %>
-                                    <img src="/uploads/<%= a.gambar % loading="lazy">" alt="<%= a.judul %>">
+                                    <img src="/uploads/<%= a.gambar %>" alt="<%= a.judul %>">
                                     <% } else { %>
                                     <div class="berita-slide-placeholder" style="background:linear-gradient(135deg,#f59e0b,#ef4444);"><i class="fas fa-calendar-alt"></i></div>
                                     <% } %>

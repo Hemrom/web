@@ -124,7 +124,7 @@
                      data-jurusan="<%= (a.jurusan||'').toLowerCase() %>">
                     <div class="alumni-card">
                         <% if (a.foto) { %>
-                        <img src="/uploads/<%= a.foto % loading="lazy">" class="alumni-foto" alt="<%= a.nama %>">
+                        <img src="/uploads/<%= a.foto %>" class="alumni-foto" alt="<%= a.nama %>">
                         <% } else { %>
                         <div class="alumni-foto-placeholder"><i class="fas fa-user"></i></div>
                         <% } %>

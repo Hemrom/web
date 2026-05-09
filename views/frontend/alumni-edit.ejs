@@ -52,7 +52,7 @@
 
                 <div class="text-center mb-3">
                     <% if (alumni.foto) { %>
-                    <img src="/uploads/<%= alumni.foto % loading="lazy">" class="foto-current" id="fotoPreview" alt="Foto">
+                    <img src="/uploads/<%= alumni.foto %>" class="foto-current" id="fotoPreview" alt="Foto">
                     <% } else { %>
                     <div style="width:100px;height:100px;border-radius:50%;background:#f1f5f9;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:2rem;margin:0 auto;" id="fotoPreview">
                         <i class="fas fa-user"></i>

@@ -97,7 +97,7 @@
                 <div class="col-lg-3 col-md-4 col-sm-6">
                     <a href="<%= e.url %>" class="ekskul-card">
                         <% if (e.foto) { %>
-                        <img src="/uploads/<%= e.foto % loading="lazy">" class="ekskul-img" alt="<%= e.nama %>" onerror="this.style.display='none'">
+                        <img src="/uploads/<%= e.foto %>" class="ekskul-img" alt="<%= e.nama %>" onerror="this.style.display='none'">
                         <% } else { %>
                         <div class="ekskul-placeholder" style="background:<%= e.warna %>;">
                             <i class="<%= e.icon %>"></i>

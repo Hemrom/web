@@ -84,7 +84,7 @@
                 <div class="col-lg-8">
                     <div class="article-body">
                         <% if (artikel.gambar) { %>
-                        <img src="/uploads/<%= artikel.gambar % loading="lazy">" alt="<%= artikel.judul %>" class="article-cover">
+                        <img src="/uploads/<%= artikel.gambar %>" alt="<%= artikel.judul %>" class="article-cover">
                         <% } %>
                         <div class="content"><%- artikel.konten %></div>
                         <% shareTitle = artikel.judul; shareUrl = '/artikel/' + artikel.slug; %>
@@ -101,7 +101,7 @@
                         <% related.forEach(r => { %>
                         <a href="/artikel/<%= r.slug %>" class="related-item">
                             <% if (r.gambar) { %>
-                            <img src="/uploads/<%= r.gambar % loading="lazy">" class="related-thumb" alt="<%= r.judul %>">
+                            <img src="/uploads/<%= r.gambar %>" class="related-thumb" alt="<%= r.judul %>">
                             <% } else { %>
                             <div class="related-thumb d-flex align-items-center justify-content-center"><i class="fas fa-file-alt text-muted"></i></div>
                             <% } %>

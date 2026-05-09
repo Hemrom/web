@@ -99,7 +99,7 @@
                 <div class="col-lg-8">
                     <div class="main-card">
                         <% if (lowongan.gambar) { %>
-                        <img src="/uploads/<%= lowongan.gambar % loading="lazy">" class="cover-img" alt="<%= lowongan.judul %>">
+                        <img src="/uploads/<%= lowongan.gambar %>" class="cover-img" alt="<%= lowongan.judul %>">
                         <% } %>
                         <div class="card-body-pad">
 
@@ -179,7 +179,7 @@
                                 <% if (syaratLines.length > 1) { %>
                                 <ul class="persyaratan-list">
                                     <% syaratLines.forEach(s => { %>
-                                    <li><%= s.replace(/^[-•*]\s*/, '') %></li>
+                                    <li><%= s.replace(/^[-ï¿½*]\s*/, '') %></li>
                                     <% }) %>
                                 </ul>
                                 <% } else { %>
