@@ -331,14 +331,18 @@ exports.sejarah = async (req, res) => {
 
 exports.sambutan = async (req, res) => {
   try {
-    const [profil, [kepsekRows], menuItems, mediaSosialFooter, relatedBerita] = await Promise.all([
+    const [profil, [kepsekRows], menuItems, mediaSosialFooter, relatedBerita, [beritaSidebar], [artikelSidebar], [agendaSidebar]] = await Promise.all([
       getProfilSekolah(),
       db.query("SELECT * FROM profil_konten WHERE tipe = 'sambutan' LIMIT 1"),
-      getMenuItems(), getMediaSosialFooter(), getRelatedBerita()
+      getMenuItems(), getMediaSosialFooter(), getRelatedBerita(),
+      db.query("SELECT id, judul, slug, gambar, created_at FROM berita WHERE status='published' ORDER BY created_at DESC LIMIT 5"),
+      db.query("SELECT id, judul, slug, gambar, created_at FROM artikel WHERE status='published' ORDER BY created_at DESC LIMIT 4"),
+      db.query("SELECT id, judul, slug, gambar, tanggal_mulai FROM agenda WHERE status='aktif' ORDER BY tanggal_mulai ASC LIMIT 4")
     ]);
     res.render('frontend/sambutan-kepsek', {
       title: 'Sambutan Kepala Sekolah', currentPage: 'profil',
-      profil, kepsek: kepsekRows[0] || null, menuItems, mediaSosialFooter, relatedBerita
+      profil, kepsek: kepsekRows[0] || null, menuItems, mediaSosialFooter, relatedBerita,
+      beritaSidebar, artikelSidebar, agendaSidebar
     });
   } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
 };
