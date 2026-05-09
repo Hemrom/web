@@ -8,7 +8,7 @@ const clearMedsosCahce = () => cache.del('media_sosial_footer');
 // Admin functions
 exports.index = async (req, res) => {
   try {
-    const [mediaSosial] = await db.query('SELECT * FROM media_sosial ORDER BY urutan ASC, created_at DESC');
+    const [mediaSosial] = await db.query('SELECT * FROM media_sosial ORDER BY created_at DESC');
     res.render('admin/media-sosial/index', {
       title: 'Kelola Media Sosial',
       user: req.session,

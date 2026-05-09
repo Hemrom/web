@@ -54,7 +54,6 @@
                                             <th>Judul</th>
                                             <th>Platform</th>
                                             <th>Status</th>
-                                            <th>Urutan</th>
                                             <th>Tanggal</th>
                                             <th>Aksi</th>
                                         </tr>
@@ -79,7 +78,6 @@
                                                             <%= item.status.toUpperCase() %>
                                                         </span>
                                                     </td>
-                                                    <td><%= item.urutan %></td>
                                                     <td><%= new Date(item.created_at).toLocaleDateString('id-ID') %></td>
                                                     <td>
                                                         <a href="/admin/media-sosial/edit/<%= item.id %>" class="btn btn-warning btn-sm">
