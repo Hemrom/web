@@ -244,18 +244,25 @@
                             <i style="background:linear-gradient(135deg,#E1306C,#833ab4);"><i class="fas fa-share-alt"></i></i>
                             Ikuti Kami
                         </div>
-                        <% const sosmedColors={instagram:'#E1306C',youtube:'#FF0000',facebook:'#1877F2',tiktok:'#010101',twitter:'#1DA1F2',x:'#000',threads:'#6366f1',whatsapp:'#25D366',telegram:'#229ED9'}; %>
-                        <% const sosmedIcons={instagram:'fa-instagram',youtube:'fa-youtube',facebook:'fa-facebook-f',tiktok:'fa-tiktok',twitter:'fa-x-twitter',x:'fa-x-twitter',threads:'fa-threads',whatsapp:'fa-whatsapp',telegram:'fa-telegram-plane'}; %>
+                        <% const sosmedColors={instagram:'#E1306C',youtube:'#FF0000',facebook:'#1877F2',tiktok:'#010101',twitter:'#000',x:'#000',threads:'#6366f1',whatsapp:'#25D366',telegram:'#229ED9'}; %>
+                        <% const sosmedIcons={instagram:'fa-instagram',youtube:'fa-youtube',facebook:'fa-facebook-f',tiktok:'fa-tiktok',twitter:null,x:null,threads:null,whatsapp:'fa-whatsapp',telegram:'fa-telegram-plane'}; %>
                         <div style="display:flex;flex-wrap:wrap;gap:.5rem;">
                             <% mediaSosialFooter.forEach(ms=>{ %>
                             <%
-                            var msColor = sosmedColors[ms.platform] || '#333';
-                            var msIcon = sosmedIcons[ms.platform] || 'fa-globe';
+                            var msColor = sosmedColors[ms.platform] || '#64748b';
+                            var msIcon = sosmedIcons[ms.platform];
+                            var isSpecial = (ms.platform === 'twitter' || ms.platform === 'x' || ms.platform === 'threads');
                             %>
                             <a href="<%= ms.embed_url %>" target="_blank" rel="noopener"
                                style="width:40px;height:40px;border-radius:10px;background:<%= msColor %>;display:flex;align-items:center;justify-content:center;color:white;font-size:1.1rem;text-decoration:none;"
                                title="<%= ms.judul %>">
-                                <i class="fab <%= msIcon %>"></i>
+                                <% if (ms.platform === 'twitter' || ms.platform === 'x') { %>
+                                <span style="font-weight:900;font-size:1rem;font-family:Arial,sans-serif;line-height:1;">𝕏</span>
+                                <% } else if (ms.platform === 'threads') { %>
+                                <span style="font-weight:900;font-size:1.1rem;font-family:Arial,sans-serif;line-height:1;">@</span>
+                                <% } else { %>
+                                <i class="fab <%= msIcon || 'fa-globe' %>"></i>
+                                <% } %>
                             </a>
                             <% }) %>
                         </div>
