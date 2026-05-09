@@ -41,7 +41,7 @@
         .agenda-card {
             background: white; border-radius: 20px; overflow: hidden;
             box-shadow: 0 4px 20px rgba(14,165,233,.08); border: 1px solid var(--gray-100);
-            transition: all .35s ease; height: 100%;
+            transition: all .35s ease; height: 100%; cursor: pointer;
         }
         .agenda-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(14,165,233,.16); border-color: #bfdbfe; }
         .agenda-img {
@@ -133,6 +133,7 @@
             <div class="row g-4">
                 <% agenda.forEach(item => { %>
                 <div class="col-lg-4 col-md-6">
+                    <a href="/agenda/<%= item.slug %>" style="text-decoration:none;display:block;height:100%;">
                     <div class="agenda-card">
                         <div class="agenda-img" style="background-image:url('<%= item.gambar ? '/uploads/' + item.gambar : '/assets/img/undraw_posting_photo.svg' %>')">
                             <div class="agenda-date-badge">
@@ -150,9 +151,10 @@
                                 <span><i class="fas fa-map-marker-alt"></i> <%= item.lokasi %></span>
                                 <% } %>
                             </div>
-                            <a href="/agenda/<%= item.slug %>" class="btn-agenda">Lihat Detail <i class="fas fa-arrow-right"></i></a>
+                            <span class="btn-agenda">Lihat Detail <i class="fas fa-arrow-right"></i></span>
                         </div>
                     </div>
+                    </a>
                 </div>
                 <% }) %>
             </div>
