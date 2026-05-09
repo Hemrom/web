@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="utf-8">
@@ -52,7 +52,7 @@
 
                 <div class="text-center mb-3">
                     <% if (alumni.foto) { %>
-                    <img src="/uploads/<%= alumni.foto %>" class="foto-current" id="fotoPreview" alt="Foto">
+                    <img src="/uploads/<%= alumni.foto % loading="lazy">" class="foto-current" id="fotoPreview" alt="Foto">
                     <% } else { %>
                     <div style="width:100px;height:100px;border-radius:50%;background:#f1f5f9;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:2rem;margin:0 auto;" id="fotoPreview">
                         <i class="fas fa-user"></i>
@@ -133,7 +133,7 @@
 
                 <button type="submit" class="btn-submit"><i class="fas fa-save me-2"></i>Simpan Perubahan</button>
                 <div class="text-center mt-3">
-                    <a href="/alumni" class="text-muted small">← Kembali ke halaman alumni</a>
+                    <a href="/alumni" class="text-muted small">? Kembali ke halaman alumni</a>
                 </div>
             </form>
         </div>
@@ -147,10 +147,11 @@
         const reader = new FileReader();
         reader.onload = e => {
             const prev = document.getElementById('fotoPreview');
-            prev.outerHTML = `<img src="${e.target.result}" class="foto-current" id="fotoPreview" alt="Foto">`;
+            prev.outerHTML = `<img src="${e.target.result}" class="foto-current" id="fotoPreview" alt="Foto" loading="lazy">`;
         };
         reader.readAsDataURL(file);
     });
     </script>
 </body>
 </html>
+

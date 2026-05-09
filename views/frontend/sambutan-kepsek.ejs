@@ -151,7 +151,7 @@
                 <div class="col-lg-5 d-flex justify-content-center justify-content-lg-end pt-3">
                     <div class="foto-frame">
                         <% if (kepsek && kepsek.foto) { %>
-                            <img src="/uploads/<%= kepsek.foto %>" class="foto-img" alt="<%= kepsek.judul || 'Kepala Sekolah' %>">
+                            <img src="/uploads/<%= kepsek.foto % loading="lazy">" class="foto-img" alt="<%= kepsek.judul || 'Kepala Sekolah' %>">
                         <% } else { %>
                             <div class="foto-placeholder">
                                 <i class="fas fa-user-tie fa-5x" style="color:#1e3a5f;opacity:.4;"></i>
@@ -177,3 +177,4 @@
     </script>
 </body>
 </html>
+

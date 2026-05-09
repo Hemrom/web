@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="utf-8">
@@ -208,7 +208,7 @@
                                     </svg>
                                     <!-- Foto -->
                                     <% if (konten.foto) { %>
-                                    <img src="/uploads/<%= konten.foto %>" alt="<%= konten.judul %>">
+                                    <img src="/uploads/<%= konten.foto % loading="lazy">" alt="<%= konten.judul %>">
                                     <% } else { %>
                                     <div style="min-height:420px;display:flex;align-items:center;justify-content:center;">
                                         <i class="fas fa-user-tie fa-6x" style="color:#0ea5e9"></i>
@@ -293,5 +293,6 @@
     </script>
 </body>
 </html>
+
 
 

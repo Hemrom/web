@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="utf-8">
@@ -46,7 +46,7 @@
         .persyaratan-list { list-style: none; padding: 0; }
         .persyaratan-list li { padding: 0.6rem 0; border-bottom: 1px solid var(--gray-100); display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.9rem; }
         .persyaratan-list li:last-child { border-bottom: none; }
-        .persyaratan-list li::before { content: '✓'; color: var(--bkk-green); font-weight: 700; flex-shrink: 0; margin-top: 0.1rem; }
+        .persyaratan-list li::before { content: '?'; color: var(--bkk-green); font-weight: 700; flex-shrink: 0; margin-top: 0.1rem; }
         .deskripsi-text { font-size: 0.95rem; line-height: 1.8; color: var(--gray-700); white-space: pre-line; }
 
         .cta-box { background: linear-gradient(135deg, var(--bkk-dark), var(--bkk-green)); border-radius: 16px; padding: 2rem; color: white; text-align: center; margin-top: 2rem; }
@@ -99,7 +99,7 @@
                 <div class="col-lg-8">
                     <div class="main-card">
                         <% if (lowongan.gambar) { %>
-                        <img src="/uploads/<%= lowongan.gambar %>" class="cover-img" alt="<%= lowongan.judul %>">
+                        <img src="/uploads/<%= lowongan.gambar % loading="lazy">" class="cover-img" alt="<%= lowongan.judul %>">
                         <% } %>
                         <div class="card-body-pad">
 
@@ -179,7 +179,7 @@
                                 <% if (syaratLines.length > 1) { %>
                                 <ul class="persyaratan-list">
                                     <% syaratLines.forEach(s => { %>
-                                    <li><%= s.replace(/^[-•*]\s*/, '') %></li>
+                                    <li><%= s.replace(/^[-�*]\s*/, '') %></li>
                                     <% }) %>
                                 </ul>
                                 <% } else { %>
@@ -292,3 +292,4 @@
     </script>
 </body>
 </html>
+

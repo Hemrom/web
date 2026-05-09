@@ -28,7 +28,7 @@
             <div class="row justify-content-center">
                 <div class="col-lg-9">
                     <div class="content-card">
-                        <% if (kegiatan.gambar) { %><img src="/uploads/<%= kegiatan.gambar %>" style="width:100%;border-radius:12px;margin-bottom:2rem;" alt="<%= kegiatan.judul %>"><% } %>
+                        <% if (kegiatan.gambar) { %><img src="/uploads/<%= kegiatan.gambar % loading="lazy">" style="width:100%;border-radius:12px;margin-bottom:2rem;" alt="<%= kegiatan.judul %>"><% } %>
                         <div style="font-size:1rem;line-height:1.8;"><%- kegiatan.konten || '' %></div>
                         <% shareTitle = kegiatan.judul; shareUrl = '/paskibraka/' + kegiatan.slug; %>
                         <%- include('partials/share-buttons') %>
@@ -46,3 +46,4 @@
     <script>$(window).scroll(function(){if($(window).scrollTop()>50)$('.navbar-modern').addClass('scrolled');else$('.navbar-modern').removeClass('scrolled');});</script>
 </body>
 </html>
+

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="utf-8">
@@ -31,7 +31,7 @@
             <h1 style="font-size:2.2rem;font-weight:800;margin-bottom:.5rem;"><%= berita.judul %></h1>
             <p style="opacity:.8;font-size:.9rem;">
                 <i class="fas fa-calendar me-1"></i><%= new Date(berita.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}) %>
-                <% if (berita.penulis) { %> &nbsp;·&nbsp; <i class="fas fa-user me-1"></i><%= berita.penulis %><% } %>
+                <% if (berita.penulis) { %> &nbsp;�&nbsp; <i class="fas fa-user me-1"></i><%= berita.penulis %><% } %>
             </p>
         </div>
     </section>
@@ -42,7 +42,7 @@
                 <div class="col-lg-9">
                     <div class="content-card">
                         <% if (berita.gambar) { %>
-                        <img src="/uploads/<%= berita.gambar %>" alt="<%= berita.judul %>" style="width:100%;max-height:400px;object-fit:cover;">
+                        <img src="/uploads/<%= berita.gambar % loading="lazy">" alt="<%= berita.judul %>" style="width:100%;max-height:400px;object-fit:cover;">
                         <% } %>
                         <div style="font-size:1rem;line-height:1.8;margin-top:<%= berita.gambar?'1.5rem':'0' %>;">
                             <%- berita.konten || '' %>
@@ -66,3 +66,4 @@
     <script>$(window).scroll(function(){if($(window).scrollTop()>50)$('.navbar-modern').addClass('scrolled');else$('.navbar-modern').removeClass('scrolled');});</script>
 </body>
 </html>
+

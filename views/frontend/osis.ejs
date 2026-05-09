@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="utf-8">
@@ -24,7 +24,7 @@
         }
         body { color: var(--gray-700); line-height: 1.6; background: #fff; }
 
-        /* ── HERO ── */
+        /* -- HERO -- */
         .hero {
             background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 50%, #4c1d95 100%);
             padding: 9rem 0 6rem;
@@ -81,7 +81,7 @@
         .hero-stat-num { font-size: 2rem; font-weight: 900; color: var(--gold); line-height: 1; }
         .hero-stat-label { font-size: .78rem; opacity: .7; margin-top: .2rem; }
 
-        /* ── SECTION COMMON ── */
+        /* -- SECTION COMMON -- */
         .section { padding: 5rem 0; }
         .section-alt { background: var(--gray-50); }
         .section-label {
@@ -107,7 +107,7 @@
             margin: .75rem 0 1.5rem;
         }
 
-        /* ── KEGIATAN CARDS ── */
+        /* -- KEGIATAN CARDS -- */
         .kegiatan-card {
             background: white;
             border-radius: 20px;
@@ -163,7 +163,7 @@
             overflow: hidden;
         }
 
-        /* ── BERITA LIST ── */
+        /* -- BERITA LIST -- */
         .berita-item {
             display: flex; gap: 1.25rem;
             background: white;
@@ -211,7 +211,7 @@
             overflow: hidden;
         }
 
-        /* ── GALERI MASONRY-LIKE ── */
+        /* -- GALERI MASONRY-LIKE -- */
         .galeri-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -248,7 +248,7 @@
         .galeri-item:hover .galeri-overlay { opacity: 1; }
         .galeri-caption { color: white; font-size: .78rem; font-weight: 600; }
 
-        /* ── EMPTY STATE ── */
+        /* -- EMPTY STATE -- */
         .empty-box {
             text-align: center;
             padding: 3rem;
@@ -259,7 +259,7 @@
         }
         .empty-box i { font-size: 2.5rem; color: #fcd34d; margin-bottom: .75rem; display: block; }
 
-        /* ── CTA STRIP ── */
+        /* -- CTA STRIP -- */
         .cta-strip {
             background: linear-gradient(135deg, var(--navy), var(--navy-mid));
             padding: 3rem 0;
@@ -315,7 +315,7 @@
                 <div class="col-lg-4 col-md-6">
                     <a href="/osis/<%= k.slug %>" class="kegiatan-card">
                         <% if (k.gambar) { %>
-                        <img src="/uploads/<%= k.gambar %>" class="kegiatan-img" alt="<%= k.judul %>" onerror="this.style.display='none'">
+                        <img src="/uploads/<%= k.gambar % loading="lazy">" class="kegiatan-img" alt="<%= k.judul %>" onerror="this.style.display='none'">
                         <% } else { %>
                         <div class="kegiatan-placeholder"><i class="fas fa-calendar-check"></i></div>
                         <% } %>
@@ -346,7 +346,7 @@
                     <div class="section-label"><i class="fas fa-newspaper"></i> Informasi Terkini</div>
                     <h2 class="section-title">Berita & <span>Pengumuman</span></h2>
                     <div class="divider"></div>
-                    <p class="section-desc">Update terbaru dari OSIS — kegiatan, pengumuman, dan informasi penting untuk seluruh siswa.</p>
+                    <p class="section-desc">Update terbaru dari OSIS � kegiatan, pengumuman, dan informasi penting untuk seluruh siswa.</p>
                     <div style="background:linear-gradient(135deg,var(--navy),var(--navy-mid));border-radius:16px;padding:1.5rem;color:white;margin-top:1.5rem;">
                         <i class="fas fa-bullhorn fa-2x mb-2" style="color:var(--gold);"></i>
                         <p style="font-size:.9rem;opacity:.85;margin:0;">Pantau terus informasi terbaru dari OSIS untuk tidak ketinggalan kegiatan sekolah.</p>
@@ -362,7 +362,7 @@
                     <% berita.forEach(b => { %>
                     <a href="/osis/berita/<%= b.slug %>" class="berita-item" style="text-decoration:none;color:inherit;">
                         <% if (b.gambar) { %>
-                        <img src="/uploads/<%= b.gambar %>" class="berita-thumb" alt="<%= b.judul %>" onerror="this.style.display='none'">
+                        <img src="/uploads/<%= b.gambar % loading="lazy">" class="berita-thumb" alt="<%= b.judul %>" onerror="this.style.display='none'">
                         <% } else { %>
                         <div class="berita-thumb-placeholder"><i class="fas fa-newspaper"></i></div>
                         <% } %>
@@ -375,7 +375,7 @@
                             <div class="kegiatan-meta mt-1">
                                 <i class="fas fa-calendar me-1"></i>
                                 <%= new Date(b.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}) %>
-                                <% if (b.penulis) { %> &nbsp;·&nbsp; <i class="fas fa-user me-1"></i><%= b.penulis %><% } %>
+                                <% if (b.penulis) { %> &nbsp;�&nbsp; <i class="fas fa-user me-1"></i><%= b.penulis %><% } %>
                             </div>
                         </div>
                     </a>
@@ -400,7 +400,7 @@
                 <% galeri.forEach((g, i) => { %>
                 <div class="galeri-item<% if(i===0){%> g-tall g-wide<%}else if(i===3){%> g-wide<%}%>">
                     <a href="/uploads/<%= g.gambar %>" data-lightbox="osis-galeri" data-title="<%= g.judul %>">
-                        <img src="/uploads/<%= g.gambar %>" alt="<%= g.judul %>" onerror="this.parentElement.parentElement.style.display='none'">
+                        <img src="/uploads/<%= g.gambar % loading="lazy">" alt="<%= g.judul %>" onerror="this.parentElement.parentElement.style.display='none'">
                         <div class="galeri-overlay">
                             <span class="galeri-caption"><i class="fas fa-search-plus me-1"></i><%= g.judul %></span>
                         </div>
@@ -434,3 +434,4 @@
     </script>
 </body>
 </html>
+

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="utf-8">
@@ -326,7 +326,7 @@
             
             <div class="article-container">
                 <% if (berita.gambar) { %>
-                    <img src="/uploads/<%= berita.gambar %>" alt="<%= berita.judul %>" class="article-image">
+                    <img src="/uploads/<%= berita.gambar % loading="lazy">" alt="<%= berita.judul %>" class="article-image">
                 <% } %>
                 <div class="article-content">
                     <div class="article-meta">
@@ -363,7 +363,7 @@
                         <div class="col-lg-4 col-md-6 mb-4">
                             <a href="/berita/<%= item.slug %>" class="related-card d-block">
                                 <% if (item.gambar) { %>
-                                    <img src="/uploads/<%= item.gambar %>" alt="<%= item.judul %>" class="related-image">
+                                    <img src="/uploads/<%= item.gambar % loading="lazy">" alt="<%= item.judul %>" class="related-image">
                                 <% } %>
                                 <div class="related-content">
                                     <h3 class="related-title"><%= item.judul %></h3>
@@ -400,4 +400,5 @@
     </script>
 </body>
 </html>
+
 

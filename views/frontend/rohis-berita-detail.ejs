@@ -32,7 +32,7 @@
             <div class="row justify-content-center">
                 <div class="col-lg-9">
                     <div class="content-card">
-                        <% if (berita.gambar) { %><img src="/uploads/<%= berita.gambar %>" style="width:100%;border-radius:12px;margin-bottom:2rem;" alt="<%= berita.judul %>"><% } %>
+                        <% if (berita.gambar) { %><img src="/uploads/<%= berita.gambar % loading="lazy">" style="width:100%;border-radius:12px;margin-bottom:2rem;" alt="<%= berita.judul %>"><% } %>
                         <div style="font-size:1rem;line-height:1.8;"><%- berita.konten || '' %></div>
                         <% shareTitle = berita.judul; shareUrl = '/rohis/berita/' + berita.slug; %>
                         <%- include('partials/share-buttons') %>
@@ -50,3 +50,4 @@
     <script>$(window).scroll(function(){if($(window).scrollTop()>50)$('.navbar-modern').addClass('scrolled');else$('.navbar-modern').removeClass('scrolled');});</script>
 </body>
 </html>
+

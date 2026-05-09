@@ -12,7 +12,7 @@
                 <a href="/berita/<%= b.slug %>" style="display:flex;gap:0.75rem;margin-bottom:1rem;text-decoration:none;align-items:flex-start;">
                     <div style="flex-shrink:0;width:70px;height:60px;border-radius:8px;overflow:hidden;background:#e2e8f0;">
                         <% if (b.gambar) { %>
-                        <img src="/uploads/<%= b.gambar %>" style="width:100%;height:100%;object-fit:cover;" alt="">
+                        <img src="/uploads/<%= b.gambar % loading="lazy">" style="width:100%;height:100%;object-fit:cover;" alt="">
                         <% } else { %>
                         <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
                             <i class="fas fa-image" style="color:#94a3b8;font-size:1.2rem;"></i>
@@ -77,3 +77,4 @@
         </div>
     </div>
 </section>
+

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="utf-8">
@@ -56,7 +56,7 @@
                 <div class="col-lg-4 col-md-6">
                     <div class="prestasi-card">
                         <% if (p.gambar) { %>
-                        <img src="/uploads/<%= p.gambar %>" class="prestasi-img" alt="<%= p.judul %>">
+                        <img src="/uploads/<%= p.gambar % loading="lazy">" class="prestasi-img" alt="<%= p.judul %>">
                         <% } else { %>
                         <div class="prestasi-img-placeholder"><i class="fas fa-trophy"></i></div>
                         <% } %>
@@ -83,3 +83,4 @@
     <script>$(window).scroll(function(){if($(window).scrollTop()>50)$('.navbar-modern').addClass('scrolled');else$('.navbar-modern').removeClass('scrolled');});</script>
 </body>
 </html>
+

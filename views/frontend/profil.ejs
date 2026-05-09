@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="utf-8">
@@ -274,7 +274,7 @@
                     <div class="profile-card">
                         <% if (profil.logo) { %>
                             <div class="logo-container">
-                                <img src="/uploads/<%= profil.logo %>" alt="Logo Sekolah" class="school-logo">
+                                <img src="/uploads/<%= profil.logo % loading="lazy">" alt="Logo Sekolah" class="school-logo">
                             </div>
                         <% } %>
                         
@@ -438,4 +438,5 @@
     </script>
 </body>
 </html>
+
 

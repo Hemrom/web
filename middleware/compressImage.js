@@ -19,7 +19,6 @@ const compressImage = async (req, res, next) => {
     }));
 
     if (failed.length > 0) {
-      // Hapus semua file yang sudah terupload
       getUploadedFiles(req).forEach(f => {
         if (fs.existsSync(f.path)) fs.unlinkSync(f.path);
       });
@@ -44,7 +43,6 @@ function getUploadedFiles(req) {
   if (req.file) return [req.file];
   if (!req.files) return [];
   if (Array.isArray(req.files)) return req.files;
-  // multer fields: { fieldname: [file, ...], ... }
   return Object.values(req.files).flat();
 }
 
@@ -61,13 +59,13 @@ async function compressFile(file) {
 
     if (ext === '.png' && !isHeic) {
       await sharpInstance
-        .resize({ width: 1920, height: 1080, fit: 'inside', withoutEnlargement: true })
-        .png({ quality: 80, compressionLevel: 8 })
+        .resize({ width: 1200, height: 900, fit: 'inside', withoutEnlargement: true })
+        .png({ quality: 75, compressionLevel: 9 })
         .toFile(outPath);
     } else {
       await sharpInstance
-        .resize({ width: 1920, height: 1080, fit: 'inside', withoutEnlargement: true })
-        .jpeg({ quality: 80, progressive: true })
+        .resize({ width: 1200, height: 900, fit: 'inside', withoutEnlargement: true })
+        .jpeg({ quality: 75, progressive: true, mozjpeg: true })
         .toFile(outPath);
     }
 
@@ -81,7 +79,6 @@ async function compressFile(file) {
     return true;
   } catch (err) {
     if (fs.existsSync(outPath)) fs.unlinkSync(outPath);
-    // Hapus file asli juga agar tidak tersimpan ke DB
     if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
     console.error('Gagal kompres gambar:', file.filename, err.message);
     return false;

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="utf-8">
@@ -352,7 +352,7 @@
                                     <% } else { %>
                                     <a href="<%= item.embed_url %>" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;height:100%;text-decoration:none;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);position:relative;overflow:hidden;">
                                         <% if (item.thumbnail) { %>
-                                        <img src="/uploads/<%= item.thumbnail %>" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">
+                                        <img src="/uploads/<%= item.thumbnail % loading="lazy">" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">
                                         <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.4);"></div>
                                         <% } %>
                                         <div style="text-align:center;padding:2rem;position:relative;z-index:1;">
@@ -373,7 +373,7 @@
                                     %>
                                     <a href="<%= item.embed_url %>" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;height:100%;text-decoration:none;background:<%= bg2 %>;position:relative;overflow:hidden;">
                                         <% if (item.thumbnail) { %>
-                                        <img src="/uploads/<%= item.thumbnail %>" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">
+                                        <img src="/uploads/<%= item.thumbnail % loading="lazy">" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">
                                         <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.45);"></div>
                                         <% } %>
                                         <div style="text-align:center;padding:2rem;position:relative;z-index:1;">
@@ -420,4 +420,5 @@
     </script>
 </body>
 </html>
+
 
