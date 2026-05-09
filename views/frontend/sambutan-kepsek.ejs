@@ -151,7 +151,7 @@
             <div class="row g-5 align-items-start">
 
                 <!-- Kolom Teks (kiri) -->
-                <div class="col-lg-5">
+                <div class="col-lg-7">
                     <h2 class="sambutan-nama">
                         <%= kepsek && kepsek.judul ? kepsek.judul : 'Kepala Sekolah' %>
                     </h2>
@@ -171,21 +171,23 @@
                     </div>
                 </div>
 
-                <!-- Kolom Foto (tengah) -->
-                <div class="col-lg-3 d-flex justify-content-center pt-3">
-                    <div class="foto-frame">
-                        <% if (kepsek && kepsek.foto) { %>
-                            <img src="/uploads/<%= kepsek.foto %>" class="foto-img" alt="<%= kepsek.judul || 'Kepala Sekolah' %>" loading="lazy">
-                        <% } else { %>
-                            <div class="foto-placeholder">
-                                <i class="fas fa-user-tie fa-5x" style="color:#1e3a5f;opacity:.4;"></i>
-                            </div>
-                        <% } %>
+                <!-- Kolom Kanan: Foto + Sidebar -->
+                <div class="col-lg-5">
+                    <!-- Foto -->
+                    <div class="d-flex justify-content-center mb-4">
+                        <div class="foto-frame">
+                            <% if (kepsek && kepsek.foto) { %>
+                                <img src="/uploads/<%= kepsek.foto %>" class="foto-img" alt="<%= kepsek.judul || 'Kepala Sekolah' %>" loading="lazy">
+                            <% } else { %>
+                                <div class="foto-placeholder">
+                                    <i class="fas fa-user-tie fa-5x" style="color:#1e3a5f;opacity:.4;"></i>
+                                </div>
+                            <% } %>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Sidebar (kanan) -->
-                <div class="col-lg-4">
+                    <!-- Sidebar di bawah foto -->
+
                     <!-- Slider Berita -->
                     <% if (typeof beritaSidebar !== 'undefined' && beritaSidebar && beritaSidebar.length > 0) { %>
                     <div class="sidebar-widget">
