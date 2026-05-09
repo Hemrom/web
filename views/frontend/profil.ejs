@@ -411,7 +411,17 @@
                             <% } %>
                         </div>
                     </div><!-- end profile-card -->
-                </div><!-- end col-lg-8 -->
+
+                    <!-- Share di bawah konten -->
+                    <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid #e2e8f0;">
+                        <span style="font-size:.9rem;font-weight:700;color:#64748b;margin-right:.75rem;"><i class="fas fa-share-alt me-1"></i> Bagikan:</span>
+                        <a href="https://wa.me/?text=<%= encodeURIComponent(typeof title !== 'undefined' ? title : 'Profil Sekolah') %>%20<%= encodeURIComponent('https://smknegeri1kras.sch.id' + (typeof reqUrl !== 'undefined' ? reqUrl : '/profil')) %>" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.4rem;padding:.45rem 1rem;border-radius:50px;font-size:.82rem;font-weight:700;text-decoration:none;background:#25D366;color:white;margin-right:.4rem;"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+                        <a href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent('https://smknegeri1kras.sch.id' + (typeof reqUrl !== 'undefined' ? reqUrl : '/profil')) %>" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.4rem;padding:.45rem 1rem;border-radius:50px;font-size:.82rem;font-weight:700;text-decoration:none;background:#1877F2;color:white;margin-right:.4rem;"><i class="fab fa-facebook-f"></i> Facebook</a>
+                        <a href="https://twitter.com/intent/tweet?text=<%= encodeURIComponent(typeof title !== 'undefined' ? title : 'Profil Sekolah') %>&url=<%= encodeURIComponent('https://smknegeri1kras.sch.id' + (typeof reqUrl !== 'undefined' ? reqUrl : '/profil')) %>" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.4rem;padding:.45rem 1rem;border-radius:50px;font-size:.82rem;font-weight:700;text-decoration:none;background:#000;color:white;margin-right:.4rem;"><span style="font-weight:900;">X</span></a>
+                        <button onclick="navigator.clipboard.writeText(window.location.href).then(function(){alert('Link disalin!')})" style="display:inline-flex;align-items:center;gap:.4rem;padding:.45rem 1rem;border-radius:50px;font-size:.82rem;font-weight:700;background:#f1f5f9;color:#475569;border:none;cursor:pointer;"><i class="fas fa-link"></i> Salin Link</button>
+                    </div>
+
+                </div><!-- end col-12 -->
 
                 <!-- Sidebar -->
                 <div class="col-12">

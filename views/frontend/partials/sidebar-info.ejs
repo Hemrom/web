@@ -1,8 +1,6 @@
 <%
-  // Variabel yang dibutuhkan:
-  // - beritaSidebar, artikelSidebar, agendaSidebar (dari controller)
-  // - title (judul halaman, untuk share)
-  // - reqUrl (req.path, untuk share URL)
+  // Sidebar horizontal 3 kolom - untuk profil, visi misi, sejarah
+  // Diletakkan di bawah konten utama
 %>
 <style>
 .sidebar-widget { background: white; border-radius: 20px; padding: 1.5rem; box-shadow: 0 4px 20px rgba(14,165,233,.08); border: 1px solid #f1f5f9; margin-bottom: 1.5rem; }
@@ -27,28 +25,7 @@
 .sw-artikel-placeholder { width: 65px; height: 50px; border-radius: 8px; background: #e0f2fe; display: flex; align-items: center; justify-content: center; color: #0ea5e9; flex-shrink: 0; }
 .sw-artikel-title { font-size: .83rem; font-weight: 600; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .sw-artikel-date { font-size: .73rem; color: #94a3b8; margin-top: .2rem; }
-/* Share buttons */
-.share-box { background: white; border-radius: 20px; padding: 1.25rem 1.5rem; box-shadow: 0 4px 20px rgba(14,165,233,.08); border: 1px solid #f1f5f9; margin-bottom: 1.5rem; }
-.share-title { font-size: .9rem; font-weight: 700; color: #64748b; margin-bottom: .75rem; }
-.share-btns { display: flex; gap: .5rem; flex-wrap: wrap; }
-.share-btn-sidebar { display: inline-flex; align-items: center; gap: .4rem; padding: .45rem 1rem; border-radius: 50px; font-size: .78rem; font-weight: 700; text-decoration: none; transition: all .2s; border: none; cursor: pointer; }
-.share-btn-sidebar:hover { transform: translateY(-2px); opacity: .9; }
-.share-wa-s { background: #25D366; color: white; }
-.share-fb-s { background: #1877F2; color: white; }
-.share-tw-s { background: #000; color: white; }
-.share-copy-s { background: #f1f5f9; color: #475569; }
 </style>
-
-<!-- Share -->
-<div class="share-box">
-    <div class="share-title"><i class="fas fa-share-alt me-1"></i> Bagikan Halaman Ini</div>
-    <div class="share-btns">
-        <a href="https://wa.me/?text=<%= encodeURIComponent(typeof title !== 'undefined' ? title : 'Info Sekolah') %>%20<%= encodeURIComponent('https://smknegeri1kras.sch.id' + (typeof reqUrl !== 'undefined' ? reqUrl : '')) %>" target="_blank" rel="noopener" class="share-btn-sidebar share-wa-s"><i class="fab fa-whatsapp"></i> WhatsApp</a>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent('https://smknegeri1kras.sch.id' + (typeof reqUrl !== 'undefined' ? reqUrl : '')) %>" target="_blank" rel="noopener" class="share-btn-sidebar share-fb-s"><i class="fab fa-facebook-f"></i> Facebook</a>
-        <a href="https://twitter.com/intent/tweet?text=<%= encodeURIComponent(typeof title !== 'undefined' ? title : 'Info Sekolah') %>&url=<%= encodeURIComponent('https://smknegeri1kras.sch.id' + (typeof reqUrl !== 'undefined' ? reqUrl : '')) %>" target="_blank" rel="noopener" class="share-btn-sidebar share-tw-s"><span style="font-weight:900;">X</span></a>
-        <button onclick="navigator.clipboard.writeText(window.location.href).then(function(){alert('Link disalin!')}).catch(function(){alert('Link: '+window.location.href)})" class="share-btn-sidebar share-copy-s"><i class="fas fa-link"></i> Salin Link</button>
-    </div>
-</div>
 
 <div class="row g-4">
 
@@ -130,19 +107,18 @@
 
 <script>
 (function(){
-    var _swBeritaCur = 0, _swAgendaCur = 0;
-    function _swGo(trackId, dotsId, n, curRef) {
+    var _bCur = 0, _aCur = 0;
+    function _swGo(trackId, dotsId, n) {
         var t = document.getElementById(trackId);
-        if (t) t.style.transform = 'translateX(-' + (n * 100) + '%)';
-        var dots = document.getElementById(dotsId);
-        if (dots) dots.querySelectorAll('.sw-dot').forEach(function(d, i){ d.classList.toggle('active', i === n); });
-        return n;
+        if (t) t.style.transform = 'translateX(-' + (n*100) + '%)';
+        var d = document.getElementById(dotsId);
+        if (d) d.querySelectorAll('.sw-dot').forEach(function(el,i){ el.classList.toggle('active', i===n); });
     }
-    window.swGoBerita = function(n) { _swBeritaCur = _swGo('swBeritaTrack', 'swBeritaDots', n); };
-    window.swGoAgenda = function(n) { _swAgendaCur = _swGo('swAgendaTrack', 'swAgendaDots', n); };
-    var _bTotal = <%= typeof beritaSidebar !== 'undefined' && beritaSidebar ? beritaSidebar.length : 0 %>;
-    var _aTotal = <%= typeof agendaSidebar !== 'undefined' && agendaSidebar ? agendaSidebar.length : 0 %>;
-    if (_bTotal > 1) setInterval(function(){ _swBeritaCur = (_swBeritaCur + 1) % _bTotal; window.swGoBerita(_swBeritaCur); }, 4000);
-    if (_aTotal > 1) setInterval(function(){ _swAgendaCur = (_swAgendaCur + 1) % _aTotal; window.swGoAgenda(_swAgendaCur); }, 5000);
+    window.swGoBerita = function(n){ _bCur = n; _swGo('swBeritaTrack','swBeritaDots',n); };
+    window.swGoAgenda = function(n){ _aCur = n; _swGo('swAgendaTrack','swAgendaDots',n); };
+    var bTotal = <%= typeof beritaSidebar !== 'undefined' && beritaSidebar ? beritaSidebar.length : 0 %>;
+    var aTotal = <%= typeof agendaSidebar !== 'undefined' && agendaSidebar ? agendaSidebar.length : 0 %>;
+    if (bTotal > 1) setInterval(function(){ _bCur = (_bCur+1)%bTotal; window.swGoBerita(_bCur); }, 4000);
+    if (aTotal > 1) setInterval(function(){ _aCur = (_aCur+1)%aTotal; window.swGoAgenda(_aCur); }, 5000);
 })();
 </script>

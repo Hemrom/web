@@ -3,17 +3,6 @@
   // Widget ditumpuk ke bawah (tidak dalam row)
 %>
 
-<!-- Share -->
-<div class="sidebar-widget">
-    <div class="widget-title"><i class="fas fa-share-alt" style="color:#0ea5e9"></i> Bagikan <span>Halaman</span></div>
-    <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
-        <a href="https://wa.me/?text=<%= encodeURIComponent(typeof title !== 'undefined' ? title : 'Info Sekolah') %>%20<%= encodeURIComponent('https://smknegeri1kras.sch.id' + (typeof reqUrl !== 'undefined' ? reqUrl : '')) %>" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .9rem;border-radius:50px;font-size:.78rem;font-weight:700;text-decoration:none;background:#25D366;color:white;"><i class="fab fa-whatsapp"></i> WA</a>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent('https://smknegeri1kras.sch.id' + (typeof reqUrl !== 'undefined' ? reqUrl : '')) %>" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .9rem;border-radius:50px;font-size:.78rem;font-weight:700;text-decoration:none;background:#1877F2;color:white;"><i class="fab fa-facebook-f"></i> FB</a>
-        <a href="https://twitter.com/intent/tweet?text=<%= encodeURIComponent(typeof title !== 'undefined' ? title : 'Info Sekolah') %>&url=<%= encodeURIComponent('https://smknegeri1kras.sch.id' + (typeof reqUrl !== 'undefined' ? reqUrl : '')) %>" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .9rem;border-radius:50px;font-size:.78rem;font-weight:700;text-decoration:none;background:#000;color:white;"><span style="font-weight:900;">X</span></a>
-        <button onclick="navigator.clipboard.writeText(window.location.href).then(function(){alert('Link disalin!')})" style="display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .9rem;border-radius:50px;font-size:.78rem;font-weight:700;background:#f1f5f9;color:#475569;border:none;cursor:pointer;"><i class="fas fa-link"></i> Salin</button>
-    </div>
-</div>
-
 <!-- Slider Berita -->
 <% if (typeof beritaSidebar !== 'undefined' && beritaSidebar && beritaSidebar.length > 0) { %>
 <div class="sidebar-widget">
