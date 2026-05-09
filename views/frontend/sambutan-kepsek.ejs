@@ -107,6 +107,30 @@
             justify-content: center;
             background: linear-gradient(135deg, #ddd6fe 0%, #bfdbfe 100%);
         }
+
+        /* Sidebar */
+        .sidebar-widget { background: white; border-radius: 20px; padding: 1.5rem; box-shadow: 0 4px 20px rgba(14,165,233,.08); border: 1px solid #f1f5f9; margin-bottom: 1.5rem; }
+        .widget-title { font-size: 1.05rem; font-weight: 800; color: #1e293b; margin-bottom: 1.25rem; padding-bottom: .75rem; border-bottom: 2px solid #e0f2fe; display: flex; align-items: center; gap: .5rem; }
+        .widget-title span { color: #0ea5e9; }
+        .berita-slider-wrap { position: relative; overflow: hidden; border-radius: 14px; }
+        .berita-slider-track { display: flex; transition: transform .4s ease; }
+        .berita-slide { flex: 0 0 100%; position: relative; }
+        .berita-slide img { width: 100%; height: 180px; object-fit: cover; display: block; }
+        .berita-slide-placeholder { width: 100%; height: 180px; background: linear-gradient(135deg, #0ea5e9, #0369a1); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem; }
+        .berita-slide-caption { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,.75) 0%, transparent 100%); padding: 1rem .75rem .75rem; }
+        .berita-slide-caption a { color: white; font-size: .82rem; font-weight: 600; text-decoration: none; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .berita-slide-caption a:hover { color: #bfdbfe; }
+        .berita-slide-date { font-size: .72rem; color: rgba(255,255,255,.75); margin-top: .2rem; }
+        .slider-dots { display: flex; justify-content: center; gap: 6px; margin-top: .75rem; }
+        .slider-dot { width: 8px; height: 8px; border-radius: 50%; background: #e2e8f0; cursor: pointer; transition: all .2s; border: none; padding: 0; }
+        .slider-dot.active { background: #0ea5e9; transform: scale(1.3); }
+        .artikel-item { display: flex; gap: .75rem; padding: .75rem 0; border-bottom: 1px solid #f1f5f9; text-decoration: none; color: inherit; transition: all .2s; }
+        .artikel-item:last-child { border-bottom: none; }
+        .artikel-item:hover { color: #0ea5e9; }
+        .artikel-item img { width: 65px; height: 50px; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
+        .artikel-item-placeholder { width: 65px; height: 50px; border-radius: 8px; background: #e0f2fe; display: flex; align-items: center; justify-content: center; color: #0ea5e9; flex-shrink: 0; }
+        .artikel-item-title { font-size: .83rem; font-weight: 600; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .artikel-item-date { font-size: .73rem; color: #94a3b8; margin-top: .2rem; }
     </style>
 </head>
 <body>
@@ -127,7 +151,7 @@
             <div class="row g-5 align-items-start">
 
                 <!-- Kolom Teks (kiri) -->
-                <div class="col-lg-7">
+                <div class="col-lg-5">
                     <h2 class="sambutan-nama">
                         <%= kepsek && kepsek.judul ? kepsek.judul : 'Kepala Sekolah' %>
                     </h2>
@@ -147,17 +171,107 @@
                     </div>
                 </div>
 
-                <!-- Kolom Foto (kanan) -->
-                <div class="col-lg-5 d-flex justify-content-center justify-content-lg-end pt-3">
+                <!-- Kolom Foto (tengah) -->
+                <div class="col-lg-3 d-flex justify-content-center pt-3">
                     <div class="foto-frame">
                         <% if (kepsek && kepsek.foto) { %>
-                            <img src="/uploads/<%= kepsek.foto %>" class="foto-img" alt="<%= kepsek.judul || 'Kepala Sekolah' %>">
+                            <img src="/uploads/<%= kepsek.foto %>" class="foto-img" alt="<%= kepsek.judul || 'Kepala Sekolah' %>" loading="lazy">
                         <% } else { %>
                             <div class="foto-placeholder">
                                 <i class="fas fa-user-tie fa-5x" style="color:#1e3a5f;opacity:.4;"></i>
                             </div>
                         <% } %>
                     </div>
+                </div>
+
+                <!-- Sidebar (kanan) -->
+                <div class="col-lg-4">
+                    <!-- Slider Berita -->
+                    <% if (typeof beritaSidebar !== 'undefined' && beritaSidebar && beritaSidebar.length > 0) { %>
+                    <div class="sidebar-widget">
+                        <div class="widget-title"><i class="fas fa-newspaper" style="color:#0ea5e9"></i> Berita <span>Terbaru</span></div>
+                        <div class="berita-slider-wrap">
+                            <div class="berita-slider-track" id="beritaTrack">
+                                <% beritaSidebar.forEach(b => { %>
+                                <div class="berita-slide">
+                                    <% if (b.gambar) { %>
+                                    <img src="/uploads/<%= b.gambar %>" alt="<%= b.judul %>" loading="lazy">
+                                    <% } else { %>
+                                    <div class="berita-slide-placeholder"><i class="fas fa-newspaper"></i></div>
+                                    <% } %>
+                                    <div class="berita-slide-caption">
+                                        <a href="/berita/<%= b.slug %>"><%= b.judul %></a>
+                                        <div class="berita-slide-date"><i class="fas fa-calendar-alt me-1"></i><%= new Date(b.created_at).toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric'}) %></div>
+                                    </div>
+                                </div>
+                                <% }) %>
+                            </div>
+                            <div class="slider-dots" id="beritaDots">
+                                <% beritaSidebar.forEach((b, i) => { %>
+                                <button class="slider-dot <%= i === 0 ? 'active' : '' %>" onclick="goToBerita(<%= i %>)"></button>
+                                <% }) %>
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="/berita" style="font-size:.82rem;color:#0ea5e9;font-weight:700;text-decoration:none;">Lihat Semua Berita <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    <% } %>
+
+                    <!-- Slider Agenda -->
+                    <% if (typeof agendaSidebar !== 'undefined' && agendaSidebar && agendaSidebar.length > 0) { %>
+                    <div class="sidebar-widget">
+                        <div class="widget-title"><i class="fas fa-calendar-check" style="color:#0ea5e9"></i> Agenda <span>Lainnya</span></div>
+                        <div class="berita-slider-wrap">
+                            <div class="berita-slider-track" id="agendaTrack">
+                                <% agendaSidebar.forEach(a => { %>
+                                <div class="berita-slide">
+                                    <% if (a.gambar) { %>
+                                    <img src="/uploads/<%= a.gambar %>" alt="<%= a.judul %>" loading="lazy">
+                                    <% } else { %>
+                                    <div class="berita-slide-placeholder" style="background:linear-gradient(135deg,#f59e0b,#ef4444);"><i class="fas fa-calendar-alt"></i></div>
+                                    <% } %>
+                                    <div class="berita-slide-caption">
+                                        <a href="/agenda/<%= a.slug %>"><%= a.judul %></a>
+                                        <div class="berita-slide-date"><i class="fas fa-calendar-alt me-1"></i><%= a.tanggal_mulai ? a.tanggal_mulai.substring(0,10) : '' %></div>
+                                    </div>
+                                </div>
+                                <% }) %>
+                            </div>
+                            <div class="slider-dots" id="agendaDots">
+                                <% agendaSidebar.forEach((a, i) => { %>
+                                <button class="slider-dot <%= i === 0 ? 'active' : '' %>" onclick="goToAgenda(<%= i %>)"></button>
+                                <% }) %>
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="/agenda" style="font-size:.82rem;color:#0ea5e9;font-weight:700;text-decoration:none;">Lihat Semua Agenda <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    <% } %>
+
+                    <!-- Artikel -->
+                    <% if (typeof artikelSidebar !== 'undefined' && artikelSidebar && artikelSidebar.length > 0) { %>
+                    <div class="sidebar-widget">
+                        <div class="widget-title"><i class="fas fa-pen-nib" style="color:#0ea5e9"></i> Artikel <span>Sekolah</span></div>
+                        <% artikelSidebar.forEach(a => { %>
+                        <a href="/artikel/<%= a.slug %>" class="artikel-item">
+                            <% if (a.gambar) { %>
+                            <img src="/uploads/<%= a.gambar %>" alt="<%= a.judul %>" loading="lazy">
+                            <% } else { %>
+                            <div class="artikel-item-placeholder"><i class="fas fa-pen-nib"></i></div>
+                            <% } %>
+                            <div>
+                                <div class="artikel-item-title"><%= a.judul %></div>
+                                <div class="artikel-item-date"><i class="fas fa-calendar-alt me-1"></i><%= new Date(a.created_at).toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric'}) %></div>
+                            </div>
+                        </a>
+                        <% }) %>
+                        <div class="text-center mt-3">
+                            <a href="/artikel" style="font-size:.82rem;color:#0ea5e9;font-weight:700;text-decoration:none;">Lihat Semua Artikel <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    <% } %>
                 </div>
 
             </div>
@@ -174,6 +288,21 @@
             if($(window).scrollTop()>50) $('.navbar-modern').addClass('scrolled');
             else $('.navbar-modern').removeClass('scrolled');
         });
+
+        function makeSlider(trackId, dotsSelector, total, interval) {
+            let cur = 0;
+            function go(n) {
+                cur = n;
+                const t = document.getElementById(trackId);
+                if (t) t.style.transform = 'translateX(-' + (n * 100) + '%)';
+                document.querySelectorAll(dotsSelector).forEach((d, i) => d.classList.toggle('active', i === n));
+            }
+            if (total > 1) setInterval(() => go((cur + 1) % total), interval);
+            return go;
+        }
+
+        const goToBerita = makeSlider('beritaTrack', '#beritaDots .slider-dot', <%= typeof beritaSidebar !== 'undefined' ? beritaSidebar.length : 0 %>, 4000);
+        const goToAgenda = makeSlider('agendaTrack', '#agendaDots .slider-dot', <%= typeof agendaSidebar !== 'undefined' ? agendaSidebar.length : 0 %>, 5000);
     </script>
 </body>
 </html>
