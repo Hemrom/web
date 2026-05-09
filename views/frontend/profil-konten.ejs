@@ -116,9 +116,9 @@
 
     <section class="content-section">
         <div class="container">
-            <div class="row">
-                <!-- Konten utama - full width -->
-                <div class="col-lg-12">
+            <div class="row g-4 align-items-start">
+                <!-- Konten utama -->
+                <div class="col-lg-8">
                     <div class="content-card">
                         <% if (konten.tipe === 'sambutan') { %>
                         <!-- Layout sambutan modern: 2 kolom -->
@@ -274,9 +274,15 @@
                             </div>
                         <% } %>
                         <% } %>
-                    </div>
-                </div>
-            </div>
+                    </div><!-- end content-card -->
+                </div><!-- end col-lg-8 -->
+
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    <%- include('partials/sidebar-info') %>
+                </div><!-- end col-lg-4 -->
+
+            </div><!-- end row -->
         </div>
     </section>
 

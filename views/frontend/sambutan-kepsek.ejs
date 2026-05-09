@@ -187,93 +187,7 @@
                     </div>
 
                     <!-- Sidebar di bawah foto -->
-
-                    <!-- Slider Berita -->
-                    <% if (typeof beritaSidebar !== 'undefined' && beritaSidebar && beritaSidebar.length > 0) { %>
-                    <div class="sidebar-widget">
-                        <div class="widget-title"><i class="fas fa-newspaper" style="color:#0ea5e9"></i> Berita <span>Terbaru</span></div>
-                        <div class="berita-slider-wrap">
-                            <div class="berita-slider-track" id="beritaTrack">
-                                <% beritaSidebar.forEach(b => { %>
-                                <div class="berita-slide">
-                                    <% if (b.gambar) { %>
-                                    <img src="/uploads/<%= b.gambar %>" alt="<%= b.judul %>" loading="lazy">
-                                    <% } else { %>
-                                    <div class="berita-slide-placeholder"><i class="fas fa-newspaper"></i></div>
-                                    <% } %>
-                                    <div class="berita-slide-caption">
-                                        <a href="/berita/<%= b.slug %>"><%= b.judul %></a>
-                                        <div class="berita-slide-date"><i class="fas fa-calendar-alt me-1"></i><%= new Date(b.created_at).toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric'}) %></div>
-                                    </div>
-                                </div>
-                                <% }) %>
-                            </div>
-                            <div class="slider-dots" id="beritaDots">
-                                <% beritaSidebar.forEach((b, i) => { %>
-                                <button class="slider-dot <%= i === 0 ? 'active' : '' %>" onclick="goToBerita(<%= i %>)"></button>
-                                <% }) %>
-                            </div>
-                        </div>
-                        <div class="text-center mt-3">
-                            <a href="/berita" style="font-size:.82rem;color:#0ea5e9;font-weight:700;text-decoration:none;">Lihat Semua Berita <i class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </div>
-                    <% } %>
-
-                    <!-- Slider Agenda -->
-                    <% if (typeof agendaSidebar !== 'undefined' && agendaSidebar && agendaSidebar.length > 0) { %>
-                    <div class="sidebar-widget">
-                        <div class="widget-title"><i class="fas fa-calendar-check" style="color:#0ea5e9"></i> Agenda <span>Lainnya</span></div>
-                        <div class="berita-slider-wrap">
-                            <div class="berita-slider-track" id="agendaTrack">
-                                <% agendaSidebar.forEach(a => { %>
-                                <div class="berita-slide">
-                                    <% if (a.gambar) { %>
-                                    <img src="/uploads/<%= a.gambar %>" alt="<%= a.judul %>" loading="lazy">
-                                    <% } else { %>
-                                    <div class="berita-slide-placeholder" style="background:linear-gradient(135deg,#f59e0b,#ef4444);"><i class="fas fa-calendar-alt"></i></div>
-                                    <% } %>
-                                    <div class="berita-slide-caption">
-                                        <a href="/agenda/<%= a.slug %>"><%= a.judul %></a>
-                                        <div class="berita-slide-date"><i class="fas fa-calendar-alt me-1"></i><%= a.tanggal_mulai ? a.tanggal_mulai.substring(0,10) : '' %></div>
-                                    </div>
-                                </div>
-                                <% }) %>
-                            </div>
-                            <div class="slider-dots" id="agendaDots">
-                                <% agendaSidebar.forEach((a, i) => { %>
-                                <button class="slider-dot <%= i === 0 ? 'active' : '' %>" onclick="goToAgenda(<%= i %>)"></button>
-                                <% }) %>
-                            </div>
-                        </div>
-                        <div class="text-center mt-3">
-                            <a href="/agenda" style="font-size:.82rem;color:#0ea5e9;font-weight:700;text-decoration:none;">Lihat Semua Agenda <i class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </div>
-                    <% } %>
-
-                    <!-- Artikel -->
-                    <% if (typeof artikelSidebar !== 'undefined' && artikelSidebar && artikelSidebar.length > 0) { %>
-                    <div class="sidebar-widget">
-                        <div class="widget-title"><i class="fas fa-pen-nib" style="color:#0ea5e9"></i> Artikel <span>Sekolah</span></div>
-                        <% artikelSidebar.forEach(a => { %>
-                        <a href="/artikel/<%= a.slug %>" class="artikel-item">
-                            <% if (a.gambar) { %>
-                            <img src="/uploads/<%= a.gambar %>" alt="<%= a.judul %>" loading="lazy">
-                            <% } else { %>
-                            <div class="artikel-item-placeholder"><i class="fas fa-pen-nib"></i></div>
-                            <% } %>
-                            <div>
-                                <div class="artikel-item-title"><%= a.judul %></div>
-                                <div class="artikel-item-date"><i class="fas fa-calendar-alt me-1"></i><%= new Date(a.created_at).toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric'}) %></div>
-                            </div>
-                        </a>
-                        <% }) %>
-                        <div class="text-center mt-3">
-                            <a href="/artikel" style="font-size:.82rem;color:#0ea5e9;font-weight:700;text-decoration:none;">Lihat Semua Artikel <i class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </div>
-                    <% } %>
+                    <%- include('partials/sidebar-info') %>
                 </div>
 
             </div>
@@ -290,21 +204,6 @@
             if($(window).scrollTop()>50) $('.navbar-modern').addClass('scrolled');
             else $('.navbar-modern').removeClass('scrolled');
         });
-
-        function makeSlider(trackId, dotsSelector, total, interval) {
-            let cur = 0;
-            function go(n) {
-                cur = n;
-                const t = document.getElementById(trackId);
-                if (t) t.style.transform = 'translateX(-' + (n * 100) + '%)';
-                document.querySelectorAll(dotsSelector).forEach((d, i) => d.classList.toggle('active', i === n));
-            }
-            if (total > 1) setInterval(() => go((cur + 1) % total), interval);
-            return go;
-        }
-
-        const goToBerita = makeSlider('beritaTrack', '#beritaDots .slider-dot', <%= typeof beritaSidebar !== 'undefined' ? beritaSidebar.length : 0 %>, 4000);
-        const goToAgenda = makeSlider('agendaTrack', '#agendaDots .slider-dot', <%= typeof agendaSidebar !== 'undefined' ? agendaSidebar.length : 0 %>, 5000);
     </script>
 </body>
 </html>

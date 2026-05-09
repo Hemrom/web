@@ -123,12 +123,16 @@ exports.home = async (req, res) => {
 
 exports.profil = async (req, res) => {
   try {
-    const [profil, menuItems, mediaSosialFooter, relatedBerita] = await Promise.all([
-      getProfilSekolah(), getMenuItems(), getMediaSosialFooter(), getRelatedBerita()
+    const [profil, menuItems, mediaSosialFooter, relatedBerita, [beritaSidebar], [artikelSidebar], [agendaSidebar]] = await Promise.all([
+      getProfilSekolah(), getMenuItems(), getMediaSosialFooter(), getRelatedBerita(),
+      db.query("SELECT id, judul, slug, gambar, created_at FROM berita WHERE status='published' ORDER BY created_at DESC LIMIT 5"),
+      db.query("SELECT id, judul, slug, gambar, created_at FROM artikel WHERE status='published' ORDER BY created_at DESC LIMIT 4"),
+      db.query("SELECT id, judul, slug, gambar, tanggal_mulai FROM agenda WHERE status='aktif' ORDER BY tanggal_mulai ASC LIMIT 4")
     ]);
     res.render('frontend/profil', {
       title: 'Profil Sekolah', currentPage: 'profil',
-      profil, menuItems, mediaSosialFooter, relatedBerita
+      profil, menuItems, mediaSosialFooter, relatedBerita,
+      beritaSidebar, artikelSidebar, agendaSidebar, reqUrl: req.path
     });
   } catch (error) {
     console.error(error);
@@ -313,19 +317,25 @@ exports.mediaSosial = async (req, res) => {
 
 exports.visiMisi = async (req, res) => {
   try {
-    const [profil, konten, menuItems, mediaSosialFooter, relatedBerita] = await Promise.all([
-      getProfilSekolah(), getProfilKonten('visi_misi'), getMenuItems(), getMediaSosialFooter(), getRelatedBerita()
+    const [profil, konten, menuItems, mediaSosialFooter, relatedBerita, [beritaSidebar], [artikelSidebar], [agendaSidebar]] = await Promise.all([
+      getProfilSekolah(), getProfilKonten('visi_misi'), getMenuItems(), getMediaSosialFooter(), getRelatedBerita(),
+      db.query("SELECT id, judul, slug, gambar, created_at FROM berita WHERE status='published' ORDER BY created_at DESC LIMIT 5"),
+      db.query("SELECT id, judul, slug, gambar, created_at FROM artikel WHERE status='published' ORDER BY created_at DESC LIMIT 4"),
+      db.query("SELECT id, judul, slug, gambar, tanggal_mulai FROM agenda WHERE status='aktif' ORDER BY tanggal_mulai ASC LIMIT 4")
     ]);
-    res.render('frontend/profil-konten', { title: 'Visi & Misi', currentPage: 'profil', profil, konten, activeMenu: 'visi-misi', menuItems, mediaSosialFooter, relatedBerita });
+    res.render('frontend/profil-konten', { title: 'Visi & Misi', currentPage: 'profil', profil, konten, activeMenu: 'visi-misi', menuItems, mediaSosialFooter, relatedBerita, beritaSidebar, artikelSidebar, agendaSidebar, reqUrl: req.path });
   } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
 };
 
 exports.sejarah = async (req, res) => {
   try {
-    const [profil, konten, menuItems, mediaSosialFooter, relatedBerita] = await Promise.all([
-      getProfilSekolah(), getProfilKonten('sejarah'), getMenuItems(), getMediaSosialFooter(), getRelatedBerita()
+    const [profil, konten, menuItems, mediaSosialFooter, relatedBerita, [beritaSidebar], [artikelSidebar], [agendaSidebar]] = await Promise.all([
+      getProfilSekolah(), getProfilKonten('sejarah'), getMenuItems(), getMediaSosialFooter(), getRelatedBerita(),
+      db.query("SELECT id, judul, slug, gambar, created_at FROM berita WHERE status='published' ORDER BY created_at DESC LIMIT 5"),
+      db.query("SELECT id, judul, slug, gambar, created_at FROM artikel WHERE status='published' ORDER BY created_at DESC LIMIT 4"),
+      db.query("SELECT id, judul, slug, gambar, tanggal_mulai FROM agenda WHERE status='aktif' ORDER BY tanggal_mulai ASC LIMIT 4")
     ]);
-    res.render('frontend/profil-konten', { title: 'Sejarah Sekolah', currentPage: 'profil', profil, konten, activeMenu: 'sejarah', menuItems, mediaSosialFooter, relatedBerita });
+    res.render('frontend/profil-konten', { title: 'Sejarah Sekolah', currentPage: 'profil', profil, konten, activeMenu: 'sejarah', menuItems, mediaSosialFooter, relatedBerita, beritaSidebar, artikelSidebar, agendaSidebar, reqUrl: req.path });
   } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
 };
 
@@ -342,7 +352,7 @@ exports.sambutan = async (req, res) => {
     res.render('frontend/sambutan-kepsek', {
       title: 'Sambutan Kepala Sekolah', currentPage: 'profil',
       profil, kepsek: kepsekRows[0] || null, menuItems, mediaSosialFooter, relatedBerita,
-      beritaSidebar, artikelSidebar, agendaSidebar
+      beritaSidebar, artikelSidebar, agendaSidebar, reqUrl: req.path
     });
   } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
 };
@@ -360,7 +370,7 @@ exports.sambutanKepsek = async (req, res) => {
     res.render('frontend/sambutan-kepsek', {
       title: 'Sambutan Kepala Sekolah', currentPage: 'profil',
       profil, kepsek: kepsekRows[0] || null, menuItems, mediaSosialFooter, relatedBerita,
-      beritaSidebar, artikelSidebar, agendaSidebar
+      beritaSidebar, artikelSidebar, agendaSidebar, reqUrl: req.path
     });
   } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
 };
