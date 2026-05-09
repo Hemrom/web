@@ -27,8 +27,9 @@ exports.getMenuItems = getMenuItems;
 const getMediaSosialFooter = async () => {
   const cached = cache.get('media_sosial_footer');
   if (cached) return cached;
+  // Prioritaskan yang punya thumbnail (lebih visual), lalu urut ID DESC (terbaru)
   const [rows] = await db.query(
-    "SELECT id, judul, platform, embed_url, thumbnail FROM media_sosial WHERE status = 'aktif' ORDER BY updated_at DESC, created_at DESC"
+    "SELECT id, judul, platform, embed_url, thumbnail FROM media_sosial WHERE status = 'aktif' ORDER BY CASE WHEN thumbnail IS NOT NULL AND thumbnail != '' THEN 0 ELSE 1 END ASC, id DESC"
   );
   cache.set('media_sosial_footer', rows, 300);
   return rows;

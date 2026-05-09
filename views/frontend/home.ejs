@@ -2087,7 +2087,7 @@
                     <% mediaSosialFooter.forEach(function(ms) { %>
                     <a href="<%= ms.embed_url %>" target="_blank" rel="noopener" class="medsos-platform-btn" style="background:<%= platformColors[ms.platform]||'#333' %>;" title="<%= ms.judul %>">
                         <% if (ms.platform === 'twitter') { %>
-                        <span style="font-weight:900;font-size:1rem;line-height:1;font-family:Arial,sans-serif;">??</span>
+                        <span style="font-weight:900;font-size:1rem;line-height:1;font-family:Arial,sans-serif;color:white;">X</span>
                         <% } else if (ms.platform === 'threads') { %>
                         <span style="font-weight:900;font-size:1.1rem;line-height:1;font-family:Arial,sans-serif;">@</span>
                         <% } else { %>
@@ -2104,7 +2104,7 @@
                     <% const featured = mediaSosialFooter[0]; %>
                     <div class="medsos-featured">
                         <div class="medsos-featured-badge">
-                            <% if (featured.platform === 'twitter') { %><span style="font-weight:900;font-size:.9rem;font-family:Arial,sans-serif;margin-right:.3rem;">??</span>
+                            <% if (featured.platform === 'twitter') { %><span style="font-weight:900;font-size:.9rem;font-family:Arial,sans-serif;margin-right:.3rem;color:white;">X</span>
                             <% } else if (featured.platform === 'threads') { %><span style="font-weight:900;font-size:1rem;font-family:Arial,sans-serif;margin-right:.3rem;">@</span>
                             <% } else { %><i class="fab <%= platformIcons[featured.platform]||'fa-globe' %> me-1"></i><% } %>
                             <%= featured.platform === 'twitter' ? 'X/Twitter' : featured.platform.charAt(0).toUpperCase()+featured.platform.slice(1) %>
@@ -2201,7 +2201,7 @@
                         <a href="<%= ms.embed_url %>" target="_blank" rel="noopener" class="medsos-list-item">
                             <div class="medsos-list-icon" style="background:<%= platformColors[ms.platform]||'#333' %>;">
                                 <% if (ms.platform === 'twitter') { %>
-                                <span style="font-weight:900;font-size:1rem;color:white;font-family:Arial,sans-serif;">??</span>
+                                <span style="font-weight:900;font-size:1rem;color:white;font-family:Arial,sans-serif;">X</span>
                                 <% } else if (ms.platform === 'threads') { %>
                                 <span style="font-weight:900;font-size:1.2rem;color:white;font-family:Arial,sans-serif;">@</span>
                                 <% } else { %>
