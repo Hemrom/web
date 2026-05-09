@@ -118,7 +118,7 @@
         <div class="container">
             <div class="row g-4 align-items-start">
                 <!-- Konten utama -->
-                <div class="col-12">
+                <div class="col-lg-8">
                     <div class="content-card">
                         <% if (konten.tipe === 'sambutan') { %>
                         <!-- Layout sambutan modern: 2 kolom -->
@@ -287,10 +287,10 @@
 
                 </div><!-- end col-lg-8 -->
 
-                <!-- Sidebar -->
-                <div class="col-12">
-                    <%- include('partials/sidebar-info') %>
-                </div><!-- end col-12 -->
+                <!-- Sidebar Kanan -->
+                <div class="col-lg-4">
+                    <%- include('partials/sidebar-info-vertical') %>
+                </div>
 
             </div><!-- end row -->
         </div>
