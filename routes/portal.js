@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const ctrl = require('../controllers/portalController');
-const { isBKK, isOSIS, isJurusan, isPramuka, isOlahraga, isPaskibraka, isSeni, isBahasaAsing, isRohis, isPmr } = require('../middleware/authPortal');
+const { isBKK, isOSIS, isJurusan, isPramuka, isOlahraga, isPaskibraka, isSeni, isBahasaAsing, isRohis, isPmr, isPikr, isPecintaAlam } = require('../middleware/authPortal');
 const { loginLimiter, formLimiter } = require('../middleware/security');
 const { csrfProtect } = require('../middleware/csrf');
 const { validateIdParam } = require('../middleware/securityHardening');
@@ -183,6 +183,48 @@ router.post('/pmr/berita/create', isPmr, csrfProtect, ctrl.pmrBeritaCreate);
 router.get('/pmr/berita/edit/:id', isPmr, validateIdParam, ctrl.pmrBeritaEditPage);
 router.post('/pmr/berita/edit/:id', isPmr, csrfProtect, validateIdParam, ctrl.pmrBeritaUpdate);
 router.post('/pmr/berita/delete/:id', isPmr, csrfProtect, validateIdParam, ctrl.pmrBeritaDelete);
+
+// ── PIK-R Portal ──────────────────────────────────────────────────────────────
+router.get('/pikr/login', ctrl.portalLoginPage('pikr', 'Login Portal PIK-R'));
+router.post('/pikr/login', loginLimiter, csrfProtect, ctrl.portalLogin('pikr'));
+router.get('/pikr/logout', ctrl.portalLogout('pikr'));
+router.get('/pikr/dashboard', isPikr, ctrl.pikrDashboard);
+router.get('/pikr/create', isPikr, ctrl.pikrCreatePage);
+router.post('/pikr/create', isPikr, csrfProtect, ctrl.pikrCreate);
+router.get('/pikr/edit/:id', isPikr, validateIdParam, ctrl.pikrEditPage);
+router.post('/pikr/edit/:id', isPikr, csrfProtect, validateIdParam, ctrl.pikrUpdate);
+router.post('/pikr/delete/:id', isPikr, csrfProtect, validateIdParam, ctrl.pikrDelete);
+router.get('/pikr/galeri', isPikr, ctrl.pikrGaleriIndex);
+router.post('/pikr/galeri/upload', isPikr, ctrl.pikrGaleriCreate);
+router.post('/pikr/galeri/delete/:id', isPikr, csrfProtect, validateIdParam, ctrl.pikrGaleriDelete);
+// Berita PIK-R
+router.get('/pikr/berita', isPikr, ctrl.pikrBeritaIndex);
+router.get('/pikr/berita/create', isPikr, ctrl.pikrBeritaCreatePage);
+router.post('/pikr/berita/create', isPikr, csrfProtect, ctrl.pikrBeritaCreate);
+router.get('/pikr/berita/edit/:id', isPikr, validateIdParam, ctrl.pikrBeritaEditPage);
+router.post('/pikr/berita/edit/:id', isPikr, csrfProtect, validateIdParam, ctrl.pikrBeritaUpdate);
+router.post('/pikr/berita/delete/:id', isPikr, csrfProtect, validateIdParam, ctrl.pikrBeritaDelete);
+
+// ── Pecinta Alam Portal ───────────────────────────────────────────────────────
+router.get('/pecinta-alam/login', ctrl.portalLoginPage('pecinta_alam', 'Login Portal Pecinta Alam'));
+router.post('/pecinta-alam/login', loginLimiter, csrfProtect, ctrl.portalLogin('pecinta_alam'));
+router.get('/pecinta-alam/logout', ctrl.portalLogout('pecinta_alam'));
+router.get('/pecinta-alam/dashboard', isPecintaAlam, ctrl.pecintaAlamDashboard);
+router.get('/pecinta-alam/create', isPecintaAlam, ctrl.pecintaAlamCreatePage);
+router.post('/pecinta-alam/create', isPecintaAlam, csrfProtect, ctrl.pecintaAlamCreate);
+router.get('/pecinta-alam/edit/:id', isPecintaAlam, validateIdParam, ctrl.pecintaAlamEditPage);
+router.post('/pecinta-alam/edit/:id', isPecintaAlam, csrfProtect, validateIdParam, ctrl.pecintaAlamUpdate);
+router.post('/pecinta-alam/delete/:id', isPecintaAlam, csrfProtect, validateIdParam, ctrl.pecintaAlamDelete);
+router.get('/pecinta-alam/galeri', isPecintaAlam, ctrl.pecintaAlamGaleriIndex);
+router.post('/pecinta-alam/galeri/upload', isPecintaAlam, ctrl.pecintaAlamGaleriCreate);
+router.post('/pecinta-alam/galeri/delete/:id', isPecintaAlam, csrfProtect, validateIdParam, ctrl.pecintaAlamGaleriDelete);
+// Berita Pecinta Alam
+router.get('/pecinta-alam/berita', isPecintaAlam, ctrl.pecintaAlamBeritaIndex);
+router.get('/pecinta-alam/berita/create', isPecintaAlam, ctrl.pecintaAlamBeritaCreatePage);
+router.post('/pecinta-alam/berita/create', isPecintaAlam, csrfProtect, ctrl.pecintaAlamBeritaCreate);
+router.get('/pecinta-alam/berita/edit/:id', isPecintaAlam, validateIdParam, ctrl.pecintaAlamBeritaEditPage);
+router.post('/pecinta-alam/berita/edit/:id', isPecintaAlam, csrfProtect, validateIdParam, ctrl.pecintaAlamBeritaUpdate);
+router.post('/pecinta-alam/berita/delete/:id', isPecintaAlam, csrfProtect, validateIdParam, ctrl.pecintaAlamBeritaDelete);
 
 // ── Jurusan Portal ────────────────────────────────────────────────────────────
 router.get('/jurusan-portal/login', ctrl.portalLoginPage('jurusan', 'Login Portal Jurusan'));

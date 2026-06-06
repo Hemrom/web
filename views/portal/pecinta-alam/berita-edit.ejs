@@ -1,0 +1,44 @@
+<%- include('../_portal_header', {portalColor:'warning', portalLabel:'Pecinta Alam', dashUrl:'/pecinta-alam/dashboard', logoutUrl:'/pecinta-alam/logout', portalStyle:'background:linear-gradient(180deg,#451a03,#78350f)!important'}) %>
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Edit Berita Pecinta Alam</h1>
+    <a href="/pecinta-alam/berita" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left fa-sm"></i> Kembali</a>
+</div>
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <form method="POST" action="/pecinta-alam/berita/edit/<%= item.id %>" enctype="multipart/form-data">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="form-group"><label>Judul *</label><input type="text" class="form-control" name="judul" value="<%= item.judul %>" required></div>
+                    <div class="form-group"><label>Konten</label><textarea class="form-control" name="konten" id="editor" rows="10"><%- item.konten||'' %></textarea></div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group"><label>Kategori</label>
+                        <select class="form-control" name="kategori">
+                            <option value="berita" <%= item.kategori==='berita'?'selected':'' %>>Berita</option>
+                            <option value="pengumuman" <%= item.kategori==='pengumuman'?'selected':'' %>>Pengumuman</option>
+                            <option value="kegiatan" <%= item.kategori==='kegiatan'?'selected':'' %>>Kegiatan</option>
+                            <option value="pendakian" <%= item.kategori==='pendakian'?'selected':'' %>>Pendakian</option>
+                            <option value="lainnya" <%= item.kategori==='lainnya'?'selected':'' %>>Lainnya</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Status</label>
+                        <select class="form-control" name="status">
+                            <option value="published" <%= item.status==='published'?'selected':'' %>>Published</option>
+                            <option value="draft" <%= item.status==='draft'?'selected':'' %>>Draft</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Gambar</label>
+                        <% if (item.gambar) { %><div class="mb-2"><img src="/uploads/<%= item.gambar %>" style="max-width:150px;border-radius:8px;"></div><% } %>
+                        <input type="file" class="form-control-file" name="gambar" accept=".jpg,.jpeg,.png,.webp">
+                        <small class="text-muted">Kosongkan jika tidak ingin mengubah</small>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn" style="background:#78350f;color:white;"><i class="fas fa-save mr-1"></i>Simpan</button>
+            <a href="/pecinta-alam/berita" class="btn btn-secondary ml-2">Batal</a>
+        </form>
+    </div>
+</div>
+<%- include('../_portal_footer', {portalLabel:'Pecinta Alam'}) %>

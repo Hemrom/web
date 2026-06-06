@@ -19,5 +19,10 @@ const isJurusan = (req, res, next) => {
 };
 const isRohis = isPortalAuth('rohis');
 const isPmr = isPortalAuth('pmr');
+const isPikr = isPortalAuth('pikr');
+const isPecintaAlam = (req, res, next) => {
+  if (req.session && req.session.portalId && req.session.portalRole === 'pecinta_alam') return next();
+  res.redirect('/pecinta-alam/login');
+};
 
-module.exports = { isBKK, isOSIS, isJurusan, isPramuka, isOlahraga, isPaskibraka, isSeni, isBahasaAsing, isRohis, isPmr };
+module.exports = { isBKK, isOSIS, isJurusan, isPramuka, isOlahraga, isPaskibraka, isSeni, isBahasaAsing, isRohis, isPmr, isPikr, isPecintaAlam };

@@ -21,7 +21,7 @@
 </head>
 <body id="page-top">
 <div id="wrapper">
-    <ul class="navbar-nav bg-gradient-<%= portalColor %> sidebar sidebar-dark accordion" id="accordionSidebar">
+    <ul class="navbar-nav bg-gradient-<%= portalColor %> sidebar sidebar-dark accordion" id="accordionSidebar"<% if (typeof portalStyle !== 'undefined' && portalStyle) { %> style="<%= portalStyle %>"<% } %>>
         <a class="sidebar-brand d-flex align-items-center justify-content-center" href="<%= dashUrl %>">
             <div class="sidebar-brand-icon"><img src="/uploads/logo-sekolah.png" style="width:36px;height:36px;object-fit:contain;border-radius:6px;" onerror="this.style.display='none'"></div>
             <div class="sidebar-brand-text mx-3">Portal <%= portalLabel %></div>
@@ -61,6 +61,14 @@
         <li class="nav-item"><a class="nav-link" href="<%= dashUrl %>"><i class="fas fa-fw fa-first-aid"></i><span>Dashboard (Kegiatan)</span></a></li>
         <li class="nav-item"><a class="nav-link" href="/pmr/berita"><i class="fas fa-fw fa-newspaper"></i><span>Berita & Informasi</span></a></li>
         <li class="nav-item"><a class="nav-link" href="/pmr/galeri"><i class="fas fa-fw fa-images"></i><span>Galeri PMR</span></a></li>
+        <% } else if (portalLabel === 'PIK-R') { %>
+        <li class="nav-item"><a class="nav-link" href="<%= dashUrl %>"><i class="fas fa-fw fa-heart"></i><span>Dashboard (Kegiatan)</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/pikr/berita"><i class="fas fa-fw fa-newspaper"></i><span>Berita & Informasi</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/pikr/galeri"><i class="fas fa-fw fa-images"></i><span>Galeri PIK-R</span></a></li>
+        <% } else if (portalLabel === 'Pecinta Alam') { %>
+        <li class="nav-item"><a class="nav-link" href="<%= dashUrl %>"><i class="fas fa-fw fa-mountain"></i><span>Dashboard (Kegiatan)</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/pecinta-alam/berita"><i class="fas fa-fw fa-newspaper"></i><span>Berita & Informasi</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/pecinta-alam/galeri"><i class="fas fa-fw fa-images"></i><span>Galeri Pecinta Alam</span></a></li>
         <% } else { %>        <li class="nav-item"><a class="nav-link" href="<%= dashUrl %>"><i class="fas fa-fw fa-tachometer-alt"></i><span>Dashboard (Prestasi)</span></a></li>
         <li class="nav-item"><a class="nav-link" href="/jurusan-portal/halaman"><i class="fas fa-fw fa-edit"></i><span>Edit Halaman Jurusan</span></a></li>
         <li class="nav-item"><a class="nav-link" href="/jurusan-portal/berita"><i class="fas fa-fw fa-newspaper"></i><span>Berita & Informasi</span></a></li>
