@@ -49,7 +49,7 @@
                                         <div class="form-group">
                                             <label for="gambar">Gambar Slider *</label>
                                             <input type="file" class="form-control-file" id="gambar" name="gambar" accept="image/*" required>
-                                            <small class="form-text text-muted">Format: JPG, PNG, GIF. Ukuran maksimal: 2MB. Resolusi yang disarankan: 1920x1080px</small>
+                                            <small class="form-text text-muted">Format: JPG/PNG. Maks 2MB. <strong class="text-danger">Wajib rasio 16:9</strong> — gunakan <strong>1920x1080px</strong>, <strong>1600x900px</strong>, atau <strong>1280x720px</strong></small>
                                         </div>
                                         
                                         <div class="form-group">
@@ -89,13 +89,22 @@
                                     <h6 class="m-0 font-weight-bold text-primary">Panduan</h6>
                                 </div>
                                 <div class="card-body">
-                                    <h6>Tips Membuat Slider:</h6>
+                                    <div class="alert alert-warning py-2 px-3 mb-3">
+                                        <i class="fas fa-exclamation-triangle mr-1"></i>
+                                        <strong>Ukuran Gambar yang Benar:</strong><br>
+                                        Gambar <strong>wajib rasio 16:9</strong> agar tampil penuh tanpa terpotong dan tanpa ruang kosong.<br>
+                                        <span class="badge badge-success mt-1">✓ 1920 x 1080 px</span>
+                                        <span class="badge badge-success mt-1">✓ 1600 x 900 px</span>
+                                        <span class="badge badge-success mt-1">✓ 1280 x 720 px</span><br>
+                                        <small class="text-danger mt-1 d-block">✗ Ukuran lain (misal 1:1 atau 4:3) akan tampil terpotong atau ada ruang hitam.</small>
+                                    </div>
+                                    <h6>Tips Lainnya:</h6>
                                     <ul class="small">
-                                        <li>Gunakan gambar dengan resolusi tinggi (1920x1080px)</li>
-                                        <li>Pastikan teks pada gambar mudah dibaca</li>
+                                        <li>Simpan gambar dalam format <strong>JPG</strong> untuk ukuran file lebih kecil</li>
+                                        <li>Pastikan konten penting (teks/logo) tidak terlalu di pinggir gambar</li>
                                         <li>Judul sebaiknya singkat dan menarik</li>
                                         <li>Deskripsi maksimal 2-3 kalimat</li>
-                                        <li>Atur urutan sesuai prioritas</li>
+                                        <li>Atur urutan: angka kecil = tampil lebih awal</li>
                                     </ul>
                                 </div>
                             </div>

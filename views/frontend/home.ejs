@@ -136,10 +136,21 @@
         .hero-slider {
             position: relative;
             width: 100%;
-            /* Rasio 16:9 — cocok untuk gambar 1920x1080, 1600x900 */
-            aspect-ratio: 16 / 9;
-            max-height: 85vh;
-            min-height: 320px;
+            /* Pakai padding-bottom untuk menjaga rasio 16:9 tanpa letterbox */
+            /* Rumus: (tinggi / lebar) x 100 = (9/16) x 100 = 56.25% */
+            padding-bottom: 56.25%;
+            height: 0;
+            min-height: 300px;
+        }
+        /* Kompensasi navbar 80px — geser container ke atas sedikit */
+        @supports (aspect-ratio: 16/9) {
+            .hero-slider {
+                padding-bottom: 0;
+                height: auto;
+                aspect-ratio: 16 / 9;
+                max-height: calc(100vw * 9 / 16);
+                min-height: 300px;
+            }
         }
         .hero-slide {
             position: absolute;
@@ -149,10 +160,9 @@
             height: 100%;
             opacity: 0;
             transition: opacity 1s ease-in-out;
-            background-size: contain;
+            background-size: cover;
             background-repeat: no-repeat;
             background-position: center center;
-            background-color: #000;
             display: flex;
             align-items: center;
         }
@@ -1026,17 +1036,9 @@
             .hero-title { font-size: 2rem; }
             .hero-subtitle { font-size: 1rem; }
             .section-title { font-size: 1.8rem; }
-            /* Di mobile, slider lebih pendek agar tidak terlalu besar */
-            .hero-slider {
-                aspect-ratio: 4 / 3;
-                max-height: 70vw;
-            }
         }
         @media (max-width: 480px) {
-            .hero-slider {
-                aspect-ratio: 3 / 2;
-                max-height: 75vw;
-            }
+            .hero-title { font-size: 1.5rem; }
         }
 
         /* -- Media Sosial Section -- */
