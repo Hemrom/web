@@ -559,24 +559,23 @@ async function run() {
   }
   console.log(`  Tabel: ${ok} OK, ${skip} skip`);
 
-  // Menu navigasi - tambah jika belum ada
+  // Menu navigasi - seed HANYA jika tabel kosong (install baru)
+  // JANGAN tambah per-url karena akan mengembalikan menu yang sudah dihapus admin
   const menus = [
     { label: 'Beranda',          url: '/',          urutan: 1 },
     { label: 'Profil',           url: '/profil',    urutan: 2 },
     { label: 'Berita',           url: '/berita',    urutan: 3 },
     { label: 'Program Keahlian', url: '/jurusan',   urutan: 4 },
-    { label: 'Prestasi',         url: '/prestasi',  urutan: 5 },
-    { label: 'BKK',              url: '/bkk',       urutan: 6 },
-    { label: 'OSIS',             url: '/osis',      urutan: 7 },
-    { label: 'Galeri',           url: '/galeri',    urutan: 8 },
-    { label: 'Kontak',           url: '/kontak',    urutan: 9 },
+    { label: 'Galeri',           url: '/galeri',    urutan: 5 },
+    { label: 'Kontak',           url: '/kontak',    urutan: 6 },
   ];
 
   let menuAdded = 0;
-  for (const m of menus) {
-    try {
-      const [ex] = await db.query('SELECT id FROM menu_navigasi WHERE url=? LIMIT 1', [m.url]);
-      if (!ex.length) {
+  try {
+    const [total] = await db.query('SELECT COUNT(*) as c FROM menu_navigasi');
+    if (total[0].c === 0) {
+      // Hanya seed jika tabel benar-benar kosong (install baru)
+      for (const m of menus) {
         await db.query(
           'INSERT INTO menu_navigasi (label,url,urutan,status) VALUES (?,?,?,?)',
           [m.label, m.url, m.urutan, 'aktif']
@@ -584,12 +583,13 @@ async function run() {
         menuAdded++;
         console.log('  + Menu:', m.label);
       }
-    } catch (e) {
-      console.log('  Menu skip:', e.message.substring(0, 60));
+      console.log(`  Menu: ${menuAdded} ditambahkan (install baru)`);
+    } else {
+      console.log('  Menu: tidak diubah (kelola via Admin > Kontrol Website > Tab Menu)');
     }
+  } catch (e) {
+    console.log('  Menu skip:', e.message.substring(0, 60));
   }
-  if (menuAdded === 0) console.log('  Menu: semua sudah ada');
-  else console.log(`  Menu: ${menuAdded} ditambahkan`);
 
   console.log('  Migrasi selesai!');
   process.exit(0);
