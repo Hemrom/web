@@ -132,11 +132,14 @@
             position: relative;
             overflow: hidden;
             padding-top: 80px;
-            min-height: 100vh;
         }
         .hero-slider {
             position: relative;
-            height: 100vh;
+            width: 100%;
+            /* Rasio 16:9 — cocok untuk gambar 1920x1080, 1600x900 */
+            aspect-ratio: 16 / 9;
+            max-height: 85vh;
+            min-height: 320px;
         }
         .hero-slide {
             position: absolute;
@@ -146,8 +149,10 @@
             height: 100%;
             opacity: 0;
             transition: opacity 1s ease-in-out;
-            background-size: cover;
-            background-position: center;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-color: #000;
             display: flex;
             align-items: center;
         }
@@ -1021,6 +1026,17 @@
             .hero-title { font-size: 2rem; }
             .hero-subtitle { font-size: 1rem; }
             .section-title { font-size: 1.8rem; }
+            /* Di mobile, slider lebih pendek agar tidak terlalu besar */
+            .hero-slider {
+                aspect-ratio: 4 / 3;
+                max-height: 70vw;
+            }
+        }
+        @media (max-width: 480px) {
+            .hero-slider {
+                aspect-ratio: 3 / 2;
+                max-height: 75vw;
+            }
         }
 
         /* -- Media Sosial Section -- */
