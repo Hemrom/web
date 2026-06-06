@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const ctrl = require('../controllers/portalController');
-const { isBKK, isOSIS, isJurusan, isPramuka, isOlahraga, isPaskibraka, isSeni, isBahasaAsing, isRohis, isPmr, isPikr, isPecintaAlam } = require('../middleware/authPortal');
+const { isBKK, isOSIS, isJurusan, isPramuka, isOlahraga, isPaskibraka, isSeni, isBahasaAsing, isRohis, isPmr, isPikr, isPecintaAlam, isPencakSilat } = require('../middleware/authPortal');
 const { loginLimiter, formLimiter } = require('../middleware/security');
 const { csrfProtect } = require('../middleware/csrf');
 const { validateIdParam } = require('../middleware/securityHardening');
@@ -225,6 +225,27 @@ router.post('/pecinta-alam/berita/create', isPecintaAlam, csrfProtect, ctrl.peci
 router.get('/pecinta-alam/berita/edit/:id', isPecintaAlam, validateIdParam, ctrl.pecintaAlamBeritaEditPage);
 router.post('/pecinta-alam/berita/edit/:id', isPecintaAlam, csrfProtect, validateIdParam, ctrl.pecintaAlamBeritaUpdate);
 router.post('/pecinta-alam/berita/delete/:id', isPecintaAlam, csrfProtect, validateIdParam, ctrl.pecintaAlamBeritaDelete);
+
+// ── Pencak Silat Portal ───────────────────────────────────────────────────────
+router.get('/pencak-silat/login', ctrl.portalLoginPage('pencak_silat', 'Login Portal Pencak Silat'));
+router.post('/pencak-silat/login', loginLimiter, csrfProtect, ctrl.portalLogin('pencak_silat'));
+router.get('/pencak-silat/logout', ctrl.portalLogout('pencak_silat'));
+router.get('/pencak-silat/dashboard', isPencakSilat, ctrl.pencakSilatDashboard);
+router.get('/pencak-silat/create', isPencakSilat, ctrl.pencakSilatCreatePage);
+router.post('/pencak-silat/create', isPencakSilat, csrfProtect, ctrl.pencakSilatCreate);
+router.get('/pencak-silat/edit/:id', isPencakSilat, validateIdParam, ctrl.pencakSilatEditPage);
+router.post('/pencak-silat/edit/:id', isPencakSilat, csrfProtect, validateIdParam, ctrl.pencakSilatUpdate);
+router.post('/pencak-silat/delete/:id', isPencakSilat, csrfProtect, validateIdParam, ctrl.pencakSilatDelete);
+router.get('/pencak-silat/galeri', isPencakSilat, ctrl.pencakSilatGaleriIndex);
+router.post('/pencak-silat/galeri/upload', isPencakSilat, ctrl.pencakSilatGaleriCreate);
+router.post('/pencak-silat/galeri/delete/:id', isPencakSilat, csrfProtect, validateIdParam, ctrl.pencakSilatGaleriDelete);
+// Berita Pencak Silat
+router.get('/pencak-silat/berita', isPencakSilat, ctrl.pencakSilatBeritaIndex);
+router.get('/pencak-silat/berita/create', isPencakSilat, ctrl.pencakSilatBeritaCreatePage);
+router.post('/pencak-silat/berita/create', isPencakSilat, csrfProtect, ctrl.pencakSilatBeritaCreate);
+router.get('/pencak-silat/berita/edit/:id', isPencakSilat, validateIdParam, ctrl.pencakSilatBeritaEditPage);
+router.post('/pencak-silat/berita/edit/:id', isPencakSilat, csrfProtect, validateIdParam, ctrl.pencakSilatBeritaUpdate);
+router.post('/pencak-silat/berita/delete/:id', isPencakSilat, csrfProtect, validateIdParam, ctrl.pencakSilatBeritaDelete);
 
 // ── Jurusan Portal ────────────────────────────────────────────────────────────
 router.get('/jurusan-portal/login', ctrl.portalLoginPage('jurusan', 'Login Portal Jurusan'));

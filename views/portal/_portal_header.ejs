@@ -69,6 +69,10 @@
         <li class="nav-item"><a class="nav-link" href="<%= dashUrl %>"><i class="fas fa-fw fa-mountain"></i><span>Dashboard (Kegiatan)</span></a></li>
         <li class="nav-item"><a class="nav-link" href="/pecinta-alam/berita"><i class="fas fa-fw fa-newspaper"></i><span>Berita & Informasi</span></a></li>
         <li class="nav-item"><a class="nav-link" href="/pecinta-alam/galeri"><i class="fas fa-fw fa-images"></i><span>Galeri Pecinta Alam</span></a></li>
+        <% } else if (portalLabel === 'Pencak Silat') { %>
+        <li class="nav-item"><a class="nav-link" href="<%= dashUrl %>"><i class="fas fa-fw fa-fist-raised"></i><span>Dashboard (Kegiatan)</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/pencak-silat/berita"><i class="fas fa-fw fa-newspaper"></i><span>Berita & Informasi</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/pencak-silat/galeri"><i class="fas fa-fw fa-images"></i><span>Galeri Pencak Silat</span></a></li>
         <% } else { %>        <li class="nav-item"><a class="nav-link" href="<%= dashUrl %>"><i class="fas fa-fw fa-tachometer-alt"></i><span>Dashboard (Prestasi)</span></a></li>
         <li class="nav-item"><a class="nav-link" href="/jurusan-portal/halaman"><i class="fas fa-fw fa-edit"></i><span>Edit Halaman Jurusan</span></a></li>
         <li class="nav-item"><a class="nav-link" href="/jurusan-portal/berita"><i class="fas fa-fw fa-newspaper"></i><span>Berita & Informasi</span></a></li>

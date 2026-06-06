@@ -21,6 +21,7 @@
         .role-pmr { background:#fee2e2;color:#b91c1c; }
         .role-pikr { background:#ede9fe;color:#5b21b6; }
         .role-pecinta_alam { background:#fef3c7;color:#78350f; }
+        .role-pencak_silat { background:#fee2e2;color:#7f1d1d; }
         .action-btn { width:32px;height:32px;border-radius:8px;border:none;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s; }
         .action-btn:hover { transform:translateY(-1px);box-shadow:0 4px 10px rgba(0,0,0,.15); }
         .import-zone { border:2px dashed #cbd5e1;border-radius:12px;padding:1.5rem;text-align:center;transition:border-color .2s;cursor:pointer; }
@@ -80,6 +81,7 @@
                                             <option value="pmr">PMR</option>
                                             <option value="pikr">PIK-R</option>
                                             <option value="pecinta_alam">Pecinta Alam</option>
+                                            <option value="pencak_silat">Pencak Silat</option>
                                             <option value="jurusan">Jurusan</option>
                                         </select>
                                     </div>
@@ -110,6 +112,7 @@
                                 <div class="small mb-1"><span class="badge badge-danger mr-1" style="background:#b91c1c;">PMR</span><code>/pmr/login</code></div>
                                 <div class="small mb-1"><span class="badge mr-1" style="background:#7c3aed;color:white;">PIK-R</span><code>/pikr/login</code></div>
                                 <div class="small mb-1"><span class="badge mr-1" style="background:#78350f;color:white;">Pecinta Alam</span><code>/pecinta-alam/login</code></div>
+                                <div class="small mb-1"><span class="badge mr-1" style="background:#b91c1c;color:white;">Pencak Silat</span><code>/pencak-silat/login</code></div>
                                 <div class="small"><span class="badge badge-info mr-1">Jurusan</span><code>/jurusan-portal/login</code></div>
                             </div>
                         </div>
@@ -140,10 +143,10 @@
                                                   olahraga:'Olahraga', paskibraka:'Paskibraka',
                                                   seni:'Seni', bahasa_asing:'Bahasa Asing',
                                                   rohis:'ROHIS', pmr:'PMR', pikr:'PIK-R',
-                                                  pecinta_alam:'Pecinta Alam', jurusan:'Jurusan'
+                                                  pecinta_alam:'Pecinta Alam', pencak_silat:'Pencak Silat', jurusan:'Jurusan'
                                                 };
                                               %><%= roleLabel[u.role] || u.role.toUpperCase() %></span></td>
-                                            <td><small class="text-muted"><%= (u.role === 'bkk' || u.role === 'osis' || u.role === 'pramuka' || u.role === 'olahraga' || u.role === 'paskibraka' || u.role === 'seni' || u.role === 'bahasa_asing' || u.role === 'rohis' || u.role === 'pmr' || u.role === 'pikr' || u.role === 'pecinta_alam') ? '' : (u.jurusan||'-') %></small></td>
+                                            <td><small class="text-muted"><%= (u.role === 'bkk' || u.role === 'osis' || u.role === 'pramuka' || u.role === 'olahraga' || u.role === 'paskibraka' || u.role === 'seni' || u.role === 'bahasa_asing' || u.role === 'rohis' || u.role === 'pmr' || u.role === 'pikr' || u.role === 'pecinta_alam' || u.role === 'pencak_silat') ? '' : (u.jurusan||'-') %></small></td>
                                             <td><span class="badge badge-<%= u.aktif?'success':'secondary' %> px-2 py-1"><%= u.aktif?'Aktif':'Nonaktif' %></span></td>
                                             <td class="text-center">
                                                 <!-- Edit -->
@@ -198,7 +201,7 @@
                     <div class="form-group"><label class="font-weight-bold small">Password Baru <span class="text-muted font-weight-normal">(kosongkan jika tidak diubah)</span></label><input type="password" class="form-control" name="password" placeholder="Minimal 6 karakter" minlength="6"></div>
                     <div class="form-group"><label class="font-weight-bold small">Role</label>
                         <select class="form-control" name="role" id="edit_role" onchange="toggleJurusan('edit_jurusanField','edit_role')">
-                            <option value="bkk">BKK</option><option value="osis">OSIS</option><option value="pramuka">Pramuka</option><option value="olahraga">Olahraga</option><option value="paskibraka">Paskibraka</option><option value="seni">Seni</option><option value="bahasa_asing">Bahasa Asing</option><option value="rohis">ROHIS</option><option value="pmr">PMR</option><option value="pikr">PIK-R</option><option value="pecinta_alam">Pecinta Alam</option><option value="jurusan">Jurusan</option>
+                            <option value="bkk">BKK</option><option value="osis">OSIS</option><option value="pramuka">Pramuka</option><option value="olahraga">Olahraga</option><option value="paskibraka">Paskibraka</option><option value="seni">Seni</option><option value="bahasa_asing">Bahasa Asing</option><option value="rohis">ROHIS</option><option value="pmr">PMR</option><option value="pikr">PIK-R</option><option value="pecinta_alam">Pecinta Alam</option><option value="pencak_silat">Pencak Silat</option><option value="jurusan">Jurusan</option>
                         </select>
                     </div>
                     <div class="form-group" id="edit_jurusanField">

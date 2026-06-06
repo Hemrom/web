@@ -81,6 +81,11 @@ router.get('/pecinta-alam', portalController.pecintaAlamIndex);
 router.get('/pecinta-alam/berita/:slug', validateSlugParam, portalController.pecintaAlamBeritaDetail);
 router.get('/pecinta-alam/:slug', validateSlugParam, portalController.pecintaAlamDetail);
 
+// Pencak Silat
+router.get('/pencak-silat', portalController.pencakSilatIndex);
+router.get('/pencak-silat/berita/:slug', validateSlugParam, portalController.pencakSilatBeritaDetail);
+router.get('/pencak-silat/:slug', validateSlugParam, portalController.pencakSilatDetail);
+
 // Fasilitas
 router.get('/fasilitas', portalController.fasilitasIndex);
 
@@ -114,7 +119,7 @@ router.get('/ekstrakurikuler', portalController.ekstrakurikulerIndex);
 // SEO
 router.get('/robots.txt', (req, res) => {
   res.type('text/plain');
-  res.send(`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /guru\nDisallow: /bkk\nDisallow: /osis\nDisallow: /pramuka\nDisallow: /olahraga\nDisallow: /paskibraka\nDisallow: /seni\nDisallow: /bahasa-asing\nDisallow: /rohis\nDisallow: /pmr\nDisallow: /pikr\nDisallow: /pecinta-alam\nDisallow: /jurusan-portal\nSitemap: https://smknegeri1kras.sch.id/sitemap.xml`);
+  res.send(`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /guru\nDisallow: /bkk\nDisallow: /osis\nDisallow: /pramuka\nDisallow: /olahraga\nDisallow: /paskibraka\nDisallow: /seni\nDisallow: /bahasa-asing\nDisallow: /rohis\nDisallow: /pmr\nDisallow: /pikr\nDisallow: /pecinta-alam\nDisallow: /pencak-silat\nDisallow: /jurusan-portal\nSitemap: https://smknegeri1kras.sch.id/sitemap.xml`);
 });
 
 router.get('/sitemap.xml', async (req, res) => {
@@ -130,7 +135,7 @@ router.get('/sitemap.xml', async (req, res) => {
       db.query("SELECT slug FROM halaman WHERE status='aktif'"),
     ]);
 
-    const staticPages = ['', '/berita', '/galeri', '/guru', '/kontak', '/profil', '/prestasi', '/bkk', '/osis', '/pramuka', '/olahraga', '/paskibraka', '/seni', '/bahasa-asing', '/rohis', '/pmr', '/pikr', '/pecinta-alam', '/fasilitas', '/ekstrakurikuler'];
+    const staticPages = ['', '/berita', '/galeri', '/guru', '/kontak', '/profil', '/prestasi', '/bkk', '/osis', '/pramuka', '/olahraga', '/paskibraka', '/seni', '/bahasa-asing', '/rohis', '/pmr', '/pikr', '/pecinta-alam', '/pencak-silat', '/fasilitas', '/ekstrakurikuler'];
 
     let urls = staticPages.map(p => `
   <url><loc>${baseUrl}${p}</loc><lastmod>${now}</lastmod><changefreq>weekly</changefreq><priority>${p === '' ? '1.0' : '0.8'}</priority></url>`).join('');

@@ -36,7 +36,7 @@ exports.ekstrakurikulerIndex = async (req, res) => {
     // Ambil foto pertama dari galeri masing-masing ekskul otomatis
     const [[osisGaleri], [pramukaGaleri], [pmrGaleri], [paskibrakaGaleri],
            [olahragaGaleri], [seniGaleri], [bahasaGaleri], [rohisGaleri],
-           [pikrGaleri], [pecintaAlamGaleri]] = await Promise.all([
+           [pikrGaleri], [pecintaAlamGaleri], [pencakSilatGaleri]] = await Promise.all([
       db.query('SELECT gambar FROM osis_galeri ORDER BY created_at DESC LIMIT 1'),
       db.query('SELECT gambar FROM pramuka_galeri ORDER BY created_at DESC LIMIT 1'),
       db.query('SELECT gambar FROM pmr_galeri ORDER BY created_at DESC LIMIT 1'),
@@ -47,6 +47,7 @@ exports.ekstrakurikulerIndex = async (req, res) => {
       db.query('SELECT gambar FROM rohis_galeri ORDER BY created_at DESC LIMIT 1'),
       db.query('SELECT gambar FROM pikr_galeri ORDER BY created_at DESC LIMIT 1'),
       db.query('SELECT gambar FROM pecinta_alam_galeri ORDER BY created_at DESC LIMIT 1'),
+      db.query('SELECT gambar FROM pencak_silat_galeri ORDER BY created_at DESC LIMIT 1'),
     ]);
 
     const ekskul = [
@@ -60,6 +61,7 @@ exports.ekstrakurikulerIndex = async (req, res) => {
       { nama: 'Rohis', deskripsi: 'Rohani Islam SMKN 1 Kras', url: '/rohis', icon: 'fas fa-mosque', warna: '#065f46', foto: rohisGaleri[0]?.gambar || null },
       { nama: 'PIK-R', deskripsi: 'Pusat Informasi dan Konseling Remaja', url: '/pikr', icon: 'fas fa-heart', warna: '#7c3aed', foto: pikrGaleri[0]?.gambar || null },
       { nama: 'Pecinta Alam', deskripsi: 'Ekstrakurikuler Pecinta Alam', url: '/pecinta-alam', icon: 'fas fa-mountain', warna: '#78350f', foto: pecintaAlamGaleri[0]?.gambar || null },
+      { nama: 'Pencak Silat', deskripsi: 'Seni Bela Diri Kebanggaan Bangsa', url: '/pencak-silat', icon: 'fas fa-fist-raised', warna: '#b91c1c', foto: pencakSilatGaleri[0]?.gambar || null },
     ];
     res.render('frontend/ekstrakurikuler', { title: 'Ekstrakurikuler', currentPage: 'ekstrakurikuler', ekskul, ...common });
   } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
@@ -200,7 +202,7 @@ exports.olahragaBeritaDetail = async (req, res) => {
 
 // ── PORTAL LOGIN (shared) ─────────────────────────────────────────────────────
 exports.portalLoginPage = (role, title) => (req, res) => {
-  const urlPrefix = role === 'jurusan' ? 'jurusan-portal' : role === 'bahasa_asing' ? 'bahasa-asing' : role === 'pecinta_alam' ? 'pecinta-alam' : role;
+  const urlPrefix = role === 'jurusan' ? 'jurusan-portal' : role === 'bahasa_asing' ? 'bahasa-asing' : role === 'pecinta_alam' ? 'pecinta-alam' : role === 'pencak_silat' ? 'pencak-silat' : role;
   if (req.session.portalId && req.session.portalRole === role) return res.redirect(`/${urlPrefix}/dashboard`);
   res.render('portal/login', { title, role, error: null });
 };
@@ -216,7 +218,7 @@ exports.portalLogin = (role) => async (req, res) => {
     req.session.portalRole = rows[0].role;
     req.session.portalNama = rows[0].nama;
     req.session.portalJurusan = rows[0].jurusan;
-    const redirect = role === 'jurusan' ? '/jurusan-portal/dashboard' : role === 'bahasa_asing' ? '/bahasa-asing/dashboard' : role === 'pecinta_alam' ? '/pecinta-alam/dashboard' : `/${role}/dashboard`;
+    const redirect = role === 'jurusan' ? '/jurusan-portal/dashboard' : role === 'bahasa_asing' ? '/bahasa-asing/dashboard' : role === 'pecinta_alam' ? '/pecinta-alam/dashboard' : role === 'pencak_silat' ? '/pencak-silat/dashboard' : `/${role}/dashboard`;
     res.redirect(redirect);
   } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
 };
@@ -225,7 +227,7 @@ exports.portalLogout = (role) => (req, res) => {
   req.session.portalId = null;
   req.session.portalRole = null;
   req.session.portalNama = null;
-  const redirect = role === 'jurusan' ? '/jurusan-portal/login' : role === 'bahasa_asing' ? '/bahasa-asing/login' : role === 'pecinta_alam' ? '/pecinta-alam/login' : `/${role}/login`;
+  const redirect = role === 'jurusan' ? '/jurusan-portal/login' : role === 'bahasa_asing' ? '/bahasa-asing/login' : role === 'pecinta_alam' ? '/pecinta-alam/login' : role === 'pencak_silat' ? '/pencak-silat/login' : `/${role}/login`;
   res.redirect(redirect);
 };
 
@@ -1169,7 +1171,7 @@ exports.adminPortalUserCreate = async (req, res) => {
   try {
     const { username, password, nama, role, jurusan } = req.body;
     const hash = await bcrypt.hash(password, 10);
-    const ekskulRoles = ['bkk','osis','pramuka','olahraga','paskibraka','seni','bahasa_asing','rohis','pmr','pikr','pecinta_alam'];
+    const ekskulRoles = ['bkk','osis','pramuka','olahraga','paskibraka','seni','bahasa_asing','rohis','pmr','pikr','pecinta_alam','pencak_silat'];
     const finalJurusan = ekskulRoles.includes(role) ? null : (jurusan || null);
     await db.query('INSERT INTO portal_users (username,password,nama,role,jurusan) VALUES (?,?,?,?,?)',
       [username, hash, nama, role, finalJurusan]);
@@ -1186,7 +1188,7 @@ exports.adminPortalUserCreate = async (req, res) => {
 exports.adminPortalUserEdit = async (req, res) => {
   try {
     const { nama, username, role, jurusan, password } = req.body;
-    const ekskulRoles = ['bkk','osis','pramuka','olahraga','paskibraka','seni','bahasa_asing','rohis','pmr','pikr','pecinta_alam'];
+    const ekskulRoles = ['bkk','osis','pramuka','olahraga','paskibraka','seni','bahasa_asing','rohis','pmr','pikr','pecinta_alam','pencak_silat'];
     const finalJurusan = ekskulRoles.includes(role) ? null : (jurusan || null);
     
     if (password && password.trim() !== '') {
@@ -2293,6 +2295,236 @@ exports.pecintaAlamBeritaUpdate = (req, res) => {
 exports.pecintaAlamBeritaDelete = async (req, res) => {
   await db.query('DELETE FROM pecinta_alam_berita WHERE id=?', [req.params.id]);
   res.redirect('/pecinta-alam/berita?success=3');
+};
+
+// ── PORTAL PENCAK SILAT ───────────────────────────────────────────────────────
+const uploadGaleriPencakSilat = createUpload('pencaksilat-galeri', { maxFiles: 20 }).array('gambar', 20);
+
+exports.pencakSilatDashboard = async (req, res) => {
+  const [kegiatan] = await db.query('SELECT * FROM pencak_silat_kegiatan ORDER BY created_at DESC');
+  portalRender(res, req, 'portal/pencak-silat/dashboard', { title: 'Dashboard Pencak Silat', user: req.session, kegiatan, success: req.query.success });
+};
+exports.pencakSilatCreatePage = (req, res) =>
+  portalRender(res, req, 'portal/pencak-silat/create', { title: 'Tambah Kegiatan Pencak Silat', user: req.session });
+exports.pencakSilatCreate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return portalRender(res, req, 'portal/pencak-silat/create', { title: 'Tambah Kegiatan Pencak Silat', user: req.session, error: err.message });
+    try {
+      const { judul, konten, kategori, status } = req.body;
+      if (!judul) return portalRender(res, req, 'portal/pencak-silat/create', { title: 'Tambah Kegiatan Pencak Silat', user: req.session, error: 'Judul wajib diisi' });
+      const gambar = req.file ? req.file.filename : null;
+      const slug = createSlug(judul);
+      await db.query('INSERT INTO pencak_silat_kegiatan (judul,slug,konten,gambar,kategori,status,penulis) VALUES (?,?,?,?,?,?,?)',
+        [judul, slug, konten||null, gambar, kategori||'kegiatan', status||'published', req.session.portalNama]);
+      res.redirect('/pencak-silat/dashboard?success=1');
+    } catch (e) { console.error(e); portalRender(res, req, 'portal/pencak-silat/create', { title: 'Tambah Kegiatan Pencak Silat', user: req.session, error: e.message }); }
+  });
+};
+exports.pencakSilatEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM pencak_silat_kegiatan WHERE id=?', [req.params.id]);
+  if (!rows.length) return res.redirect('/pencak-silat/dashboard');
+  portalRender(res, req, 'portal/pencak-silat/edit', { title: 'Edit Kegiatan Pencak Silat', user: req.session, item: rows[0] });
+};
+exports.pencakSilatUpdate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/pencak-silat/dashboard');
+    const { judul, konten, kategori, status } = req.body;
+    const [rows] = await db.query('SELECT gambar FROM pencak_silat_kegiatan WHERE id=?', [req.params.id]);
+    const gambar = req.file ? req.file.filename : rows[0]?.gambar;
+    await db.query('UPDATE pencak_silat_kegiatan SET judul=?,konten=?,gambar=?,kategori=?,status=? WHERE id=?',
+      [judul, konten||null, gambar, kategori||'kegiatan', status||'published', req.params.id]);
+    res.redirect('/pencak-silat/dashboard?success=2');
+  });
+};
+exports.pencakSilatDelete = async (req, res) => {
+  await db.query('DELETE FROM pencak_silat_kegiatan WHERE id=?', [req.params.id]);
+  res.redirect('/pencak-silat/dashboard?success=3');
+};
+exports.pencakSilatGaleriIndex = async (req, res) => {
+  const [galeri] = await db.query('SELECT * FROM pencak_silat_galeri ORDER BY created_at DESC');
+  portalRender(res, req, 'portal/pencak-silat/galeri', { title: 'Galeri Pencak Silat', user: req.session, galeri, success: req.query.success, errorMsg: req.query.error || null });
+};
+exports.pencakSilatGaleriCreate = (req, res) => {
+  uploadGaleriPencakSilat(req, res, async (err) => {
+    if (err) return res.redirect('/pencak-silat/galeri?error=' + encodeURIComponent(err.message));
+    try {
+      if (!req.files || req.files.length === 0) return res.redirect('/pencak-silat/galeri?error=Pilih+minimal+1+foto');
+      const { judul, keterangan } = req.body;
+      for (const file of req.files) {
+        await db.query('INSERT INTO pencak_silat_galeri (judul,gambar,keterangan) VALUES (?,?,?)',
+          [judul||'Galeri Pencak Silat', file.filename, keterangan||null]);
+      }
+      res.redirect('/pencak-silat/galeri?success=1');
+    } catch (e) { console.error(e); res.redirect('/pencak-silat/galeri?error=' + encodeURIComponent(e.message)); }
+  });
+};
+exports.pencakSilatGaleriDelete = async (req, res) => {
+  await db.query('DELETE FROM pencak_silat_galeri WHERE id=?', [req.params.id]);
+  res.redirect('/pencak-silat/galeri?success=3');
+};
+exports.pencakSilatBeritaIndex = async (req, res) => {
+  const [berita] = await db.query('SELECT * FROM pencak_silat_berita ORDER BY created_at DESC');
+  portalRender(res, req, 'portal/pencak-silat/berita', { title: 'Berita Pencak Silat', user: req.session, berita, success: req.query.success });
+};
+exports.pencakSilatBeritaCreatePage = (req, res) =>
+  portalRender(res, req, 'portal/pencak-silat/berita-create', { title: 'Tambah Berita Pencak Silat', user: req.session });
+exports.pencakSilatBeritaCreate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return portalRender(res, req, 'portal/pencak-silat/berita-create', { title: 'Tambah Berita Pencak Silat', user: req.session, error: err.message });
+    try {
+      const { judul, konten, kategori, status } = req.body;
+      if (!judul) return portalRender(res, req, 'portal/pencak-silat/berita-create', { title: 'Tambah Berita Pencak Silat', user: req.session, error: 'Judul wajib diisi' });
+      const gambar = req.file ? req.file.filename : null;
+      const slug = createSlug(judul);
+      await db.query('INSERT INTO pencak_silat_berita (judul,slug,konten,gambar,kategori,status,penulis) VALUES (?,?,?,?,?,?,?)',
+        [judul, slug, konten||null, gambar, kategori||'berita', status||'published', req.session.portalNama]);
+      res.redirect('/pencak-silat/berita?success=1');
+    } catch (e) { console.error(e); portalRender(res, req, 'portal/pencak-silat/berita-create', { title: 'Tambah Berita Pencak Silat', user: req.session, error: e.message }); }
+  });
+};
+exports.pencakSilatBeritaEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM pencak_silat_berita WHERE id=?', [req.params.id]);
+  if (!rows.length) return res.redirect('/pencak-silat/berita');
+  portalRender(res, req, 'portal/pencak-silat/berita-edit', { title: 'Edit Berita Pencak Silat', user: req.session, item: rows[0] });
+};
+exports.pencakSilatBeritaUpdate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/pencak-silat/berita');
+    const { judul, konten, kategori, status } = req.body;
+    const [rows] = await db.query('SELECT gambar FROM pencak_silat_berita WHERE id=?', [req.params.id]);
+    const gambar = req.file ? req.file.filename : rows[0]?.gambar;
+    await db.query('UPDATE pencak_silat_berita SET judul=?,konten=?,gambar=?,kategori=?,status=? WHERE id=?',
+      [judul, konten||null, gambar, kategori||'berita', status||'published', req.params.id]);
+    res.redirect('/pencak-silat/berita?success=2');
+  });
+};
+exports.pencakSilatBeritaDelete = async (req, res) => {
+  await db.query('DELETE FROM pencak_silat_berita WHERE id=?', [req.params.id]);
+  res.redirect('/pencak-silat/berita?success=3');
+};
+
+// ── ADMIN PENCAK SILAT ────────────────────────────────────────────────────────
+exports.adminPencakSilatIndex = async (req, res) => {
+  const [kegiatan] = await db.query('SELECT * FROM pencak_silat_kegiatan ORDER BY created_at DESC');
+  res.render('admin/pencaksilat/index', { title: 'Kelola Pencak Silat', user: req.session, kegiatan, success: req.query.success, csrfToken: req.session.csrfToken });
+};
+exports.adminPencakSilatCreatePage = (req, res) => res.render('admin/pencaksilat/create', { title: 'Tambah Kegiatan Pencak Silat', user: req.session, csrfToken: req.session.csrfToken });
+exports.adminPencakSilatCreate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/admin/pencak-silat');
+    const { judul, konten, kategori, status } = req.body;
+    const gambar = req.file ? req.file.filename : null;
+    const slug = createSlug(judul);
+    await db.query('INSERT INTO pencak_silat_kegiatan (judul,slug,konten,gambar,kategori,status) VALUES (?,?,?,?,?,?)',
+      [judul, slug, konten||null, gambar, kategori||'kegiatan', status||'published']);
+    res.redirect('/admin/pencak-silat?success=1');
+  });
+};
+exports.adminPencakSilatEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM pencak_silat_kegiatan WHERE id=?', [req.params.id]);
+  if (!rows.length) return res.redirect('/admin/pencak-silat');
+  res.render('admin/pencaksilat/edit', { title: 'Edit Kegiatan Pencak Silat', user: req.session, item: rows[0], csrfToken: req.session.csrfToken });
+};
+exports.adminPencakSilatUpdate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/admin/pencak-silat');
+    const { judul, konten, kategori, status } = req.body;
+    const [rows] = await db.query('SELECT gambar FROM pencak_silat_kegiatan WHERE id=?', [req.params.id]);
+    const gambar = req.file ? req.file.filename : rows[0]?.gambar;
+    await db.query('UPDATE pencak_silat_kegiatan SET judul=?,konten=?,gambar=?,kategori=?,status=? WHERE id=?',
+      [judul, konten||null, gambar, kategori||'kegiatan', status||'published', req.params.id]);
+    res.redirect('/admin/pencak-silat?success=2');
+  });
+};
+exports.adminPencakSilatDelete = async (req, res) => {
+  await db.query('DELETE FROM pencak_silat_kegiatan WHERE id=?', [req.params.id]);
+  res.redirect('/admin/pencak-silat?success=3');
+};
+exports.adminPencakSilatBeritaIndex = async (req, res) => {
+  const [berita] = await db.query('SELECT * FROM pencak_silat_berita ORDER BY created_at DESC');
+  res.render('admin/pencaksilat/berita', { title: 'Berita Pencak Silat', user: req.session, berita, success: req.query.success, csrfToken: req.session.csrfToken });
+};
+exports.adminPencakSilatBeritaCreatePage = (req, res) => res.render('admin/pencaksilat/berita-create', { title: 'Tambah Berita Pencak Silat', user: req.session, csrfToken: req.session.csrfToken });
+exports.adminPencakSilatBeritaCreate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.render('admin/pencaksilat/berita-create', { title: 'Tambah Berita Pencak Silat', user: req.session, error: err.message, csrfToken: req.session.csrfToken });
+    const { judul, konten, kategori, status } = req.body;
+    const gambar = req.file ? req.file.filename : null;
+    const slug = createSlug(judul);
+    await db.query('INSERT INTO pencak_silat_berita (judul,slug,konten,gambar,kategori,status,penulis) VALUES (?,?,?,?,?,?,?)',
+      [judul, slug, konten||null, gambar, kategori||'berita', status||'published', req.session.nama || req.session.username]);
+    res.redirect('/admin/pencak-silat/berita?success=1');
+  });
+};
+exports.adminPencakSilatBeritaEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM pencak_silat_berita WHERE id=?', [req.params.id]);
+  if (!rows.length) return res.redirect('/admin/pencak-silat/berita');
+  res.render('admin/pencaksilat/berita-edit', { title: 'Edit Berita Pencak Silat', user: req.session, item: rows[0], csrfToken: req.session.csrfToken });
+};
+exports.adminPencakSilatBeritaUpdate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/admin/pencak-silat/berita');
+    const { judul, konten, kategori, status } = req.body;
+    const [rows] = await db.query('SELECT gambar FROM pencak_silat_berita WHERE id=?', [req.params.id]);
+    const gambar = req.file ? req.file.filename : rows[0]?.gambar;
+    await db.query('UPDATE pencak_silat_berita SET judul=?,konten=?,gambar=?,kategori=?,status=? WHERE id=?',
+      [judul, konten||null, gambar, kategori||'berita', status||'published', req.params.id]);
+    res.redirect('/admin/pencak-silat/berita?success=2');
+  });
+};
+exports.adminPencakSilatBeritaDelete = async (req, res) => {
+  await db.query('DELETE FROM pencak_silat_berita WHERE id=?', [req.params.id]);
+  res.redirect('/admin/pencak-silat/berita?success=3');
+};
+exports.adminPencakSilatGaleriIndex = async (req, res) => {
+  const [galeri] = await db.query('SELECT * FROM pencak_silat_galeri ORDER BY created_at DESC');
+  res.render('admin/pencaksilat/galeri', { title: 'Galeri Pencak Silat', user: req.session, galeri, success: req.query.success, query: req.query, csrfToken: req.session.csrfToken });
+};
+exports.adminPencakSilatGaleriCreate = (req, res) => {
+  const uploadGaleri = createUpload('pencaksilat-galeri', { maxFiles: 20 }).array('gambar', 20);
+  uploadGaleri(req, res, async (err) => {
+    if (err) return res.redirect('/admin/pencak-silat/galeri?error=' + encodeURIComponent(err.message));
+    if (!req.files || req.files.length === 0) return res.redirect('/admin/pencak-silat/galeri?error=Pilih+minimal+1+foto');
+    const { judul, keterangan } = req.body;
+    for (const file of req.files) {
+      await db.query('INSERT INTO pencak_silat_galeri (judul,gambar,keterangan) VALUES (?,?,?)',
+        [judul||'Galeri Pencak Silat', file.filename, keterangan||null]);
+    }
+    res.redirect('/admin/pencak-silat/galeri?success=1');
+  });
+};
+exports.adminPencakSilatGaleriDelete = async (req, res) => {
+  await db.query('DELETE FROM pencak_silat_galeri WHERE id=?', [req.params.id]);
+  res.redirect('/admin/pencak-silat/galeri?success=3');
+};
+
+// ── FRONTEND PENCAK SILAT ─────────────────────────────────────────────────────
+exports.pencakSilatIndex = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [[kegiatan], [berita], [galeri]] = await Promise.all([
+      db.query("SELECT * FROM pencak_silat_kegiatan WHERE status='published' ORDER BY created_at DESC"),
+      db.query("SELECT * FROM pencak_silat_berita WHERE status='published' ORDER BY created_at DESC"),
+      db.query("SELECT * FROM pencak_silat_galeri ORDER BY created_at DESC")
+    ]);
+    res.render('frontend/pencaksilat', { title: 'Pencak Silat', currentPage: 'pencak-silat', kegiatan, berita, galeri, ...common });
+  } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
+};
+exports.pencakSilatDetail = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [rows] = await db.query("SELECT * FROM pencak_silat_kegiatan WHERE slug=? AND status='published'", [req.params.slug]);
+    if (!rows.length) return res.status(404).render('frontend/404', { title: '404', menuItems: common.menuItems });
+    res.render('frontend/pencaksilat-detail', { title: rows[0].judul, kegiatan: rows[0], ...common });
+  } catch (err) { res.status(500).send('Terjadi kesalahan'); }
+};
+exports.pencakSilatBeritaDetail = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [rows] = await db.query("SELECT * FROM pencak_silat_berita WHERE slug=? AND status='published'", [req.params.slug]);
+    if (!rows.length) return res.status(404).render('frontend/404', { title: '404', menuItems: common.menuItems });
+    res.render('frontend/pencaksilat-berita-detail', { title: rows[0].judul, berita: rows[0], ...common });
+  } catch (err) { res.status(500).send('Terjadi kesalahan'); }
 };
 
 // ── ADMIN EKSTRAKURIKULER CONTROLLERS ───────────────────────────────────────

@@ -316,6 +316,23 @@ router.get('/pecinta-alam/galeri', isAuthenticated, portalController.adminPecint
 router.post('/pecinta-alam/galeri/upload', isAuthenticated, csrfProtect, uploadLimiter, portalController.adminPecintaAlamGaleriCreate);
 router.post('/pecinta-alam/galeri/delete/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminPecintaAlamGaleriDelete);
 
+// Admin PENCAK SILAT
+router.get('/pencak-silat', isAuthenticated, portalController.adminPencakSilatIndex);
+router.get('/pencak-silat/create', isAuthenticated, portalController.adminPencakSilatCreatePage);
+router.post('/pencak-silat/create', isAuthenticated, csrfProtect, portalController.adminPencakSilatCreate);
+router.get('/pencak-silat/edit/:id', isAuthenticated, validateIdParam, portalController.adminPencakSilatEditPage);
+router.post('/pencak-silat/edit/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminPencakSilatUpdate);
+router.post('/pencak-silat/delete/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminPencakSilatDelete);
+router.get('/pencak-silat/berita', isAuthenticated, portalController.adminPencakSilatBeritaIndex);
+router.get('/pencak-silat/berita/create', isAuthenticated, portalController.adminPencakSilatBeritaCreatePage);
+router.post('/pencak-silat/berita/create', isAuthenticated, csrfProtect, uploadLimiter, portalController.adminPencakSilatBeritaCreate);
+router.get('/pencak-silat/berita/edit/:id', isAuthenticated, validateIdParam, portalController.adminPencakSilatBeritaEditPage);
+router.post('/pencak-silat/berita/edit/:id', isAuthenticated, csrfProtect, validateIdParam, uploadLimiter, portalController.adminPencakSilatBeritaUpdate);
+router.post('/pencak-silat/berita/delete/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminPencakSilatBeritaDelete);
+router.get('/pencak-silat/galeri', isAuthenticated, portalController.adminPencakSilatGaleriIndex);
+router.post('/pencak-silat/galeri/upload', isAuthenticated, csrfProtect, uploadLimiter, portalController.adminPencakSilatGaleriCreate);
+router.post('/pencak-silat/galeri/delete/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminPencakSilatGaleriDelete);
+
 // Admin kelola Berita Jurusan
 router.get('/jurusan-berita', isAuthenticated, portalController.adminJurusanBeritaIndex);
 router.get('/jurusan-berita/create', isAuthenticated, portalController.adminJurusanBeritaCreatePage);

@@ -483,6 +483,44 @@ async function run() {
     // Tambah role pikr dan pecinta_alam ke portal_users
     `ALTER TABLE portal_users MODIFY COLUMN role ENUM('bkk','osis','jurusan','pramuka','olahraga','paskibraka','seni','bahasa_asing','rohis','pmr','pikr','pecinta_alam') NOT NULL`,
 
+    // Pencak Silat tables
+    `CREATE TABLE IF NOT EXISTS pencak_silat_kegiatan (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      judul VARCHAR(255) NOT NULL,
+      slug VARCHAR(300) NOT NULL UNIQUE,
+      konten LONGTEXT,
+      gambar VARCHAR(255),
+      kategori VARCHAR(100) DEFAULT 'kegiatan',
+      status ENUM('published','draft') DEFAULT 'published',
+      penulis VARCHAR(100),
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+
+    `CREATE TABLE IF NOT EXISTS pencak_silat_berita (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      judul VARCHAR(255) NOT NULL,
+      slug VARCHAR(300) NOT NULL UNIQUE,
+      konten LONGTEXT,
+      gambar VARCHAR(255),
+      kategori VARCHAR(100) DEFAULT 'berita',
+      status ENUM('published','draft') DEFAULT 'published',
+      penulis VARCHAR(100),
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+
+    `CREATE TABLE IF NOT EXISTS pencak_silat_galeri (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      judul VARCHAR(255) DEFAULT 'Galeri Pencak Silat',
+      gambar VARCHAR(255) NOT NULL,
+      keterangan TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+
+    // Tambah role pencak_silat ke portal_users
+    `ALTER TABLE portal_users MODIFY COLUMN role ENUM('bkk','osis','jurusan','pramuka','olahraga','paskibraka','seni','bahasa_asing','rohis','pmr','pikr','pecinta_alam','pencak_silat') NOT NULL`,
+
     // Agenda
     `CREATE TABLE IF NOT EXISTS agenda (
       id INT(11) NOT NULL AUTO_INCREMENT,

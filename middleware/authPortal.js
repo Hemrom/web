@@ -24,5 +24,9 @@ const isPecintaAlam = (req, res, next) => {
   if (req.session && req.session.portalId && req.session.portalRole === 'pecinta_alam') return next();
   res.redirect('/pecinta-alam/login');
 };
+const isPencakSilat = (req, res, next) => {
+  if (req.session && req.session.portalId && req.session.portalRole === 'pencak_silat') return next();
+  res.redirect('/pencak-silat/login');
+};
 
-module.exports = { isBKK, isOSIS, isJurusan, isPramuka, isOlahraga, isPaskibraka, isSeni, isBahasaAsing, isRohis, isPmr, isPikr, isPecintaAlam };
+module.exports = { isBKK, isOSIS, isJurusan, isPramuka, isOlahraga, isPaskibraka, isSeni, isBahasaAsing, isRohis, isPmr, isPikr, isPecintaAlam, isPencakSilat };

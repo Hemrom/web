@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Berita Pencak Silat - Admin Panel</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="/assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <%- include('./_sidebar') %>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3"><i class="fa fa-bars"></i></button>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item"><span class="nav-link text-gray-600 small"><i class="fas fa-user mr-1"></i><%= user.nama || user.username %></span></li>
+                    <li class="nav-item"><a class="nav-link" href="/admin/logout"><i class="fas fa-sign-out-alt"></i></a></li>
+                </ul>
+            </nav>
+            <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Berita & Informasi Pencak Silat</h1>
+                    <a href="/admin/pencak-silat/berita/create" class="btn btn-sm btn-danger shadow-sm"><i class="fas fa-plus fa-sm"></i> Tambah Berita</a>
+                </div>
+                <% if (success==1) { %><div class="alert alert-success alert-dismissible fade show">Berita berhasil ditambahkan.<button type="button" class="close" data-dismiss="alert">&times;</button></div><% } %>
+                <% if (success==2) { %><div class="alert alert-success alert-dismissible fade show">Berita berhasil diperbarui.<button type="button" class="close" data-dismiss="alert">&times;</button></div><% } %>
+                <% if (success==3) { %><div class="alert alert-danger alert-dismissible fade show">Berita berhasil dihapus.<button type="button" class="close" data-dismiss="alert">&times;</button></div><% } %>
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-danger">Daftar Berita & Informasi</h6></div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable">
+                                <thead><tr><th>#</th><th>Gambar</th><th>Judul</th><th>Kategori</th><th>Status</th><th>Tanggal</th><th>Aksi</th></tr></thead>
+                                <tbody>
+                                <% if (!berita||berita.length===0) { %><tr><td colspan="7" class="text-center">Belum ada berita</td></tr>
+                                <% } else { berita.forEach((b,i)=>{ %>
+                                <tr>
+                                    <td><%= i+1 %></td>
+                                    <td><% if (b.gambar) { %><img src="/uploads/<%= b.gambar %>" style="width:60px;height:40px;object-fit:cover;border-radius:5px;"><% } else { %>-<% } %></td>
+                                    <td><%= b.judul %></td>
+                                    <td><span class="badge badge-info"><%= b.kategori %></span></td>
+                                    <td><span class="badge badge-<%= b.status==='published'?'success':'secondary' %>"><%= b.status %></span></td>
+                                    <td><%= new Date(b.created_at).toLocaleDateString('id-ID') %></td>
+                                    <td>
+                                        <a href="/admin/pencak-silat/berita/edit/<%= b.id %>" class="btn btn-danger btn-sm"><i class="fas fa-edit"></i></a>
+                                        <form method="POST" action="/admin/pencak-silat/berita/delete/<%= b.id %>" style="display:inline" onsubmit="return confirm('Hapus berita ini?')">
+                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                            <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <% }) } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto"><div class="copyright text-center my-auto"><span>Portal Pencak Silat &copy; <%= new Date().getFullYear() %></span></div></div>
+        </footer>
+    </div>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="/assets/js/sb-admin-2.min.js"></script>
+<script src="/assets/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="/assets/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+<script>$(document).ready(function(){$('#dataTable').DataTable();});</script>
+</body>
+</html>
