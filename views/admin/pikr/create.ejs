@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Tambah Kegiatan PIK-R - Admin Panel</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="/assets/vendor/summernote/summernote-bs4.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <%- include('./_sidebar') %>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3"><i class="fa fa-bars"></i></button>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item"><span class="nav-link text-gray-600 small"><i class="fas fa-user mr-1"></i><%= user.nama || user.username %></span></li>
+                    <li class="nav-item"><a class="nav-link" href="/admin/logout"><i class="fas fa-sign-out-alt"></i></a></li>
+                </ul>
+            </nav>
+            <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Tambah Kegiatan PIK-R</h1>
+                    <a href="/admin/pikr" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left fa-sm"></i> Kembali</a>
+                </div>
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <form method="POST" action="/admin/pikr/create" enctype="multipart/form-data">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group"><label>Judul *</label><input type="text" class="form-control" name="judul" required></div>
+                                    <div class="form-group"><label>Konten</label><textarea class="form-control" name="konten" id="editor" rows="10"></textarea></div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group"><label>Kategori</label>
+                                        <select class="form-control" name="kategori">
+                                            <option value="kegiatan">Kegiatan</option>
+                                            <option value="pengumuman">Pengumuman</option>
+                                            <option value="penyuluhan">Penyuluhan</option>
+                                            <option value="prestasi">Prestasi</option>
+                                            <option value="lainnya">Lainnya</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group"><label>Status</label>
+                                        <select class="form-control" name="status">
+                                            <option value="published">Published</option>
+                                            <option value="draft">Draft</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group"><label>Gambar</label><input type="file" class="form-control-file" name="gambar" accept=".jpg,.jpeg,.png,.webp"></div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn" style="background:#7c3aed;color:white;"><i class="fas fa-save mr-1"></i>Simpan</button>
+                            <a href="/admin/pikr" class="btn btn-secondary ml-2">Batal</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto"><div class="copyright text-center my-auto"><span>Portal PIK-R &copy; <%= new Date().getFullYear() %></span></div></div>
+        </footer>
+    </div>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="/assets/js/sb-admin-2.min.js"></script>
+<script src="/assets/vendor/summernote/summernote-bs4.min.js"></script>
+<script>$(document).ready(function(){$('#editor').summernote({height:350});});</script>
+</body>
+</html>

@@ -282,6 +282,40 @@ router.get('/pmr/galeri', isAuthenticated, portalController.adminPmrGaleriIndex)
 router.post('/pmr/galeri/upload', isAuthenticated, csrfProtect, uploadLimiter, portalController.adminPmrGaleriCreate);
 router.post('/pmr/galeri/delete/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminPmrGaleriDelete);
 
+// Admin PIK-R
+router.get('/pikr', isAuthenticated, portalController.adminPikrIndex);
+router.get('/pikr/create', isAuthenticated, portalController.adminPikrCreatePage);
+router.post('/pikr/create', isAuthenticated, csrfProtect, portalController.adminPikrCreate);
+router.get('/pikr/edit/:id', isAuthenticated, validateIdParam, portalController.adminPikrEditPage);
+router.post('/pikr/edit/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminPikrUpdate);
+router.post('/pikr/delete/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminPikrDelete);
+router.get('/pikr/berita', isAuthenticated, portalController.adminPikrBeritaIndex);
+router.get('/pikr/berita/create', isAuthenticated, portalController.adminPikrBeritaCreatePage);
+router.post('/pikr/berita/create', isAuthenticated, csrfProtect, uploadLimiter, portalController.adminPikrBeritaCreate);
+router.get('/pikr/berita/edit/:id', isAuthenticated, validateIdParam, portalController.adminPikrBeritaEditPage);
+router.post('/pikr/berita/edit/:id', isAuthenticated, csrfProtect, validateIdParam, uploadLimiter, portalController.adminPikrBeritaUpdate);
+router.post('/pikr/berita/delete/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminPikrBeritaDelete);
+router.get('/pikr/galeri', isAuthenticated, portalController.adminPikrGaleriIndex);
+router.post('/pikr/galeri/upload', isAuthenticated, csrfProtect, uploadLimiter, portalController.adminPikrGaleriCreate);
+router.post('/pikr/galeri/delete/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminPikrGaleriDelete);
+
+// Admin PECINTA ALAM
+router.get('/pecinta-alam', isAuthenticated, portalController.adminPecintaAlamIndex);
+router.get('/pecinta-alam/create', isAuthenticated, portalController.adminPecintaAlamCreatePage);
+router.post('/pecinta-alam/create', isAuthenticated, csrfProtect, portalController.adminPecintaAlamCreate);
+router.get('/pecinta-alam/edit/:id', isAuthenticated, validateIdParam, portalController.adminPecintaAlamEditPage);
+router.post('/pecinta-alam/edit/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminPecintaAlamUpdate);
+router.post('/pecinta-alam/delete/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminPecintaAlamDelete);
+router.get('/pecinta-alam/berita', isAuthenticated, portalController.adminPecintaAlamBeritaIndex);
+router.get('/pecinta-alam/berita/create', isAuthenticated, portalController.adminPecintaAlamBeritaCreatePage);
+router.post('/pecinta-alam/berita/create', isAuthenticated, csrfProtect, uploadLimiter, portalController.adminPecintaAlamBeritaCreate);
+router.get('/pecinta-alam/berita/edit/:id', isAuthenticated, validateIdParam, portalController.adminPecintaAlamBeritaEditPage);
+router.post('/pecinta-alam/berita/edit/:id', isAuthenticated, csrfProtect, validateIdParam, uploadLimiter, portalController.adminPecintaAlamBeritaUpdate);
+router.post('/pecinta-alam/berita/delete/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminPecintaAlamBeritaDelete);
+router.get('/pecinta-alam/galeri', isAuthenticated, portalController.adminPecintaAlamGaleriIndex);
+router.post('/pecinta-alam/galeri/upload', isAuthenticated, csrfProtect, uploadLimiter, portalController.adminPecintaAlamGaleriCreate);
+router.post('/pecinta-alam/galeri/delete/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminPecintaAlamGaleriDelete);
+
 // Admin kelola Berita Jurusan
 router.get('/jurusan-berita', isAuthenticated, portalController.adminJurusanBeritaIndex);
 router.get('/jurusan-berita/create', isAuthenticated, portalController.adminJurusanBeritaCreatePage);

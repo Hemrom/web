@@ -35,7 +35,8 @@ exports.ekstrakurikulerIndex = async (req, res) => {
 
     // Ambil foto pertama dari galeri masing-masing ekskul otomatis
     const [[osisGaleri], [pramukaGaleri], [pmrGaleri], [paskibrakaGaleri],
-           [olahragaGaleri], [seniGaleri], [bahasaGaleri], [rohisGaleri]] = await Promise.all([
+           [olahragaGaleri], [seniGaleri], [bahasaGaleri], [rohisGaleri],
+           [pikrGaleri], [pecintaAlamGaleri]] = await Promise.all([
       db.query('SELECT gambar FROM osis_galeri ORDER BY created_at DESC LIMIT 1'),
       db.query('SELECT gambar FROM pramuka_galeri ORDER BY created_at DESC LIMIT 1'),
       db.query('SELECT gambar FROM pmr_galeri ORDER BY created_at DESC LIMIT 1'),
@@ -44,6 +45,8 @@ exports.ekstrakurikulerIndex = async (req, res) => {
       db.query('SELECT gambar FROM seni_galeri ORDER BY created_at DESC LIMIT 1'),
       db.query('SELECT gambar FROM bahasa_asing_galeri ORDER BY created_at DESC LIMIT 1'),
       db.query('SELECT gambar FROM rohis_galeri ORDER BY created_at DESC LIMIT 1'),
+      db.query('SELECT gambar FROM pikr_galeri ORDER BY created_at DESC LIMIT 1'),
+      db.query('SELECT gambar FROM pecinta_alam_galeri ORDER BY created_at DESC LIMIT 1'),
     ]);
 
     const ekskul = [
@@ -52,9 +55,11 @@ exports.ekstrakurikulerIndex = async (req, res) => {
       { nama: 'PMR', deskripsi: 'Palang Merah Remaja', url: '/pmr', icon: 'fas fa-first-aid', warna: '#dc2626', foto: pmrGaleri[0]?.gambar || null },
       { nama: 'Paskibraka', deskripsi: 'Pasukan Pengibar Bendera', url: '/paskibraka', icon: 'fas fa-flag', warna: '#991b1b', foto: paskibrakaGaleri[0]?.gambar || null },
       { nama: 'Olahraga', deskripsi: 'Ekstrakurikuler Olahraga', url: '/olahraga', icon: 'fas fa-running', warna: '#c2410c', foto: olahragaGaleri[0]?.gambar || null },
-      { nama: 'Seni', deskripsi: 'Ekstrakurikuler Seni', url: '/seni', icon: 'fas fa-palette', warna: '#7c3aed', foto: seniGaleri[0]?.gambar || null },
+      { nama: 'Seni', deskripsi: 'Ekstrakurikuler Seni', url: '/seni', icon: 'fas fa-palette', warna: '#a855f7', foto: seniGaleri[0]?.gambar || null },
       { nama: 'Bahasa Asing', deskripsi: 'Ekstrakurikuler Bahasa Asing', url: '/bahasa-asing', icon: 'fas fa-language', warna: '#0f766e', foto: bahasaGaleri[0]?.gambar || null },
       { nama: 'Rohis', deskripsi: 'Rohani Islam SMKN 1 Kras', url: '/rohis', icon: 'fas fa-mosque', warna: '#065f46', foto: rohisGaleri[0]?.gambar || null },
+      { nama: 'PIK-R', deskripsi: 'Pusat Informasi dan Konseling Remaja', url: '/pikr', icon: 'fas fa-heart', warna: '#7c3aed', foto: pikrGaleri[0]?.gambar || null },
+      { nama: 'Pecinta Alam', deskripsi: 'Ekstrakurikuler Pecinta Alam', url: '/pecinta-alam', icon: 'fas fa-mountain', warna: '#78350f', foto: pecintaAlamGaleri[0]?.gambar || null },
     ];
     res.render('frontend/ekstrakurikuler', { title: 'Ekstrakurikuler', currentPage: 'ekstrakurikuler', ekskul, ...common });
   } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
@@ -2743,3 +2748,255 @@ exports.adminPmrGaleriDelete = async (req, res) => {
   res.redirect('/admin/pmr/galeri?success=3');
 };
 
+
+// ── FRONTEND PIK-R ────────────────────────────────────────────────────────────
+exports.pikrIndex = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [[kegiatan], [berita], [galeri]] = await Promise.all([
+      db.query("SELECT * FROM pikr_kegiatan WHERE status='published' ORDER BY created_at DESC"),
+      db.query("SELECT * FROM pikr_berita WHERE status='published' ORDER BY created_at DESC"),
+      db.query("SELECT * FROM pikr_galeri ORDER BY created_at DESC")
+    ]);
+    res.render('frontend/pikr', { title: 'PIK-R', currentPage: 'pikr', kegiatan, berita, galeri, ...common });
+  } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
+};
+
+exports.pikrDetail = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [rows] = await db.query("SELECT * FROM pikr_kegiatan WHERE slug=? AND status='published'", [req.params.slug]);
+    if (!rows.length) return res.status(404).render('frontend/404', { title: '404', menuItems: common.menuItems });
+    res.render('frontend/pikr-detail', { title: rows[0].judul, kegiatan: rows[0], ...common });
+  } catch (err) { res.status(500).send('Terjadi kesalahan'); }
+};
+
+exports.pikrBeritaDetail = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [rows] = await db.query("SELECT * FROM pikr_berita WHERE slug=? AND status='published'", [req.params.slug]);
+    if (!rows.length) return res.status(404).render('frontend/404', { title: '404', menuItems: common.menuItems });
+    res.render('frontend/pikr-berita-detail', { title: rows[0].judul, berita: rows[0], ...common });
+  } catch (err) { res.status(500).send('Terjadi kesalahan'); }
+};
+
+// ── FRONTEND PECINTA ALAM ─────────────────────────────────────────────────────
+exports.pecintaAlamIndex = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [[kegiatan], [berita], [galeri]] = await Promise.all([
+      db.query("SELECT * FROM pecinta_alam_kegiatan WHERE status='published' ORDER BY created_at DESC"),
+      db.query("SELECT * FROM pecinta_alam_berita WHERE status='published' ORDER BY created_at DESC"),
+      db.query("SELECT * FROM pecinta_alam_galeri ORDER BY created_at DESC")
+    ]);
+    res.render('frontend/pecintaalam', { title: 'Pecinta Alam', currentPage: 'pecinta-alam', kegiatan, berita, galeri, ...common });
+  } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
+};
+
+exports.pecintaAlamDetail = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [rows] = await db.query("SELECT * FROM pecinta_alam_kegiatan WHERE slug=? AND status='published'", [req.params.slug]);
+    if (!rows.length) return res.status(404).render('frontend/404', { title: '404', menuItems: common.menuItems });
+    res.render('frontend/pecintaalam-detail', { title: rows[0].judul, kegiatan: rows[0], ...common });
+  } catch (err) { res.status(500).send('Terjadi kesalahan'); }
+};
+
+exports.pecintaAlamBeritaDetail = async (req, res) => {
+  try {
+    const common = await getCommon();
+    const [rows] = await db.query("SELECT * FROM pecinta_alam_berita WHERE slug=? AND status='published'", [req.params.slug]);
+    if (!rows.length) return res.status(404).render('frontend/404', { title: '404', menuItems: common.menuItems });
+    res.render('frontend/pecintaalam-berita-detail', { title: rows[0].judul, berita: rows[0], ...common });
+  } catch (err) { res.status(500).send('Terjadi kesalahan'); }
+};
+
+// ── ADMIN PIK-R ───────────────────────────────────────────────────────────────
+exports.adminPikrIndex = async (req, res) => {
+  const [kegiatan] = await db.query('SELECT * FROM pikr_kegiatan ORDER BY created_at DESC');
+  res.render('admin/pikr/index', { title: 'Kelola PIK-R', user: req.session, kegiatan, success: req.query.success, csrfToken: req.session.csrfToken });
+};
+exports.adminPikrCreatePage = (req, res) => res.render('admin/pikr/create', { title: 'Tambah Kegiatan PIK-R', user: req.session, csrfToken: req.session.csrfToken });
+exports.adminPikrCreate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/admin/pikr');
+    const { judul, konten, kategori, status } = req.body;
+    const gambar = req.file ? req.file.filename : null;
+    const slug = createSlug(judul);
+    await db.query('INSERT INTO pikr_kegiatan (judul,slug,konten,gambar,kategori,status) VALUES (?,?,?,?,?,?)',
+      [judul, slug, konten||null, gambar, kategori||'kegiatan', status||'published']);
+    res.redirect('/admin/pikr?success=1');
+  });
+};
+exports.adminPikrEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM pikr_kegiatan WHERE id=?', [req.params.id]);
+  if (!rows.length) return res.redirect('/admin/pikr');
+  res.render('admin/pikr/edit', { title: 'Edit Kegiatan PIK-R', user: req.session, item: rows[0], csrfToken: req.session.csrfToken });
+};
+exports.adminPikrUpdate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/admin/pikr');
+    const { judul, konten, kategori, status } = req.body;
+    const [rows] = await db.query('SELECT gambar FROM pikr_kegiatan WHERE id=?', [req.params.id]);
+    const gambar = req.file ? req.file.filename : rows[0]?.gambar;
+    await db.query('UPDATE pikr_kegiatan SET judul=?,konten=?,gambar=?,kategori=?,status=? WHERE id=?',
+      [judul, konten||null, gambar, kategori||'kegiatan', status||'published', req.params.id]);
+    res.redirect('/admin/pikr?success=2');
+  });
+};
+exports.adminPikrDelete = async (req, res) => {
+  await db.query('DELETE FROM pikr_kegiatan WHERE id=?', [req.params.id]);
+  res.redirect('/admin/pikr?success=3');
+};
+exports.adminPikrBeritaIndex = async (req, res) => {
+  const [berita] = await db.query('SELECT * FROM pikr_berita ORDER BY created_at DESC');
+  res.render('admin/pikr/berita', { title: 'Berita PIK-R', user: req.session, berita, success: req.query.success, csrfToken: req.session.csrfToken });
+};
+exports.adminPikrBeritaCreatePage = (req, res) => res.render('admin/pikr/berita-create', { title: 'Tambah Berita PIK-R', user: req.session, csrfToken: req.session.csrfToken });
+exports.adminPikrBeritaCreate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.render('admin/pikr/berita-create', { title: 'Tambah Berita PIK-R', user: req.session, error: err.message, csrfToken: req.session.csrfToken });
+    const { judul, konten, kategori, status } = req.body;
+    const gambar = req.file ? req.file.filename : null;
+    const slug = createSlug(judul);
+    await db.query('INSERT INTO pikr_berita (judul,slug,konten,gambar,kategori,status,penulis) VALUES (?,?,?,?,?,?,?)',
+      [judul, slug, konten||null, gambar, kategori||'berita', status||'published', req.session.nama || req.session.username]);
+    res.redirect('/admin/pikr/berita?success=1');
+  });
+};
+exports.adminPikrBeritaEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM pikr_berita WHERE id=?', [req.params.id]);
+  if (!rows.length) return res.redirect('/admin/pikr/berita');
+  res.render('admin/pikr/berita-edit', { title: 'Edit Berita PIK-R', user: req.session, item: rows[0], csrfToken: req.session.csrfToken });
+};
+exports.adminPikrBeritaUpdate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/admin/pikr/berita');
+    const { judul, konten, kategori, status } = req.body;
+    const [rows] = await db.query('SELECT gambar FROM pikr_berita WHERE id=?', [req.params.id]);
+    const gambar = req.file ? req.file.filename : rows[0]?.gambar;
+    await db.query('UPDATE pikr_berita SET judul=?,konten=?,gambar=?,kategori=?,status=? WHERE id=?',
+      [judul, konten||null, gambar, kategori||'berita', status||'published', req.params.id]);
+    res.redirect('/admin/pikr/berita?success=2');
+  });
+};
+exports.adminPikrBeritaDelete = async (req, res) => {
+  await db.query('DELETE FROM pikr_berita WHERE id=?', [req.params.id]);
+  res.redirect('/admin/pikr/berita?success=3');
+};
+exports.adminPikrGaleriIndex = async (req, res) => {
+  const [galeri] = await db.query('SELECT * FROM pikr_galeri ORDER BY created_at DESC');
+  res.render('admin/pikr/galeri', { title: 'Galeri PIK-R', user: req.session, galeri, success: req.query.success, query: req.query, csrfToken: req.session.csrfToken });
+};
+exports.adminPikrGaleriCreate = (req, res) => {
+  const uploadGaleri = createUpload('pikr-galeri', { maxFiles: 20 }).array('gambar', 20);
+  uploadGaleri(req, res, async (err) => {
+    if (err) return res.redirect('/admin/pikr/galeri?error=' + encodeURIComponent(err.message));
+    if (!req.files || req.files.length === 0) return res.redirect('/admin/pikr/galeri?error=Pilih+minimal+1+foto');
+    const { judul, keterangan } = req.body;
+    for (const file of req.files) {
+      await db.query('INSERT INTO pikr_galeri (judul,gambar,keterangan) VALUES (?,?,?)',
+        [judul||'Galeri PIK-R', file.filename, keterangan||null]);
+    }
+    res.redirect('/admin/pikr/galeri?success=1');
+  });
+};
+exports.adminPikrGaleriDelete = async (req, res) => {
+  await db.query('DELETE FROM pikr_galeri WHERE id=?', [req.params.id]);
+  res.redirect('/admin/pikr/galeri?success=3');
+};
+
+// ── ADMIN PECINTA ALAM ────────────────────────────────────────────────────────
+exports.adminPecintaAlamIndex = async (req, res) => {
+  const [kegiatan] = await db.query('SELECT * FROM pecinta_alam_kegiatan ORDER BY created_at DESC');
+  res.render('admin/pecintaalam/index', { title: 'Kelola Pecinta Alam', user: req.session, kegiatan, success: req.query.success, csrfToken: req.session.csrfToken });
+};
+exports.adminPecintaAlamCreatePage = (req, res) => res.render('admin/pecintaalam/create', { title: 'Tambah Kegiatan Pecinta Alam', user: req.session, csrfToken: req.session.csrfToken });
+exports.adminPecintaAlamCreate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/admin/pecinta-alam');
+    const { judul, konten, kategori, status } = req.body;
+    const gambar = req.file ? req.file.filename : null;
+    const slug = createSlug(judul);
+    await db.query('INSERT INTO pecinta_alam_kegiatan (judul,slug,konten,gambar,kategori,status) VALUES (?,?,?,?,?,?)',
+      [judul, slug, konten||null, gambar, kategori||'kegiatan', status||'published']);
+    res.redirect('/admin/pecinta-alam?success=1');
+  });
+};
+exports.adminPecintaAlamEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM pecinta_alam_kegiatan WHERE id=?', [req.params.id]);
+  if (!rows.length) return res.redirect('/admin/pecinta-alam');
+  res.render('admin/pecintaalam/edit', { title: 'Edit Kegiatan Pecinta Alam', user: req.session, item: rows[0], csrfToken: req.session.csrfToken });
+};
+exports.adminPecintaAlamUpdate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/admin/pecinta-alam');
+    const { judul, konten, kategori, status } = req.body;
+    const [rows] = await db.query('SELECT gambar FROM pecinta_alam_kegiatan WHERE id=?', [req.params.id]);
+    const gambar = req.file ? req.file.filename : rows[0]?.gambar;
+    await db.query('UPDATE pecinta_alam_kegiatan SET judul=?,konten=?,gambar=?,kategori=?,status=? WHERE id=?',
+      [judul, konten||null, gambar, kategori||'kegiatan', status||'published', req.params.id]);
+    res.redirect('/admin/pecinta-alam?success=2');
+  });
+};
+exports.adminPecintaAlamDelete = async (req, res) => {
+  await db.query('DELETE FROM pecinta_alam_kegiatan WHERE id=?', [req.params.id]);
+  res.redirect('/admin/pecinta-alam?success=3');
+};
+exports.adminPecintaAlamBeritaIndex = async (req, res) => {
+  const [berita] = await db.query('SELECT * FROM pecinta_alam_berita ORDER BY created_at DESC');
+  res.render('admin/pecintaalam/berita', { title: 'Berita Pecinta Alam', user: req.session, berita, success: req.query.success, csrfToken: req.session.csrfToken });
+};
+exports.adminPecintaAlamBeritaCreatePage = (req, res) => res.render('admin/pecintaalam/berita-create', { title: 'Tambah Berita Pecinta Alam', user: req.session, csrfToken: req.session.csrfToken });
+exports.adminPecintaAlamBeritaCreate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.render('admin/pecintaalam/berita-create', { title: 'Tambah Berita Pecinta Alam', user: req.session, error: err.message, csrfToken: req.session.csrfToken });
+    const { judul, konten, kategori, status } = req.body;
+    const gambar = req.file ? req.file.filename : null;
+    const slug = createSlug(judul);
+    await db.query('INSERT INTO pecinta_alam_berita (judul,slug,konten,gambar,kategori,status,penulis) VALUES (?,?,?,?,?,?,?)',
+      [judul, slug, konten||null, gambar, kategori||'berita', status||'published', req.session.nama || req.session.username]);
+    res.redirect('/admin/pecinta-alam/berita?success=1');
+  });
+};
+exports.adminPecintaAlamBeritaEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM pecinta_alam_berita WHERE id=?', [req.params.id]);
+  if (!rows.length) return res.redirect('/admin/pecinta-alam/berita');
+  res.render('admin/pecintaalam/berita-edit', { title: 'Edit Berita Pecinta Alam', user: req.session, item: rows[0], csrfToken: req.session.csrfToken });
+};
+exports.adminPecintaAlamBeritaUpdate = (req, res) => {
+  uploadSingle(req, res, async (err) => {
+    if (err) return res.redirect('/admin/pecinta-alam/berita');
+    const { judul, konten, kategori, status } = req.body;
+    const [rows] = await db.query('SELECT gambar FROM pecinta_alam_berita WHERE id=?', [req.params.id]);
+    const gambar = req.file ? req.file.filename : rows[0]?.gambar;
+    await db.query('UPDATE pecinta_alam_berita SET judul=?,konten=?,gambar=?,kategori=?,status=? WHERE id=?',
+      [judul, konten||null, gambar, kategori||'berita', status||'published', req.params.id]);
+    res.redirect('/admin/pecinta-alam/berita?success=2');
+  });
+};
+exports.adminPecintaAlamBeritaDelete = async (req, res) => {
+  await db.query('DELETE FROM pecinta_alam_berita WHERE id=?', [req.params.id]);
+  res.redirect('/admin/pecinta-alam/berita?success=3');
+};
+exports.adminPecintaAlamGaleriIndex = async (req, res) => {
+  const [galeri] = await db.query('SELECT * FROM pecinta_alam_galeri ORDER BY created_at DESC');
+  res.render('admin/pecintaalam/galeri', { title: 'Galeri Pecinta Alam', user: req.session, galeri, success: req.query.success, query: req.query, csrfToken: req.session.csrfToken });
+};
+exports.adminPecintaAlamGaleriCreate = (req, res) => {
+  const uploadGaleri = createUpload('pecintaalam-galeri', { maxFiles: 20 }).array('gambar', 20);
+  uploadGaleri(req, res, async (err) => {
+    if (err) return res.redirect('/admin/pecinta-alam/galeri?error=' + encodeURIComponent(err.message));
+    if (!req.files || req.files.length === 0) return res.redirect('/admin/pecinta-alam/galeri?error=Pilih+minimal+1+foto');
+    const { judul, keterangan } = req.body;
+    for (const file of req.files) {
+      await db.query('INSERT INTO pecinta_alam_galeri (judul,gambar,keterangan) VALUES (?,?,?)',
+        [judul||'Galeri Pecinta Alam', file.filename, keterangan||null]);
+    }
+    res.redirect('/admin/pecinta-alam/galeri?success=1');
+  });
+};
+exports.adminPecintaAlamGaleriDelete = async (req, res) => {
+  await db.query('DELETE FROM pecinta_alam_galeri WHERE id=?', [req.params.id]);
+  res.redirect('/admin/pecinta-alam/galeri?success=3');
+};

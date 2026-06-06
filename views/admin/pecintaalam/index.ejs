@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Kelola Pecinta Alam - Admin Panel</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="/assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <%- include('./_sidebar') %>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3"><i class="fa fa-bars"></i></button>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item"><span class="nav-link text-gray-600 small"><i class="fas fa-user mr-1"></i><%= user.nama || user.username %></span></li>
+                    <li class="nav-item"><a class="nav-link" href="/admin/logout"><i class="fas fa-sign-out-alt"></i></a></li>
+                </ul>
+            </nav>
+            <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Dashboard Pecinta Alam</h1>
+                    <a href="/admin/pecinta-alam/create" class="btn btn-sm shadow-sm" style="background:#78350f;color:white;"><i class="fas fa-plus fa-sm"></i> Tambah Kegiatan</a>
+                </div>
+                <% if (success==1) { %><div class="alert alert-success alert-dismissible fade show">Berhasil ditambahkan.<button type="button" class="close" data-dismiss="alert">&times;</button></div><% } %>
+                <% if (success==2) { %><div class="alert alert-success alert-dismissible fade show">Berhasil diperbarui.<button type="button" class="close" data-dismiss="alert">&times;</button></div><% } %>
+                <% if (success==3) { %><div class="alert alert-danger alert-dismissible fade show">Berhasil dihapus.<button type="button" class="close" data-dismiss="alert">&times;</button></div><% } %>
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3"><h6 class="m-0 font-weight-bold" style="color:#78350f;">Kegiatan & Pengumuman Pecinta Alam</h6></div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable">
+                                <thead><tr><th>#</th><th>Judul</th><th>Kategori</th><th>Status</th><th>Tanggal</th><th>Aksi</th></tr></thead>
+                                <tbody>
+                                <% if (!kegiatan||kegiatan.length===0) { %><tr><td colspan="6" class="text-center">Belum ada data</td></tr>
+                                <% } else { kegiatan.forEach((k,i)=>{ %>
+                                <tr>
+                                    <td><%= i+1 %></td>
+                                    <td><%= k.judul %></td>
+                                    <td><span class="badge badge-info"><%= k.kategori %></span></td>
+                                    <td><span class="badge badge-<%= k.status==='published'?'success':'secondary' %>"><%= k.status %></span></td>
+                                    <td><%= new Date(k.created_at).toLocaleDateString('id-ID') %></td>
+                                    <td>
+                                        <a href="/admin/pecinta-alam/edit/<%= k.id %>" class="btn btn-sm" style="background:#78350f;color:white;"><i class="fas fa-edit"></i></a>
+                                        <form method="POST" action="/admin/pecinta-alam/delete/<%= k.id %>" style="display:inline" onsubmit="return confirm('Hapus?')">
+                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                            <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <% }) } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto"><div class="copyright text-center my-auto"><span>Portal Pecinta Alam &copy; <%= new Date().getFullYear() %></span></div></div>
+        </footer>
+    </div>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="/assets/js/sb-admin-2.min.js"></script>
+<script src="/assets/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="/assets/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+<script>$(document).ready(function(){$('#dataTable').DataTable();});</script>
+</body>
+</html>
