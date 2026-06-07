@@ -91,7 +91,8 @@ exports.home = async (req, res) => {
       [fileDownloadHome],
       [bkkHome],
       siteSettings,
-      [agendaHome]
+      [agendaHome],
+      [guruHome]
     ] = await Promise.all([
       getProfilSekolah(),
       db.query('SELECT id, judul, slug, gambar, konten, kategori, created_at FROM berita WHERE status = "published" ORDER BY created_at DESC LIMIT 6'),
@@ -107,13 +108,25 @@ exports.home = async (req, res) => {
       db.query('SELECT id, judul, tipe_file, ukuran_file, kategori, jumlah_download, created_at FROM file_download WHERE status = "aktif" AND tampil_home = 1 ORDER BY created_at DESC LIMIT 6'),
       db.query("SELECT id, judul, slug, perusahaan, lokasi, kategori, gambar, deadline, kontak FROM bkk_lowongan WHERE status='aktif' ORDER BY created_at DESC LIMIT 6"),
       getSettings(),
-      db.query("SELECT id, judul, slug, gambar, tanggal_mulai, tanggal_selesai, waktu_mulai, waktu_selesai, lokasi FROM agenda WHERE status='aktif' AND tampil_home=1 AND (tanggal_selesai >= CURDATE() OR (tanggal_selesai IS NULL AND tanggal_mulai >= CURDATE())) ORDER BY tanggal_mulai ASC LIMIT 3")
+      db.query("SELECT id, judul, slug, gambar, tanggal_mulai, tanggal_selesai, waktu_mulai, waktu_selesai, lokasi FROM agenda WHERE status='aktif' AND tampil_home=1 AND (tanggal_selesai >= CURDATE() OR (tanggal_selesai IS NULL AND tanggal_mulai >= CURDATE())) ORDER BY tanggal_mulai ASC LIMIT 3"),
+      db.query(`SELECT id, nama, jabatan, mata_pelajaran, foto,
+        CASE
+          WHEN LOWER(jabatan) LIKE '%kepala sekolah%' OR LOWER(jabatan) LIKE '%kepsek%' THEN 1
+          WHEN LOWER(jabatan) LIKE '%wakil kepala%' OR LOWER(jabatan) LIKE '%waka%' THEN 2
+          WHEN LOWER(jabatan) LIKE '%kepala tata usaha%' OR LOWER(jabatan) LIKE '%ktu%' THEN 3
+          WHEN LOWER(jabatan) LIKE '%kepala program%' OR LOWER(jabatan) LIKE '%kaproli%' OR LOWER(jabatan) LIKE '%kaprogli%' OR LOWER(jabatan) LIKE '%kepala jurusan%' OR LOWER(jabatan) LIKE '%kakomli%' THEN 4
+          WHEN LOWER(jabatan) LIKE '%guru%' THEN 5
+          WHEN LOWER(jabatan) LIKE '%staf%' OR LOWER(jabatan) LIKE '%staff%' OR LOWER(jabatan) LIKE '%karyawan%' OR LOWER(jabatan) LIKE '%tata usaha%' THEN 6
+          ELSE 7
+        END AS urutan_jabatan
+        FROM guru
+        ORDER BY urutan_jabatan ASC, nama ASC`)
     ]);
 
     res.render('frontend/home', {
       title: 'Beranda', currentPage: 'home',
       profil, berita: beritaTerbaru, galeri, slider, jurusan, menuItems, mediaSosialFooter, linkTerkait, alumniHome, fasilitasHome,
-      artikelHome, fileDownloadHome, bkkHome, siteSettings, agendaHome
+      artikelHome, fileDownloadHome, bkkHome, siteSettings, agendaHome, guruHome
     });
   } catch (error) {
     console.error(error);

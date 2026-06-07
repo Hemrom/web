@@ -2251,6 +2251,284 @@
     </section>
     <% } %>
 
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- SECTION: GURU & STAFF                                        -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <% if (guruHome && guruHome.length > 0) { %>
+    <section id="section-guru" style="padding:5rem 0;background:var(--gray-50);">
+        <div class="container">
+            <div class="text-center mb-4">
+                <h2 class="section-title">Guru &amp; Staff</h2>
+                <p class="section-subtitle">Tenaga pendidik dan kependidikan SMK Negeri 1 Kras</p>
+            </div>
+
+            <!-- Slider wrapper -->
+            <div class="guru-slider-outer" style="position:relative;">
+                <!-- Track -->
+                <div class="guru-slider-track" id="guruTrack">
+                <%
+                    // Kelompokkan berdasarkan urutan_jabatan agar label bisa ditampilkan
+                    const jabatanLabel = {
+                        1: 'Kepala Sekolah', 2: 'Wakil Kepala Sekolah',
+                        3: 'Kepala Tata Usaha', 4: 'Kepala Kompetensi Keahlian',
+                        5: 'Guru', 6: 'Staff / Karyawan', 7: 'Lainnya'
+                    };
+                    // Bagi guru ke halaman (6 per slide)
+                    const perSlide = 6;
+                    const totalSlides = Math.ceil(guruHome.length / perSlide);
+                    for (let s = 0; s < totalSlides; s++) {
+                        const batch = guruHome.slice(s * perSlide, (s + 1) * perSlide);
+                %>
+                <div class="guru-slide <%= s === 0 ? 'active' : '' %>" data-slide="<%= s %>">
+                    <div class="row g-3 justify-content-center">
+                    <% batch.forEach(function(g) {
+                        const jabNum = g.urutan_jabatan;
+                        const labelJab = jabatanLabel[jabNum] || g.jabatan || 'Guru';
+                        const badgeColor = jabNum === 1 ? '#dc2626' : jabNum === 2 ? '#2563eb' : jabNum === 3 ? '#7c3aed' : jabNum === 4 ? '#0891b2' : jabNum === 5 ? '#16a34a' : '#64748b';
+                    %>
+                    <div class="col-lg-2 col-md-3 col-sm-4 col-6">
+                        <div class="guru-card">
+                            <div class="guru-foto-wrap">
+                                <% if (g.foto) { %>
+                                <img src="/uploads/<%= g.foto %>" alt="<%= g.nama %>" class="guru-foto" loading="lazy" onerror="this.src='/assets/img/undraw_profile.svg'">
+                                <% } else { %>
+                                <div class="guru-foto-placeholder">
+                                    <i class="fas fa-user-tie"></i>
+                                </div>
+                                <% } %>
+                                <span class="guru-badge" style="background:<%= badgeColor %>;">
+                                    <%= jabNum === 1 ? 'Kepsek' : jabNum === 2 ? 'Waka' : jabNum === 3 ? 'KTU' : jabNum === 4 ? 'Kakomli' : jabNum === 5 ? 'Guru' : 'Staff' %>
+                                </span>
+                            </div>
+                            <div class="guru-info">
+                                <div class="guru-nama"><%= g.nama %></div>
+                                <div class="guru-jabatan"><%= g.jabatan || labelJab %></div>
+                                <% if (g.mata_pelajaran) { %>
+                                <div class="guru-mapel"><%= g.mata_pelajaran %></div>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                    <% }) %>
+                    </div>
+                </div>
+                <% } %>
+                </div><!-- /track -->
+
+                <!-- Prev/Next -->
+                <% if (totalSlides > 1) { %>
+                <button class="guru-arrow guru-prev" onclick="guruSlide(-1)" aria-label="Sebelumnya">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="guru-arrow guru-next" onclick="guruSlide(1)" aria-label="Berikutnya">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <% } %>
+            </div><!-- /outer -->
+
+            <!-- Dots + counter -->
+            <% if (totalSlides > 1) { %>
+            <div class="guru-dots" id="guruDots">
+                <% for (let d = 0; d < totalSlides; d++) { %>
+                <button class="guru-dot <%= d === 0 ? 'active' : '' %>" onclick="guruGoTo(<%= d %>)" aria-label="Slide <%= d+1 %>"></button>
+                <% } %>
+            </div>
+            <div style="text-align:center;margin-top:.75rem;">
+                <span id="guruCounter" style="font-size:.8rem;color:var(--gray-500);">1 / <%= totalSlides %></span>
+            </div>
+            <% } %>
+
+            <div style="text-align:center;margin-top:2.5rem;">
+                <a href="/guru" class="btn btn-primary" style="border-radius:50px;padding:.75rem 2rem;">
+                    <i class="fas fa-users me-2"></i>Lihat Semua Guru &amp; Staff
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <style>
+    /* ── Guru Slider ── */
+    .guru-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 2px 12px rgba(0,0,0,.06);
+        border: 1px solid var(--gray-100,#f1f5f9);
+        transition: all .3s;
+        text-align: center;
+        height: 100%;
+    }
+    .guru-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 30px rgba(37,99,235,.12);
+    }
+    .guru-foto-wrap {
+        position: relative;
+        background: linear-gradient(135deg,#dbeafe,#ede9fe);
+        padding-top: 100%;  /* rasio 1:1 */
+    }
+    .guru-foto {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top;
+    }
+    .guru-foto-placeholder {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: #94a3b8;
+    }
+    .guru-badge {
+        position: absolute;
+        bottom: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: white;
+        font-size: .6rem;
+        font-weight: 700;
+        padding: .2rem .6rem;
+        border-radius: 20px;
+        white-space: nowrap;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        box-shadow: 0 2px 6px rgba(0,0,0,.25);
+    }
+    .guru-info {
+        padding: .75rem .6rem .8rem;
+    }
+    .guru-nama {
+        font-size: .78rem;
+        font-weight: 700;
+        color: var(--gray-800,#1e293b);
+        line-height: 1.3;
+        margin-bottom: .2rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    .guru-jabatan {
+        font-size: .68rem;
+        color: var(--gray-500,#64748b);
+        line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    .guru-mapel {
+        font-size: .65rem;
+        color: #2563eb;
+        margin-top: .2rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    /* Slide transition */
+    .guru-slider-outer { overflow: hidden; }
+    .guru-slider-track { position: relative; min-height: 10px; }
+    .guru-slide {
+        display: none;
+        animation: guruFadeIn .45s ease;
+    }
+    .guru-slide.active { display: block; }
+    @keyframes guruFadeIn {
+        from { opacity: 0; transform: translateX(30px); }
+        to   { opacity: 1; transform: translateX(0); }
+    }
+    /* Arrows */
+    .guru-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 5;
+        background: white;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        box-shadow: 0 4px 14px rgba(0,0,0,.12);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .85rem;
+        color: var(--gray-700,#334155);
+        cursor: pointer;
+        transition: all .2s;
+    }
+    .guru-arrow:hover { background: #2563eb; color: white; box-shadow: 0 6px 18px rgba(37,99,235,.35); }
+    .guru-prev { left: -20px; }
+    .guru-next { right: -20px; }
+    @media (max-width: 768px) {
+        .guru-prev { left: -10px; }
+        .guru-next { right: -10px; }
+    }
+    /* Dots */
+    .guru-dots {
+        display: flex;
+        justify-content: center;
+        gap: .5rem;
+        margin-top: 1.5rem;
+    }
+    .guru-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #cbd5e1;
+        border: none;
+        cursor: pointer;
+        transition: all .25s;
+        padding: 0;
+    }
+    .guru-dot.active {
+        background: #2563eb;
+        width: 24px;
+        border-radius: 4px;
+    }
+    </style>
+
+    <script>
+    (function(){
+        let guruCurrent = 0;
+        const slides = document.querySelectorAll('.guru-slide');
+        const dots   = document.querySelectorAll('.guru-dot');
+        const counter = document.getElementById('guruCounter');
+        const total  = slides.length;
+        if (!total) return;
+
+        window.guruGoTo = function(n) {
+            slides[guruCurrent].classList.remove('active');
+            dots[guruCurrent] && dots[guruCurrent].classList.remove('active');
+            guruCurrent = (n + total) % total;
+            slides[guruCurrent].classList.add('active');
+            dots[guruCurrent] && dots[guruCurrent].classList.add('active');
+            if (counter) counter.textContent = (guruCurrent + 1) + ' / ' + total;
+        };
+        window.guruSlide = function(dir) { guruGoTo(guruCurrent + dir); };
+
+        // Auto-slide setiap 10 detik
+        let timer = setInterval(function(){ guruGoTo(guruCurrent + 1); }, 10000);
+
+        // Pause saat hover
+        const outer = document.getElementById('guruTrack');
+        if (outer) {
+            outer.addEventListener('mouseenter', function(){ clearInterval(timer); });
+            outer.addEventListener('mouseleave', function(){
+                clearInterval(timer);
+                timer = setInterval(function(){ guruGoTo(guruCurrent + 1); }, 10000);
+            });
+        }
+    })();
+    </script>
+    <% } %>
+
     <!-- Alumni Section -->
     <section style="padding:5rem 0;background:white;">
         <div class="container">
