@@ -2255,11 +2255,20 @@
     <!-- SECTION: GURU & STAFF                                        -->
     <!-- ═══════════════════════════════════════════════════════════ -->
     <% if (guruHome && guruHome.length > 0) { %>
-    <section id="section-guru" style="padding:5rem 0;background:var(--gray-50);">
-        <div class="container">
+    <section id="section-guru">
+        <!-- Background dekor -->
+        <div class="guru-bg-decor">
+            <div class="guru-orb guru-orb-1"></div>
+            <div class="guru-orb guru-orb-2"></div>
+            <div class="guru-orb guru-orb-3"></div>
+            <div class="guru-grid-overlay"></div>
+        </div>
+        <div class="container" style="position:relative;z-index:1;">
             <div class="text-center mb-4">
-                <h2 class="section-title">Guru &amp; Staff</h2>
-                <p class="section-subtitle">Tenaga pendidik dan kependidikan SMK Negeri 1 Kras</p>
+                <span class="guru-eyebrow"><i class="fas fa-chalkboard-teacher me-2"></i>Tenaga Pendidik</span>
+                <h2 class="guru-section-title">Guru &amp; <span class="guru-title-accent">Staff</span></h2>
+                <p class="guru-section-sub">Tenaga pendidik dan kependidikan SMK Negeri 1 Kras</p>
+                <div class="guru-title-line"></div>
             </div>
 
             <!-- Slider wrapper -->
@@ -2287,7 +2296,8 @@
                         const badgeColor = jabNum === 1 ? '#dc2626' : jabNum === 2 ? '#2563eb' : jabNum === 3 ? '#7c3aed' : jabNum === 4 ? '#0891b2' : jabNum === 5 ? '#16a34a' : '#64748b';
                     %>
                     <div class="col-lg-2 col-md-3 col-sm-4 col-6">
-                        <div class="guru-card">
+                        <% const glowColor = jabNum === 1 ? 'rgba(220,38,38,.35)' : jabNum === 2 ? 'rgba(37,99,235,.35)' : jabNum === 3 ? 'rgba(124,58,237,.35)' : jabNum === 4 ? 'rgba(8,145,178,.35)' : jabNum === 5 ? 'rgba(22,163,74,.35)' : 'rgba(99,102,241,.3)'; %>
+                        <div class="guru-card" style="--glow:<%- glowColor %>;">
                             <div class="guru-foto-wrap">
                                 <% if (g.foto) { %>
                                 <img src="/uploads/<%= g.foto %>" alt="<%= g.nama %>" class="guru-foto" loading="lazy" onerror="this.src='/assets/img/undraw_profile.svg'">
@@ -2296,10 +2306,11 @@
                                     <i class="fas fa-user-tie"></i>
                                 </div>
                                 <% } %>
-                                <span class="guru-badge" style="background:<%= badgeColor %>;">
-                                    <%= jabNum === 1 ? 'Kepsek' : jabNum === 2 ? 'Waka' : jabNum === 3 ? 'KTU' : jabNum === 4 ? 'Kakomli' : jabNum === 5 ? 'Guru' : 'Staff' %>
-                                </span>
+                                <div class="guru-foto-overlay"></div>
                             </div>
+                            <span class="guru-badge" style="background:<%= badgeColor %>;">
+                                <%= jabNum === 1 ? 'Kepsek' : jabNum === 2 ? 'Waka' : jabNum === 3 ? 'KTU' : jabNum === 4 ? 'Kakomli' : jabNum === 5 ? 'Guru' : 'Staff' %>
+                            </span>
                             <div class="guru-info">
                                 <div class="guru-nama"><%= g.nama %></div>
                                 <div class="guru-jabatan"><%= g.jabatan || labelJab %></div>
@@ -2334,12 +2345,12 @@
                 <% } %>
             </div>
             <div style="text-align:center;margin-top:.75rem;">
-                <span id="guruCounter" style="font-size:.8rem;color:var(--gray-500);">1 / <%= totalSlides %></span>
+                <span id="guruCounter" style="font-size:.8rem;color:rgba(255,255,255,.5);">1 / <%= totalSlides %></span>
             </div>
             <% } %>
 
             <div style="text-align:center;margin-top:2.5rem;">
-                <a href="/guru" class="btn btn-primary" style="border-radius:50px;padding:.75rem 2rem;">
+                <a href="/guru" class="guru-cta-btn">
                     <i class="fas fa-users me-2"></i>Lihat Semua Guru &amp; Staff
                 </a>
             </div>
@@ -2347,25 +2358,129 @@
     </section>
 
     <style>
-    /* ── Guru Slider ── */
-    .guru-card {
-        background: white;
-        border-radius: 16px;
+    /* ══════════════════════════════════════════
+       SECTION GURU — Modern Dark Gradient
+    ══════════════════════════════════════════ */
+    #section-guru {
+        position: relative;
+        padding: 5.5rem 0 4.5rem;
+        background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 35%, #0c2340 65%, #0f172a 100%);
         overflow: hidden;
-        box-shadow: 0 2px 12px rgba(0,0,0,.06);
-        border: 1px solid var(--gray-100,#f1f5f9);
-        transition: all .3s;
+    }
+
+    /* Background dekor */
+    .guru-bg-decor {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+    }
+    .guru-orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(60px);
+        opacity: .35;
+    }
+    .guru-orb-1 {
+        width: 500px; height: 500px;
+        background: radial-gradient(circle, #6366f1 0%, transparent 70%);
+        top: -150px; left: -100px;
+        animation: guruOrbFloat 18s ease-in-out infinite;
+    }
+    .guru-orb-2 {
+        width: 400px; height: 400px;
+        background: radial-gradient(circle, #0ea5e9 0%, transparent 70%);
+        bottom: -100px; right: -80px;
+        animation: guruOrbFloat 14s ease-in-out 4s infinite reverse;
+    }
+    .guru-orb-3 {
+        width: 280px; height: 280px;
+        background: radial-gradient(circle, #10b981 0%, transparent 70%);
+        top: 40%; left: 55%;
+        animation: guruOrbFloat 20s ease-in-out 8s infinite;
+        opacity: .2;
+    }
+    @keyframes guruOrbFloat {
+        0%,100% { transform: translateY(0) scale(1); }
+        50%      { transform: translateY(-30px) scale(1.08); }
+    }
+    .guru-grid-overlay {
+        position: absolute;
+        inset: 0;
+        background-image:
+            linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+        background-size: 50px 50px;
+    }
+
+    /* Header */
+    .guru-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        background: rgba(99,102,241,.18);
+        border: 1px solid rgba(99,102,241,.35);
+        color: #a5b4fc;
+        padding: .4rem 1.2rem;
+        border-radius: 50px;
+        font-size: .8rem;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+    }
+    .guru-section-title {
+        font-size: clamp(1.9rem, 4vw, 2.8rem);
+        font-weight: 900;
+        color: white;
+        margin-bottom: .5rem;
+        line-height: 1.15;
+    }
+    .guru-title-accent {
+        background: linear-gradient(135deg, #6366f1, #0ea5e9, #10b981);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .guru-section-sub {
+        color: rgba(255,255,255,.55);
+        font-size: .98rem;
+        margin-bottom: .8rem;
+    }
+    .guru-title-line {
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, #6366f1, #0ea5e9);
+        border-radius: 2px;
+        margin: 0 auto;
+    }
+
+    /* Card */
+    .guru-card {
+        background: rgba(255,255,255,.06);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255,255,255,.12);
+        border-radius: 18px;
+        overflow: visible;
+        transition: all .35s cubic-bezier(.22,.68,0,1.2);
         text-align: center;
         height: 100%;
+        position: relative;
     }
     .guru-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 12px 30px rgba(37,99,235,.12);
+        transform: translateY(-8px) scale(1.02);
+        background: rgba(255,255,255,.1);
+        border-color: rgba(255,255,255,.25);
+        box-shadow: 0 20px 50px var(--glow, rgba(99,102,241,.3));
     }
+
+    /* Foto */
     .guru-foto-wrap {
         position: relative;
-        background: linear-gradient(135deg,#dbeafe,#ede9fe);
-        padding-top: 100%;  /* rasio 1:1 */
+        padding-top: 100%;
+        border-radius: 18px 18px 0 0;
+        overflow: hidden;
+        background: linear-gradient(135deg, #1e1b4b, #0c2340);
     }
     .guru-foto {
         position: absolute;
@@ -2374,6 +2489,13 @@
         height: 100%;
         object-fit: cover;
         object-position: top;
+        transition: transform .4s ease;
+    }
+    .guru-card:hover .guru-foto { transform: scale(1.06); }
+    .guru-foto-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(15,23,42,.7) 0%, transparent 50%);
     }
     .guru-foto-placeholder {
         position: absolute;
@@ -2381,32 +2503,35 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 2.5rem;
-        color: #94a3b8;
+        font-size: 2.8rem;
+        color: rgba(255,255,255,.25);
+        background: linear-gradient(135deg, #1e1b4b, #0c2340);
     }
+
+    /* Badge jabatan */
     .guru-badge {
-        position: absolute;
-        bottom: 8px;
-        left: 50%;
-        transform: translateX(-50%);
+        display: inline-block;
+        margin: -.6rem auto .4rem;
+        position: relative;
+        z-index: 2;
         color: white;
-        font-size: .6rem;
-        font-weight: 700;
-        padding: .2rem .6rem;
+        font-size: .58rem;
+        font-weight: 800;
+        padding: .25rem .7rem;
         border-radius: 20px;
         white-space: nowrap;
-        letter-spacing: .04em;
+        letter-spacing: .06em;
         text-transform: uppercase;
-        box-shadow: 0 2px 6px rgba(0,0,0,.25);
+        box-shadow: 0 4px 12px rgba(0,0,0,.4);
     }
-    .guru-info {
-        padding: .75rem .6rem .8rem;
-    }
+
+    /* Info */
+    .guru-info { padding: .5rem .6rem .9rem; }
     .guru-nama {
-        font-size: .78rem;
+        font-size: .76rem;
         font-weight: 700;
-        color: var(--gray-800,#1e293b);
-        line-height: 1.3;
+        color: white;
+        line-height: 1.35;
         margin-bottom: .2rem;
         display: -webkit-box;
         -webkit-line-clamp: 2;
@@ -2414,8 +2539,8 @@
         overflow: hidden;
     }
     .guru-jabatan {
-        font-size: .68rem;
-        color: var(--gray-500,#64748b);
+        font-size: .65rem;
+        color: rgba(255,255,255,.5);
         line-height: 1.3;
         display: -webkit-box;
         -webkit-line-clamp: 2;
@@ -2423,74 +2548,97 @@
         overflow: hidden;
     }
     .guru-mapel {
-        font-size: .65rem;
-        color: #2563eb;
-        margin-top: .2rem;
+        font-size: .62rem;
+        color: #7dd3fc;
+        margin-top: .25rem;
         display: -webkit-box;
         -webkit-line-clamp: 1;
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
+
     /* Slide transition */
     .guru-slider-outer { overflow: hidden; }
-    .guru-slider-track { position: relative; min-height: 10px; }
+    .guru-slider-track { position: relative; }
     .guru-slide {
         display: none;
-        animation: guruFadeIn .45s ease;
+        animation: guruFadeIn .5s cubic-bezier(.22,.68,0,1.1);
     }
     .guru-slide.active { display: block; }
     @keyframes guruFadeIn {
-        from { opacity: 0; transform: translateX(30px); }
+        from { opacity: 0; transform: translateX(40px); }
         to   { opacity: 1; transform: translateX(0); }
     }
+
     /* Arrows */
     .guru-arrow {
         position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
+        top: 50%; transform: translateY(-50%);
         z-index: 5;
-        background: white;
-        border: none;
-        width: 40px;
-        height: 40px;
+        background: rgba(255,255,255,.08);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255,255,255,.15);
+        width: 42px; height: 42px;
         border-radius: 50%;
-        box-shadow: 0 4px 14px rgba(0,0,0,.12);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: .85rem;
-        color: var(--gray-700,#334155);
-        cursor: pointer;
-        transition: all .2s;
-    }
-    .guru-arrow:hover { background: #2563eb; color: white; box-shadow: 0 6px 18px rgba(37,99,235,.35); }
-    .guru-prev { left: -20px; }
-    .guru-next { right: -20px; }
-    @media (max-width: 768px) {
-        .guru-prev { left: -10px; }
-        .guru-next { right: -10px; }
-    }
-    /* Dots */
-    .guru-dots {
-        display: flex;
-        justify-content: center;
-        gap: .5rem;
-        margin-top: 1.5rem;
-    }
-    .guru-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: #cbd5e1;
-        border: none;
+        display: flex; align-items: center; justify-content: center;
+        font-size: .9rem;
+        color: rgba(255,255,255,.7);
         cursor: pointer;
         transition: all .25s;
+    }
+    .guru-arrow:hover {
+        background: linear-gradient(135deg, #6366f1, #0ea5e9);
+        border-color: transparent;
+        color: white;
+        box-shadow: 0 6px 20px rgba(99,102,241,.5);
+        transform: translateY(-50%) scale(1.1);
+    }
+    .guru-prev { left: -5px; }
+    .guru-next { right: -5px; }
+    @media(max-width:768px){ .guru-prev{left:0;} .guru-next{right:0;} }
+
+    /* Dots */
+    .guru-dots {
+        display: flex; justify-content: center; gap: .45rem;
+        margin-top: 1.75rem;
+    }
+    .guru-dot {
+        width: 7px; height: 7px;
+        border-radius: 50%;
+        background: rgba(255,255,255,.2);
+        border: none; cursor: pointer;
+        transition: all .3s;
         padding: 0;
     }
     .guru-dot.active {
-        background: #2563eb;
-        width: 24px;
+        background: linear-gradient(90deg, #6366f1, #0ea5e9);
+        width: 28px;
         border-radius: 4px;
+    }
+
+    /* CTA button */
+    .guru-cta-btn {
+        display: inline-flex;
+        align-items: center;
+        background: rgba(255,255,255,.08);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255,255,255,.2);
+        color: white;
+        font-weight: 700;
+        font-size: .95rem;
+        padding: .85rem 2rem;
+        border-radius: 50px;
+        text-decoration: none;
+        transition: all .3s;
+        letter-spacing: .02em;
+    }
+    .guru-cta-btn:hover {
+        background: linear-gradient(135deg, #6366f1, #0ea5e9);
+        border-color: transparent;
+        color: white;
+        text-decoration: none;
+        transform: translateY(-3px);
+        box-shadow: 0 12px 35px rgba(99,102,241,.45);
     }
     </style>
 
