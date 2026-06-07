@@ -2500,7 +2500,7 @@
     /* Foto */
     .guru-foto-wrap {
         position: relative;
-        padding-top: 100%;
+        padding-top: 133%;   /* rasio 3:4 — cocok untuk foto portrait/formal guru */
         border-radius: 18px 18px 0 0;
         overflow: hidden;
         background: linear-gradient(135deg, #1e1b4b, #0c2340);
@@ -2511,7 +2511,7 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
-        object-position: top;
+        object-position: center top;  /* center horizontal, mulai dari atas agar wajah tidak terpotong */
         transition: transform .4s ease;
     }
     .guru-card:hover .guru-foto { transform: scale(1.06); }
@@ -2526,9 +2526,9 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 2.8rem;
-        color: rgba(255,255,255,.25);
-        background: linear-gradient(135deg, #1e1b4b, #0c2340);
+        font-size: 3.5rem;   /* lebih besar karena kotak lebih tinggi */
+        color: rgba(255,255,255,.2);
+        background: linear-gradient(135deg, #1e1b4b 0%, #0c2340 100%);
     }
 
     /* Badge jabatan */
