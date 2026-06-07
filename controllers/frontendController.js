@@ -285,6 +285,25 @@ exports.guru = async (req, res) => {
   }
 };
 
+exports.guruDetail = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const [[guruRows], profil, menuItems, mediaSosialFooter] = await Promise.all([
+      db.query('SELECT id, nip, nama, jabatan, mata_pelajaran, foto, email, telepon, jenis_kelamin, tempat_lahir, tanggal_lahir, alamat FROM guru WHERE id = ?', [id]),
+      getProfilSekolah(), getMenuItems(), getMediaSosialFooter()
+    ]);
+    if (!guruRows.length) return res.status(404).render('frontend/404', { title: '404', menuItems: await getMenuItems(), profil: await getProfilSekolah(), mediaSosialFooter: [] });
+    const g = guruRows[0];
+    res.render('frontend/guru-detail', {
+      title: g.nama, currentPage: 'guru',
+      guru: g, profil, menuItems, mediaSosialFooter
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Terjadi kesalahan');
+  }
+};
+
 exports.kontakPage = async (req, res) => {
   try {
     const [profil, menuItems, mediaSosialFooter, relatedBerita] = await Promise.all([

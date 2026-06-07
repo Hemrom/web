@@ -148,10 +148,26 @@
             border: 1px solid var(--gray-100);
             margin-bottom: 2rem;
             overflow: hidden;
+            cursor: pointer;
         }
-        .teacher-card:hover {
+        .teacher-card-link:hover .teacher-card {
             transform: translateY(-10px);
             box-shadow: 0 20px 40px rgba(14, 165, 233, 0.15);
+        }
+        .view-profile-btn {
+            display: inline-flex;
+            align-items: center;
+            background: var(--light-blue);
+            color: var(--primary-blue);
+            padding: 0.5rem 1.25rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .teacher-card-link:hover .view-profile-btn {
+            background: var(--primary-blue);
+            color: white;
         }
         .teacher-photo {
             width: 100%;
@@ -326,6 +342,7 @@
                     <div class="row">
                         <% grouped[kelompok.key].forEach(function(teacher) { %>
                         <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                            <a href="/guru/<%= teacher.id %>" class="teacher-card-link" style="text-decoration:none;color:inherit;display:block;">
                             <div class="teacher-card">
                                 <% if (teacher.foto) { %>
                                     <img src="/uploads/<%= teacher.foto %>" alt="<%= teacher.nama %>" class="teacher-photo">
@@ -342,14 +359,12 @@
                                     <% if (teacher.jabatan) { %>
                                         <div class="teacher-position"><%= teacher.jabatan %></div>
                                     <% } %>
-                                    <% if (teacher.email) { %>
-                                        <div class="contact-item mt-2">
-                                            <i class="fas fa-envelope"></i>
-                                            <span><%= teacher.email %></span>
-                                        </div>
-                                    <% } %>
+                                    <div class="view-profile-btn mt-3">
+                                        <span><i class="fas fa-eye me-1"></i> Lihat Profil</span>
+                                    </div>
                                 </div>
                             </div>
+                            </a>
                         </div>
                         <% }); %>
                     </div>

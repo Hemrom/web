@@ -18,6 +18,7 @@ router.get('/berita', frontendController.berita);
 router.get('/berita/:slug', validateSlugParam, frontendController.beritaDetail);
 router.get('/galeri', frontendController.galeri);
 router.get('/guru', frontendController.guru);
+router.get('/guru/:id', frontendController.guruDetail);
 router.get('/kontak', frontendController.kontakPage);
 router.post('/kontak', formLimiter, frontendController.kontakSubmit);
 router.get('/media-sosial', frontendController.mediaSosial);
