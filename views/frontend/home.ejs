@@ -763,44 +763,26 @@
             overflow: hidden;
             text-align: center;
         }
-        /* Warna unik per card — solid ceria & hangat */
-        .feature-card-blue {
-            background: #38bdf8 !important;
-            box-shadow: 0 8px 32px rgba(56,189,248,.4);
-            border: none;
-        }
-        .feature-card-blue:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 24px 52px rgba(56,189,248,.55);
-            background: #0ea5e9 !important;
-        }
-        .feature-card-blue .feature-title { color: #fff !important; }
-        .feature-card-blue .feature-desc  { color: rgba(255,255,255,.88) !important; }
-
-        .feature-card-indigo {
-            background: #818cf8 !important;
-            box-shadow: 0 8px 32px rgba(129,140,248,.4);
-            border: none;
-        }
-        .feature-card-indigo:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 24px 52px rgba(129,140,248,.55);
-            background: #6366f1 !important;
-        }
-        .feature-card-indigo .feature-title { color: #fff !important; }
-        .feature-card-indigo .feature-desc  { color: rgba(255,255,255,.88) !important; }
-
+        /* Semua card pakai warna tema utama — ikut berubah jika :root diubah */
+        .feature-card-blue,
+        .feature-card-indigo,
         .feature-card-amber {
-            background: #fb923c !important;
-            box-shadow: 0 8px 32px rgba(251,146,60,.4);
+            background: var(--primary-blue) !important;
+            box-shadow: 0 8px 32px rgba(14,165,233,.35);
             border: none;
         }
+        .feature-card-blue:hover,
+        .feature-card-indigo:hover,
         .feature-card-amber:hover {
             transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 24px 52px rgba(251,146,60,.55);
-            background: #f97316 !important;
+            box-shadow: 0 24px 52px rgba(14,165,233,.5);
+            background: var(--primary-blue-dark) !important;
         }
+        .feature-card-blue .feature-title,
+        .feature-card-indigo .feature-title,
         .feature-card-amber .feature-title { color: #fff !important; }
+        .feature-card-blue .feature-desc,
+        .feature-card-indigo .feature-desc,
         .feature-card-amber .feature-desc  { color: rgba(255,255,255,.88) !important; }
         /* Garis warna bawah card */
         .feature-card::after {
