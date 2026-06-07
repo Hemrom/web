@@ -3,9 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title><%= lowongan.judul %> - BKK Website Sekolah</title>
-    <meta name="description" content="<%= (lowongan.deskripsi||'').substring(0,160) %>">
-    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <% seoTitle=lowongan.judul+' - BKK'; seoDesc=(lowongan.deskripsi||'').substring(0,160); seoUrl='/bkk/'+lowongan.slug; seoType='article'; %>
+    <%- include('partials/_seo') %>
     <link href="/assets/vendor/bootstrap5/bootstrap.min.css" rel="stylesheet">
     <link href="/assets/vendor/fontawesome6/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/theme.css">

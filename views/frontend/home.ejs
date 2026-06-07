@@ -20,7 +20,30 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="<%= typeof profil !== 'undefined' && profil && profil.nama_sekolah ? profil.nama_sekolah : 'SMKN 1 Kras' %>">
     <meta name="twitter:description" content="Website resmi SMK Negeri 1 Kras, Kediri, Jawa Timur.">
-    
+    <meta name="twitter:image" content="https://smknegeri1kras.sch.id/uploads/<%= typeof profil !== 'undefined' && profil && profil.logo ? profil.logo : 'logo-sekolah.png' %>">
+
+    <!-- JSON-LD: Organization + EducationalOrganization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "EducationalOrganization",
+      "name": "<%= typeof profil !== 'undefined' && profil && profil.nama_sekolah ? profil.nama_sekolah : 'SMK Negeri 1 Kras' %>",
+      "alternateName": "SMKN 1 Kras",
+      "url": "https://smknegeri1kras.sch.id",
+      "logo": "https://smknegeri1kras.sch.id/assets/img/logo-sekolah.png",
+      "description": "Website resmi SMK Negeri 1 Kras, Kediri, Jawa Timur. Sekolah kejuruan unggulan dengan program keahlian TKJ, TKR, Kuliner, dan TPTUP.",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Kras",
+        "addressRegion": "Kediri",
+        "addressCountry": "ID"
+      },
+      "sameAs": [
+        "https://smknegeri1kras.sch.id"
+      ]
+    }
+    </script>
+
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
     

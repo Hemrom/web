@@ -3,8 +3,66 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title><%= title %> - Website Sekolah</title>
-    
+    <%
+    const _beritaDesc = (berita.konten || '').replace(/<[^>]*>/g, '').replace(/\s+/g,' ').trim().substring(0, 160);
+    const _beritaImg  = berita.gambar ? 'https://smknegeri1kras.sch.id/uploads/' + berita.gambar : 'https://smknegeri1kras.sch.id/assets/img/logo-sekolah.png';
+    const _beritaUrl  = 'https://smknegeri1kras.sch.id/berita/' + berita.slug;
+    const _beritaDate = berita.created_at ? new Date(berita.created_at).toISOString() : '';
+    %>
+    <title><%= berita.judul %> - SMKN 1 Kras</title>
+    <meta name="description" content="<%= _beritaDesc %>">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="SMKN 1 Kras">
+    <link rel="canonical" href="<%= _beritaUrl %>">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="<%= _beritaUrl %>">
+    <meta property="og:title" content="<%= berita.judul %> - SMKN 1 Kras">
+    <meta property="og:description" content="<%= _beritaDesc %>">
+    <meta property="og:image" content="<%= _beritaImg %>">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="SMKN 1 Kras">
+    <meta property="og:locale" content="id_ID">
+    <meta property="article:published_time" content="<%= _beritaDate %>">
+    <meta property="article:section" content="<%= berita.kategori || 'Berita' %>">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<%= berita.judul %> - SMKN 1 Kras">
+    <meta name="twitter:description" content="<%= _beritaDesc %>">
+    <meta name="twitter:image" content="<%= _beritaImg %>">
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "NewsArticle",
+      "headline": "<%= berita.judul.replace(/"/g, '&quot;') %>",
+      "description": "<%= _beritaDesc.replace(/"/g, '&quot;') %>",
+      "image": "<%= _beritaImg %>",
+      "datePublished": "<%= _beritaDate %>",
+      "dateModified": "<%= berita.updated_at ? new Date(berita.updated_at).toISOString() : _beritaDate %>",
+      "author": {
+        "@type": "Organization",
+        "name": "SMKN 1 Kras"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "SMK Negeri 1 Kras",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://smknegeri1kras.sch.id/assets/img/logo-sekolah.png"
+        }
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "<%= _beritaUrl %>"
+      }
+    }
+    </script>
+
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
     

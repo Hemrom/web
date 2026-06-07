@@ -3,8 +3,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title><%= title %> - Website Sekolah</title>
-    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <%
+    const _jDesc = (jurusan.deskripsi || '').replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim().substring(0,160) || `Program keahlian ${jurusan.nama} di SMK Negeri 1 Kras, Kediri. Informasi lengkap kurikulum, fasilitas, dan prospek kerja.`;
+    const _jImg  = jurusan.gambar ? 'https://smknegeri1kras.sch.id/uploads/' + jurusan.gambar : 'https://smknegeri1kras.sch.id/assets/img/logo-sekolah.png';
+    seoTitle = jurusan.nama; seoDesc = _jDesc; seoImage = _jImg; seoUrl = '/jurusan/' + jurusan.kode.toLowerCase();
+    %>
+    <%- include('partials/_seo') %>
     <link href="/assets/vendor/bootstrap5/bootstrap.min.css" rel="stylesheet">
     <link href="/assets/vendor/fontawesome6/all.min.css" rel="stylesheet">    <link rel="stylesheet" href="/assets/vendor/lightbox2/lightbox.min.css">
     <link rel="stylesheet" href="/theme.css">

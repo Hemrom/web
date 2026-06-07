@@ -1,0 +1,55 @@
+<%
+/**
+ * SEO Partial — include di setiap halaman frontend
+ *
+ * Variabel yang bisa di-pass dari halaman pemanggil:
+ *   seoTitle       — judul halaman (default: title)
+ *   seoDesc        — deskripsi (default: deskripsi umum sekolah)
+ *   seoImage       — URL gambar OG (default: logo sekolah)
+ *   seoUrl         — canonical URL (default: '/')
+ *   seoType        — og:type: 'website' | 'article' (default: 'website')
+ *   seoNoindex     — true jika tidak mau diindex (default: false)
+ *
+ * Variabel global yang harus tersedia: profil
+ */
+const _baseUrl   = 'https://smknegeri1kras.sch.id';
+const _namaSekolah = (typeof profil !== 'undefined' && profil && profil.nama_sekolah)
+                      ? profil.nama_sekolah : 'SMK Negeri 1 Kras';
+const _logoUrl   = (typeof profil !== 'undefined' && profil && profil.logo)
+                      ? `${_baseUrl}/uploads/${profil.logo}`
+                      : `${_baseUrl}/assets/img/logo-sekolah.png`;
+
+const _seoTitle  = (typeof seoTitle  !== 'undefined' && seoTitle)  ? seoTitle  : (typeof title !== 'undefined' ? title : _namaSekolah);
+const _seoDesc   = (typeof seoDesc   !== 'undefined' && seoDesc)   ? seoDesc   : `Website resmi ${_namaSekolah}, Kediri, Jawa Timur. Informasi sekolah, berita, galeri, dan program keahlian.`;
+const _seoImage  = (typeof seoImage  !== 'undefined' && seoImage)  ? seoImage  : _logoUrl;
+const _seoUrl    = (typeof seoUrl    !== 'undefined' && seoUrl)    ? `${_baseUrl}${seoUrl}` : _baseUrl;
+const _seoType   = (typeof seoType   !== 'undefined' && seoType)   ? seoType   : 'website';
+const _noindex   = (typeof seoNoindex !== 'undefined' && seoNoindex);
+const _fullTitle = `${_seoTitle} - ${_namaSekolah}`;
+%>
+    <title><%- _fullTitle %></title>
+    <meta name="description" content="<%- _seoDesc.substring(0,160) %>">
+    <meta name="robots" content="<%= _noindex ? 'noindex, nofollow' : 'index, follow' %>">
+    <meta name="author" content="<%= _namaSekolah %>">
+    <link rel="canonical" href="<%= _seoUrl %>">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="<%= _seoType %>">
+    <meta property="og:url" content="<%= _seoUrl %>">
+    <meta property="og:title" content="<%- _fullTitle %>">
+    <meta property="og:description" content="<%- _seoDesc.substring(0,160) %>">
+    <meta property="og:image" content="<%= _seoImage %>">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="<%= _namaSekolah %>">
+    <meta property="og:locale" content="id_ID">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<%- _fullTitle %>">
+    <meta name="twitter:description" content="<%- _seoDesc.substring(0,160) %>">
+    <meta name="twitter:image" content="<%= _seoImage %>">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <link rel="shortcut icon" href="/assets/img/favicon.png">

@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Agenda Sekolah - <%= typeof profil !== 'undefined' && profil && profil.nama_sekolah ? profil.nama_sekolah : 'SMKN 1 Kras' %></title>
-    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <% seoTitle='Agenda Sekolah'; seoDesc='Agenda dan jadwal kegiatan SMK Negeri 1 Kras, Kediri. Informasi event, ujian, dan kegiatan sekolah yang akan datang.'; seoUrl='/agenda'; %>
+    <%- include('partials/_seo') %>
     <link href="/assets/vendor/bootstrap5/bootstrap.min.css" rel="stylesheet">
     <link href="/assets/vendor/fontawesome6/all.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">

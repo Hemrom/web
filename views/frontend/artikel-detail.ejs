@@ -3,8 +3,65 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title><%= artikel.judul %> - Website Sekolah</title>
-    <meta name="description" content="<%= (artikel.ringkasan || (artikel.konten || '').replace(/<[^>]*>/g, '')).substring(0, 160) %>">
+    <%
+    const _artDesc = (artikel.ringkasan || (artikel.konten || '').replace(/<[^>]*>/g, '').replace(/\s+/g,' ').trim()).substring(0, 160);
+    const _artImg  = artikel.gambar ? 'https://smknegeri1kras.sch.id/uploads/' + artikel.gambar : 'https://smknegeri1kras.sch.id/assets/img/logo-sekolah.png';
+    const _artUrl  = 'https://smknegeri1kras.sch.id/artikel/' + artikel.slug;
+    const _artDate = artikel.created_at ? new Date(artikel.created_at).toISOString() : '';
+    %>
+    <title><%= artikel.judul %> - SMKN 1 Kras</title>
+    <meta name="description" content="<%= _artDesc %>">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="<%= artikel.penulis_nama || 'SMKN 1 Kras' %>">
+    <link rel="canonical" href="<%= _artUrl %>">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="<%= _artUrl %>">
+    <meta property="og:title" content="<%= artikel.judul %> - SMKN 1 Kras">
+    <meta property="og:description" content="<%= _artDesc %>">
+    <meta property="og:image" content="<%= _artImg %>">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="SMKN 1 Kras">
+    <meta property="og:locale" content="id_ID">
+    <meta property="article:published_time" content="<%= _artDate %>">
+    <meta property="article:section" content="<%= artikel.kategori || 'Artikel' %>">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<%= artikel.judul %> - SMKN 1 Kras">
+    <meta name="twitter:description" content="<%= _artDesc %>">
+    <meta name="twitter:image" content="<%= _artImg %>">
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "<%= artikel.judul.replace(/"/g, '&quot;') %>",
+      "description": "<%= _artDesc.replace(/"/g, '&quot;') %>",
+      "image": "<%= _artImg %>",
+      "datePublished": "<%= _artDate %>",
+      "author": {
+        "@type": "Person",
+        "name": "<%= (artikel.penulis_nama || 'SMKN 1 Kras').replace(/"/g, '&quot;') %>"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "SMK Negeri 1 Kras",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://smknegeri1kras.sch.id/assets/img/logo-sekolah.png"
+        }
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "<%= _artUrl %>"
+      }
+    }
+    </script>
+
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
     <link href="/assets/vendor/bootstrap5/bootstrap.min.css" rel="stylesheet">
     <link href="/assets/vendor/fontawesome6/all.min.css" rel="stylesheet">

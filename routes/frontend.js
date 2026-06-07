@@ -119,7 +119,45 @@ router.get('/ekstrakurikuler', portalController.ekstrakurikulerIndex);
 // SEO
 router.get('/robots.txt', (req, res) => {
   res.type('text/plain');
-  res.send(`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /guru\nDisallow: /bkk\nDisallow: /osis\nDisallow: /pramuka\nDisallow: /olahraga\nDisallow: /paskibraka\nDisallow: /seni\nDisallow: /bahasa-asing\nDisallow: /rohis\nDisallow: /pmr\nDisallow: /pikr\nDisallow: /pecinta-alam\nDisallow: /pencak-silat\nDisallow: /jurusan-portal\nSitemap: https://smknegeri1kras.sch.id/sitemap.xml`);
+  // Hanya blokir halaman admin dan login portal — halaman publik ekskul tetap bisa diindex
+  res.send([
+    'User-agent: *',
+    'Allow: /',
+    '',
+    '# Halaman admin - tidak perlu diindex',
+    'Disallow: /admin',
+    '',
+    '# Login portal operator ekskul - tidak perlu diindex',
+    'Disallow: /bkk/login',
+    'Disallow: /osis/login',
+    'Disallow: /pramuka/login',
+    'Disallow: /olahraga/login',
+    'Disallow: /paskibraka/login',
+    'Disallow: /seni/login',
+    'Disallow: /bahasa-asing/login',
+    'Disallow: /rohis/login',
+    'Disallow: /pmr/login',
+    'Disallow: /pikr/login',
+    'Disallow: /pecinta-alam/login',
+    'Disallow: /pencak-silat/login',
+    'Disallow: /jurusan-portal',
+    '',
+    '# Dashboard portal - tidak perlu diindex',
+    'Disallow: /bkk/dashboard',
+    'Disallow: /osis/dashboard',
+    'Disallow: /pramuka/dashboard',
+    'Disallow: /olahraga/dashboard',
+    'Disallow: /paskibraka/dashboard',
+    'Disallow: /seni/dashboard',
+    'Disallow: /bahasa-asing/dashboard',
+    'Disallow: /rohis/dashboard',
+    'Disallow: /pmr/dashboard',
+    'Disallow: /pikr/dashboard',
+    'Disallow: /pecinta-alam/dashboard',
+    'Disallow: /pencak-silat/dashboard',
+    '',
+    'Sitemap: https://smknegeri1kras.sch.id/sitemap.xml'
+  ].join('\n'));
 });
 
 router.get('/sitemap.xml', async (req, res) => {
@@ -128,26 +166,74 @@ router.get('/sitemap.xml', async (req, res) => {
     const baseUrl = 'https://smknegeri1kras.sch.id';
     const now = new Date().toISOString().split('T')[0];
 
-    const [[berita], [artikel], [jurusan], [halaman]] = await Promise.all([
-      db.query("SELECT slug, updated_at FROM berita WHERE status='published'"),
-      db.query("SELECT slug, updated_at FROM artikel WHERE status='published'"),
+    const [[berita], [artikel], [jurusan], [halaman], [agenda], [prestasi]] = await Promise.all([
+      db.query("SELECT slug, updated_at FROM berita WHERE status='published' ORDER BY updated_at DESC"),
+      db.query("SELECT slug, updated_at FROM artikel WHERE status='published' ORDER BY updated_at DESC"),
       db.query("SELECT kode FROM jurusan WHERE status='aktif'"),
       db.query("SELECT slug FROM halaman WHERE status='aktif'"),
+      db.query("SELECT slug FROM agenda WHERE status='aktif' AND slug IS NOT NULL"),
+      db.query("SELECT slug FROM prestasi WHERE status='published' AND slug IS NOT NULL"),
     ]);
 
-    const staticPages = ['', '/berita', '/galeri', '/guru', '/kontak', '/profil', '/prestasi', '/bkk', '/osis', '/pramuka', '/olahraga', '/paskibraka', '/seni', '/bahasa-asing', '/rohis', '/pmr', '/pikr', '/pecinta-alam', '/pencak-silat', '/fasilitas', '/ekstrakurikuler'];
+    // Halaman statis dengan prioritas
+    const staticPages = [
+      { url: '',               pri: '1.0', freq: 'daily'   },
+      { url: '/berita',        pri: '0.9', freq: 'daily'   },
+      { url: '/profil',        pri: '0.8', freq: 'monthly' },
+      { url: '/jurusan',       pri: '0.8', freq: 'monthly' },
+      { url: '/galeri',        pri: '0.7', freq: 'weekly'  },
+      { url: '/prestasi',      pri: '0.7', freq: 'weekly'  },
+      { url: '/fasilitas',     pri: '0.7', freq: 'monthly' },
+      { url: '/guru',          pri: '0.6', freq: 'monthly' },
+      { url: '/ekstrakurikuler',pri:'0.7', freq: 'monthly' },
+      { url: '/bkk',           pri: '0.7', freq: 'weekly'  },
+      { url: '/alumni',        pri: '0.6', freq: 'monthly' },
+      { url: '/artikel',       pri: '0.7', freq: 'weekly'  },
+      { url: '/agenda',        pri: '0.7', freq: 'weekly'  },
+      { url: '/osis',          pri: '0.6', freq: 'monthly' },
+      { url: '/pramuka',       pri: '0.6', freq: 'monthly' },
+      { url: '/pmr',           pri: '0.6', freq: 'monthly' },
+      { url: '/paskibraka',    pri: '0.6', freq: 'monthly' },
+      { url: '/olahraga',      pri: '0.6', freq: 'monthly' },
+      { url: '/seni',          pri: '0.6', freq: 'monthly' },
+      { url: '/bahasa-asing',  pri: '0.6', freq: 'monthly' },
+      { url: '/rohis',         pri: '0.6', freq: 'monthly' },
+      { url: '/pikr',          pri: '0.6', freq: 'monthly' },
+      { url: '/pecinta-alam',  pri: '0.6', freq: 'monthly' },
+      { url: '/pencak-silat',  pri: '0.6', freq: 'monthly' },
+      { url: '/kontak',        pri: '0.5', freq: 'monthly' },
+    ];
 
     let urls = staticPages.map(p => `
-  <url><loc>${baseUrl}${p}</loc><lastmod>${now}</lastmod><changefreq>weekly</changefreq><priority>${p === '' ? '1.0' : '0.8'}</priority></url>`).join('');
+  <url><loc>${baseUrl}${p.url}</loc><lastmod>${now}</lastmod><changefreq>${p.freq}</changefreq><priority>${p.pri}</priority></url>`).join('');
 
-    berita.forEach(b => { urls += `\n  <url><loc>${baseUrl}/berita/${b.slug}</loc><lastmod>${new Date(b.updated_at).toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>`; });
-    artikel.forEach(a => { urls += `\n  <url><loc>${baseUrl}/artikel/${a.slug}</loc><lastmod>${new Date(a.updated_at).toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>`; });
-    jurusan.forEach(j => { urls += `\n  <url><loc>${baseUrl}/jurusan/${j.kode.toLowerCase()}</loc><lastmod>${now}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>`; });
-    halaman.forEach(h => { urls += `\n  <url><loc>${baseUrl}/page/${h.slug}</loc><lastmod>${now}</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>`; });
+    berita.forEach(b => {
+      const d = b.updated_at ? new Date(b.updated_at).toISOString().split('T')[0] : now;
+      urls += `\n  <url><loc>${baseUrl}/berita/${b.slug}</loc><lastmod>${d}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>`;
+    });
+    artikel.forEach(a => {
+      const d = a.updated_at ? new Date(a.updated_at).toISOString().split('T')[0] : now;
+      urls += `\n  <url><loc>${baseUrl}/artikel/${a.slug}</loc><lastmod>${d}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>`;
+    });
+    jurusan.forEach(j => {
+      urls += `\n  <url><loc>${baseUrl}/jurusan/${j.kode.toLowerCase()}</loc><lastmod>${now}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>`;
+    });
+    halaman.forEach(h => {
+      urls += `\n  <url><loc>${baseUrl}/page/${h.slug}</loc><lastmod>${now}</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>`;
+    });
+    agenda.forEach(a => {
+      if (a.slug) urls += `\n  <url><loc>${baseUrl}/agenda/${a.slug}</loc><lastmod>${now}</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>`;
+    });
+    prestasi.forEach(p => {
+      if (p.slug) urls += `\n  <url><loc>${baseUrl}/prestasi/${p.slug}</loc><lastmod>${now}</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>`;
+    });
 
     res.type('application/xml');
     res.send(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}\n</urlset>`);
-  } catch (e) { res.status(500).send('Error generating sitemap'); }
+  } catch (e) {
+    console.error('Sitemap error:', e);
+    res.status(500).send('Error generating sitemap');
+  }
 });
 
 module.exports = router;
