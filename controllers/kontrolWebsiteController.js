@@ -199,7 +199,12 @@ body { background-color: ${bodyBg} !important; color: ${bodyColor} !important; }
 .footer-title { color: white !important; }
 .footer-link { color: rgba(255,255,255,.75) !important; }
 .footer-link:hover { color: white !important; }
-.news-card, .feature-card, .stat-card { background: ${cardBg} !important; border-radius: var(--border-radius-card) !important; }
+.news-card, .stat-card { background: ${cardBg} !important; border-radius: var(--border-radius-card) !important; }
+.feature-card { border-radius: var(--border-radius-card) !important; }
+.feature-card-blue, .feature-card-indigo, .feature-card-amber { background: ${primary} !important; box-shadow: 0 8px 32px ${primary}55 !important; border: none !important; }
+.feature-card-blue:hover, .feature-card-indigo:hover, .feature-card-amber:hover { background: ${secondary} !important; }
+.feature-card-blue .feature-title, .feature-card-indigo .feature-title, .feature-card-amber .feature-title { color: #fff !important; }
+.feature-card-blue .feature-desc, .feature-card-indigo .feature-desc, .feature-card-amber .feature-desc { color: rgba(255,255,255,.88) !important; }
 .stats-section, .news-section { background: ${gray50} !important; }
 .features-section, .gallery-section { background: ${cardBg} !important; }
 .btn-primary { background: ${primary} !important; border-color: ${primary} !important; }
@@ -210,13 +215,13 @@ body { background-color: ${bodyBg} !important; color: ${bodyColor} !important; }
 .nav-link:hover, .nav-link.active { color: ${primary} !important; background-color: ${primaryLight} !important; }
 .page-header, .hero-default, .cta-section { background: linear-gradient(135deg, ${primary} 0%, ${secondary} 100%) !important; }
 .stat-number, .news-meta a { color: ${primary} !important; }
-.feature-icon { background: linear-gradient(135deg, ${primary}, ${secondary}) !important; }
+.feature-icon { background: rgba(255,255,255,.25) !important; box-shadow: none !important; }
 .news-badge { background: ${primary} !important; }
 .link-terkait-header { background: ${primary} !important; }
 .medsos-section { background: linear-gradient(135deg, ${secondary}dd 0%, ${primary}cc 100%) !important; }
 ${heroLightOverrides}
 ${isDark ? `
-.stat-card, .feature-card, .news-card { background: ${cardBg} !important; border-color: ${gray100} !important; }
+.stat-card, .news-card { background: ${cardBg} !important; border-color: ${gray100} !important; }
 .section-title, .feature-title, .news-title { color: #f1f5f9 !important; }
 .section-subtitle, .feature-desc, .news-excerpt { color: #94a3b8 !important; }
 .text-muted { color: #94a3b8 !important; }
