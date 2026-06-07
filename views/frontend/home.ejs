@@ -1983,7 +1983,7 @@
                                     <div style="padding:1.25rem;">
                                         <span style="background:rgba(99,102,241,.25);color:#c7d2fe;padding:.2rem .7rem;border-radius:50px;font-size:.72rem;font-weight:700;"><%= item.kategori %></span>
                                         <h3 style="font-size:<%= idx === 0 ? '1.05rem' : '.88rem' %>;font-weight:700;color:white;margin:.65rem 0 .4rem;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;"><%= item.judul %></h3>
-                                        <p style="font-size:.75rem;color:rgba(255,255,255,.5);margin:0;"><i class="fas fa-user me-1"></i><%= item.penulis_nama %> � <i class="fas fa-calendar ms-1 me-1"></i><%= new Date(item.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}) %></p>
+                                        <p style="font-size:.75rem;color:rgba(255,255,255,.5);margin:0;"><i class="fas fa-user me-1"></i><%= item.penulis_nama %> &middot; <i class="fas fa-calendar ms-1 me-1"></i><%= new Date(item.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}) %></p>
                                     </div>
                                 </div>
                             </a>
@@ -2017,7 +2017,7 @@
                             </div>
                             <div style="flex:1;min-width:0;">
                                 <div style="font-weight:600;color:white;font-size:.875rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><%= item.judul %></div>
-                                <div style="font-size:.72rem;color:rgba(255,255,255,.45);margin-top:.2rem;"><%= item.kategori %> � <%= item.ukuran_file %> � <i class="fas fa-download me-1"></i><%= item.jumlah_download %>x</div>
+                                <div style="font-size:.72rem;color:rgba(255,255,255,.45);margin-top:.2rem;"><%= item.kategori %> &middot; <%= item.ukuran_file %> &middot; <i class="fas fa-download me-1"></i><%= item.jumlah_download %>x</div>
                             </div>
                             <i class="fas fa-download" style="color:#7dd3fc;flex-shrink:0;font-size:.85rem;"></i>
                         </a>
@@ -2042,7 +2042,7 @@
             <div class="d-flex align-items-end justify-content-between mb-4 flex-wrap gap-3">
                 <div>
                     <div style="display:inline-flex;align-items:center;gap:.5rem;background:#d1fae5;color:#065f46;padding:.35rem 1rem;border-radius:50px;font-size:.8rem;font-weight:700;margin-bottom:.75rem;">
-                        <i class="fas fa-briefcase"></i> BKK � Bursa Kerja Khusus
+                        <i class="fas fa-briefcase"></i> BKK &middot; Bursa Kerja Khusus
                     </div>
                     <h2 style="font-size:2rem;font-weight:800;color:#1e293b;margin-bottom:.25rem;">Lowongan Terbaru</h2>
                     <p style="color:#64748b;font-size:.95rem;margin:0;">Peluang kerja, magang, dan beasiswa untuk lulusan</p>
@@ -2737,9 +2737,9 @@
                                 <div style="font-weight:700;color:var(--gray-800);font-size:.95rem;"><%= a.nama %></div>
                                 <div style="font-size:.78rem;color:var(--gray-500);">
                                     <% if (a.tahun_lulus) { %><span style="background:var(--light-blue);color:var(--primary-blue-dark);padding:.1rem .5rem;border-radius:10px;font-weight:600;">Angkatan <%= a.tahun_lulus %></span><% } %>
-                                    <% if (a.jurusan) { %> � <%= a.jurusan %><% } %>
+                                    <% if (a.jurusan) { %> &middot; <%= a.jurusan %><% } %>
                                 </div>
-                                <% if (a.pekerjaan) { %><div style="font-size:.8rem;color:var(--primary-blue);font-weight:600;margin-top:.2rem;"><i class="fas fa-briefcase me-1"></i><%= a.pekerjaan %><% if(a.perusahaan){%> � <%=a.perusahaan%><% } %></div><% } %>
+                                <% if (a.pekerjaan) { %><div style="font-size:.8rem;color:var(--primary-blue);font-weight:600;margin-top:.2rem;"><i class="fas fa-briefcase me-1"></i><%= a.pekerjaan %><% if(a.perusahaan){%> &middot; <%=a.perusahaan%><% } %></div><% } %>
                             </div>
                         </div>
                         <% if (a.cerita) { %><div style="flex:1;font-size:.83rem;color:var(--gray-600);font-style:italic;line-height:1.6;border-left:3px solid var(--accent-blue);padding-left:.9rem;">"<%= a.cerita.substring(0,160) %><%= a.cerita.length>160?'...':'' %>"</div><% } %>
