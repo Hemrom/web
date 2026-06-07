@@ -94,7 +94,7 @@ exports.create = (req, res) => {
     }
     await compressImage(req, res, () => {});
     try {
-      const { nip, nama, mata_pelajaran, jabatan, email, telepon, guru_username, guru_password } = req.body;
+      const { nip, nama, mata_pelajaran, jabatan, email, telepon, guru_username, guru_password, jenis_kelamin } = req.body;
       const foto = req.file ? req.file.filename : null;
 
       // Hash password jika diisi
@@ -105,8 +105,8 @@ exports.create = (req, res) => {
       }
 
       await db.query(
-        'INSERT INTO guru (nip, nama, foto, mata_pelajaran, jabatan, email, telepon, guru_username, guru_password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        [nip || null, nama, foto, mata_pelajaran, jabatan, email, telepon, guru_username || null, hashedPassword]
+        'INSERT INTO guru (nip, nama, foto, mata_pelajaran, jabatan, email, telepon, jenis_kelamin, guru_username, guru_password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        [nip || null, nama, foto, mata_pelajaran, jabatan, email, telepon, jenis_kelamin || null, guru_username || null, hashedPassword]
       );
       
       res.redirect('/admin/data-sekolah?tab=guru');
@@ -144,13 +144,13 @@ exports.update = (req, res) => {
     }
     await compressImage(req, res, () => {});
     try {
-      const { nip, nama, mata_pelajaran, jabatan, email, telepon, guru_username, guru_username_lama, guru_password } = req.body;
+      const { nip, nama, mata_pelajaran, jabatan, email, telepon, guru_username, guru_username_lama, guru_password, jenis_kelamin } = req.body;
       const foto = req.file ? req.file.filename : null;
 
       // Siapkan update akun login
       const bcrypt = require('bcryptjs');
       let loginUpdate = '';
-      const params = [nip || null, nama, mata_pelajaran, jabatan, email, telepon];
+      const params = [nip || null, nama, mata_pelajaran, jabatan, email, telepon, jenis_kelamin || null];
 
       // Hanya update username kalau benar-benar berubah dari nilai lama
       const usernameBaruBersih = guru_username ? guru_username.trim() : '';
@@ -167,12 +167,12 @@ exports.update = (req, res) => {
 
       if (foto) {
         await db.query(
-          `UPDATE guru SET nip=?, nama=?, mata_pelajaran=?, jabatan=?, email=?, telepon=?, foto=?${loginUpdate} WHERE id=?`,
+          `UPDATE guru SET nip=?, nama=?, mata_pelajaran=?, jabatan=?, email=?, telepon=?, jenis_kelamin=?, foto=?${loginUpdate} WHERE id=?`,
           [...params, foto, req.params.id]
         );
       } else {
         await db.query(
-          `UPDATE guru SET nip=?, nama=?, mata_pelajaran=?, jabatan=?, email=?, telepon=?${loginUpdate} WHERE id=?`,
+          `UPDATE guru SET nip=?, nama=?, mata_pelajaran=?, jabatan=?, email=?, telepon=?, jenis_kelamin=?${loginUpdate} WHERE id=?`,
           [...params, req.params.id]
         );
       }

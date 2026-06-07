@@ -103,19 +103,19 @@ exports.updateProfil = (req, res) => {
     if (err) return res.status(500).send('Error upload');
     await compressImage(req, res, () => {});
     try {
-      const { nama, nip, telepon, email, mata_pelajaran, jabatan, alamat } = req.body;
+      const { nama, nip, telepon, email, mata_pelajaran, jabatan, alamat, jenis_kelamin } = req.body;
       const foto = req.file ? req.file.filename : null;
 
       if (foto) {
         await db.query(
-          'UPDATE guru SET nama=?, nip=?, telepon=?, email=?, mata_pelajaran=?, jabatan=?, alamat=?, foto=? WHERE id=?',
-          [nama, nip, telepon, email, mata_pelajaran, jabatan, alamat, foto, req.session.guruId]
+          'UPDATE guru SET nama=?, nip=?, telepon=?, email=?, mata_pelajaran=?, jabatan=?, alamat=?, jenis_kelamin=?, foto=? WHERE id=?',
+          [nama, nip, telepon, email, mata_pelajaran, jabatan, alamat, jenis_kelamin || null, foto, req.session.guruId]
         );
         req.session.guruFoto = foto;
       } else {
         await db.query(
-          'UPDATE guru SET nama=?, nip=?, telepon=?, email=?, mata_pelajaran=?, jabatan=?, alamat=? WHERE id=?',
-          [nama, nip, telepon, email, mata_pelajaran, jabatan, alamat, req.session.guruId]
+          'UPDATE guru SET nama=?, nip=?, telepon=?, email=?, mata_pelajaran=?, jabatan=?, alamat=?, jenis_kelamin=? WHERE id=?',
+          [nama, nip, telepon, email, mata_pelajaran, jabatan, alamat, jenis_kelamin || null, req.session.guruId]
         );
       }
       req.session.guruNama = nama;
