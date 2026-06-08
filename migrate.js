@@ -525,6 +525,9 @@ async function run() {
     `ALTER TABLE alumni CHANGE COLUMN IF EXISTS nis nisn VARCHAR(20) DEFAULT NULL`,
     `ALTER TABLE alumni CHANGE COLUMN IF EXISTS linkedin tiktok VARCHAR(100) DEFAULT NULL`,
 
+    // Guru: tambah kolom alamat jika belum ada
+    `ALTER TABLE guru ADD COLUMN IF NOT EXISTS alamat TEXT DEFAULT NULL`,
+
     // Agenda
     `CREATE TABLE IF NOT EXISTS agenda (
       id INT(11) NOT NULL AUTO_INCREMENT,
