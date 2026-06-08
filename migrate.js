@@ -521,6 +521,10 @@ async function run() {
     // Tambah role pencak_silat ke portal_users
     `ALTER TABLE portal_users MODIFY COLUMN role ENUM('bkk','osis','jurusan','pramuka','olahraga','paskibraka','seni','bahasa_asing','rohis','pmr','pikr','pecinta_alam','pencak_silat') NOT NULL`,
 
+    // Alumni: rename nis -> nisn, linkedin -> tiktok
+    `ALTER TABLE alumni CHANGE COLUMN IF EXISTS nis nisn VARCHAR(20) DEFAULT NULL`,
+    `ALTER TABLE alumni CHANGE COLUMN IF EXISTS linkedin tiktok VARCHAR(100) DEFAULT NULL`,
+
     // Agenda
     `CREATE TABLE IF NOT EXISTS agenda (
       id INT(11) NOT NULL AUTO_INCREMENT,

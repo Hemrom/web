@@ -25,7 +25,7 @@ const getCommonData = async () => {
 exports.frontendIndex = async (req, res) => {
   try {
     const common = await getCommonData();
-    const [alumni] = await db.query("SELECT id,nama,tahun_lulus,jurusan,pekerjaan,perusahaan,kota,foto,cerita,instagram,linkedin FROM alumni WHERE status='disetujui' ORDER BY tahun_lulus DESC, nama ASC");
+    const [alumni] = await db.query("SELECT id,nama,tahun_lulus,jurusan,pekerjaan,perusahaan,kota,foto,cerita,instagram,tiktok FROM alumni WHERE status='disetujui' ORDER BY tahun_lulus DESC, nama ASC");
     res.render('frontend/alumni', { title: 'Alumni', currentPage: 'alumni', alumni, ...common });
   } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
 };
@@ -42,13 +42,13 @@ exports.register = (req, res) => {
     const common = await getCommonData();
     if (err) return res.render('frontend/alumni-register', { title: 'Daftar Alumni', currentPage: 'alumni', success: false, error: err.message, token: null, ...common });
     try {
-      const { nama, nis, tahun_lulus, jurusan, pekerjaan, perusahaan, kota, email, telepon, instagram, linkedin, cerita } = req.body;
+      const { nama, nisn, tahun_lulus, jurusan, pekerjaan, perusahaan, kota, email, telepon, instagram, tiktok, cerita } = req.body;
       if (!nama || !tahun_lulus) return res.render('frontend/alumni-register', { title: 'Daftar Alumni', currentPage: 'alumni', success: false, error: 'Nama dan tahun lulus wajib diisi.', token: null, ...common });
       const foto = req.file ? req.file.filename : null;
       const token = crypto.randomBytes(32).toString('hex');
       await db.query(
-        'INSERT INTO alumni (nama,nis,tahun_lulus,jurusan,pekerjaan,perusahaan,kota,foto,email,telepon,instagram,linkedin,cerita,token,status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-        [nama, nis||null, tahun_lulus, jurusan||null, pekerjaan||null, perusahaan||null, kota||null, foto, email||null, telepon||null, instagram||null, linkedin||null, cerita||null, token, 'pending']
+        'INSERT INTO alumni (nama,nisn,tahun_lulus,jurusan,pekerjaan,perusahaan,kota,foto,email,telepon,instagram,tiktok,cerita,token,status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+        [nama, nisn||null, tahun_lulus, jurusan||null, pekerjaan||null, perusahaan||null, kota||null, foto, email||null, telepon||null, instagram||null, tiktok||null, cerita||null, token, 'pending']
       );
       res.render('frontend/alumni-register', { title: 'Daftar Alumni', currentPage: 'alumni', success: true, error: null, token, ...common });
     } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
@@ -79,11 +79,11 @@ exports.editSubmit = (req, res) => {
     if (!rows.length) return res.status(404).send('Link tidak valid.');
     if (err) return res.render('frontend/alumni-edit', { title: 'Update Biodata Alumni', currentPage: 'alumni', alumni: rows[0], success: false, error: err.message, ...common });
     try {
-      const { nama, nis, tahun_lulus, jurusan, pekerjaan, perusahaan, kota, email, telepon, instagram, linkedin, cerita } = req.body;
+      const { nama, nisn, tahun_lulus, jurusan, pekerjaan, perusahaan, kota, email, telepon, instagram, tiktok, cerita } = req.body;
       const foto = req.file ? req.file.filename : rows[0].foto;
       await db.query(
-        'UPDATE alumni SET nama=?,nis=?,tahun_lulus=?,jurusan=?,pekerjaan=?,perusahaan=?,kota=?,foto=?,email=?,telepon=?,instagram=?,linkedin=?,cerita=?,status=? WHERE token=?',
-        [nama, nis||null, tahun_lulus, jurusan||null, pekerjaan||null, perusahaan||null, kota||null, foto, email||null, telepon||null, instagram||null, linkedin||null, cerita||null, 'pending', req.params.token]
+        'UPDATE alumni SET nama=?,nisn=?,tahun_lulus=?,jurusan=?,pekerjaan=?,perusahaan=?,kota=?,foto=?,email=?,telepon=?,instagram=?,tiktok=?,cerita=?,status=? WHERE token=?',
+        [nama, nisn||null, tahun_lulus, jurusan||null, pekerjaan||null, perusahaan||null, kota||null, foto, email||null, telepon||null, instagram||null, tiktok||null, cerita||null, 'pending', req.params.token]
       );
       const [updated] = await db.query('SELECT * FROM alumni WHERE token = ?', [req.params.token]);
       res.render('frontend/alumni-edit', { title: 'Update Biodata Alumni', currentPage: 'alumni', alumni: updated[0], success: true, error: null, ...common });
@@ -114,11 +114,11 @@ exports.adminEditPage = async (req, res) => {
 exports.adminUpdate = (req, res) => {
   upload(req, res, async (err) => {
     if (err) return res.redirect('/admin/alumni?success=0');
-    const { nama, nis, tahun_lulus, jurusan, pekerjaan, perusahaan, kota, email, telepon, instagram, linkedin, cerita, status } = req.body;
+    const { nama, nisn, tahun_lulus, jurusan, pekerjaan, perusahaan, kota, email, telepon, instagram, tiktok, cerita, status } = req.body;
     const [rows] = await db.query('SELECT foto FROM alumni WHERE id=?', [req.params.id]);
     const foto = req.file ? req.file.filename : (rows[0]?.foto || null);
-    await db.query('UPDATE alumni SET nama=?,nis=?,tahun_lulus=?,jurusan=?,pekerjaan=?,perusahaan=?,kota=?,foto=?,email=?,telepon=?,instagram=?,linkedin=?,cerita=?,status=? WHERE id=?',
-      [nama, nis||null, tahun_lulus, jurusan||null, pekerjaan||null, perusahaan||null, kota||null, foto, email||null, telepon||null, instagram||null, linkedin||null, cerita||null, status, req.params.id]);
+    await db.query('UPDATE alumni SET nama=?,nisn=?,tahun_lulus=?,jurusan=?,pekerjaan=?,perusahaan=?,kota=?,foto=?,email=?,telepon=?,instagram=?,tiktok=?,cerita=?,status=? WHERE id=?',
+      [nama, nisn||null, tahun_lulus, jurusan||null, pekerjaan||null, perusahaan||null, kota||null, foto, email||null, telepon||null, instagram||null, tiktok||null, cerita||null, status, req.params.id]);
     res.redirect('/admin/alumni?success=2');
   });
 };

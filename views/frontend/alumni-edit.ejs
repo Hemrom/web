@@ -73,8 +73,8 @@
                         <input type="text" class="form-control" name="nama" value="<%= alumni.nama %>" required>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">NIS</label>
-                        <input type="text" class="form-control" name="nis" value="<%= alumni.nis||'' %>">
+                        <label class="form-label">NISN</label>
+                        <input type="text" class="form-control" name="nisn" value="<%= alumni.nisn||'' %>">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Tahun Lulus *</label>
@@ -120,8 +120,11 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">LinkedIn</label>
-                        <input type="url" class="form-control" name="linkedin" value="<%= alumni.linkedin||'' %>">
+                        <label class="form-label">TikTok</label>
+                        <div class="input-group">
+                            <span class="input-group-text">@</span>
+                            <input type="text" class="form-control" name="tiktok" value="<%= alumni.tiktok||'' %>">
+                        </div>
                     </div>
                 </div>
 
@@ -133,7 +136,7 @@
 
                 <button type="submit" class="btn-submit"><i class="fas fa-save me-2"></i>Simpan Perubahan</button>
                 <div class="text-center mt-3">
-                    <a href="/alumni" class="text-muted small">? Kembali ke halaman alumni</a>
+                    <a href="/alumni" class="text-muted small"><i class="fas fa-arrow-left me-1"></i>Kembali ke halaman alumni</a>
                 </div>
             </form>
         </div>

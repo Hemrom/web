@@ -77,8 +77,8 @@
                         <input type="text" class="form-control" name="nama" required placeholder="Nama sesuai ijazah">
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">NIS</label>
-                        <input type="text" class="form-control" name="nis" placeholder="Nomor Induk Siswa">
+                        <label class="form-label">NISN</label>
+                        <input type="text" class="form-control" name="nisn" placeholder="Nomor Induk Siswa Nasional">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Tahun Lulus *</label>
@@ -124,8 +124,11 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">LinkedIn</label>
-                        <input type="url" class="form-control" name="linkedin" placeholder="https://linkedin.com/in/...">
+                        <label class="form-label">TikTok</label>
+                        <div class="input-group">
+                            <span class="input-group-text">@</span>
+                            <input type="text" class="form-control" name="tiktok" placeholder="username tiktok">
+                        </div>
                     </div>
                 </div>
 
@@ -138,7 +141,7 @@
 
                 <button type="submit" class="btn-submit"><i class="fas fa-paper-plane me-2"></i>Kirim Pendaftaran</button>
                 <div class="text-center mt-3">
-                    <a href="/alumni" class="text-muted small">? Kembali ke halaman alumni</a>
+                    <a href="/alumni" class="text-muted small"><i class="fas fa-arrow-left me-1"></i>Kembali ke halaman alumni</a>
                 </div>
             </form>
             <% } %>

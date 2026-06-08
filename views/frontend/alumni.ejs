@@ -135,10 +135,10 @@
                         <% if (a.perusahaan) { %><div class="alumni-perusahaan"><%= a.perusahaan %></div><% } %>
                         <% if (a.kota) { %><div class="alumni-kota"><i class="fas fa-map-marker-alt me-1"></i><%= a.kota %></div><% } %>
                         <% if (a.cerita) { %><div class="alumni-cerita">"<%= a.cerita %>"</div><% } %>
-                        <% if (a.instagram || a.linkedin) { %>
+                        <% if (a.instagram || a.tiktok) { %>
                         <div class="alumni-sosmed mt-2">
                             <% if (a.instagram) { %><a href="https://instagram.com/<%= a.instagram.replace('@','') %>" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a><% } %>
-                            <% if (a.linkedin) { %><a href="<%= a.linkedin %>" target="_blank" rel="noopener"><i class="fab fa-linkedin"></i></a><% } %>
+                            <% if (a.tiktok) { %><a href="https://tiktok.com/@<%= a.tiktok.replace('@','') %>" target="_blank" rel="noopener"><i class="fab fa-tiktok"></i></a><% } %>
                         </div>
                         <% } %>
                     </div>
