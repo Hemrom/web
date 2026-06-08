@@ -295,6 +295,14 @@
                             <i class="fas fa-id-card"></i> Informasi Lengkap
                         </div>
 
+                        <div class="info-row">
+                            <div class="info-icon"><i class="fas fa-user-tie"></i></div>
+                            <div>
+                                <div class="info-label">Nama Lengkap</div>
+                                <div class="info-value"><%= guru.nama %></div>
+                            </div>
+                        </div>
+
                         <% if (guru.nip) { %>
                         <div class="info-row">
                             <div class="info-icon"><i class="fas fa-fingerprint"></i></div>
@@ -304,14 +312,6 @@
                             </div>
                         </div>
                         <% } %>
-
-                        <div class="info-row">
-                            <div class="info-icon"><i class="fas fa-user-tie"></i></div>
-                            <div>
-                                <div class="info-label">Nama Lengkap</div>
-                                <div class="info-value"><%= guru.nama %></div>
-                            </div>
-                        </div>
 
                         <% if (guru.jabatan) { %>
                         <div class="info-row">
