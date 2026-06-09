@@ -151,7 +151,6 @@
                         </button>
                         <form method="POST" action="/jurusan-portal/fasilitas/delete/<%= f.id %>"
                               style="flex:1" onsubmit="return confirm('Hapus fasilitas ini?')">
-                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                             <button class="btn btn-danger btn-sm btn-block">
                                 <i class="fas fa-trash mr-1"></i> Hapus
                             </button>

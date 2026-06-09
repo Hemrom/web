@@ -274,8 +274,8 @@ router.post('/jurusan-portal/galeri/delete/:id', isJurusan, csrfProtect, validat
 
 // Fasilitas Jurusan
 router.get('/jurusan-portal/fasilitas', isJurusan, ctrl.jurusanFasilitasIndex);
-router.post('/jurusan-portal/fasilitas/create', isJurusan, csrfProtect, ctrl.jurusanFasilitasCreate);
-router.post('/jurusan-portal/fasilitas/edit/:id', isJurusan, csrfProtect, validateIdParam, ctrl.jurusanFasilitasUpdate);
-router.post('/jurusan-portal/fasilitas/delete/:id', isJurusan, csrfProtect, validateIdParam, ctrl.jurusanFasilitasDelete);
+router.post('/jurusan-portal/fasilitas/create', isJurusan, ctrl.jurusanFasilitasCreate);
+router.post('/jurusan-portal/fasilitas/edit/:id', isJurusan, validateIdParam, ctrl.jurusanFasilitasUpdate);
+router.post('/jurusan-portal/fasilitas/delete/:id', isJurusan, validateIdParam, ctrl.jurusanFasilitasDelete);
 
 module.exports = router;
