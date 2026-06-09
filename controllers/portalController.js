@@ -1481,9 +1481,16 @@ exports.jurusanDetailPage = async (req, res) => {
       "SELECT id,judul,slug,created_at FROM berita WHERE status='published' ORDER BY created_at DESC LIMIT 3"
     );
 
+    // Ambil fasilitas jurusan (foto asli dari DB, fallback ke SVG di view)
+    const [fasilitasDB] = await db.query(
+      "SELECT * FROM jurusan_fasilitas WHERE jurusan=? ORDER BY urutan ASC, id ASC",
+      [kode]
+    ).catch(() => [[]]); // graceful fallback jika tabel belum ada
+
     res.render('frontend/jurusan-detail', {
       title: jurusan.nama, currentPage: 'jurusan',
-      jurusan, guru, prestasi, galeri, galeriJurusan, jurusanBerita, beritaTerbaru, ...common
+      jurusan, guru, prestasi, galeri, galeriJurusan, jurusanBerita, beritaTerbaru,
+      fasilitasDB, ...common
     });
   } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
 };
@@ -1673,6 +1680,67 @@ exports.jurusanGaleriCreate = (req, res) => {
 exports.jurusanGaleriDelete = async (req, res) => {
   await db.query('DELETE FROM jurusan_galeri WHERE id=? AND jurusan=?', [req.params.id, req.session.portalJurusan]);
   res.redirect('/jurusan-portal/galeri?success=3');
+};
+
+// ── PORTAL JURUSAN: Fasilitas ─────────────────────────────────────────────────
+const uploadFasilitasJurusan = createUpload('fasilitas', { maxFiles: 1 }).single('gambar');
+
+exports.jurusanFasilitasIndex = async (req, res) => {
+  const jurusan = req.session.portalJurusan;
+  const [fasilitas] = await db.query(
+    'SELECT * FROM jurusan_fasilitas WHERE jurusan=? ORDER BY urutan ASC, id ASC', [jurusan]
+  );
+  portalRender(res, req, 'portal/jurusan/fasilitas', {
+    title: `Fasilitas Jurusan ${jurusan}`,
+    user: req.session, fasilitas, jurusan,
+    success: req.query.success, error: req.query.error
+  });
+};
+
+exports.jurusanFasilitasCreate = (req, res) => {
+  uploadFasilitasJurusan(req, res, async (err) => {
+    if (err) return res.redirect('/jurusan-portal/fasilitas?error=' + encodeURIComponent(err.message));
+    try {
+      const { nama, deskripsi, icon, urutan } = req.body;
+      if (!nama) return res.redirect('/jurusan-portal/fasilitas?error=Nama+wajib+diisi');
+      const gambar = req.file ? req.file.filename : null;
+      const jurusan = req.session.portalJurusan;
+      await db.query(
+        'INSERT INTO jurusan_fasilitas (jurusan,nama,deskripsi,gambar,icon,urutan) VALUES (?,?,?,?,?,?)',
+        [jurusan, nama, deskripsi||null, gambar, icon||'fas fa-building', parseInt(urutan)||0]
+      );
+      res.redirect('/jurusan-portal/fasilitas?success=1');
+    } catch (e) {
+      console.error('jurusanFasilitasCreate error:', e);
+      res.redirect('/jurusan-portal/fasilitas?error=' + encodeURIComponent(e.message));
+    }
+  });
+};
+
+exports.jurusanFasilitasUpdate = (req, res) => {
+  uploadFasilitasJurusan(req, res, async (err) => {
+    if (err) return res.redirect('/jurusan-portal/fasilitas?error=' + encodeURIComponent(err.message));
+    try {
+      const { nama, deskripsi, icon, urutan } = req.body;
+      const jurusan = req.session.portalJurusan;
+      const [old] = await db.query('SELECT gambar FROM jurusan_fasilitas WHERE id=? AND jurusan=?', [req.params.id, jurusan]);
+      if (!old.length) return res.redirect('/jurusan-portal/fasilitas');
+      const gambar = req.file ? req.file.filename : old[0].gambar;
+      await db.query(
+        'UPDATE jurusan_fasilitas SET nama=?,deskripsi=?,gambar=?,icon=?,urutan=? WHERE id=? AND jurusan=?',
+        [nama, deskripsi||null, gambar, icon||'fas fa-building', parseInt(urutan)||0, req.params.id, jurusan]
+      );
+      res.redirect('/jurusan-portal/fasilitas?success=2');
+    } catch (e) {
+      console.error('jurusanFasilitasUpdate error:', e);
+      res.redirect('/jurusan-portal/fasilitas?error=' + encodeURIComponent(e.message));
+    }
+  });
+};
+
+exports.jurusanFasilitasDelete = async (req, res) => {
+  await db.query('DELETE FROM jurusan_fasilitas WHERE id=? AND jurusan=?', [req.params.id, req.session.portalJurusan]);
+  res.redirect('/jurusan-portal/fasilitas?success=3');
 };
 
 // ── FRONTEND FASILITAS ────────────────────────────────────────────────────────
