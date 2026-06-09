@@ -30,6 +30,10 @@ fi
 
 # ── 2. Pull dari GitHub ───────────────────────────────────────
 echo -e "${YELLOW}[2/6] Mengambil update dari GitHub...${NC}"
+
+# Hapus file .bak yang menyebabkan conflict
+find . -maxdepth 1 -name "*.bak" -delete 2>/dev/null && echo -e "${YELLOW}  File .bak dihapus${NC}"
+
 git pull origin main
 echo -e "${GREEN}  ✓ Kode berhasil diperbarui${NC}"
 echo "  Commit terbaru: $(git log --oneline -1)"
