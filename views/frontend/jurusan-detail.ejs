@@ -26,6 +26,88 @@
 
     /* Per-jurusan character data (static, but falls back gracefully) */
     var charMap = {
+      /* ── KULINER ──────────────────────────────────────────────────────── */
+      KULINER: {
+        tagline  : 'Ciptakan Cita Rasa, Raih Prestasi Dunia',
+        subtitle : 'Tata Boga & Seni Kuliner',
+        particles: false,
+        badges   : ['Memasak','Pastry & Bakery','Food Styling','Barista','Catering','Wirausaha'],
+        kurikulum: [
+          { sem:'Semester 1–2', topik:'Dasar Boga & Keamanan Pangan', icon:'fas fa-utensils', desc:'Pengetahuan dasar memasak, sanitasi dapur, dan keselamatan kerja.' },
+          { sem:'Semester 3–4', topik:'Masakan Indonesia & Kontinental', icon:'fas fa-globe', desc:'Teknik memasak berbagai hidangan nusantara dan masakan internasional.' },
+          { sem:'Semester 5–6', topik:'Pastry, Barista & Wirausaha Kuliner', icon:'fas fa-birthday-cake', desc:'Seni kue, minuman kopi, food costing, dan manajemen usaha kuliner.' }
+        ],
+        karir: [
+          { judul:'Chef Profesional',     icon:'fas fa-hat-chef',       gaji:'Rp 5–20 jt/bln'  },
+          { judul:'Pastry Chef',          icon:'fas fa-birthday-cake',  gaji:'Rp 4–15 jt/bln'  },
+          { judul:'Food Stylist',         icon:'fas fa-camera',         gaji:'Rp 5–18 jt/bln'  },
+          { judul:'Barista',              icon:'fas fa-mug-hot',        gaji:'Rp 3–10 jt/bln'  },
+          { judul:'Pengusaha Kuliner',    icon:'fas fa-store',          gaji:'Tak terbatas'     },
+          { judul:'Food Consultant',      icon:'fas fa-lightbulb',      gaji:'Rp 8–25 jt/bln'  }
+        ],
+        fasilitas: [
+          { nama:'Dapur Praktik Utama',   icon:'fas fa-fire-burner', desc:'Dapur lengkap dengan kompor industri, oven, dan peralatan masak profesional.', svg:null },
+          { nama:'Pastry & Bakery Lab',   icon:'fas fa-birthday-cake', desc:'Peralatan pembuatan kue, roti, dan dekorasi pastry modern.', svg:null },
+          { nama:'Ruang Food Styling',    icon:'fas fa-camera', desc:'Studio foto makanan untuk belajar presentasi dan fotografi kuliner.', svg:null },
+          { nama:'Mini Cafe & Barista',   icon:'fas fa-mug-hot', desc:'Mesin espresso, grinder, dan bar lengkap untuk praktik barista.', svg:null }
+        ],
+        sertifikasi: ['Chef Competency BNSP','Food Handler Certificate','Barista Level 1','HACCP Awareness','Halal Food Handling']
+      },
+      /* ── TKR ──────────────────────────────────────────────────────────── */
+      TKR: {
+        tagline  : 'Kuasai Mesin, Bangun Karir di Industri Otomotif',
+        subtitle : 'Teknik Kendaraan Ringan Otomotif',
+        particles: false,
+        badges   : ['Mesin Otomotif','EFI System','Transmisi','Kelistrikan','AC Mobil','Tune Up'],
+        kurikulum: [
+          { sem:'Semester 1–2', topik:'Dasar Otomotif & Keselamatan Kerja', icon:'fas fa-car', desc:'Pengenalan komponen kendaraan, K3, dan alat ukur otomotif.' },
+          { sem:'Semester 3–4', topik:'Engine, Transmisi & Sistem Rem', icon:'fas fa-cogs', desc:'Overhaul mesin, sistem pemindah daya, dan pengereman.' },
+          { sem:'Semester 5–6', topik:'Kelistrikan EFI, AC & Diagnosa', icon:'fas fa-bolt', desc:'Sistem injeksi elektronik, kelistrikan, dan diagnosa OBD.' }
+        ],
+        karir: [
+          { judul:'Mekanik Otomotif',     icon:'fas fa-wrench',         gaji:'Rp 4–12 jt/bln'  },
+          { judul:'Teknisi EFI',          icon:'fas fa-microchip',      gaji:'Rp 6–15 jt/bln'  },
+          { judul:'Service Advisor',      icon:'fas fa-clipboard-list', gaji:'Rp 5–14 jt/bln'  },
+          { judul:'Quality Control',      icon:'fas fa-check-circle',   gaji:'Rp 6–16 jt/bln'  },
+          { judul:'Pengusaha Bengkel',    icon:'fas fa-store',          gaji:'Tak terbatas'     },
+          { judul:'Instruktur Otomotif',  icon:'fas fa-chalkboard-teacher', gaji:'Rp 4–12 jt/bln' }
+        ],
+        fasilitas: [
+          { nama:'Bengkel Mesin',         icon:'fas fa-cogs',    desc:'Engine stand, alat overhaul lengkap, dan engine trainer EFI.', svg:null },
+          { nama:'Ruang Kelistrikan',     icon:'fas fa-bolt',    desc:'Unit pelatihan kelistrikan, wiring diagram, dan alat diagnosa.', svg:null },
+          { nama:'Lift & Pit Kendaraan',  icon:'fas fa-car',     desc:'Car lift, pit inspeksi, dan kendaraan praktik nyata.', svg:null },
+          { nama:'Lab Diagnosa Digital',  icon:'fas fa-laptop',  desc:'Scanner OBD, oscilloscope, dan software diagnosa kendaraan modern.', svg:null }
+        ],
+        sertifikasi: ['Mekanik Otomotif BNSP','Toyota STEP','Daihatsu Technician','AHM Mechanic','Prodia Automotive']
+      },
+      /* ── TPTUP / TPTU ─────────────────────────────────────────────────── */
+      TPTUP: {
+        tagline  : 'Tempa Logam, Bangun Masa Depan Industri',
+        subtitle : 'Teknik Pengelasan & Fabrikasi Logam',
+        particles: false,
+        badges   : ['Las SMAW','Las MIG/MAG','Fabrikasi','CNC Plasma','K3 Las','Konstruksi Baja'],
+        kurikulum: [
+          { sem:'Semester 1–2', topik:'Dasar Las & Keselamatan Kerja', icon:'fas fa-hard-hat', desc:'Pengenalan alat las, K3, gambar teknik, dan pengelasan dasar.' },
+          { sem:'Semester 3–4', topik:'Las SMAW, MIG/MAG & Fabrikasi', icon:'fas fa-fire', desc:'Teknik pengelasan berbagai posisi dan fabrikasi konstruksi logam.' },
+          { sem:'Semester 5–6', topik:'Las TIG, Pipa & Inspeksi Las', icon:'fas fa-industry', desc:'Pengelasan pipa, material spesial, dan uji kualitas hasil las.' }
+        ],
+        karir: [
+          { judul:'Welder Profesional',   icon:'fas fa-fire',           gaji:'Rp 5–18 jt/bln'  },
+          { judul:'Fabricator',           icon:'fas fa-tools',          gaji:'Rp 5–15 jt/bln'  },
+          { judul:'Welding Inspector',    icon:'fas fa-search',         gaji:'Rp 8–25 jt/bln'  },
+          { judul:'Drafter Konstruksi',   icon:'fas fa-drafting-compass',gaji:'Rp 5–14 jt/bln' },
+          { judul:'Kontraktor Las',       icon:'fas fa-hard-hat',       gaji:'Tak terbatas'     },
+          { judul:'Instruktur Las',       icon:'fas fa-chalkboard-teacher',gaji:'Rp 4–12 jt/bln'}
+        ],
+        fasilitas: [
+          { nama:'Bengkel Las SMAW',      icon:'fas fa-fire',    desc:'Trafo las, booth las lengkap dengan APD standar K3.', svg:null },
+          { nama:'Bengkel MIG/MAG',       icon:'fas fa-industry',desc:'Mesin las MIG/MAG, gas CO₂, dan wire feeder otomatis.', svg:null },
+          { nama:'Fabrikasi Logam',       icon:'fas fa-tools',   desc:'Mesin potong, bending, shearing, dan peralatan fabrikasi.', svg:null },
+          { nama:'Lab Gambar Teknik',     icon:'fas fa-drafting-compass', desc:'Komputer CAD, meja gambar, dan peralatan desain konstruksi.', svg:null }
+        ],
+        sertifikasi: ['Welder 3G BNSP','Welder 6G BNSP','Welding Inspector Level 1','K3 Pengelasan','AWS Certified Welder']
+      },
+      /* ── TKJ ──────────────────────────────────────────────────────────── */
       TKJ: {
         tagline   : 'Menguasai Jaringan, Menghubungkan Dunia',
         subtitle  : 'Teknik Jaringan Komputer & Telekomunikasi',
@@ -815,17 +897,18 @@
                                 <div class="device-dot"></div>
                                 <div class="device-dot"></div>
                             </div>
+
+                            <% if(jKode === 'TKJ') { %>
+                            <!-- TKJ: Terminal jaringan -->
                             <div class="device-terminal" id="terminal">
-                                <div class="terminal-line"><span class="terminal-prompt">student@<%= jurusan.kode.toLowerCase() %>:~$</span> <span class="terminal-cmd">ping 192.168.1.1</span></div>
-                                <div class="terminal-line terminal-output">PING 192.168.1.1 (192.168.1.1) 56 bytes</div>
+                                <div class="terminal-line"><span class="terminal-prompt">student@tkj:~$</span> <span class="terminal-cmd">ping 192.168.1.1</span></div>
+                                <div class="terminal-line terminal-output">PING 192.168.1.1 56 bytes of data.</div>
                                 <div class="terminal-line terminal-output">64 bytes: icmp_seq=1 ttl=64 time=0.42ms</div>
-                                <div class="terminal-line terminal-output">64 bytes: icmp_seq=2 ttl=64 time=0.38ms</div>
-                                <div class="terminal-line terminal-output" style="color:#6bcb77;">-- ping statistics --</div>
-                                <div class="terminal-line terminal-output">2 packets transmitted, 0% packet loss</div>
-                                <div class="terminal-line"><span class="terminal-prompt">student@<%= jurusan.kode.toLowerCase() %>:~$</span> <span class="terminal-cmd">ip route show</span></div>
+                                <div class="terminal-line terminal-output" style="color:#6bcb77;">2 packets transmitted, 0% loss</div>
+                                <div class="terminal-line"><span class="terminal-prompt">student@tkj:~$</span> <span class="terminal-cmd">ip route show</span></div>
                                 <div class="terminal-line terminal-output">default via 192.168.1.1 dev eth0</div>
                                 <div class="terminal-line terminal-output">192.168.1.0/24 dev eth0 proto kernel</div>
-                                <div class="terminal-line"><span class="terminal-prompt">student@<%= jurusan.kode.toLowerCase() %>:~$</span> <span class="cursor"></span></div>
+                                <div class="terminal-line"><span class="terminal-prompt">student@tkj:~$</span> <span class="cursor"></span></div>
                             </div>
                             <div class="net-topo">
                                 <div class="net-node active"><i class="fas fa-desktop" style="font-size:.6rem"></i></div>
@@ -836,6 +919,125 @@
                                 <div class="net-line"></div>
                                 <div class="net-node active"><i class="fas fa-globe" style="font-size:.6rem"></i></div>
                             </div>
+
+                            <% } else if(jKode === 'KULINER') { %>
+                            <!-- KULINER: Menu & Resep card -->
+                            <div style="background:rgba(0,0,0,.25);border-radius:12px;padding:1.25rem;">
+                                <div style="color:rgba(255,255,255,.5);font-size:.7rem;margin-bottom:.75rem;letter-spacing:1px;">✦ MENU HARI INI ✦</div>
+                                <% var menuItems=[
+                                  {emoji:'🍜',nama:'Soto Ayam Lamongan',ket:'Indonesian',bintang:'★★★★★'},
+                                  {emoji:'🎂',nama:'Black Forest Cake',ket:'Pastry',bintang:'★★★★☆'},
+                                  {emoji:'☕',nama:'Cappuccino Art',ket:'Barista',bintang:'★★★★★'},
+                                  {emoji:'🥩',nama:'Beef Steak Continentale',ket:'Western',bintang:'★★★★☆'}
+                                ]; %>
+                                <% menuItems.forEach(function(m){ %>
+                                <div style="display:flex;align-items:center;gap:.75rem;padding:.6rem .75rem;background:rgba(255,255,255,.08);border-radius:10px;margin-bottom:.5rem;border:1px solid rgba(255,255,255,.1);">
+                                    <span style="font-size:1.5rem;"><%= m.emoji %></span>
+                                    <div style="flex:1;">
+                                        <div style="color:white;font-size:.83rem;font-weight:600;"><%= m.nama %></div>
+                                        <div style="color:rgba(255,255,255,.5);font-size:.7rem;"><%= m.ket %></div>
+                                    </div>
+                                    <span style="color:#fbbf24;font-size:.7rem;"><%= m.bintang %></span>
+                                </div>
+                                <% }) %>
+                            </div>
+                            <div style="display:flex;justify-content:center;gap:1.5rem;margin-top:1rem;padding:.75rem;background:rgba(0,0,0,.2);border-radius:10px;">
+                                <div style="text-align:center;color:white;">
+                                    <div style="font-size:1.4rem;">🔪</div><div style="font-size:.7rem;opacity:.7;margin-top:.2rem;">Knife Skills</div>
+                                </div>
+                                <div style="text-align:center;color:white;">
+                                    <div style="font-size:1.4rem;">🔥</div><div style="font-size:.7rem;opacity:.7;margin-top:.2rem;">Heat Control</div>
+                                </div>
+                                <div style="text-align:center;color:white;">
+                                    <div style="font-size:1.4rem;">🎨</div><div style="font-size:.7rem;opacity:.7;margin-top:.2rem;">Plating Art</div>
+                                </div>
+                                <div style="text-align:center;color:white;">
+                                    <div style="font-size:1.4rem;">📋</div><div style="font-size:.7rem;opacity:.7;margin-top:.2rem;">Recipe</div>
+                                </div>
+                            </div>
+
+                            <% } else if(jKode === 'TKR') { %>
+                            <!-- TKR: Dashboard diagnosa kendaraan -->
+                            <div style="background:rgba(0,0,0,.3);border-radius:12px;padding:1.25rem;">
+                                <div style="color:rgba(255,255,255,.5);font-size:.7rem;margin-bottom:.75rem;letter-spacing:1px;">⚙ VEHICLE DIAGNOSTIC SYSTEM</div>
+                                <% var diagItems=[
+                                  {label:'Engine RPM',    val:'2.500 rpm', status:'normal', bar:50},
+                                  {label:'Oil Pressure',  val:'45 PSI',    status:'normal', bar:70},
+                                  {label:'Coolant Temp',  val:'89°C',      status:'warn',   bar:80},
+                                  {label:'Battery Volt',  val:'13.8V',     status:'normal', bar:65},
+                                  {label:'Fuel System',   val:'OK',        status:'normal', bar:90}
+                                ]; %>
+                                <% diagItems.forEach(function(d){ %>
+                                <div style="margin-bottom:.6rem;">
+                                    <div style="display:flex;justify-content:space-between;margin-bottom:.2rem;">
+                                        <span style="color:rgba(255,255,255,.7);font-size:.75rem;"><%= d.label %></span>
+                                        <span style="font-size:.75rem;font-weight:700;color:<%= d.status==='warn'?'#fbbf24':'#4ade80' %>;"><%= d.val %></span>
+                                    </div>
+                                    <div style="background:rgba(255,255,255,.1);border-radius:4px;height:5px;">
+                                        <div style="width:<%= d.bar %>%;height:100%;border-radius:4px;background:<%= d.status==='warn'?'linear-gradient(90deg,#fbbf24,#f97316)':'linear-gradient(90deg,#4ade80,#22d3ee)' %>;"></div>
+                                    </div>
+                                </div>
+                                <% }) %>
+                            </div>
+                            <div style="display:flex;justify-content:space-around;margin-top:1rem;padding:.75rem;background:rgba(0,0,0,.2);border-radius:10px;">
+                                <div style="text-align:center;color:white;">
+                                    <div style="font-size:1.4rem;">🔧</div><div style="font-size:.7rem;opacity:.7;margin-top:.2rem;">Tune Up</div>
+                                </div>
+                                <div style="text-align:center;color:white;">
+                                    <div style="font-size:1.4rem;">⚡</div><div style="font-size:.7rem;opacity:.7;margin-top:.2rem;">Electrical</div>
+                                </div>
+                                <div style="text-align:center;color:white;">
+                                    <div style="font-size:1.4rem;">🚗</div><div style="font-size:.7rem;opacity:.7;margin-top:.2rem;">Engine</div>
+                                </div>
+                                <div style="text-align:center;color:white;">
+                                    <div style="font-size:1.4rem;">📊</div><div style="font-size:.7rem;opacity:.7;margin-top:.2rem;">OBD Scan</div>
+                                </div>
+                            </div>
+
+                            <% } else if(jKode === 'TPTUP' || jKode === 'TPTU') { %>
+                            <!-- TPTUP: Welding progress dashboard -->
+                            <div style="background:rgba(0,0,0,.3);border-radius:12px;padding:1.25rem;">
+                                <div style="color:rgba(255,255,255,.5);font-size:.7rem;margin-bottom:.75rem;letter-spacing:1px;">⚙ WELDING WORK ORDER</div>
+                                <% var weldItems=[
+                                  {label:'Las SMAW Posisi 1G',    pct:100, status:'✓ Selesai'},
+                                  {label:'Las SMAW Posisi 3G',    pct:100, status:'✓ Selesai'},
+                                  {label:'Las MIG Konstruksi',    pct:75,  status:'⏳ Proses'},
+                                  {label:'Fabrikasi Rangka',      pct:60,  status:'⏳ Proses'},
+                                  {label:'Las Pipa 6G (TIG)',     pct:30,  status:'○ Antrian'}
+                                ]; %>
+                                <% weldItems.forEach(function(w){ %>
+                                <div style="margin-bottom:.65rem;">
+                                    <div style="display:flex;justify-content:space-between;margin-bottom:.25rem;">
+                                        <span style="color:rgba(255,255,255,.75);font-size:.75rem;"><%= w.label %></span>
+                                        <span style="font-size:.7rem;color:<%= w.pct===100?'#4ade80':w.pct>=50?'#fbbf24':'rgba(255,255,255,.4)' %>;"><%= w.status %></span>
+                                    </div>
+                                    <div style="background:rgba(255,255,255,.1);border-radius:4px;height:5px;">
+                                        <div style="width:<%= w.pct %>%;height:100%;border-radius:4px;background:<%= w.pct===100?'#4ade80':w.pct>=50?'linear-gradient(90deg,#fbbf24,#f97316)':'rgba(255,255,255,.2)' %>;"></div>
+                                    </div>
+                                </div>
+                                <% }) %>
+                            </div>
+                            <div style="display:flex;justify-content:space-around;margin-top:1rem;padding:.75rem;background:rgba(0,0,0,.2);border-radius:10px;">
+                                <div style="text-align:center;color:white;">
+                                    <div style="font-size:1.4rem;">🔥</div><div style="font-size:.7rem;opacity:.7;margin-top:.2rem;">SMAW</div>
+                                </div>
+                                <div style="text-align:center;color:white;">
+                                    <div style="font-size:1.4rem;">⚡</div><div style="font-size:.7rem;opacity:.7;margin-top:.2rem;">MIG/MAG</div>
+                                </div>
+                                <div style="text-align:center;color:white;">
+                                    <div style="font-size:1.4rem;">🔩</div><div style="font-size:.7rem;opacity:.7;margin-top:.2rem;">Fabrikasi</div>
+                                </div>
+                                <div style="text-align:center;color:white;">
+                                    <div style="font-size:1.4rem;">📐</div><div style="font-size:.7rem;opacity:.7;margin-top:.2rem;">CAD/Draw</div>
+                                </div>
+                            </div>
+
+                            <% } else { %>
+                            <!-- Default fallback -->
+                            <div class="device-terminal" id="terminal">
+                                <div class="terminal-line"><span class="terminal-prompt">student@<%= jKode.toLowerCase() %>:~$</span> <span class="cursor"></span></div>
+                            </div>
+                            <% } %>
                         </div>
 
                         <div class="hero-stats mt-3">
@@ -1365,117 +1567,52 @@
     $(window).scroll(runCounters);
     runCounters();
 
-    // ── Canvas network animation ─────────────────────────────────────────
+    // ── Canvas network animation (TKJ only) ──────────────────────────────
     (function(){
         const canvas = document.getElementById('nodesCanvas');
         if(!canvas) return;
         const ctx = canvas.getContext('2d');
-        let W, H, nodes = [], animId;
-
-        function resize(){
-            W = canvas.width  = canvas.offsetWidth;
-            H = canvas.height = canvas.offsetHeight;
-        }
-        resize();
-        window.addEventListener('resize', resize);
-
-        // Create nodes
-        for(let i = 0; i < 40; i++){
-            nodes.push({
-                x: Math.random() * W,
-                y: Math.random() * H,
-                vx: (Math.random() - .5) * .5,
-                vy: (Math.random() - .5) * .5,
-                r: Math.random() * 2 + 1
-            });
-        }
-
+        let W, H, nodes = [];
+        function resize(){ W=canvas.width=canvas.offsetWidth; H=canvas.height=canvas.offsetHeight; }
+        resize(); window.addEventListener('resize', resize);
+        for(let i=0;i<40;i++) nodes.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.5,vy:(Math.random()-.5)*.5,r:Math.random()*2+1});
         function draw(){
-            ctx.clearRect(0, 0, W, H);
-            // Lines between close nodes
-            for(let i = 0; i < nodes.length; i++){
-                for(let j = i + 1; j < nodes.length; j++){
-                    const dx = nodes[i].x - nodes[j].x;
-                    const dy = nodes[i].y - nodes[j].y;
-                    const dist = Math.sqrt(dx*dx + dy*dy);
-                    if(dist < 120){
-                        ctx.beginPath();
-                        ctx.moveTo(nodes[i].x, nodes[i].y);
-                        ctx.lineTo(nodes[j].x, nodes[j].y);
-                        ctx.strokeStyle = 'rgba(255,255,255,' + (1 - dist/120) * 0.15 + ')';
-                        ctx.lineWidth = .8;
-                        ctx.stroke();
-                    }
-                }
+            ctx.clearRect(0,0,W,H);
+            for(let i=0;i<nodes.length;i++) for(let j=i+1;j<nodes.length;j++){
+                const dx=nodes[i].x-nodes[j].x,dy=nodes[i].y-nodes[j].y,d=Math.sqrt(dx*dx+dy*dy);
+                if(d<120){ctx.beginPath();ctx.moveTo(nodes[i].x,nodes[i].y);ctx.lineTo(nodes[j].x,nodes[j].y);ctx.strokeStyle='rgba(255,255,255,'+(1-d/120)*.15+')';ctx.lineWidth=.8;ctx.stroke();}
             }
-            // Dots
-            nodes.forEach(n => {
-                ctx.beginPath();
-                ctx.arc(n.x, n.y, n.r, 0, Math.PI*2);
-                ctx.fillStyle = 'rgba(255,255,255,0.4)';
-                ctx.fill();
-                // Move
-                n.x += n.vx; n.y += n.vy;
-                if(n.x < 0 || n.x > W) n.vx *= -1;
-                if(n.y < 0 || n.y > H) n.vy *= -1;
-            });
-            animId = requestAnimationFrame(draw);
+            nodes.forEach(n=>{ctx.beginPath();ctx.arc(n.x,n.y,n.r,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,0.4)';ctx.fill();n.x+=n.vx;n.y+=n.vy;if(n.x<0||n.x>W)n.vx*=-1;if(n.y<0||n.y>H)n.vy*=-1;});
+            requestAnimationFrame(draw);
         }
         draw();
     })();
 
-    // ── Terminal typewriter ───────────────────────────────────────────────
+    <% if(jKode === 'TKJ') { %>
+    // ── Terminal typewriter (TKJ only) ───────────────────────────────────
     (function(){
         const lines = [
-            { type:'prompt', text:'student@tkj:~$ ' },
-            { type:'cmd',    text:'nmap -sV 192.168.1.0/24' },
-            { type:'output', text:'Starting Nmap 7.93 scan...' },
-            { type:'output', text:'Host: 192.168.1.1  Services: 80/http 22/ssh' },
-            { type:'output', text:'Host: 192.168.1.10 Services: 3306/mysql' },
-            { type:'prompt', text:'student@tkj:~$ ' },
-            { type:'cmd',    text:'ssh admin@192.168.1.1' },
-            { type:'output', text:'Connected to router. Welcome!' },
+            {type:'prompt',text:'student@tkj:~$ '},{type:'cmd',text:'nmap -sV 192.168.1.0/24'},
+            {type:'output',text:'Starting Nmap 7.93 scan...'},
+            {type:'output',text:'Host: 192.168.1.1  Services: 80/http 22/ssh'},
+            {type:'output',text:'Host: 192.168.1.10 Services: 3306/mysql'},
+            {type:'prompt',text:'student@tkj:~$ '},{type:'cmd',text:'ssh admin@192.168.1.1'},
+            {type:'output',text:'Connected to router. Welcome!'},
         ];
-        let lineIdx = 0, charIdx = 0;
-        const term = document.getElementById('terminal');
+        let lineIdx=0;
+        const term=document.getElementById('terminal');
         if(!term) return;
-
-        function addLine(html){ term.innerHTML += '<div class="terminal-line">' + html + '</div>'; term.scrollTop = term.scrollHeight; }
-
+        function addLine(html){term.innerHTML+='<div class="terminal-line">'+html+'</div>';term.scrollTop=term.scrollHeight;}
         function type(){
-            if(lineIdx >= lines.length){ lineIdx = 0; term.innerHTML = ''; }
-            const line = lines[lineIdx];
-            if(charIdx === 0){
-                if(line.type === 'prompt') term.innerHTML += '<div class="terminal-line"><span class="terminal-prompt">';
-                else if(line.type === 'cmd') { /* appended to prev div */ }
-                else term.innerHTML += '<div class="terminal-line terminal-output">';
-            }
-            // Simple approach: just append full lines
-            if(charIdx === 0){
-                if(line.type === 'output'){
-                    setTimeout(()=>{
-                        addLine('<span class="terminal-output">' + line.text + '</span>');
-                        lineIdx++; charIdx = 0;
-                        setTimeout(type, 400);
-                    }, 300);
-                    return;
-                }
-            }
-            // For prompt+cmd: show together after delay
-            if(line.type === 'prompt'){
-                const cmd = lines[lineIdx+1];
-                setTimeout(()=>{
-                    addLine('<span class="terminal-prompt">' + line.text + '</span><span class="terminal-cmd">' + (cmd ? cmd.text : '') + '</span>');
-                    lineIdx += 2; charIdx = 0;
-                    setTimeout(type, 600);
-                }, 500);
-                return;
-            }
+            if(lineIdx>=lines.length){lineIdx=0;term.innerHTML='';}
+            const line=lines[lineIdx];
+            if(line.type==='output'){setTimeout(()=>{addLine('<span class="terminal-output">'+line.text+'</span>');lineIdx++;setTimeout(type,400);},300);return;}
+            if(line.type==='prompt'){const cmd=lines[lineIdx+1];setTimeout(()=>{addLine('<span class="terminal-prompt">'+line.text+'</span><span class="terminal-cmd">'+(cmd?cmd.text:'')+'</span>');lineIdx+=2;setTimeout(type,600);},500);return;}
         }
-        // Let the static terminal stay; restart animation after 6s
-        setTimeout(()=>{ term.innerHTML = ''; type(); }, 6000);
-        setInterval(()=>{ term.innerHTML = ''; lineIdx=0; type(); }, 14000);
+        setTimeout(()=>{term.innerHTML='';type();},6000);
+        setInterval(()=>{term.innerHTML='';lineIdx=0;type();},14000);
     })();
+    <% } %>
     </script>
 </body>
 </html>
