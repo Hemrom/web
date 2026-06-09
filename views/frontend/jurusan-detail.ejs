@@ -82,30 +82,30 @@
       },
       /* ── TPTUP / TPTU ─────────────────────────────────────────────────── */
       TPTUP: {
-        tagline  : 'Tempa Logam, Bangun Masa Depan Industri',
-        subtitle : 'Teknik Pengelasan & Fabrikasi Logam',
+        tagline  : 'Dinginkan Ruangan, Panaskan Masa Depanmu',
+        subtitle : 'Teknik Pemanasan, Tata Udara & Pendinginan',
         particles: false,
-        badges   : ['Las SMAW','Las MIG/MAG','Fabrikasi','CNC Plasma','K3 Las','Konstruksi Baja'],
+        badges   : ['AC & Refrigerasi','Instalasi HVAC','Tata Udara Gedung','Kulkas & Freezer','Chiller Industri','Troubleshooting'],
         kurikulum: [
-          { sem:'Semester 1–2', topik:'Dasar Las & Keselamatan Kerja', icon:'fas fa-hard-hat', desc:'Pengenalan alat las, K3, gambar teknik, dan pengelasan dasar.' },
-          { sem:'Semester 3–4', topik:'Las SMAW, MIG/MAG & Fabrikasi', icon:'fas fa-fire', desc:'Teknik pengelasan berbagai posisi dan fabrikasi konstruksi logam.' },
-          { sem:'Semester 5–6', topik:'Las TIG, Pipa & Inspeksi Las', icon:'fas fa-industry', desc:'Pengelasan pipa, material spesial, dan uji kualitas hasil las.' }
+          { sem:'Semester 1–2', topik:'Dasar Refrigerasi & Termodinamika', icon:'fas fa-snowflake', desc:'Siklus refrigerasi, komponen AC, alat ukur, dan keselamatan kerja dengan refrigeran.' },
+          { sem:'Semester 3–4', topik:'Instalasi AC & Sistem Pendinginan', icon:'fas fa-wind', desc:'Pemasangan AC split, window, multi-split, kulkas, dan sistem pendingin komersial.' },
+          { sem:'Semester 5–6', topik:'Tata Udara Gedung, Chiller & HVAC Industri', icon:'fas fa-building', desc:'Sistem AHU, cooling tower, chiller, dan tata udara gedung perkantoran & industri.' }
         ],
         karir: [
-          { judul:'Welder Profesional',   icon:'fas fa-fire',           gaji:'Rp 5–18 jt/bln'  },
-          { judul:'Fabricator',           icon:'fas fa-tools',          gaji:'Rp 5–15 jt/bln'  },
-          { judul:'Welding Inspector',    icon:'fas fa-search',         gaji:'Rp 8–25 jt/bln'  },
-          { judul:'Drafter Konstruksi',   icon:'fas fa-drafting-compass',gaji:'Rp 5–14 jt/bln' },
-          { judul:'Kontraktor Las',       icon:'fas fa-hard-hat',       gaji:'Tak terbatas'     },
-          { judul:'Instruktur Las',       icon:'fas fa-chalkboard-teacher',gaji:'Rp 4–12 jt/bln'}
+          { judul:'Teknisi AC & Refrigerasi', icon:'fas fa-snowflake',      gaji:'Rp 4–12 jt/bln' },
+          { judul:'HVAC Engineer',            icon:'fas fa-wind',           gaji:'Rp 8–25 jt/bln' },
+          { judul:'Teknisi Chiller Industri', icon:'fas fa-industry',       gaji:'Rp 7–20 jt/bln' },
+          { judul:'Commissioning Engineer',   icon:'fas fa-clipboard-check',gaji:'Rp 10–30 jt/bln'},
+          { judul:'Pengusaha Servis AC',      icon:'fas fa-store',          gaji:'Tak terbatas'    },
+          { judul:'Energy Auditor',           icon:'fas fa-leaf',           gaji:'Rp 8–22 jt/bln' }
         ],
         fasilitas: [
-          { nama:'Bengkel Las SMAW',      icon:'fas fa-fire',    desc:'Trafo las, booth las lengkap dengan APD standar K3.', svg:null },
-          { nama:'Bengkel MIG/MAG',       icon:'fas fa-industry',desc:'Mesin las MIG/MAG, gas CO₂, dan wire feeder otomatis.', svg:null },
-          { nama:'Fabrikasi Logam',       icon:'fas fa-tools',   desc:'Mesin potong, bending, shearing, dan peralatan fabrikasi.', svg:null },
-          { nama:'Lab Gambar Teknik',     icon:'fas fa-drafting-compass', desc:'Komputer CAD, meja gambar, dan peralatan desain konstruksi.', svg:null }
+          { nama:'Lab Refrigerasi',        icon:'fas fa-snowflake',    desc:'Unit trainer AC split, window AC, dan sistem refrigerasi lengkap.', svg:null },
+          { nama:'Lab HVAC Gedung',        icon:'fas fa-wind',         desc:'Trainer AHU, cooling tower, dan sistem ducting tata udara gedung.', svg:null },
+          { nama:'Bengkel Instalasi',      icon:'fas fa-tools',        desc:'Alat bending pipa tembaga, manifold gauge, vacuum pump, dan leak detector.', svg:null },
+          { nama:'Lab Kelistrikan AC',     icon:'fas fa-bolt',         desc:'Panel kontrol, wiring diagram AC, dan alat ukur kelistrikan refrigerasi.', svg:null }
         ],
-        sertifikasi: ['Welder 3G BNSP','Welder 6G BNSP','Welding Inspector Level 1','K3 Pengelasan','AWS Certified Welder']
+        sertifikasi: ['Teknisi AC BNSP','Refrigerasi & AC Level 2','Handling Refrigeran F-Gas','K3 Refrigerasi','AHRI Certification']
       },
       /* ── TKJ ──────────────────────────────────────────────────────────── */
       TKJ: {
@@ -874,7 +874,7 @@
                         </div>
                         <h1 class="hero-title"><%= jurusan.nama %></h1>
                         <p class="hero-subtitle"><%= ch.tagline %></p>
-                        <p class="hero-desc"><%= jurusan.deskripsi || 'Program keahlian unggulan yang mempersiapkan siswa menjadi tenaga profesional di bidang teknologi informasi dan jaringan komputer.' %></p>
+                        <p class="hero-desc"><%= jurusan.deskripsi || (jKode==='KULINER' ? 'Program keahlian yang mempelajari seni memasak, pastry, barista, dan wirausaha kuliner secara profesional.' : jKode==='TKR' ? 'Program keahlian yang mempelajari perawatan dan perbaikan kendaraan ringan, sistem EFI, dan kelistrikan otomotif.' : jKode==='TPTUP'||jKode==='TPTU' ? 'Program keahlian yang mempelajari cara merancang, memasang, dan merawat sistem AC, refrigerasi, dan tata udara gedung.' : 'Program keahlian unggulan yang mempersiapkan siswa menjadi tenaga profesional siap kerja.') %></p>
                         <div class="hero-tags">
                             <% ch.badges.forEach(b=>{ %><span class="hero-tag"><%= b %></span><% }) %>
                         </div>
@@ -995,40 +995,43 @@
                             </div>
 
                             <% } else if(jKode === 'TPTUP' || jKode === 'TPTU') { %>
-                            <!-- TPTUP: Welding progress dashboard -->
-                            <div style="background:rgba(0,0,0,.3);border-radius:12px;padding:1.25rem;">
-                                <div style="color:rgba(255,255,255,.5);font-size:.7rem;margin-bottom:.75rem;letter-spacing:1px;">⚙ WELDING WORK ORDER</div>
-                                <% var weldItems=[
-                                  {label:'Las SMAW Posisi 1G',    pct:100, status:'✓ Selesai'},
-                                  {label:'Las SMAW Posisi 3G',    pct:100, status:'✓ Selesai'},
-                                  {label:'Las MIG Konstruksi',    pct:75,  status:'⏳ Proses'},
-                                  {label:'Fabrikasi Rangka',      pct:60,  status:'⏳ Proses'},
-                                  {label:'Las Pipa 6G (TIG)',     pct:30,  status:'○ Antrian'}
+                            <!-- TPTUP: Dashboard sistem pendingin & tata udara -->
+                            <div style="background:rgba(0,0,0,.25);border-radius:12px;padding:1.25rem;">
+                                <div style="color:rgba(255,255,255,.5);font-size:.7rem;margin-bottom:.75rem;letter-spacing:1px;">❄ HVAC SYSTEM MONITOR</div>
+                                <% var acItems=[
+                                  {label:'Suhu Ruangan',      val:'22°C',  target:'21–24°C', ok:true,  bar:55},
+                                  {label:'Kelembaban',        val:'58%',   target:'50–65%',  ok:true,  bar:58},
+                                  {label:'Tekanan Refrigeran',val:'8.2 bar',target:'7–9 bar',ok:true,  bar:70},
+                                  {label:'Suhu Kondenser',    val:'48°C',  target:'< 55°C',  ok:true,  bar:65},
+                                  {label:'Suhu Evaporator',   val:'8°C',   target:'5–10°C',  ok:true,  bar:40},
                                 ]; %>
-                                <% weldItems.forEach(function(w){ %>
-                                <div style="margin-bottom:.65rem;">
-                                    <div style="display:flex;justify-content:space-between;margin-bottom:.25rem;">
-                                        <span style="color:rgba(255,255,255,.75);font-size:.75rem;"><%= w.label %></span>
-                                        <span style="font-size:.7rem;color:<%= w.pct===100?'#4ade80':w.pct>=50?'#fbbf24':'rgba(255,255,255,.4)' %>;"><%= w.status %></span>
+                                <% acItems.forEach(function(a){ %>
+                                <div style="margin-bottom:.55rem;">
+                                    <div style="display:flex;justify-content:space-between;margin-bottom:.2rem;">
+                                        <span style="color:rgba(255,255,255,.75);font-size:.75rem;"><%= a.label %></span>
+                                        <div>
+                                            <span style="font-size:.75rem;font-weight:700;color:<%= a.ok?'#4ade80':'#f87171' %>;margin-right:.4rem;"><%= a.val %></span>
+                                            <span style="font-size:.65rem;color:rgba(255,255,255,.35);">target: <%= a.target %></span>
+                                        </div>
                                     </div>
                                     <div style="background:rgba(255,255,255,.1);border-radius:4px;height:5px;">
-                                        <div style="width:<%= w.pct %>%;height:100%;border-radius:4px;background:<%= w.pct===100?'#4ade80':w.pct>=50?'linear-gradient(90deg,#fbbf24,#f97316)':'rgba(255,255,255,.2)' %>;"></div>
+                                        <div style="width:<%= a.bar %>%;height:100%;border-radius:4px;background:linear-gradient(90deg,#38bdf8,#4ade80);"></div>
                                     </div>
                                 </div>
                                 <% }) %>
                             </div>
                             <div style="display:flex;justify-content:space-around;margin-top:1rem;padding:.75rem;background:rgba(0,0,0,.2);border-radius:10px;">
                                 <div style="text-align:center;color:white;">
-                                    <div style="font-size:1.4rem;">🔥</div><div style="font-size:.7rem;opacity:.7;margin-top:.2rem;">SMAW</div>
+                                    <div style="font-size:1.4rem;">❄️</div><div style="font-size:.7rem;opacity:.7;margin-top:.2rem;">AC Split</div>
                                 </div>
                                 <div style="text-align:center;color:white;">
-                                    <div style="font-size:1.4rem;">⚡</div><div style="font-size:.7rem;opacity:.7;margin-top:.2rem;">MIG/MAG</div>
+                                    <div style="font-size:1.4rem;">🏢</div><div style="font-size:.7rem;opacity:.7;margin-top:.2rem;">HVAC</div>
                                 </div>
                                 <div style="text-align:center;color:white;">
-                                    <div style="font-size:1.4rem;">🔩</div><div style="font-size:.7rem;opacity:.7;margin-top:.2rem;">Fabrikasi</div>
+                                    <div style="font-size:1.4rem;">🧊</div><div style="font-size:.7rem;opacity:.7;margin-top:.2rem;">Chiller</div>
                                 </div>
                                 <div style="text-align:center;color:white;">
-                                    <div style="font-size:1.4rem;">📐</div><div style="font-size:.7rem;opacity:.7;margin-top:.2rem;">CAD/Draw</div>
+                                    <div style="font-size:1.4rem;">🌡️</div><div style="font-size:.7rem;opacity:.7;margin-top:.2rem;">Kontrol Suhu</div>
                                 </div>
                             </div>
 
