@@ -4,289 +4,1247 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <%
-    const _jDesc = (jurusan.deskripsi || '').replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim().substring(0,160) || `Program keahlian ${jurusan.nama} di SMK Negeri 1 Kras, Kediri. Informasi lengkap kurikulum, fasilitas, dan prospek kerja.`;
+    const _jDesc = (jurusan.deskripsi || '').replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim().substring(0,160) || `Program keahlian ${jurusan.nama} di SMK Negeri 1 Kras, Kediri.`;
     const _jImg  = jurusan.gambar ? 'https://smknegeri1kras.sch.id/uploads/' + jurusan.gambar : 'https://smknegeri1kras.sch.id/assets/img/logo-sekolah.png';
     seoTitle = jurusan.nama; seoDesc = _jDesc; seoImage = _jImg; seoUrl = '/jurusan/' + jurusan.kode.toLowerCase();
     %>
     <%- include('partials/_seo') %>
     <link href="/assets/vendor/bootstrap5/bootstrap.min.css" rel="stylesheet">
-    <link href="/assets/vendor/fontawesome6/all.min.css" rel="stylesheet">    <link rel="stylesheet" href="/assets/vendor/lightbox2/lightbox.min.css">
+    <link href="/assets/vendor/fontawesome6/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/vendor/lightbox2/lightbox.min.css">
     <link rel="stylesheet" href="/theme.css">
+
+    <%
+    /* ── Theming per jurusan ───────────────────────────────────────────── */
+    var jKode  = jurusan.kode.toUpperCase();
+    var jWarna = jurusan.warna || 'linear-gradient(135deg,#0ea5e9,#0369a1)';
+    var jIcon  = jurusan.icon  || 'fas fa-graduation-cap';
+
+    /* Resolve a single "accent" hex from the gradient string */
+    var accentMatch = jWarna.match(/#([0-9a-fA-F]{6})/);
+    var accentHex   = accentMatch ? accentMatch[0] : '#0ea5e9';
+
+    /* Per-jurusan character data (static, but falls back gracefully) */
+    var charMap = {
+      TKJ: {
+        tagline   : 'Menguasai Jaringan, Menghubungkan Dunia',
+        subtitle  : 'Teknik Jaringan Komputer & Telekomunikasi',
+        particles : true,
+        badges    : ['Networking','Server','Cloud','IoT','Keamanan Siber','Fiber Optik'],
+        kurikulum : [
+          { sem:'Semester 1–2', topik:'Dasar Komputer & Elektronika', icon:'fas fa-microchip', desc:'Pengenalan hardware, elektronika dasar, dan sistem operasi.' },
+          { sem:'Semester 3–4', topik:'Jaringan LAN/WAN & Routing', icon:'fas fa-network-wired', desc:'Konfigurasi router, switch, dan protokol jaringan.' },
+          { sem:'Semester 5–6', topik:'Server, Cloud & Keamanan Jaringan', icon:'fas fa-shield-alt', desc:'Administrasi server Linux, layanan cloud, dan firewall.' }
+        ],
+        karir : [
+          { judul:'Network Engineer', icon:'fas fa-network-wired', gaji:'Rp 5–15 jt/bln' },
+          { judul:'System Administrator', icon:'fas fa-server', gaji:'Rp 6–18 jt/bln' },
+          { judul:'Cybersecurity Analyst', icon:'fas fa-shield-alt', gaji:'Rp 8–25 jt/bln' },
+          { judul:'Cloud Engineer', icon:'fas fa-cloud', gaji:'Rp 10–30 jt/bln' },
+          { judul:'IT Support Specialist', icon:'fas fa-headset', gaji:'Rp 4–10 jt/bln' },
+          { judul:'Technopreneur', icon:'fas fa-rocket', gaji:'Tak terbatas' }
+        ],
+        fasilitas: [
+          { nama:'Lab Jaringan Komputer', icon:'fas fa-network-wired', desc:'Lengkap dengan router Cisco, switch manageable, dan access point profesional.' },
+          { nama:'Lab Komputer', icon:'fas fa-desktop', desc:'PC terbaru dengan spesifikasi tinggi untuk kegiatan praktik sehari-hari.' },
+          { nama:'Server Room', icon:'fas fa-server', desc:'Ruang server sungguhan untuk praktik administrasi server dan cloud.' },
+          { nama:'Ruang Fiber Optik', icon:'fas fa-circle-dot', desc:'Alat splicing dan pengujian kabel fiber optik modern.' }
+        ],
+        sertifikasi: ['Cisco CCNA','CompTIA Network+','Linux Essentials','Microsoft Azure Fundamentals','Google IT Support']
+      }
+    };
+
+    var ch = charMap[jKode] || {
+      tagline:'Program Keahlian SMK Negeri 1 Kras',
+      subtitle: jurusan.nama,
+      particles:false,
+      badges:[],
+      kurikulum:[], karir:[], fasilitas:[], sertifikasi:[]
+    };
+    %>
+
     <style>
-        :root{--primary-blue:#0ea5e9;--secondary-blue:#0369a1;--light-blue:#e0f2fe;--gray-50:#f8fafc;--gray-100:#f1f5f9;--gray-600:#475569;--gray-700:#334155;--gray-800:#1e293b;}
-        *{font-family:'Inter',sans-serif;box-sizing:border-box;margin:0;padding:0;}
-        body{color:var(--gray-700);line-height:1.6;}
-        .page-header{padding:10rem 0 5rem;color:white;text-align:center;position:relative;overflow:hidden;}
-        .page-header::before{content:'';position:absolute;top:-20%;right:-5%;width:400px;height:400px;border-radius:50%;background:rgba(255,255,255,.06);}
-        .page-header::after{content:'';position:absolute;bottom:-20%;left:-5%;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,.04);}
-        .page-title{font-size:2.8rem;font-weight:800;position:relative;z-index:1;}
-        .page-kode{background:rgba(255,255,255,.2);color:white;padding:.4rem 1.2rem;border-radius:20px;font-size:.9rem;font-weight:700;display:inline-block;margin-bottom:1rem;position:relative;z-index:1;}
-        .content-section{padding:5rem 0;background:var(--gray-50);}
-        .section-card{background:white;border-radius:20px;padding:2.5rem;box-shadow:0 4px 20px rgba(0,0,0,.06);margin-bottom:2rem;}
-        .section-title{font-size:1.4rem;font-weight:700;color:var(--gray-800);margin-bottom:1.5rem;display:flex;align-items:center;gap:.75rem;}
-        .section-title i{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:1rem;flex-shrink:0;}
-        /* Guru cards */
-        .guru-card{background:var(--gray-50);border-radius:16px;padding:1.25rem;text-align:center;border:1px solid var(--gray-100);transition:all .2s;}
-        .guru-card:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgba(0,0,0,.08);}
-        .guru-foto{width:80px;height:80px;border-radius:50%;object-fit:cover;object-position:top;border:3px solid var(--light-blue);margin:0 auto .75rem;}
-        .guru-foto-placeholder{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .75rem;color:white;font-size:1.8rem;background:linear-gradient(135deg,#0ea5e9,#0369a1);}
-        /* Prestasi */
-        .prestasi-item{display:flex;align-items:center;gap:1rem;padding:1rem;background:var(--gray-50);border-radius:12px;border:1px solid var(--gray-100);margin-bottom:.75rem;}
-        .prestasi-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:1.1rem;flex-shrink:0;}
-        /* Galeri */
-        .galeri-item{border-radius:12px;overflow:hidden;cursor:pointer;transition:transform .2s;}
-        .galeri-item:hover{transform:scale(1.03);}
-        .galeri-item img{width:100%;height:140px;object-fit:cover;}
+        /* ── Reset & Base ───────────────────────────────────────────────── */
+        :root {
+            --accent: <%= accentHex %>;
+            --grad: <%= jWarna %>;
+            --grad-light: linear-gradient(135deg,<%= accentHex %>22,<%= accentHex %>08);
+            --card-radius: 20px;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { color: #334155; line-height: 1.6; overflow-x: hidden; }
+        a { text-decoration: none; }
+        img { max-width: 100%; }
+
+        /* ── Hero Section ───────────────────────────────────────────────── */
+        .hero {
+            min-height: 100vh;
+            background: <%= jWarna %>;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            padding: 100px 0 60px;
+        }
+        /* Animated grid bg */
+        .hero-grid {
+            position: absolute; inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: gridMove 20s linear infinite;
+        }
+        @keyframes gridMove { from { background-position: 0 0; } to { background-position: 60px 60px; } }
+
+        /* Floating orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,.07);
+            animation: float 8s ease-in-out infinite;
+        }
+        .orb-1 { width: 500px; height: 500px; top: -150px; right: -100px; animation-delay: 0s; }
+        .orb-2 { width: 300px; height: 300px; bottom: -80px; left: -80px; animation-delay: 3s; }
+        .orb-3 { width: 200px; height: 200px; top: 40%; left: 30%; animation-delay: 5s; }
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.05); }
+            66% { transform: translate(-20px, 20px) scale(.95); }
+        }
+
+        /* Animated nodes (network effect) */
+        .nodes-canvas { position: absolute; inset: 0; pointer-events: none; }
+
+        .hero-content { position: relative; z-index: 5; color: white; }
+        .hero-kode-badge {
+            display: inline-flex; align-items: center; gap: .6rem;
+            background: rgba(255,255,255,.2); backdrop-filter: blur(8px);
+            color: white; padding: .5rem 1.2rem; border-radius: 50px;
+            font-size: .85rem; font-weight: 700; letter-spacing: 1px;
+            border: 1px solid rgba(255,255,255,.3);
+            margin-bottom: 1.5rem;
+            animation: fadeInDown .6s ease both;
+        }
+        .hero-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            animation: fadeInUp .7s ease .1s both;
+        }
+        .hero-subtitle {
+            font-size: clamp(1rem, 2vw, 1.3rem);
+            opacity: .85;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp .7s ease .2s both;
+        }
+        .hero-desc {
+            font-size: .95rem;
+            opacity: .8;
+            max-width: 520px;
+            line-height: 1.7;
+            margin-bottom: 2rem;
+            animation: fadeInUp .7s ease .3s both;
+        }
+        .hero-tags {
+            display: flex; flex-wrap: wrap; gap: .5rem;
+            margin-bottom: 2.5rem;
+            animation: fadeInUp .7s ease .4s both;
+        }
+        .hero-tag {
+            background: rgba(255,255,255,.15); backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,.25);
+            color: white; padding: .3rem .9rem; border-radius: 50px;
+            font-size: .78rem; font-weight: 600;
+        }
+        .hero-cta {
+            display: flex; flex-wrap: wrap; gap: 1rem;
+            animation: fadeInUp .7s ease .5s both;
+        }
+        .btn-hero-primary {
+            background: white; color: var(--accent); font-weight: 700;
+            padding: .9rem 2rem; border-radius: 50px; border: none;
+            font-size: .95rem; cursor: pointer; transition: all .3s;
+            display: inline-flex; align-items: center; gap: .5rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,.2);
+        }
+        .btn-hero-primary:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(0,0,0,.3); color: var(--accent); }
+        .btn-hero-outline {
+            background: transparent; color: white; font-weight: 700;
+            padding: .9rem 2rem; border-radius: 50px;
+            border: 2px solid rgba(255,255,255,.5);
+            font-size: .95rem; cursor: pointer; transition: all .3s;
+            display: inline-flex; align-items: center; gap: .5rem;
+        }
+        .btn-hero-outline:hover { background: rgba(255,255,255,.1); border-color: white; transform: translateY(-3px); color: white; }
+
+        /* Hero stats */
+        .hero-stats {
+            display: flex; flex-wrap: wrap; gap: 2rem;
+            padding: 1.5rem 2rem;
+            background: rgba(255,255,255,.1); backdrop-filter: blur(10px);
+            border-radius: var(--card-radius); border: 1px solid rgba(255,255,255,.2);
+            animation: fadeInUp .7s ease .6s both;
+        }
+        .stat-item { text-align: center; }
+        .stat-num { font-size: 2rem; font-weight: 900; color: white; line-height: 1; }
+        .stat-label { font-size: .78rem; color: rgba(255,255,255,.8); font-weight: 500; margin-top: .2rem; }
+
+        /* Hero visual side */
+        .hero-visual {
+            position: relative; z-index: 5;
+            animation: fadeInRight .9s ease .3s both;
+        }
+        .hero-device {
+            background: rgba(255,255,255,.12); backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,.25);
+            border-radius: 24px; padding: 2rem;
+            position: relative;
+        }
+        .device-header {
+            display: flex; gap: .5rem; margin-bottom: 1.5rem;
+        }
+        .device-dot {
+            width: 12px; height: 12px; border-radius: 50%;
+        }
+        .device-dot:nth-child(1){ background: #ff6b6b; }
+        .device-dot:nth-child(2){ background: #ffd93d; }
+        .device-dot:nth-child(3){ background: #6bcb77; }
+        .device-terminal {
+            background: rgba(0,0,0,.4); border-radius: 12px;
+            padding: 1.5rem; font-family: 'Courier New', monospace;
+            font-size: .8rem; color: #a8ff78;
+            min-height: 200px;
+        }
+        .terminal-line { margin-bottom: .4rem; line-height: 1.5; }
+        .terminal-prompt { color: #7dd3fc; }
+        .terminal-cmd { color: #ffd93d; }
+        .terminal-output { color: #a8ff78; opacity: .8; }
+        .cursor {
+            display: inline-block; width: 8px; height: 14px;
+            background: #a8ff78; animation: blink 1s infinite;
+            vertical-align: middle; margin-left: 2px;
+        }
+        @keyframes blink { 0%,50%{ opacity:1 } 51%,100%{ opacity:0 } }
+
+        /* Network topology mini */
+        .net-topo {
+            margin-top: 1.5rem;
+            background: rgba(0,0,0,.3); border-radius: 12px;
+            padding: 1rem; display: flex; align-items: center; justify-content: center; gap: .5rem;
+        }
+        .net-node {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: rgba(255,255,255,.15); border: 2px solid rgba(255,255,255,.3);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: .8rem;
+            position: relative;
+        }
+        .net-node.active { background: rgba(255,255,255,.3); animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0%,100%{ box-shadow:0 0 0 0 rgba(255,255,255,.4); }
+            50%{ box-shadow:0 0 0 10px rgba(255,255,255,0); }
+        }
+        .net-line {
+            flex: 1; height: 2px; background: linear-gradient(90deg, rgba(255,255,255,.3), rgba(255,255,255,.6), rgba(255,255,255,.3));
+            position: relative; overflow: hidden;
+        }
+        .net-line::after {
+            content: ''; position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,.8), transparent);
+            animation: dataFlow 2s linear infinite;
+        }
+        @keyframes dataFlow { from{ left:-100% } to{ left:100% } }
+
+        /* ── Section utility ───────────────────────────────────────────── */
+        .section { padding: 5rem 0; }
+        .section-alt { background: #f8fafc; }
+        .section-dark { background: #0f172a; color: white; }
+        .section-accent { background: var(--grad-light); }
+
+        .section-tag {
+            display: inline-flex; align-items: center; gap: .5rem;
+            background: var(--grad-light); color: var(--accent);
+            padding: .35rem 1rem; border-radius: 50px;
+            font-size: .78rem; font-weight: 700; letter-spacing: .5px;
+            margin-bottom: 1rem; border: 1px solid <%= accentHex %>33;
+        }
+        .section-title-main {
+            font-size: clamp(1.6rem, 3vw, 2.4rem);
+            font-weight: 800; color: #1e293b; line-height: 1.2;
+            margin-bottom: .75rem;
+        }
+        .section-title-main.white { color: white; }
+        .section-lead {
+            font-size: 1rem; color: #64748b; max-width: 560px; line-height: 1.7;
+        }
+        .section-lead.white { color: rgba(255,255,255,.7); }
+        .divider {
+            width: 60px; height: 4px; border-radius: 2px;
+            background: var(--grad); margin-bottom: 1.5rem;
+        }
+
+        /* ── Info Jurusan ───────────────────────────────────────────────── */
+        .info-card {
+            background: white;
+            border-radius: var(--card-radius);
+            padding: 2.5rem;
+            box-shadow: 0 4px 30px rgba(0,0,0,.07);
+            border: 1px solid #f1f5f9;
+        }
+        .info-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: .8rem 0; border-bottom: 1px solid #f1f5f9;
+        }
+        .info-row:last-child { border-bottom: none; }
+        .info-label { color: #64748b; font-size: .88rem; }
+        .info-value { font-weight: 700; color: #1e293b; font-size: .9rem; }
+
+        /* ── Feature Cards ─────────────────────────────────────────────── */
+        .feature-card {
+            background: white; border-radius: var(--card-radius);
+            padding: 2rem; border: 1px solid #f1f5f9;
+            box-shadow: 0 2px 15px rgba(0,0,0,.05);
+            transition: all .3s; height: 100%;
+        }
+        .feature-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 15px 40px rgba(0,0,0,.1);
+            border-color: <%= accentHex %>44;
+        }
+        .feature-icon {
+            width: 56px; height: 56px; border-radius: 16px;
+            background: var(--grad); display: flex; align-items: center;
+            justify-content: center; color: white; font-size: 1.4rem;
+            margin-bottom: 1.25rem;
+        }
+        .feature-title { font-size: 1.05rem; font-weight: 700; color: #1e293b; margin-bottom: .6rem; }
+        .feature-desc { font-size: .88rem; color: #64748b; line-height: 1.6; }
+
+        /* ── Kurikulum Timeline ────────────────────────────────────────── */
+        .timeline-wrap { position: relative; padding-left: 2.5rem; }
+        .timeline-wrap::before {
+            content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+            width: 3px; background: linear-gradient(180deg, var(--accent), transparent);
+            border-radius: 2px;
+        }
+        .timeline-item { position: relative; margin-bottom: 2.5rem; }
+        .timeline-item:last-child { margin-bottom: 0; }
+        .timeline-dot {
+            position: absolute; left: -2.5rem;
+            width: 18px; height: 18px; border-radius: 50%;
+            background: var(--grad); border: 3px solid white;
+            box-shadow: 0 0 0 3px <%= accentHex %>44;
+            top: .3rem;
+        }
+        .timeline-sem {
+            font-size: .75rem; font-weight: 700; color: var(--accent);
+            text-transform: uppercase; letter-spacing: .5px; margin-bottom: .4rem;
+        }
+        .timeline-card {
+            background: white; border-radius: 16px; padding: 1.5rem;
+            box-shadow: 0 2px 15px rgba(0,0,0,.06); border: 1px solid #f1f5f9;
+            transition: all .3s;
+        }
+        .timeline-card:hover { box-shadow: 0 8px 25px rgba(0,0,0,.1); transform: translateX(6px); }
+        .timeline-card-title { font-weight: 700; color: #1e293b; margin-bottom: .4rem; display: flex; align-items: center; gap: .5rem; }
+        .timeline-card-desc { font-size: .88rem; color: #64748b; line-height: 1.6; }
+
+        /* ── Karir Cards ───────────────────────────────────────────────── */
+        .karir-card {
+            background: white; border-radius: var(--card-radius);
+            padding: 1.75rem; border: 1px solid #f1f5f9;
+            box-shadow: 0 2px 12px rgba(0,0,0,.05);
+            transition: all .3s; text-align: center; height: 100%;
+        }
+        .karir-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,.12);
+            border-color: <%= accentHex %>55;
+        }
+        .karir-icon {
+            width: 64px; height: 64px; border-radius: 50%;
+            background: var(--grad-light); display: flex; align-items: center;
+            justify-content: center; color: var(--accent); font-size: 1.6rem;
+            margin: 0 auto 1rem; border: 2px solid <%= accentHex %>22;
+        }
+        .karir-title { font-weight: 700; font-size: 1rem; color: #1e293b; margin-bottom: .4rem; }
+        .karir-gaji {
+            display: inline-block; background: var(--grad-light);
+            color: var(--accent); padding: .2rem .75rem; border-radius: 50px;
+            font-size: .75rem; font-weight: 600; border: 1px solid <%= accentHex %>22;
+        }
+
+        /* ── Guru Cards ────────────────────────────────────────────────── */
+        .guru-card-new {
+            background: white; border-radius: var(--card-radius);
+            padding: 1.75rem 1.25rem; text-align: center;
+            border: 1px solid #f1f5f9; box-shadow: 0 2px 12px rgba(0,0,0,.05);
+            transition: all .3s; height: 100%;
+        }
+        .guru-card-new:hover { transform: translateY(-6px); box-shadow: 0 15px 35px rgba(0,0,0,.1); border-color: <%= accentHex %>44; }
+        .guru-avatar {
+            width: 90px; height: 90px; border-radius: 50%;
+            object-fit: cover; object-position: top;
+            border: 3px solid transparent;
+            background: var(--grad); padding: 3px;
+            margin: 0 auto 1rem; display: block;
+        }
+        .guru-avatar-wrap {
+            width: 90px; height: 90px; border-radius: 50%;
+            background: var(--grad); display: flex; align-items: center;
+            justify-content: center; color: white; font-size: 2rem;
+            margin: 0 auto 1rem;
+        }
+        .guru-nama { font-weight: 700; font-size: .9rem; color: #1e293b; line-height: 1.3; margin-bottom: .25rem; }
+        .guru-jabatan { font-size: .75rem; color: #64748b; }
+        .guru-mapel {
+            display: inline-block; margin-top: .5rem;
+            background: var(--grad-light); color: var(--accent);
+            padding: .15rem .6rem; border-radius: 50px; font-size: .7rem; font-weight: 600;
+        }
+
+        /* ── Galeri ────────────────────────────────────────────────────── */
+        .galeri-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+        .galeri-item-new {
+            border-radius: 16px; overflow: hidden; position: relative;
+            aspect-ratio: 1; cursor: pointer;
+        }
+        .galeri-item-new img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform .4s;
+        }
+        .galeri-item-new:hover img { transform: scale(1.08); }
+        .galeri-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(transparent 50%, rgba(0,0,0,.7));
+            opacity: 0; transition: opacity .3s;
+            display: flex; align-items: flex-end; padding: .75rem;
+        }
+        .galeri-item-new:hover .galeri-overlay { opacity: 1; }
+        .galeri-caption { color: white; font-size: .78rem; font-weight: 600; }
+
+        /* ── Berita ────────────────────────────────────────────────────── */
+        .berita-card {
+            background: white; border-radius: var(--card-radius);
+            overflow: hidden; border: 1px solid #f1f5f9;
+            box-shadow: 0 2px 12px rgba(0,0,0,.05);
+            transition: all .3s; height: 100%;
+        }
+        .berita-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,.1); }
+        .berita-img { width: 100%; height: 180px; object-fit: cover; }
+        .berita-img-placeholder {
+            width: 100%; height: 180px;
+            background: var(--grad-light);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3rem; color: var(--accent);
+        }
+        .berita-body { padding: 1.25rem; }
+        .berita-cat {
+            background: var(--grad-light); color: var(--accent);
+            padding: .2rem .7rem; border-radius: 50px;
+            font-size: .7rem; font-weight: 700; display: inline-block; margin-bottom: .5rem;
+        }
+        .berita-judul { font-weight: 700; font-size: .95rem; color: #1e293b; line-height: 1.4; margin-bottom: .5rem; }
+        .berita-date { font-size: .75rem; color: #94a3b8; }
+
+        /* ── Prestasi ──────────────────────────────────────────────────── */
+        .prestasi-card {
+            background: white; border-radius: 16px;
+            padding: 1.25rem 1.5rem;
+            border: 1px solid #f1f5f9; border-left: 4px solid var(--accent);
+            box-shadow: 0 2px 10px rgba(0,0,0,.05);
+            display: flex; align-items: center; gap: 1rem;
+            transition: all .3s;
+        }
+        .prestasi-card:hover { transform: translateX(5px); box-shadow: 0 8px 20px rgba(0,0,0,.1); }
+        .prestasi-trophy {
+            width: 48px; height: 48px; border-radius: 12px;
+            background: var(--grad); display: flex; align-items: center;
+            justify-content: center; color: white; font-size: 1.2rem; flex-shrink: 0;
+        }
+        .prestasi-judul { font-weight: 700; font-size: .88rem; color: #1e293b; line-height: 1.3; }
+        .prestasi-meta { font-size: .75rem; color: #64748b; margin-top: .25rem; }
+
+        /* ── Sertifikasi ───────────────────────────────────────────────── */
+        .sertif-badge {
+            display: inline-flex; align-items: center; gap: .5rem;
+            background: white; border: 1px solid #e2e8f0;
+            padding: .6rem 1.2rem; border-radius: 50px;
+            font-size: .85rem; font-weight: 600; color: #334155;
+            box-shadow: 0 2px 8px rgba(0,0,0,.06);
+            transition: all .3s; cursor: default;
+        }
+        .sertif-badge:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,.12); border-color: var(--accent); color: var(--accent); }
+        .sertif-badge i { color: var(--accent); }
+
+        /* ── Sticky Sidebar ────────────────────────────────────────────── */
+        .sticky-sidebar { position: sticky; top: 90px; }
+        .sidebar-card {
+            background: white; border-radius: var(--card-radius);
+            padding: 1.75rem; box-shadow: 0 4px 20px rgba(0,0,0,.07);
+            border: 1px solid #f1f5f9; margin-bottom: 1.5rem;
+        }
+        .sidebar-title {
+            font-size: .95rem; font-weight: 700; color: #1e293b;
+            margin-bottom: 1rem; display: flex; align-items: center; gap: .6rem;
+        }
+        .sidebar-title-icon {
+            width: 32px; height: 32px; border-radius: 8px;
+            background: var(--grad); display: flex; align-items: center;
+            justify-content: center; color: white; font-size: .8rem; flex-shrink: 0;
+        }
+
+        /* ── Back to top / breadcrumb ──────────────────────────────────── */
+        .breadcrumb-bar {
+            background: white; padding: .75rem 0;
+            border-bottom: 1px solid #f1f5f9;
+            position: sticky; top: 72px; z-index: 100;
+        }
+        .breadcrumb-bar a { color: #64748b; font-size: .82rem; }
+        .breadcrumb-bar a:hover { color: var(--accent); }
+        .breadcrumb-bar span { color: #94a3b8; margin: 0 .4rem; }
+        .breadcrumb-bar .current { color: var(--accent); font-weight: 600; font-size: .82rem; }
+
+        /* ── Scroll reveal ─────────────────────────────────────────────── */
+        .reveal { opacity: 0; transform: translateY(30px); transition: all .6s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* ── Animations ────────────────────────────────────────────────── */
+        @keyframes fadeInDown { from{ opacity:0; transform:translateY(-20px) } to{ opacity:1; transform:translateY(0) } }
+        @keyframes fadeInUp   { from{ opacity:0; transform:translateY(30px) } to{ opacity:1; transform:translateY(0) } }
+        @keyframes fadeInRight{ from{ opacity:0; transform:translateX(40px) } to{ opacity:1; transform:translateX(0) } }
+        @keyframes countUp { from{ opacity:0 } to{ opacity:1 } }
+
+        /* ── Responsive ────────────────────────────────────────────────── */
+        @media (max-width: 991.98px) {
+            .hero { min-height: auto; padding: 100px 0 60px; }
+            .hero-visual { margin-top: 3rem; }
+            .sticky-sidebar { position: static; }
+        }
+        @media (max-width: 575.98px) {
+            .section { padding: 3rem 0; }
+            .hero-cta { flex-direction: column; }
+            .btn-hero-primary, .btn-hero-outline { justify-content: center; }
+            .hero-stats { gap: 1rem; justify-content: center; }
+            .galeri-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        /* ── Nav scroll indicator ─────────────────────────────────────── */
+        .progress-bar-top {
+            position: fixed; top: 0; left: 0; height: 3px;
+            background: var(--grad); z-index: 9999;
+            transition: width .1s linear; width: 0%;
+        }
+
+        /* ── Quick nav dots ────────────────────────────────────────────── */
+        .section-nav {
+            position: fixed; right: 1.5rem; top: 50%; transform: translateY(-50%);
+            display: flex; flex-direction: column; gap: .75rem; z-index: 50;
+        }
+        .snav-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: #cbd5e1; cursor: pointer;
+            transition: all .3s; border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,.2);
+        }
+        .snav-dot.active { background: var(--accent); transform: scale(1.4); }
+        @media (max-width: 991.98px) { .section-nav { display: none; } }
     </style>
 </head>
 <body>
+    <!-- Progress bar top -->
+    <div class="progress-bar-top" id="scrollProgress"></div>
+
     <%- include('partials/navbar') %>
 
-    <!-- Header dengan warna jurusan -->
-    <% var headerBg = jurusan.warna || 'linear-gradient(135deg,#0ea5e9,#0369a1)'; %>
-    <section class="page-header" style="background:<%= headerBg %>;">        <div class="container" style="position:relative;z-index:1;">
-            <div class="page-kode"><% var jIcon = jurusan.icon || 'fas fa-graduation-cap'; %><i class="<%= jIcon %> me-2"></i><%= jurusan.kode %></div>
-            <h1 class="page-title"><%= jurusan.nama %></h1>
-            <% if (jurusan.deskripsi) { %>
-            <p style="font-size:1rem;opacity:.85;max-width:600px;margin:.75rem auto 0;position:relative;z-index:1;"><%= jurusan.deskripsi %></p>
-            <% } %>
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-bar">
+        <div class="container d-flex align-items-center">
+            <a href="/">Beranda</a>
+            <span>›</span>
+            <a href="/jurusan">Program Keahlian</a>
+            <span>›</span>
+            <span class="current"><%= jurusan.kode %></span>
         </div>
-    </section>
+    </div>
 
-    <% var jWarna = jurusan.warna || 'linear-gradient(135deg,#0ea5e9,#0369a1)'; %>
-    <section class="content-section">
+    <!-- ════ HERO ════════════════════════════════════════════════════════ -->
+    <section class="hero" id="sec-hero">
+        <div class="hero-grid"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <canvas class="nodes-canvas" id="nodesCanvas"></canvas>
+
         <div class="container">
-            <div class="row">
-                <div class="col-lg-8">
-
-                    <!-- Deskripsi lengkap -->
-                    <% if (jurusan.deskripsi_lengkap) { %>
-                    <div class="section-card">
-                        <div class="section-title">
-                            <i style="background:<%= jWarna %>;"><i class="fas fa-info-circle"></i></i>
-                            Tentang Program Keahlian
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6">
+                    <div class="hero-content">
+                        <div class="hero-kode-badge">
+                            <i class="<%= jIcon %>"></i>
+                            <%= jurusan.kode %> · SMK Negeri 1 Kras
                         </div>
-                        <div style="line-height:1.8;font-size:.95rem;"><%- jurusan.deskripsi_lengkap %></div>
-                    </div>
-                    <% } %>
-
-                    <!-- Guru Pengajar -->
-                    <% if (guru && guru.length > 0) { %>
-                    <div class="section-card">
-                        <div class="section-title">
-                            <i style="background:<%= jWarna %>;"><i class="fas fa-chalkboard-teacher"></i></i>
-                            Guru Pengajar
+                        <h1 class="hero-title"><%= jurusan.nama %></h1>
+                        <p class="hero-subtitle"><%= ch.tagline %></p>
+                        <p class="hero-desc"><%= jurusan.deskripsi || 'Program keahlian unggulan yang mempersiapkan siswa menjadi tenaga profesional di bidang teknologi informasi dan jaringan komputer.' %></p>
+                        <div class="hero-tags">
+                            <% ch.badges.forEach(b=>{ %><span class="hero-tag"><%= b %></span><% }) %>
                         </div>
-                        <div class="row g-3">
-                            <% guru.forEach(g=>{ %>
-                            <div class="col-6 col-md-4 col-lg-3">
-                                <div class="guru-card">
-                                    <% if (g.foto) { %>
-                                    <img src="/uploads/<%= g.foto %>" class="guru-foto" alt="<%= g.nama %>">
-                                    <% } else { %>
-                                    <div class="guru-foto-placeholder" style="background:<%= jWarna %>;"><i class="fas fa-user"></i></div>
-                                    <% } %>
-                                    <div style="font-weight:600;font-size:.82rem;color:var(--gray-800);line-height:1.3;"><%= g.nama %></div>
-                                    <% if (g.jabatan && g.jabatan !== 'GURU') { %>
-                                    <div style="font-size:.72rem;color:var(--gray-600);margin-top:.25rem;"><%= g.jabatan %></div>
-                                    <% } %>
-                                </div>
-                            </div>
-                            <% }) %>
+                        <div class="hero-cta">
+                            <a href="#sec-about" class="btn-hero-primary">
+                                <i class="fas fa-info-circle"></i> Selengkapnya
+                            </a>
+                            <a href="#sec-guru" class="btn-hero-outline">
+                                <i class="fas fa-users"></i> Tim Pengajar
+                            </a>
                         </div>
                     </div>
-                    <% } %>
-
-                    <!-- Berita & Informasi Jurusan -->
-                    <% if (jurusanBerita && jurusanBerita.length > 0) { %>
-                    <div class="section-card">
-                        <div class="section-title">
-                            <i style="background:<%= jWarna %>;"><i class="fas fa-newspaper"></i></i>
-                            Berita & Informasi
-                        </div>
-                        <% jurusanBerita.forEach(function(b){ %>
-                        <a href="/jurusan/<%= jurusan.kode.toLowerCase() %>/berita/<%= b.slug %>" style="display:flex;gap:1rem;padding:.75rem 0;border-bottom:1px solid var(--gray-100);text-decoration:none;color:inherit;">
-                            <% if (b.gambar) { %>
-                            <img src="/uploads/<%= b.gambar %>" style="width:70px;height:55px;object-fit:cover;border-radius:8px;flex-shrink:0;">
-                            <% } else { %>
-                            <div style="width:70px;height:55px;background:var(--gray-100);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fas fa-newspaper" style="color:var(--gray-400);"></i></div>
-                            <% } %>
-                            <div>
-                                <span style="background:var(--light-blue);color:var(--primary-blue-dark);padding:.1rem .5rem;border-radius:8px;font-size:.7rem;font-weight:600;"><%= b.kategori %></span>
-                                <div style="font-weight:600;font-size:.88rem;color:var(--gray-800);margin-top:.2rem;line-height:1.3;"><%= b.judul %></div>
-                                <div style="font-size:.75rem;color:var(--gray-500);margin-top:.2rem;"><%= new Date(b.created_at).toLocaleDateString('id-ID') %></div>
-                            </div>
-                        </a>
-                        <% }) %>
-                    </div>
-                    <% } %>
-
-                    <!-- Galeri Kegiatan Jurusan -->
-                    <% if (galeriJurusan && galeriJurusan.length > 0) { %>
-                    <div class="section-card">
-                        <div class="section-title">
-                            <i style="background:<%= jWarna %>;"><i class="fas fa-images"></i></i>
-                            Galeri Kegiatan
-                        </div>
-                        <div class="row g-2">
-                            <% galeriJurusan.forEach(function(g){ %>
-                            <div class="col-6 col-md-3">
-                                <a href="/uploads/<%= g.gambar %>" data-lightbox="galeri-jurusan" data-title="<%= g.judul %>" class="galeri-item d-block">
-                                    <img src="/uploads/<%= g.gambar %>" alt="<%= g.judul %>" onerror="this.parentElement.style.display='none'">
-                                </a>
-                            </div>
-                            <% }) %>
-                        </div>
-                    </div>
-                    <% } %>
-
                 </div>
 
-                <div class="col-lg-4">
-                    <!-- Info singkat -->
-                    <div class="section-card">
-                        <div class="section-title">
-                            <i style="background:<%= jWarna %>;"><i class="fas fa-info"></i></i>
-                            Info Jurusan
+                <div class="col-lg-6">
+                    <div class="hero-visual">
+                        <div class="hero-device">
+                            <div class="device-header">
+                                <div class="device-dot"></div>
+                                <div class="device-dot"></div>
+                                <div class="device-dot"></div>
+                            </div>
+                            <div class="device-terminal" id="terminal">
+                                <div class="terminal-line"><span class="terminal-prompt">student@<%= jurusan.kode.toLowerCase() %>:~$</span> <span class="terminal-cmd">ping 192.168.1.1</span></div>
+                                <div class="terminal-line terminal-output">PING 192.168.1.1 (192.168.1.1) 56 bytes</div>
+                                <div class="terminal-line terminal-output">64 bytes: icmp_seq=1 ttl=64 time=0.42ms</div>
+                                <div class="terminal-line terminal-output">64 bytes: icmp_seq=2 ttl=64 time=0.38ms</div>
+                                <div class="terminal-line terminal-output" style="color:#6bcb77;">-- ping statistics --</div>
+                                <div class="terminal-line terminal-output">2 packets transmitted, 0% packet loss</div>
+                                <div class="terminal-line"><span class="terminal-prompt">student@<%= jurusan.kode.toLowerCase() %>:~$</span> <span class="terminal-cmd">ip route show</span></div>
+                                <div class="terminal-line terminal-output">default via 192.168.1.1 dev eth0</div>
+                                <div class="terminal-line terminal-output">192.168.1.0/24 dev eth0 proto kernel</div>
+                                <div class="terminal-line"><span class="terminal-prompt">student@<%= jurusan.kode.toLowerCase() %>:~$</span> <span class="cursor"></span></div>
+                            </div>
+                            <div class="net-topo">
+                                <div class="net-node active"><i class="fas fa-desktop" style="font-size:.6rem"></i></div>
+                                <div class="net-line"></div>
+                                <div class="net-node active"><i class="fas fa-network-wired" style="font-size:.6rem"></i></div>
+                                <div class="net-line"></div>
+                                <div class="net-node"><i class="fas fa-server" style="font-size:.6rem"></i></div>
+                                <div class="net-line"></div>
+                                <div class="net-node active"><i class="fas fa-globe" style="font-size:.6rem"></i></div>
+                            </div>
                         </div>
-                        <div style="display:flex;flex-direction:column;gap:.75rem;">
-                            <div style="display:flex;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--gray-100);">
-                                <span style="color:var(--gray-600);font-size:.88rem;">Kode</span>
-                                <span style="font-weight:700;color:var(--gray-800);"><%= jurusan.kode %></span>
-                            </div>
-                            <div style="display:flex;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--gray-100);">
-                                <span style="color:var(--gray-600);font-size:.88rem;">Guru</span>
-                                <span style="font-weight:700;color:var(--gray-800);"><%= guru.length %> orang</span>
-                            </div>
-                            <div style="display:flex;justify-content:space-between;padding:.6rem 0;">
-                                <span style="color:var(--gray-600);font-size:.88rem;">Prestasi</span>
-                                <span style="font-weight:700;color:var(--gray-800);"><%= prestasi.length %> prestasi</span>
-                            </div>
-                        </div>
-                        <a href="/guru" style="display:block;text-align:center;margin-top:1.25rem;background:<%= jWarna %>;color:white;padding:.75rem;border-radius:12px;text-decoration:none;font-weight:600;font-size:.9rem;">
-                            <i class="fas fa-users me-2"></i>Lihat Semua Guru
-                        </a>
-                    </div>
 
-                    <!-- Prestasi -->
-                    <% if (prestasi && prestasi.length > 0) { %>
-                    <div class="section-card">
-                        <div class="section-title">
-                            <i style="background:<%= jWarna %>;"><i class="fas fa-trophy"></i></i>
-                            Prestasi Terbaru
-                        </div>
-                        <% prestasi.slice(0,5).forEach(p=>{ %>
-                        <div class="prestasi-item">
-                            <div class="prestasi-icon" style="background:<%= jWarna %>;"><i class="fas fa-medal"></i></div>
-                            <div>
-                                <div style="font-weight:600;font-size:.85rem;color:var(--gray-800);line-height:1.3;"><%= p.judul %></div>
-                                <div style="font-size:.75rem;color:var(--gray-600);margin-top:.2rem;"><%= p.tingkat %> � <%= p.tahun %></div>
+                        <div class="hero-stats mt-3">
+                            <div class="stat-item">
+                                <div class="stat-num" data-count="<%= guru.length %>">0</div>
+                                <div class="stat-label">Guru Pengajar</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-num" data-count="<%= prestasi.length %>">0</div>
+                                <div class="stat-label">Prestasi</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-num" data-count="3">0</div>
+                                <div class="stat-label">Tahun Studi</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-num" data-count="<%= ch.karir.length %>">0</div>
+                                <div class="stat-label">Prospek Karir</div>
                             </div>
                         </div>
-                        <% }) %>
-                        <a href="/prestasi?kategori=<%= jurusan.kode %>" style="display:block;text-align:center;margin-top:.75rem;color:var(--primary-blue);font-size:.85rem;font-weight:600;text-decoration:none;">Lihat Semua Prestasi <i class="fas fa-arrow-right ms-1"></i></a>
                     </div>
-                    <% } %>
-
-                    <!-- Jurusan lain -->
-                    <div class="section-card" style="margin-bottom:0;">
-                        <div class="section-title">
-                            <i style="background:linear-gradient(135deg,#64748b,#475569);"><i class="fas fa-th-large"></i></i>
-                            Jurusan Lainnya
-                        </div>
-                        <a href="/jurusan" style="display:block;text-align:center;background:var(--gray-50);border:1px solid var(--gray-100);color:var(--gray-700);padding:.75rem;border-radius:12px;text-decoration:none;font-weight:600;font-size:.9rem;transition:all .2s;" onmouseover="this.style.background='var(--light-blue)'" onmouseout="this.style.background='var(--gray-50)'">
-                            <i class="fas fa-graduation-cap me-2"></i>Lihat Semua Program Keahlian
-                        </a>
-                    </div>
-
-                    <!-- Berita Terbaru Sekolah -->
-                    <% if (typeof beritaTerbaru !== 'undefined' && beritaTerbaru && beritaTerbaru.length > 0) { %>
-                    <div class="section-card" style="margin-top:1.5rem;">
-                        <div class="section-title">
-                            <i style="background:linear-gradient(135deg,#0ea5e9,#0369a1);"><i class="fas fa-newspaper"></i></i>
-                            Berita Terbaru
-                        </div>
-                        <% beritaTerbaru.slice(0,3).forEach(b=>{ %>
-                        <a href="/berita/<%= b.slug %>" style="display:flex;gap:.75rem;padding:.6rem 0;border-bottom:1px solid var(--gray-100);text-decoration:none;color:inherit;">
-                            <div style="flex:1;min-width:0;">
-                                <div style="font-weight:600;font-size:.82rem;color:var(--gray-800);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;"><%= b.judul %></div>
-                                <div style="font-size:.72rem;color:var(--gray-500);margin-top:.2rem;"><% var bDate2 = new Date(b.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}); %><%= bDate2 %></div>
-                            </div>
-                        </a>
-                        <% }) %>
-                        <a href="/berita" style="display:block;text-align:center;margin-top:.75rem;color:var(--primary-blue);font-size:.82rem;font-weight:600;text-decoration:none;">Lihat Semua Berita <i class="fas fa-arrow-right ms-1"></i></a>
-                    </div>
-                    <% } %>
-
-                    <!-- Galeri Terbaru -->
-                    <% if (galeri && galeri.length > 0) { %>
-                    <div class="section-card" style="margin-top:1.5rem;">
-                        <div class="section-title">
-                            <i style="background:linear-gradient(135deg,#10b981,#059669);"><i class="fas fa-images"></i></i>
-                            Galeri Terbaru
-                        </div>
-                        <div class="row g-1">
-                            <% galeri.slice(0,4).forEach((g,idx)=>{ %>
-                            <div class="col-6">
-                                <a href="/uploads/<%= g.gambar %>" data-lightbox="sidebar-galeri" data-title="<%= g.judul %>">
-                                    <img src="/uploads/<%= g.gambar %>" alt="<%= g.judul %>"
-                                         style="width:100%;height:80px;object-fit:cover;border-radius:8px;transition:transform .2s;"
-                                         onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'"
-                                         onerror="this.parentElement.style.display='none'">
-                                </a>
-                            </div>
-                            <% }) %>
-                        </div>
-                        <a href="/galeri" style="display:block;text-align:center;margin-top:.75rem;color:var(--primary-blue);font-size:.82rem;font-weight:600;text-decoration:none;">Lihat Semua Galeri <i class="fas fa-arrow-right ms-1"></i></a>
-                    </div>
-                    <% } %>
-
-                    <!-- Media Sosial -->
-                    <% if (typeof mediaSosialFooter !== 'undefined' && mediaSosialFooter && mediaSosialFooter.length > 0) { %>
-                    <div class="section-card" style="margin-top:1.5rem;">
-                        <div class="section-title">
-                            <i style="background:linear-gradient(135deg,#E1306C,#833ab4);"><i class="fas fa-share-alt"></i></i>
-                            Ikuti Kami
-                        </div>
-                        <% const sosmedColors={instagram:'#E1306C',youtube:'#FF0000',facebook:'#1877F2',tiktok:'#010101',twitter:'#000',x:'#000',threads:'#6366f1',whatsapp:'#25D366',telegram:'#229ED9'}; %>
-                        <% const sosmedIcons={instagram:'fa-instagram',youtube:'fa-youtube',facebook:'fa-facebook-f',tiktok:'fa-tiktok',twitter:null,x:null,threads:null,whatsapp:'fa-whatsapp',telegram:'fa-telegram-plane'}; %>
-                        <div style="display:flex;flex-wrap:wrap;gap:.5rem;">
-                            <% mediaSosialFooter.forEach(ms=>{ %>
-                            <%
-                            var msColor = sosmedColors[ms.platform] || '#64748b';
-                            var msIcon = sosmedIcons[ms.platform];
-                            var isSpecial = (ms.platform === 'twitter' || ms.platform === 'x' || ms.platform === 'threads');
-                            %>
-                            <a href="<%= ms.embed_url %>" target="_blank" rel="noopener"
-                               style="width:40px;height:40px;border-radius:10px;background:<%= msColor %>;display:flex;align-items:center;justify-content:center;color:white;font-size:1.1rem;text-decoration:none;"
-                               title="<%= ms.judul %>">
-                                <% if (ms.platform === 'twitter' || ms.platform === 'x') { %>
-                                <span style="font-weight:900;font-size:1rem;font-family:Arial,sans-serif;line-height:1;">𝕏</span>
-                                <% } else if (ms.platform === 'threads') { %>
-                                <span style="font-weight:900;font-size:1.1rem;font-family:Arial,sans-serif;line-height:1;">@</span>
-                                <% } else { %>
-                                <i class="fab <%= msIcon || 'fa-globe' %>"></i>
-                                <% } %>
-                            </a>
-                            <% }) %>
-                        </div>
-                        <a href="/media-sosial" style="display:block;text-align:center;margin-top:.75rem;color:var(--primary-blue);font-size:.82rem;font-weight:600;text-decoration:none;">Lihat Semua Media Sosial <i class="fas fa-arrow-right ms-1"></i></a>
-                    </div>
-                    <% } %>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- Section nav dots -->
+    <nav class="section-nav" id="sectionNav">
+        <div class="snav-dot active" data-target="sec-hero" title="Hero"></div>
+        <div class="snav-dot" data-target="sec-about" title="Tentang"></div>
+        <div class="snav-dot" data-target="sec-kurikulum" title="Kurikulum"></div>
+        <div class="snav-dot" data-target="sec-fasilitas" title="Fasilitas"></div>
+        <div class="snav-dot" data-target="sec-karir" title="Karir"></div>
+        <% if(guru && guru.length > 0){ %><div class="snav-dot" data-target="sec-guru" title="Guru"></div><% } %>
+        <% if(galeriJurusan && galeriJurusan.length > 0){ %><div class="snav-dot" data-target="sec-galeri" title="Galeri"></div><% } %>
+        <% if(jurusanBerita && jurusanBerita.length > 0){ %><div class="snav-dot" data-target="sec-berita" title="Berita"></div><% } %>
+        <% if(prestasi && prestasi.length > 0){ %><div class="snav-dot" data-target="sec-prestasi" title="Prestasi"></div><% } %>
+    </nav>
+
+    <!-- ════ TENTANG ════════════════════════════════════════════════════ -->
+    <section class="section section-alt" id="sec-about">
+        <div class="container">
+            <div class="row g-5 align-items-start">
+                <div class="col-lg-8">
+                    <div class="reveal">
+                        <span class="section-tag"><i class="fas fa-info-circle"></i> Tentang Program</span>
+                        <h2 class="section-title-main">Apa itu <span style="color:var(--accent)"><%= jurusan.nama %></span>?</h2>
+                        <div class="divider"></div>
+                    </div>
+
+                    <% if (jurusan.deskripsi_lengkap) { %>
+                    <div class="info-card reveal" style="transition-delay:.1s">
+                        <div style="line-height:1.85;font-size:.95rem;color:#334155;">
+                            <%- jurusan.deskripsi_lengkap %>
+                        </div>
+                    </div>
+                    <% } else { %>
+                    <div class="info-card reveal" style="transition-delay:.1s">
+                        <p style="line-height:1.85;font-size:.95rem;color:#334155;">
+                            Jurusan <strong><%= jurusan.nama %></strong> (TJKT) adalah program keahlian SMK yang fokus mempelajari
+                            instalasi, konfigurasi, perawatan, dan keamanan jaringan komputer serta infrastruktur telekomunikasi.
+                            Ini adalah evolusi dari jurusan TKJ yang lebih modern, mencakup teknologi cloud, IoT, dan fiber optik.
+                        </p>
+                        <div class="row g-3 mt-3">
+                            <div class="col-md-6">
+                                <div style="background:#f8fafc;border-radius:12px;padding:1rem;">
+                                    <div style="font-weight:700;font-size:.88rem;color:#1e293b;margin-bottom:.75rem;"><i class="fas fa-book me-2" style="color:var(--accent)"></i>Materi Pembelajaran</div>
+                                    <ul style="list-style:none;padding:0;margin:0;font-size:.85rem;color:#475569;line-height:2;">
+                                        <li><i class="fas fa-check-circle me-2" style="color:var(--accent)"></i>Perakitan & Troubleshooting PC</li>
+                                        <li><i class="fas fa-check-circle me-2" style="color:var(--accent)"></i>Jaringan LAN/WAN/WiFi</li>
+                                        <li><i class="fas fa-check-circle me-2" style="color:var(--accent)"></i>Administrasi Server Linux</li>
+                                        <li><i class="fas fa-check-circle me-2" style="color:var(--accent)"></i>Keamanan Jaringan & Firewall</li>
+                                        <li><i class="fas fa-check-circle me-2" style="color:var(--accent)"></i>Pemrograman Dasar (Web & Jaringan)</li>
+                                        <li><i class="fas fa-check-circle me-2" style="color:var(--accent)"></i>Teknologi Fiber Optik & Telekomunikasi</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div style="background:#f8fafc;border-radius:12px;padding:1rem;">
+                                    <div style="font-weight:700;font-size:.88rem;color:#1e293b;margin-bottom:.75rem;"><i class="fas fa-star me-2" style="color:var(--accent)"></i>Keunggulan Jurusan</div>
+                                    <ul style="list-style:none;padding:0;margin:0;font-size:.85rem;color:#475569;line-height:2;">
+                                        <li><i class="fas fa-check-circle me-2" style="color:var(--accent)"></i>Lab jaringan berstandar industri</li>
+                                        <li><i class="fas fa-check-circle me-2" style="color:var(--accent)"></i>Sertifikasi internasional</li>
+                                        <li><i class="fas fa-check-circle me-2" style="color:var(--accent)"></i>Praktik kerja industri (PKL)</li>
+                                        <li><i class="fas fa-check-circle me-2" style="color:var(--accent)"></i>Kurikulum sesuai DUDI</li>
+                                        <li><i class="fas fa-check-circle me-2" style="color:var(--accent)"></i>Bimbingan wirausaha teknologi</li>
+                                        <li><i class="fas fa-check-circle me-2" style="color:var(--accent)"></i>Kompetisi LKS tingkat nasional</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="sticky-sidebar">
+                        <!-- Info Card -->
+                        <div class="sidebar-card reveal">
+                            <div class="sidebar-title">
+                                <div class="sidebar-title-icon"><i class="fas fa-id-card"></i></div>
+                                Info Jurusan
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Kode Jurusan</span>
+                                <span class="info-value badge" style="background:var(--grad-light);color:var(--accent);padding:.3rem .8rem;border-radius:50px;font-size:.85rem;"><%= jurusan.kode %></span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Guru Pengajar</span>
+                                <span class="info-value"><%= guru.length %> Orang</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Prestasi</span>
+                                <span class="info-value"><%= prestasi.length %> Penghargaan</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Durasi Studi</span>
+                                <span class="info-value">3 Tahun</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Status</span>
+                                <span class="info-value" style="color:#22c55e;"><i class="fas fa-circle me-1" style="font-size:.5rem;vertical-align:middle;"></i>Aktif</span>
+                            </div>
+                            <% if (jurusan.kepala_jurusan) { %>
+                            <div class="info-row">
+                                <span class="info-label">Kepala Jurusan</span>
+                                <span class="info-value" style="font-size:.82rem;text-align:right;max-width:55%;"><%= jurusan.kepala_jurusan %></span>
+                            </div>
+                            <% } %>
+                            <a href="#sec-guru" class="btn-hero-primary d-block text-center mt-3" style="background:var(--grad);color:white;font-size:.88rem;padding:.75rem;">
+                                <i class="fas fa-users me-2"></i>Tim Pengajar
+                            </a>
+                        </div>
+
+                        <!-- Sertifikasi -->
+                        <% if(ch.sertifikasi && ch.sertifikasi.length > 0) { %>
+                        <div class="sidebar-card reveal" style="transition-delay:.1s">
+                            <div class="sidebar-title">
+                                <div class="sidebar-title-icon"><i class="fas fa-certificate"></i></div>
+                                Sertifikasi
+                            </div>
+                            <div class="d-flex flex-wrap gap-2">
+                                <% ch.sertifikasi.forEach(s=>{ %>
+                                <span class="sertif-badge"><i class="fas fa-award"></i><%= s %></span>
+                                <% }) %>
+                            </div>
+                        </div>
+                        <% } %>
+
+                        <!-- Jurusan Lain -->
+                        <div class="sidebar-card reveal" style="transition-delay:.2s">
+                            <div class="sidebar-title">
+                                <div class="sidebar-title-icon" style="background:linear-gradient(135deg,#64748b,#475569)"><i class="fas fa-th-large"></i></div>
+                                Jurusan Lainnya
+                            </div>
+                            <a href="/jurusan" style="display:flex;align-items:center;gap:.75rem;padding:.75rem;background:#f8fafc;border-radius:12px;border:1px solid #f1f5f9;color:#334155;font-weight:600;font-size:.88rem;transition:all .2s;" onmouseover="this.style.background='var(--grad-light)';this.style.color='var(--accent)'" onmouseout="this.style.background='#f8fafc';this.style.color='#334155'">
+                                <i class="fas fa-graduation-cap" style="color:var(--accent)"></i>
+                                Lihat Semua Program Keahlian
+                                <i class="fas fa-arrow-right ms-auto" style="font-size:.75rem"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════ KURIKULUM ══════════════════════════════════════════════════ -->
+    <% if(ch.kurikulum && ch.kurikulum.length > 0) { %>
+    <section class="section" id="sec-kurikulum">
+        <div class="container">
+            <div class="row justify-content-center mb-5">
+                <div class="col-lg-7 text-center reveal">
+                    <span class="section-tag"><i class="fas fa-book-open"></i> Kurikulum</span>
+                    <h2 class="section-title-main">Alur Pembelajaran</h2>
+                    <div class="divider mx-auto"></div>
+                    <p class="section-lead mx-auto">Kurikulum terstruktur selama 3 tahun yang dirancang sesuai standar industri dan kebutuhan dunia kerja.</p>
+                </div>
+            </div>
+            <div class="row g-4 justify-content-center">
+                <div class="col-lg-8">
+                    <div class="timeline-wrap">
+                        <% ch.kurikulum.forEach(function(k, idx){ %>
+                        <div class="timeline-item reveal" style="transition-delay:<%= idx * 0.15 %>s">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-sem"><%= k.sem %></div>
+                            <div class="timeline-card">
+                                <div class="timeline-card-title">
+                                    <i class="<%= k.icon %>" style="color:var(--accent)"></i>
+                                    <%= k.topik %>
+                                </div>
+                                <div class="timeline-card-desc"><%= k.desc %></div>
+                            </div>
+                        </div>
+                        <% }) %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <% } %>
+
+    <!-- ════ FASILITAS ══════════════════════════════════════════════════ -->
+    <% if(ch.fasilitas && ch.fasilitas.length > 0) { %>
+    <section class="section section-alt" id="sec-fasilitas">
+        <div class="container">
+            <div class="row justify-content-center mb-5">
+                <div class="col-lg-7 text-center reveal">
+                    <span class="section-tag"><i class="fas fa-building"></i> Fasilitas</span>
+                    <h2 class="section-title-main">Fasilitas Pendukung</h2>
+                    <div class="divider mx-auto"></div>
+                    <p class="section-lead mx-auto">Laboratorium dan peralatan berstandar industri untuk mendukung kegiatan belajar praktik.</p>
+                </div>
+            </div>
+            <div class="row g-4">
+                <% ch.fasilitas.forEach(function(f, idx){ %>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="feature-card reveal" style="transition-delay:<%= idx * 0.1 %>s">
+                        <div class="feature-icon"><i class="<%= f.icon %>"></i></div>
+                        <div class="feature-title"><%= f.nama %></div>
+                        <div class="feature-desc"><%= f.desc %></div>
+                    </div>
+                </div>
+                <% }) %>
+            </div>
+        </div>
+    </section>
+    <% } %>
+
+    <!-- ════ PROSPEK KARIR ══════════════════════════════════════════════ -->
+    <% if(ch.karir && ch.karir.length > 0) { %>
+    <section class="section section-dark" id="sec-karir">
+        <div class="container">
+            <div class="row justify-content-center mb-5">
+                <div class="col-lg-7 text-center reveal">
+                    <span class="section-tag" style="background:rgba(255,255,255,.1);color:white;border-color:rgba(255,255,255,.2)"><i class="fas fa-briefcase"></i> Prospek Karir</span>
+                    <h2 class="section-title-main white">Peluang Karir Lulusan</h2>
+                    <div class="divider mx-auto"></div>
+                    <p class="section-lead white mx-auto">Lulusan TJKT memiliki prospek karir yang luas dan sangat dibutuhkan di era digital saat ini.</p>
+                </div>
+            </div>
+            <div class="row g-4">
+                <% ch.karir.forEach(function(k, idx){ %>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="karir-card reveal" style="transition-delay:<%= idx * 0.08 %>s;background:#1e293b;border-color:#334155;">
+                        <div class="karir-icon" style="background:rgba(255,255,255,.05);color:var(--accent);border-color:var(--accent)44;"><i class="<%= k.icon %>"></i></div>
+                        <div class="karir-title" style="color:white;font-size:.88rem;"><%= k.judul %></div>
+                        <span class="karir-gaji" style="background:rgba(255,255,255,.05);color:var(--accent);border-color:var(--accent)33;font-size:.7rem;"><%= k.gaji %></span>
+                    </div>
+                </div>
+                <% }) %>
+            </div>
+        </div>
+    </section>
+    <% } %>
+
+    <!-- ════ GURU ════════════════════════════════════════════════════════ -->
+    <% if (guru && guru.length > 0) { %>
+    <section class="section section-alt" id="sec-guru">
+        <div class="container">
+            <div class="row justify-content-center mb-5">
+                <div class="col-lg-7 text-center reveal">
+                    <span class="section-tag"><i class="fas fa-chalkboard-teacher"></i> Tim Pengajar</span>
+                    <h2 class="section-title-main">Guru Profesional</h2>
+                    <div class="divider mx-auto"></div>
+                    <p class="section-lead mx-auto">Dibimbing oleh guru berpengalaman dengan kompetensi di bidang teknologi jaringan dan informatika.</p>
+                </div>
+            </div>
+            <div class="row g-4 justify-content-center">
+                <% guru.forEach(function(g, idx){ %>
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="guru-card-new reveal" style="transition-delay:<%= idx * 0.07 %>s">
+                        <% if (g.foto) { %>
+                        <img src="/uploads/<%= g.foto %>" alt="<%= g.nama %>" class="guru-avatar">
+                        <% } else { %>
+                        <div class="guru-avatar-wrap"><i class="fas fa-user"></i></div>
+                        <% } %>
+                        <div class="guru-nama"><%= g.nama %></div>
+                        <% if (g.jabatan && g.jabatan !== 'GURU') { %>
+                        <div class="guru-jabatan"><%= g.jabatan %></div>
+                        <% } %>
+                        <% if (g.mata_pelajaran) { %>
+                        <span class="guru-mapel"><%= g.mata_pelajaran.split(',')[0] %></span>
+                        <% } %>
+                    </div>
+                </div>
+                <% }) %>
+            </div>
+        </div>
+    </section>
+    <% } %>
+
+    <!-- ════ GALERI ══════════════════════════════════════════════════════ -->
+    <% if (galeriJurusan && galeriJurusan.length > 0) { %>
+    <section class="section" id="sec-galeri">
+        <div class="container">
+            <div class="row justify-content-center mb-5">
+                <div class="col-lg-7 text-center reveal">
+                    <span class="section-tag"><i class="fas fa-images"></i> Galeri</span>
+                    <h2 class="section-title-main">Kegiatan & Dokumentasi</h2>
+                    <div class="divider mx-auto"></div>
+                    <p class="section-lead mx-auto">Momen-momen berharga kegiatan praktik, kompetisi, dan keseharian jurusan <%= jurusan.kode %>.</p>
+                </div>
+            </div>
+            <div class="galeri-grid reveal">
+                <% galeriJurusan.forEach(function(g){ %>
+                <a href="/uploads/<%= g.gambar %>" data-lightbox="galeri-jurusan" data-title="<%= g.judul %>" class="galeri-item-new">
+                    <img src="/uploads/<%= g.gambar %>" alt="<%= g.judul %>" onerror="this.closest('.galeri-item-new').style.display='none'">
+                    <div class="galeri-overlay">
+                        <span class="galeri-caption"><i class="fas fa-expand me-1"></i><%= g.judul %></span>
+                    </div>
+                </a>
+                <% }) %>
+            </div>
+        </div>
+    </section>
+    <% } %>
+
+    <!-- ════ BERITA ══════════════════════════════════════════════════════ -->
+    <% if (jurusanBerita && jurusanBerita.length > 0) { %>
+    <section class="section section-alt" id="sec-berita">
+        <div class="container">
+            <div class="row justify-content-center mb-5">
+                <div class="col-lg-7 text-center reveal">
+                    <span class="section-tag"><i class="fas fa-newspaper"></i> Informasi</span>
+                    <h2 class="section-title-main">Berita & Informasi Jurusan</h2>
+                    <div class="divider mx-auto"></div>
+                </div>
+            </div>
+            <div class="row g-4">
+                <% jurusanBerita.forEach(function(b, idx){ %>
+                <div class="col-md-6 col-lg-4">
+                    <a href="/jurusan/<%= jurusan.kode.toLowerCase() %>/berita/<%= b.slug %>" class="berita-card d-block reveal" style="transition-delay:<%= idx * 0.1 %>s;color:inherit;">
+                        <% if (b.gambar) { %>
+                        <img src="/uploads/<%= b.gambar %>" class="berita-img" alt="<%= b.judul %>" onerror="this.style.display='none'">
+                        <% } else { %>
+                        <div class="berita-img-placeholder"><i class="fas fa-newspaper"></i></div>
+                        <% } %>
+                        <div class="berita-body">
+                            <span class="berita-cat"><%= b.kategori %></span>
+                            <div class="berita-judul"><%= b.judul %></div>
+                            <div class="berita-date"><i class="fas fa-calendar me-1"></i><%= new Date(b.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}) %></div>
+                        </div>
+                    </a>
+                </div>
+                <% }) %>
+            </div>
+        </div>
+    </section>
+    <% } %>
+
+    <!-- ════ PRESTASI ════════════════════════════════════════════════════ -->
+    <% if (prestasi && prestasi.length > 0) { %>
+    <section class="section" id="sec-prestasi">
+        <div class="container">
+            <div class="row justify-content-center mb-5">
+                <div class="col-lg-7 text-center reveal">
+                    <span class="section-tag"><i class="fas fa-trophy"></i> Prestasi</span>
+                    <h2 class="section-title-main">Penghargaan & Prestasi</h2>
+                    <div class="divider mx-auto"></div>
+                    <p class="section-lead mx-auto">Bukti nyata kualitas dan semangat juang siswa-siswi jurusan <%= jurusan.kode %>.</p>
+                </div>
+            </div>
+            <div class="row g-3">
+                <% prestasi.forEach(function(p, idx){ %>
+                <div class="col-md-6">
+                    <div class="prestasi-card reveal" style="transition-delay:<%= idx * 0.07 %>s">
+                        <div class="prestasi-trophy"><i class="fas fa-medal"></i></div>
+                        <div>
+                            <div class="prestasi-judul"><%= p.judul %></div>
+                            <div class="prestasi-meta">
+                                <span style="background:var(--grad-light);color:var(--accent);padding:.1rem .5rem;border-radius:50px;font-size:.7rem;font-weight:600;margin-right:.4rem;"><%= p.tingkat %></span>
+                                <i class="fas fa-calendar me-1"></i><%= p.tahun %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <% }) %>
+            </div>
+            <div class="text-center mt-4 reveal">
+                <a href="/prestasi?kategori=<%= jurusan.kode %>" style="display:inline-flex;align-items:center;gap:.5rem;color:var(--accent);font-weight:600;">
+                    Lihat Semua Prestasi <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+    <% } %>
+
+    <!-- ════ CTA DAFTAR ══════════════════════════════════════════════════ -->
+    <section class="section" style="background:var(--grad);position:relative;overflow:hidden;">
+        <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:40px 40px;"></div>
+        <div class="container text-center" style="position:relative;z-index:1;">
+            <div class="reveal">
+                <h2 style="color:white;font-size:clamp(1.6rem,3vw,2.5rem);font-weight:800;margin-bottom:1rem;">Siap Bergabung di Jurusan <%= jurusan.kode %>?</h2>
+                <p style="color:rgba(255,255,255,.8);font-size:1rem;max-width:500px;margin:0 auto 2rem;">Jadilah bagian dari keluarga besar SMKN 1 Kras dan wujudkan cita-citamu di dunia teknologi!</p>
+                <div class="d-flex gap-3 justify-content-center flex-wrap">
+                    <a href="/spmb" class="btn-hero-primary"><i class="fas fa-paper-plane"></i> Daftar Sekarang</a>
+                    <a href="/kontak" class="btn-hero-outline"><i class="fas fa-phone"></i> Hubungi Kami</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <%- include('partials/footer') %>
+
     <script src="/assets/vendor/bootstrap5/bootstrap.bundle.min.js"></script>
     <script src="/assets/vendor/jquery3/jquery.min.js"></script>
     <script src="/assets/vendor/lightbox2/lightbox.min.js"></script>
-    <%- include('partials/footer') %>
+
     <script>
-        lightbox.option({resizeDuration:200,wrapAround:true});
-        $(window).scroll(function(){if($(window).scrollTop()>50)$('.navbar-modern').addClass('scrolled');else$('.navbar-modern').removeClass('scrolled');});
+    // ── Lightbox config ──────────────────────────────────────────────────
+    lightbox.option({ resizeDuration: 200, wrapAround: true });
+
+    // ── Navbar scroll effect ─────────────────────────────────────────────
+    $(window).scroll(function(){
+        if($(window).scrollTop()>50) $('.navbar-modern').addClass('scrolled');
+        else $('.navbar-modern').removeClass('scrolled');
+
+        // Scroll progress
+        var scrollTop = $(window).scrollTop();
+        var docHeight = $(document).height() - $(window).height();
+        var progress = docHeight > 0 ? (scrollTop / docHeight * 100) : 0;
+        document.getElementById('scrollProgress').style.width = progress + '%';
+
+        // Section nav dots
+        updateNavDots();
+
+        // Reveal elements
+        revealElements();
+    });
+
+    // ── Smooth scroll anchor links ───────────────────────────────────────
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', function(e){
+            const target = document.querySelector(this.getAttribute('href'));
+            if(target){
+                e.preventDefault();
+                const offset = target.getBoundingClientRect().top + window.pageYOffset - 130;
+                window.scrollTo({ top: offset, behavior: 'smooth' });
+            }
+        });
+    });
+
+    // ── Section nav dots ─────────────────────────────────────────────────
+    const sNavDots = document.querySelectorAll('.snav-dot');
+    sNavDots.forEach(dot => {
+        dot.addEventListener('click', function(){
+            const target = document.getElementById(this.dataset.target);
+            if(target){
+                const offset = target.getBoundingClientRect().top + window.pageYOffset - 130;
+                window.scrollTo({ top: offset, behavior: 'smooth' });
+            }
+        });
+    });
+
+    function updateNavDots(){
+        const sections = document.querySelectorAll('section[id]');
+        let active = '';
+        sections.forEach(sec => {
+            const top = sec.getBoundingClientRect().top;
+            if(top < 200) active = sec.id;
+        });
+        sNavDots.forEach(dot => {
+            dot.classList.toggle('active', dot.dataset.target === active);
+        });
+    }
+
+    // ── Scroll reveal ────────────────────────────────────────────────────
+    function revealElements(){
+        document.querySelectorAll('.reveal').forEach(el => {
+            const rect = el.getBoundingClientRect();
+            if(rect.top < window.innerHeight - 80) el.classList.add('visible');
+        });
+    }
+    revealElements();
+
+    // ── Counter animation ────────────────────────────────────────────────
+    const counters = document.querySelectorAll('[data-count]');
+    let counted = false;
+    function runCounters(){
+        if(counted) return;
+        const heroStats = document.querySelector('.hero-stats');
+        if(!heroStats) return;
+        const rect = heroStats.getBoundingClientRect();
+        if(rect.top < window.innerHeight){
+            counted = true;
+            counters.forEach(el => {
+                const target = parseInt(el.dataset.count, 10);
+                let current = 0;
+                const step = Math.max(1, Math.ceil(target / 40));
+                const timer = setInterval(() => {
+                    current = Math.min(current + step, target);
+                    el.textContent = current;
+                    if(current >= target) clearInterval(timer);
+                }, 40);
+            });
+        }
+    }
+    $(window).scroll(runCounters);
+    runCounters();
+
+    // ── Canvas network animation ─────────────────────────────────────────
+    (function(){
+        const canvas = document.getElementById('nodesCanvas');
+        if(!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let W, H, nodes = [], animId;
+
+        function resize(){
+            W = canvas.width  = canvas.offsetWidth;
+            H = canvas.height = canvas.offsetHeight;
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        // Create nodes
+        for(let i = 0; i < 40; i++){
+            nodes.push({
+                x: Math.random() * W,
+                y: Math.random() * H,
+                vx: (Math.random() - .5) * .5,
+                vy: (Math.random() - .5) * .5,
+                r: Math.random() * 2 + 1
+            });
+        }
+
+        function draw(){
+            ctx.clearRect(0, 0, W, H);
+            // Lines between close nodes
+            for(let i = 0; i < nodes.length; i++){
+                for(let j = i + 1; j < nodes.length; j++){
+                    const dx = nodes[i].x - nodes[j].x;
+                    const dy = nodes[i].y - nodes[j].y;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    if(dist < 120){
+                        ctx.beginPath();
+                        ctx.moveTo(nodes[i].x, nodes[i].y);
+                        ctx.lineTo(nodes[j].x, nodes[j].y);
+                        ctx.strokeStyle = 'rgba(255,255,255,' + (1 - dist/120) * 0.15 + ')';
+                        ctx.lineWidth = .8;
+                        ctx.stroke();
+                    }
+                }
+            }
+            // Dots
+            nodes.forEach(n => {
+                ctx.beginPath();
+                ctx.arc(n.x, n.y, n.r, 0, Math.PI*2);
+                ctx.fillStyle = 'rgba(255,255,255,0.4)';
+                ctx.fill();
+                // Move
+                n.x += n.vx; n.y += n.vy;
+                if(n.x < 0 || n.x > W) n.vx *= -1;
+                if(n.y < 0 || n.y > H) n.vy *= -1;
+            });
+            animId = requestAnimationFrame(draw);
+        }
+        draw();
+    })();
+
+    // ── Terminal typewriter ───────────────────────────────────────────────
+    (function(){
+        const lines = [
+            { type:'prompt', text:'student@tkj:~$ ' },
+            { type:'cmd',    text:'nmap -sV 192.168.1.0/24' },
+            { type:'output', text:'Starting Nmap 7.93 scan...' },
+            { type:'output', text:'Host: 192.168.1.1  Services: 80/http 22/ssh' },
+            { type:'output', text:'Host: 192.168.1.10 Services: 3306/mysql' },
+            { type:'prompt', text:'student@tkj:~$ ' },
+            { type:'cmd',    text:'ssh admin@192.168.1.1' },
+            { type:'output', text:'Connected to router. Welcome!' },
+        ];
+        let lineIdx = 0, charIdx = 0;
+        const term = document.getElementById('terminal');
+        if(!term) return;
+
+        function addLine(html){ term.innerHTML += '<div class="terminal-line">' + html + '</div>'; term.scrollTop = term.scrollHeight; }
+
+        function type(){
+            if(lineIdx >= lines.length){ lineIdx = 0; term.innerHTML = ''; }
+            const line = lines[lineIdx];
+            if(charIdx === 0){
+                if(line.type === 'prompt') term.innerHTML += '<div class="terminal-line"><span class="terminal-prompt">';
+                else if(line.type === 'cmd') { /* appended to prev div */ }
+                else term.innerHTML += '<div class="terminal-line terminal-output">';
+            }
+            // Simple approach: just append full lines
+            if(charIdx === 0){
+                if(line.type === 'output'){
+                    setTimeout(()=>{
+                        addLine('<span class="terminal-output">' + line.text + '</span>');
+                        lineIdx++; charIdx = 0;
+                        setTimeout(type, 400);
+                    }, 300);
+                    return;
+                }
+            }
+            // For prompt+cmd: show together after delay
+            if(line.type === 'prompt'){
+                const cmd = lines[lineIdx+1];
+                setTimeout(()=>{
+                    addLine('<span class="terminal-prompt">' + line.text + '</span><span class="terminal-cmd">' + (cmd ? cmd.text : '') + '</span>');
+                    lineIdx += 2; charIdx = 0;
+                    setTimeout(type, 600);
+                }, 500);
+                return;
+            }
+        }
+        // Let the static terminal stay; restart animation after 6s
+        setTimeout(()=>{ term.innerHTML = ''; type(); }, 6000);
+        setInterval(()=>{ term.innerHTML = ''; lineIdx=0; type(); }, 14000);
+    })();
     </script>
 </body>
 </html>
-
-
