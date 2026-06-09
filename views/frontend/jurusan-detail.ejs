@@ -551,7 +551,7 @@
             margin-bottom: 1rem; border: 1px solid <%= accentHex %>33;
         }
         .section-title-main {
-            font-size: clamp(1.6rem, 3vw, 2.4rem);
+            font-size: clamp(1.3rem, 2.5vw, 1.9rem);
             font-weight: 800; color: #1e293b; line-height: 1.2;
             margin-bottom: .75rem;
         }
@@ -594,19 +594,20 @@
             border-color: <%= accentHex %>44;
         }
         .feature-img {
-            width: 100%; height: 160px; overflow: hidden;
+            width: 100%; height: 120px; overflow: hidden;
             display: block; position: relative;
         }
         .feature-img svg { width: 100%; height: 100%; display: block; }
-        .feature-body { padding: 1.5rem; }
+        .feature-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .feature-body { padding: 1rem 1.25rem 1.25rem; }
         .feature-icon {
-            width: 44px; height: 44px; border-radius: 12px;
+            width: 38px; height: 38px; border-radius: 10px;
             background: var(--grad); display: inline-flex; align-items: center;
-            justify-content: center; color: white; font-size: 1.1rem;
-            margin-bottom: 1rem;
+            justify-content: center; color: white; font-size: 1rem;
+            margin-bottom: .75rem;
         }
-        .feature-title { font-size: 1rem; font-weight: 700; color: #1e293b; margin-bottom: .5rem; }
-        .feature-desc { font-size: .85rem; color: #64748b; line-height: 1.6; }
+        .feature-title { font-size: .95rem; font-weight: 700; color: #1e293b; margin-bottom: .4rem; }
+        .feature-desc { font-size: .82rem; color: #64748b; line-height: 1.55; }
 
         /* ── Kurikulum Timeline ────────────────────────────────────────── */
         .timeline-wrap { position: relative; padding-left: 2.5rem; }
@@ -1281,8 +1282,8 @@
                         <div class="feature-img"><%- f.svg %></div>
                         <% } else { %>
                         <!-- Fallback icon saja -->
-                        <div class="feature-img" style="height:160px;background:var(--grad-light);display:flex;align-items:center;justify-content:center;">
-                            <i class="<%= f.icon %>" style="font-size:3.5rem;color:var(--accent);opacity:.4;"></i>
+                        <div class="feature-img" style="background:var(--grad-light);display:flex;align-items:center;justify-content:center;">
+                            <i class="<%= f.icon %>" style="font-size:2.8rem;color:var(--accent);opacity:.4;"></i>
                         </div>
                         <% } %>
                         <div class="feature-body">
