@@ -1370,11 +1370,20 @@
                     <span class="section-tag"><i class="fas fa-images"></i> Galeri</span>
                     <h2 class="section-title-main">Kegiatan & Dokumentasi</h2>
                     <div class="divider mx-auto"></div>
-                    <p class="section-lead mx-auto">Momen-momen berharga kegiatan praktik, kompetisi, dan keseharian jurusan <%= jurusan.kode %>.</p>
+                    <p class="section-lead mx-auto">Momen-momen berharga kegiatan praktik, kompetisi, dan keseharian jurusan <%= jurusan.kode %>.
+                        <span style="font-weight:600;color:var(--accent);"> (<%= galeriJurusan.length %> foto)</span>
+                    </p>
                 </div>
             </div>
-            <div class="galeri-grid reveal">
-                <% galeriJurusan.forEach(function(g){ %>
+
+            <%
+            /* Tampilkan 10 foto preview, sisanya disembunyikan tapi tetap ada di DOM untuk lightbox */
+            var galeriPreview = galeriJurusan.slice(0, 10);
+            var galeriSisa    = galeriJurusan.slice(10);
+            %>
+
+            <div class="galeri-grid reveal" id="galeriGrid">
+                <% galeriPreview.forEach(function(g){ %>
                 <a href="/uploads/<%= g.gambar %>" data-lightbox="galeri-jurusan" data-title="<%= g.judul %>" class="galeri-item-new">
                     <img src="/uploads/<%= g.gambar %>" alt="<%= g.judul %>" onerror="this.closest('.galeri-item-new').style.display='none'">
                     <div class="galeri-overlay">
@@ -1382,7 +1391,26 @@
                     </div>
                 </a>
                 <% }) %>
+
+                <% galeriSisa.forEach(function(g){ %>
+                <!-- Foto ke-11 dst: tersembunyi tapi ada di DOM agar lightbox bisa navigate -->
+                <a href="/uploads/<%= g.gambar %>" data-lightbox="galeri-jurusan" data-title="<%= g.judul %>"
+                   class="galeri-item-new galeri-hidden"
+                   style="display:none;">
+                    <img src="/uploads/<%= g.gambar %>" alt="<%= g.judul %>">
+                </a>
+                <% }) %>
             </div>
+
+            <% if (galeriSisa.length > 0) { %>
+            <div class="text-center mt-4 reveal">
+                <button onclick="tampilkanSemuaGaleri(this)"
+                        style="background:var(--grad);color:white;border:none;padding:.75rem 2rem;border-radius:50px;font-weight:600;font-size:.9rem;cursor:pointer;transition:all .3s;box-shadow:0 4px 15px rgba(0,0,0,.15);">
+                    <i class="fas fa-images me-2"></i>
+                    Lihat Semua (<%= galeriJurusan.length %> Foto)
+                </button>
+            </div>
+            <% } %>
         </div>
     </section>
     <% } %>
@@ -1592,6 +1620,14 @@
         }
         draw();
     })();
+
+    // ── Tampilkan semua galeri ────────────────────────────────────────────
+    function tampilkanSemuaGaleri(btn) {
+        document.querySelectorAll('.galeri-hidden').forEach(function(el) {
+            el.style.display = 'block';
+        });
+        btn.parentElement.style.display = 'none';
+    }
 
     <% if(jKode === 'TKJ') { %>
     // ── Terminal typewriter (TKJ only) ───────────────────────────────────

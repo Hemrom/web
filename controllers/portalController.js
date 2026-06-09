@@ -1463,7 +1463,7 @@ exports.jurusanDetailPage = async (req, res) => {
 
     // Galeri konten utama: dari jurusan_galeri (khusus jurusan ini)
     const [galeriJurusan] = await db.query(
-      "SELECT * FROM jurusan_galeri WHERE jurusan=? ORDER BY urutan ASC, created_at DESC LIMIT 8",
+      "SELECT * FROM jurusan_galeri WHERE jurusan=? ORDER BY urutan ASC, created_at DESC",
       [kode]
     );
 
