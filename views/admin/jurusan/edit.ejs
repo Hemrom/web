@@ -79,6 +79,23 @@
                                             </div>
                                         </div>
 
+                                        <div class="form-group">
+                                            <label><i class="fas fa-link mr-1 text-primary"></i> Link Tombol "Daftar Sekarang"</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fas fa-external-link-alt"></i></span>
+                                                </div>
+                                                <input type="text" class="form-control" name="link_daftar"
+                                                       value="<%= jurusan.link_daftar || '/spmb' %>"
+                                                       placeholder="/spmb">
+                                            </div>
+                                            <small class="text-muted">
+                                                URL tujuan tombol <strong>"Daftar Sekarang"</strong> di halaman jurusan ini.
+                                                Contoh: <code>/spmb</code>, <code>/ppdb</code>,
+                                                <code>https://ppdb.smknegeri1kras.sch.id</code>
+                                            </small>
+                                        </div>
+
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="form-group">

@@ -1465,7 +1465,9 @@
                 <h2 style="color:white;font-size:clamp(1.6rem,3vw,2.5rem);font-weight:800;margin-bottom:1rem;">Siap Bergabung di Jurusan <%= jurusan.kode %>?</h2>
                 <p style="color:rgba(255,255,255,.8);font-size:1rem;max-width:500px;margin:0 auto 2rem;">Jadilah bagian dari keluarga besar SMKN 1 Kras dan wujudkan cita-citamu di dunia teknologi!</p>
                 <div class="d-flex gap-3 justify-content-center flex-wrap">
-                    <a href="/spmb" class="btn-hero-primary"><i class="fas fa-paper-plane"></i> Daftar Sekarang</a>
+                    <a href="<%= jurusan.link_daftar || '/spmb' %>" class="btn-hero-primary">
+                        <i class="fas fa-paper-plane"></i> Daftar Sekarang
+                    </a>
                     <a href="/kontak" class="btn-hero-outline"><i class="fas fa-phone"></i> Hubungi Kami</a>
                 </div>
             </div>

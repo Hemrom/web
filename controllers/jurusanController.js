@@ -95,7 +95,7 @@ exports.edit = async (req, res) => {
 // Update jurusan
 exports.update = async (req, res) => {
   try {
-    const { kode, nama, deskripsi, deskripsi_lengkap, kepala_jurusan, status, icon, warna } = req.body;
+    const { kode, nama, deskripsi, deskripsi_lengkap, kepala_jurusan, status, icon, warna, link_daftar } = req.body;
 
     const badgeMap = {
       '#0ea5e9': { bg: '#e0f2fe', teks: '#0369a1' },
@@ -113,8 +113,8 @@ exports.update = async (req, res) => {
     const [oldJurusan] = await db.query('SELECT nama FROM jurusan WHERE id = ?', [req.params.id]);
 
     await db.query(
-      'UPDATE jurusan SET kode=?, nama=?, deskripsi=?, deskripsi_lengkap=?, kepala_jurusan=?, status=?, icon=?, warna=?, warna_badge=?, warna_teks_badge=? WHERE id=?',
-      [kode, nama, deskripsi, deskripsi_lengkap||null, kepala_jurusan, status, icon || 'fas fa-graduation-cap', warna || 'linear-gradient(135deg,#0ea5e9,#0369a1)', badge.bg, badge.teks, req.params.id]
+      'UPDATE jurusan SET kode=?, nama=?, deskripsi=?, deskripsi_lengkap=?, kepala_jurusan=?, status=?, icon=?, warna=?, warna_badge=?, warna_teks_badge=?, link_daftar=? WHERE id=?',
+      [kode, nama, deskripsi, deskripsi_lengkap||null, kepala_jurusan, status, icon || 'fas fa-graduation-cap', warna || 'linear-gradient(135deg,#0ea5e9,#0369a1)', badge.bg, badge.teks, link_daftar||'/spmb', req.params.id]
     );
 
     if (oldJurusan[0].nama !== nama) {

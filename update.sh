@@ -53,6 +53,7 @@ echo -e "${YELLOW}[4/6] Menjalankan migrasi database...${NC}"
 node migrate.js
 # Migrasi tambahan (jalankan jika file ada)
 [ -f migrate_jurusan_fasilitas.js ] && node migrate_jurusan_fasilitas.js
+[ -f migrate_jurusan_link_daftar.js ] && node migrate_jurusan_link_daftar.js
 echo -e "${GREEN}  ✓ Migrasi selesai${NC}"
 
 # ── 5. Buat folder yang dibutuhkan ────────────────────────────
