@@ -12,6 +12,7 @@ router.get('/logout', ctrl.logout);
 router.get('/dashboard', isGuruAuthenticated, ctrl.dashboard);
 router.get('/profil', isGuruAuthenticated, ctrl.profilPage);
 router.post('/profil', isGuruAuthenticated, csrfProtect, ctrl.updateProfil);
+router.post('/profil/delete-foto', isGuruAuthenticated, csrfProtect, ctrl.deleteFoto);
 router.get('/password', isGuruAuthenticated, ctrl.passwordPage);
 router.post('/password', isGuruAuthenticated, csrfProtect, ctrl.updatePassword);
 

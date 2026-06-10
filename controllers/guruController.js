@@ -1,19 +1,13 @@
 const db = require('../config/database');
 const cbtDb = require('../config/database-cbt');
-const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 const XLSX = require('xlsx');
 const compressImage = require('../middleware/compressImage');
+const { createUpload } = require('../middleware/uploadSecurity');
 
-const storage = multer.diskStorage({
-  destination: './uploads/',
-  filename: (req, file, cb) => {
-    cb(null, 'guru-' + Date.now() + path.extname(file.originalname));
-  }
-});
-
-const upload = multer({ storage }).single('foto');
-const multerExcel = multer({ storage: multer.memoryStorage() }).single('file');
+const upload = createUpload('guru').single('foto');
+const multerExcel = require('multer')({ storage: require('multer').memoryStorage() }).single('file');
 
 exports.index = async (req, res) => {
   try {
@@ -129,7 +123,8 @@ exports.editPage = async (req, res) => {
     res.render('admin/guru/edit', {
       title: 'Edit Guru',
       user: req.session,
-      guru: guru[0]
+      guru: guru[0],
+      success: req.query.success || null
     });
   } catch (error) {
     console.error(error);
@@ -192,6 +187,21 @@ exports.delete = async (req, res) => {
   try {
     await db.query('DELETE FROM guru WHERE id = ?', [req.params.id]);
     res.redirect('/admin/data-sekolah?tab=guru');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Terjadi kesalahan');
+  }
+};
+
+exports.deleteFoto = async (req, res) => {
+  try {
+    const [rows] = await db.query('SELECT foto FROM guru WHERE id = ?', [req.params.id]);
+    if (rows.length && rows[0].foto) {
+      const filePath = `./uploads/${rows[0].foto}`;
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    }
+    await db.query('UPDATE guru SET foto = NULL WHERE id = ?', [req.params.id]);
+    res.redirect(`/admin/guru/edit/${req.params.id}?success=foto_hapus`);
   } catch (error) {
     console.error(error);
     res.status(500).send('Terjadi kesalahan');

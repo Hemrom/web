@@ -1,16 +1,11 @@
 const db = require('../config/database');
 const bcrypt = require('bcryptjs');
-const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 const compressImage = require('../middleware/compressImage');
+const { createUpload } = require('../middleware/uploadSecurity');
 
-const storage = multer.diskStorage({
-  destination: './uploads/',
-  filename: (req, file, cb) => {
-    cb(null, 'guru-' + Date.now() + path.extname(file.originalname));
-  }
-});
-const upload = multer({ storage }).single('foto');
+const upload = createUpload('guru').single('foto');
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
 
@@ -126,6 +121,24 @@ exports.updateProfil = (req, res) => {
       res.render('guru/profil', { title: 'Edit Profil', guru: rows[0], success: null, error: 'Gagal menyimpan, coba lagi.' });
     }
   });
+};
+
+// ── Hapus Foto ────────────────────────────────────────────────────────────────
+
+exports.deleteFoto = async (req, res) => {
+  try {
+    const [rows] = await db.query('SELECT foto FROM guru WHERE id = ?', [req.session.guruId]);
+    if (rows.length && rows[0].foto) {
+      const filePath = `./uploads/${rows[0].foto}`;
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    }
+    await db.query('UPDATE guru SET foto = NULL WHERE id = ?', [req.session.guruId]);
+    req.session.guruFoto = null;
+    res.redirect('/guru/profil?success=1');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Terjadi kesalahan');
+  }
 };
 
 // ── Ganti Password ────────────────────────────────────────────────────────────

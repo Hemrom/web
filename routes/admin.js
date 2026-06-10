@@ -69,6 +69,7 @@ router.post('/guru/create', isAuthenticated, csrfProtect, guruController.create)
 router.get('/guru/edit/:id', isAuthenticated, validateIdParam, guruController.editPage);
 router.post('/guru/edit/:id', isAuthenticated, csrfProtect, validateIdParam, guruController.update);
 router.post('/guru/delete/:id', isAuthenticated, csrfProtect, validateIdParam, guruController.delete);
+router.post('/guru/delete-foto/:id', isAuthenticated, csrfProtect, validateIdParam, guruController.deleteFoto);
 router.get('/guru/sync-cbt', isAuthenticated, guruController.syncFromCBT);
 router.get('/guru/export', isAuthenticated, guruController.exportExcel);
 router.get('/guru/template', isAuthenticated, guruController.downloadTemplate);
