@@ -119,3 +119,31 @@ exports.deleteAlbum = async (req, res) => {
     res.status(500).send('Terjadi kesalahan');
   }
 };
+
+exports.addToAlbum = (req, res) => {
+  uploadMulti(req, res, async (err) => {
+    if (err) {
+      console.error('Upload error:', err);
+      return res.status(400).send(`
+        <div style="font-family:sans-serif;padding:2rem;max-width:600px;margin:2rem auto;background:#fff3cd;border:1px solid #ffc107;border-radius:8px;">
+          <h3 style="color:#856404;">⚠️ Gagal Upload</h3>
+          <p>${err.message}</p>
+          <a href="/admin/galeri" style="color:#0ea5e9;">← Kembali</a>
+        </div>
+      `);
+    }
+    try {
+      if (!req.files || req.files.length === 0) return res.redirect('/admin/galeri?success=nofile');
+      await compressImage(req, res, () => {});
+      const { judul, deskripsi, kategori } = req.body;
+      for (let i = 0; i < req.files.length; i++) {
+        await db.query('INSERT INTO galeri (judul, deskripsi, gambar, kategori) VALUES (?, ?, ?, ?)',
+          [judul, deskripsi || '', req.files[i].filename, kategori || '']);
+      }
+      res.redirect('/admin/galeri?success=4');
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Terjadi kesalahan: ' + error.message);
+    }
+  });
+};

@@ -60,6 +60,7 @@ router.get('/galeri/edit/:id', isAuthenticated, validateIdParam, galeriControlle
 router.post('/galeri/edit/:id', isAuthenticated, csrfProtect, validateIdParam, galeriController.update);
 router.post('/galeri/delete/:id', isAuthenticated, csrfProtect, validateIdParam, galeriController.delete);
 router.post('/galeri/delete-album', isAuthenticated, csrfProtect, galeriController.deleteAlbum);
+router.post('/galeri/add-to-album', isAuthenticated, csrfProtect, galeriController.addToAlbum);
 
 // Guru
 router.get('/guru', isAuthenticated, guruController.index);

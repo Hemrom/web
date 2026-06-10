@@ -27,6 +27,8 @@
                 <div class="alert alert-success alert-dismissible fade show">Foto berhasil diperbarui. <button type="button" class="close" data-dismiss="alert">&times;</button></div>
                 <% } else if (typeof success !== 'undefined' && success == 3) { %>
                 <div class="alert alert-success alert-dismissible fade show">Foto berhasil dihapus. <button type="button" class="close" data-dismiss="alert">&times;</button></div>
+                <% } else if (typeof success !== 'undefined' && success == 4) { %>
+                <div class="alert alert-success alert-dismissible fade show">Foto berhasil ditambahkan ke album. <button type="button" class="close" data-dismiss="alert">&times;</button></div>
                 <% } %>
 
                 <div class="row">
@@ -72,11 +74,12 @@
                         <div class="modal-dialog modal-lg">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title"><%= album.judul %></h5>
+                                    <h5 class="modal-title"><i class="fas fa-images mr-2 text-primary"></i><%= album.judul %></h5>
                                     <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
                                 </div>
                                 <div class="modal-body">
-                                    <div class="row">
+                                    <!-- Foto yang sudah ada -->
+                                    <div class="row mb-3" id="fotoGrid<%= idx %>">
                                         <% album.fotos.forEach(function(foto) { %>
                                         <div class="col-4 col-md-3 mb-2" style="position:relative;">
                                             <img src="/uploads/<%= foto.gambar %>" style="width:100%;height:100px;object-fit:cover;border-radius:6px;">
@@ -86,6 +89,33 @@
                                             </form>
                                         </div>
                                         <% }) %>
+                                    </div>
+
+                                    <hr>
+
+                                    <!-- Form tambah foto ke album -->
+                                    <div>
+                                        <h6 class="font-weight-bold text-success mb-3">
+                                            <i class="fas fa-plus-circle mr-1"></i> Tambah Foto ke Album Ini
+                                        </h6>
+                                        <form method="POST" action="/admin/galeri/add-to-album" enctype="multipart/form-data">
+                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                            <input type="hidden" name="judul" value="<%= album.judul %>">
+                                            <input type="hidden" name="kategori" value="<%= album.kategori || '' %>">
+                                            <input type="hidden" name="deskripsi" value="<%= (album.deskripsi || '').replace(/<[^>]*>/g,'') %>">
+                                            <div class="form-group">
+                                                <div class="border rounded p-3" style="background:#f0fff4;">
+                                                    <input type="file" class="form-control-file tambah-foto-input" name="gambar"
+                                                        accept=".jpg,.jpeg,.png,.gif,.webp" multiple required
+                                                        data-preview="previewTambah<%= idx %>">
+                                                    <small class="text-muted">Format: <strong>JPG, PNG, WebP</strong>. Bisa pilih banyak sekaligus.</small>
+                                                    <div id="previewTambah<%= idx %>" class="row mt-2"></div>
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-success btn-sm">
+                                                <i class="fas fa-upload mr-1"></i> Upload ke Album
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -103,5 +133,26 @@
 <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
 <script src="/assets/js/sb-admin-2.min.js"></script>
+<script>
+// Preview foto sebelum upload di modal tambah foto
+document.querySelectorAll('.tambah-foto-input').forEach(function(input) {
+    input.addEventListener('change', function() {
+        const previewId = this.getAttribute('data-preview');
+        const grid = document.getElementById(previewId);
+        grid.innerHTML = '';
+        Array.from(this.files).forEach(function(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                grid.innerHTML += `
+                <div class="col-4 col-md-3 mb-2">
+                    <img src="${e.target.result}" style="width:100%;height:80px;object-fit:cover;border-radius:6px;box-shadow:0 2px 6px rgba(0,0,0,0.1);">
+                    <p class="small text-muted text-center mt-1" style="font-size:0.65rem;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">${file.name}</p>
+                </div>`;
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+});
+</script>
 </body>
 </html>
