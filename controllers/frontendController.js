@@ -246,7 +246,7 @@ exports.guru = async (req, res) => {
       { key: 'kaproli',       label: 'Kepala Program Keahlian', keywords: ['kaproli', 'kaprogli', 'kepala program', 'kepala jurusan'] },
       { key: 'guru_normatif', label: 'Guru Normatif & Adaptif', keywords: [] },
       { key: 'guru_tkj',      label: 'Guru Kejuruan TKJ',       keywords: [] },
-      { key: 'guru_TKR',     label: 'Guru Kejuruan TKR',      keywords: [] },
+      { key: 'guru_tkr',      label: 'Guru Kejuruan TKR',       keywords: [] },
       { key: 'guru_kuliner',  label: 'Guru Kejuruan Kuliner',   keywords: [] },
       { key: 'guru_tptup',    label: 'Guru Kejuruan TPTUP',     keywords: [] },
       { key: 'staff',         label: 'Staff / Karyawan',        keywords: ['staff', 'staf', 'karyawan', 'tata usaha', 'administrasi', 'operator', 'penjaga', 'satpam', 'cleaning', 'toolman', 'caraka', 'bendahara', 'perpus', 'pustakawan', 'security', 'kebersihan'] },
@@ -266,7 +266,7 @@ exports.guru = async (req, res) => {
       if (['kaproli', 'kaprogli', 'kepala program', 'kepala jurusan'].some(k => jab.includes(k))) { grouped['kaproli'].push(g); return; }
       if (['staff', 'staf', 'karyawan', 'tata usaha', 'administrasi', 'operator', 'penjaga', 'satpam', 'cleaning', 'toolman', 'caraka', 'bendahara', 'perpus', 'pustakawan', 'security', 'kebersihan'].some(k => jab.includes(k) || mapel.includes(k))) { grouped['staff'].push(g); return; }
       if (mapel.includes('tkj')) { grouped['guru_tkj'].push(g); return; }
-      if (mapel.includes('TKR')) { grouped['guru_TKR'].push(g); return; }
+      if (mapel.includes('tkr')) { grouped['guru_tkr'].push(g); return; }
       if (mapel.includes('kuliner')) { grouped['guru_kuliner'].push(g); return; }
       if (mapel.includes('tptup')) { grouped['guru_tptup'].push(g); return; }
       if (jab.includes('guru')) { grouped['guru_normatif'].push(g); return; }
