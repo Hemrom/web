@@ -11,10 +11,16 @@
         body { background: #f1f5f9; font-family: 'Segoe UI', sans-serif; }
         .card-form { border: none; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
         .avatar-wrap { position: relative; display: inline-block; }
-        .avatar { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid #0ea5e9; }
+        .avatar { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid #0ea5e9; cursor: zoom-in; transition: transform .15s; }
+        .avatar:hover { transform: scale(1.07); }
         .avatar-placeholder { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg,#0ea5e9,#0369a1); display:flex;align-items:center;justify-content:center;color:white;font-size:2.5rem; }
         .form-label { font-weight: 600; font-size: 0.85rem; color: #374151; }
         .form-control:focus { border-color: #0ea5e9; box-shadow: 0 0 0 0.2rem rgba(14,165,233,.2); }
+        /* Lightbox */
+        .lb-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.82); z-index:9999; align-items:center; justify-content:center; cursor:zoom-out; }
+        .lb-overlay.show { display:flex; }
+        .lb-overlay img { max-width:88vw; max-height:88vh; border-radius:12px; box-shadow:0 8px 40px rgba(0,0,0,.5); cursor:default; }
+        .lb-close { position:absolute; top:18px; right:24px; color:#fff; font-size:2rem; cursor:pointer; line-height:1; }
     </style>
 </head>
 <body>
@@ -38,7 +44,8 @@
             <!-- Foto -->
             <div class="text-center mb-4">
                 <% if (guru.foto) { %>
-                <img src="/uploads/<%= guru.foto %>" class="avatar mb-2" alt="Foto" id="previewImg">
+                <img src="/uploads/<%= guru.foto %>" class="avatar mb-2" alt="Foto" id="previewImg"
+                    onclick="openLightbox(this.src)" title="Klik untuk perbesar">
                 <% } else { %>
                 <div class="avatar-placeholder mx-auto mb-2" id="avatarPlaceholder"><i class="fas fa-user"></i></div>
                 <img src="" class="avatar mb-2 d-none" id="previewImg">
@@ -115,13 +122,30 @@ document.getElementById('fotoInput').addEventListener('change', function() {
         img.src = e.target.result;
         img.classList.remove('d-none');
         if (ph) ph.style.display = 'none';
+        // Preview tidak bisa di-zoom (belum diupload), hapus onclick sementara
+        img.onclick = null;
     };
     reader.readAsDataURL(file);
-    // Attach file to form
     const dt = new DataTransfer();
     dt.items.add(file);
     document.querySelector('input[name="foto"]').files = dt.files;
 });
+
+function openLightbox(src) {
+    document.getElementById('lbImg').src = src;
+    document.getElementById('lbOverlay').classList.add('show');
+}
+function closeLightbox() {
+    document.getElementById('lbOverlay').classList.remove('show');
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeLightbox(); });
 </script>
+
+<!-- Lightbox -->
+<div class="lb-overlay" id="lbOverlay" onclick="closeLightbox()">
+    <span class="lb-close" onclick="closeLightbox()">&times;</span>
+    <img id="lbImg" src="" alt="Foto Profil" onclick="event.stopPropagation()">
+</div>
+
 </body>
 </html>

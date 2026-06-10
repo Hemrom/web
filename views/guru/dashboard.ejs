@@ -9,8 +9,14 @@
     <link href="/assets/vendor/fontawesome6/all.min.css" rel="stylesheet">
     <style>
         body { background: #f1f5f9; font-family: 'Segoe UI', sans-serif; }
-        .avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #0ea5e9; }
+        .avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #0ea5e9; cursor: zoom-in; transition: transform .15s; }
+        .avatar:hover { transform: scale(1.08); }
         .avatar-placeholder { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg,#0ea5e9,#0369a1); display:flex;align-items:center;justify-content:center;color:white;font-size:2rem; }
+        /* Lightbox */
+        .lb-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.82); z-index:9999; align-items:center; justify-content:center; cursor:zoom-out; }
+        .lb-overlay.show { display:flex; }
+        .lb-overlay img { max-width:88vw; max-height:88vh; border-radius:12px; box-shadow:0 8px 40px rgba(0,0,0,.5); cursor:default; }
+        .lb-close { position:absolute; top:18px; right:24px; color:#fff; font-size:2rem; cursor:pointer; line-height:1; }
         .card-stat { border: none; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
         .info-label { font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
         .info-value { font-size: 0.95rem; color: #1e293b; font-weight: 500; }
@@ -28,7 +34,7 @@
     <div class="card card-stat mb-4">
         <div class="card-body d-flex align-items-center gap-4 flex-wrap">
             <% if (guru.foto) { %>
-            <img src="/uploads/<%= guru.foto %>" class="avatar" alt="<%= guru.nama %>">
+            <img src="/uploads/<%= guru.foto %>" class="avatar" alt="<%= guru.nama %>" onclick="openLightbox(this.src)" title="Klik untuk perbesar">
             <% } else { %>
             <div class="avatar-placeholder"><i class="fas fa-user"></i></div>
             <% } %>
@@ -159,5 +165,21 @@
         </div>
     </div>
 </div>
+
+<!-- Lightbox -->
+<div class="lb-overlay" id="lbOverlay" onclick="closeLightbox()">
+    <span class="lb-close" onclick="closeLightbox()">&times;</span>
+    <img id="lbImg" src="" alt="Foto" onclick="event.stopPropagation()">
+</div>
+<script>
+function openLightbox(src) {
+    document.getElementById('lbImg').src = src;
+    document.getElementById('lbOverlay').classList.add('show');
+}
+function closeLightbox() {
+    document.getElementById('lbOverlay').classList.remove('show');
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeLightbox(); });
+</script>
 </body>
 </html>
