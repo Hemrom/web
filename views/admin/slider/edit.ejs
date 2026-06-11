@@ -54,7 +54,11 @@
                                                 </div>
                                             <% } %>
                                             <input type="file" class="form-control-file" id="gambar" name="gambar" accept="image/*">
-                                            <small class="form-text text-muted">Kosongkan jika tidak ingin mengubah. Format: JPG/PNG. Maks 2MB. <strong class="text-danger">Wajib rasio 16:9</strong> — gunakan <strong>1920x1080px</strong>, <strong>1600x900px</strong>, atau <strong>1280x720px</strong></small>
+                                            <small class="form-text text-muted">
+                                                Kosongkan jika tidak ingin mengubah. Format: JPG/PNG. Maks 10MB.
+                                                <strong class="text-danger">Ukuran ideal: 1920 x 860 px</strong>
+                                                (lebar penuh, tinggi disesuaikan tampilan layar)
+                                            </small>
                                         </div>
                                         
                                         <div class="form-group">
@@ -94,22 +98,33 @@
                                     <h6 class="m-0 font-weight-bold text-primary">Panduan</h6>
                                 </div>
                                 <div class="card-body">
-                                    <div class="alert alert-warning py-2 px-3 mb-3">
-                                        <i class="fas fa-exclamation-triangle mr-1"></i>
-                                        <strong>Ukuran Gambar yang Benar:</strong><br>
-                                        Gambar <strong>wajib rasio 16:9</strong> agar tampil penuh tanpa terpotong dan tanpa ruang kosong.<br>
-                                        <span class="badge badge-success mt-1">✓ 1920 x 1080 px</span>
-                                        <span class="badge badge-success mt-1">✓ 1600 x 900 px</span>
-                                        <span class="badge badge-success mt-1">✓ 1280 x 720 px</span><br>
-                                        <small class="text-danger mt-1 d-block">✗ Ukuran lain (misal 1:1 atau 4:3) akan tampil terpotong atau ada ruang hitam.</small>
+                                    <div class="alert alert-info py-2 px-3 mb-3" style="border-left:4px solid #17a2b8;">
+                                        <i class="fas fa-ruler-combined mr-1"></i>
+                                        <strong>Ukuran Gambar Slider yang Ideal:</strong>
+                                        <div class="mt-2">
+                                            <span class="badge badge-success">✓ 1920 x 860 px</span>
+                                            <span class="badge badge-success ml-1">✓ 1600 x 720 px</span>
+                                            <span class="badge badge-success ml-1">✓ 1280 x 575 px</span>
+                                        </div>
+                                        <small class="d-block mt-2 text-muted">Rasio lebar:tinggi ≈ <strong>2.23 : 1</strong> (lebih lebar dari 16:9 biasa)</small>
+                                        <hr class="my-2">
+                                        <small>
+                                            <i class="fas fa-info-circle text-info mr-1"></i>
+                                            Slider mengisi <strong>tinggi layar penuh</strong> dikurangi navbar (~56px) dan ticker (~44px).
+                                            Di layar <strong>768px</strong> tinggi → slider ≈ <strong>668px</strong>.
+                                            Di layar <strong>1080px</strong> tinggi → slider ≈ <strong>860px</strong> (maks).
+                                        </small>
+                                        <div class="mt-2">
+                                            <small class="text-danger"><i class="fas fa-times mr-1"></i>Hindari rasio 1:1, 4:3, atau 16:9 — akan tampil terpotong atas-bawah.</small>
+                                        </div>
                                     </div>
                                     <h6>Tips Lainnya:</h6>
                                     <ul class="small">
-                                        <li>Simpan gambar dalam format <strong>JPG</strong> untuk ukuran file lebih kecil</li>
-                                        <li>Pastikan konten penting (teks/logo) tidak terlalu di pinggir gambar</li>
-                                        <li>Judul sebaiknya singkat dan menarik</li>
-                                        <li>Deskripsi maksimal 2-3 kalimat</li>
-                                        <li>Atur urutan: angka kecil = tampil lebih awal</li>
+                                        <li>Format <strong>JPG</strong> lebih ringan dari PNG untuk foto</li>
+                                        <li>Pastikan subjek utama berada di <strong>tengah atau kiri</strong> gambar</li>
+                                        <li>Hindari teks penting di tepi gambar (bisa terpotong di layar kecil)</li>
+                                        <li>Judul singkat, deskripsi maksimal 2-3 kalimat</li>
+                                        <li>Angka urutan kecil = tampil lebih awal</li>
                                     </ul>
                                 </div>
                             </div>
