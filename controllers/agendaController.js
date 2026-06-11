@@ -132,7 +132,8 @@ exports.frontendIndex = async (req, res) => {
     ]);
     const [artikel] = await db.query("SELECT id, judul, slug, gambar, kategori, created_at FROM artikel WHERE status='published' ORDER BY created_at DESC LIMIT 4");
     const [beritaSlider] = await db.query("SELECT id, judul, slug, gambar, kategori, created_at FROM berita WHERE status='published' ORDER BY created_at DESC LIMIT 5");
-    res.render('frontend/agenda', { title: 'Agenda Sekolah', currentPage: 'agenda', agenda, profil, menuItems, mediaSosialFooter, artikel, beritaSlider, formatTanggal });
+    const relatedBerita = beritaSlider;
+    res.render('frontend/agenda', { title: 'Agenda Sekolah', currentPage: 'agenda', agenda, profil, menuItems, mediaSosialFooter, artikel, beritaSlider, relatedBerita, formatTanggal });
   } catch (err) {
     console.error(err);
     res.status(500).send('Terjadi kesalahan');
@@ -155,8 +156,9 @@ exports.frontendDetail = async (req, res) => {
     ]);
     const [artikel] = await db.query("SELECT id, judul, slug, gambar, kategori, created_at FROM artikel WHERE status='published' ORDER BY created_at DESC LIMIT 4");
     const [beritaSlider] = await db.query("SELECT id, judul, slug, gambar, kategori, created_at FROM berita WHERE status='published' ORDER BY created_at DESC LIMIT 5");
+    const relatedBerita = beritaSlider;
     const [agendaLain] = await db.query("SELECT * FROM agenda WHERE status='aktif' ORDER BY CASE WHEN tanggal_mulai >= CURDATE() THEN 0 ELSE 1 END ASC, tanggal_mulai ASC LIMIT 5", []);
-    res.render('frontend/agenda-detail', { title: agendaItem.judul, currentPage: 'agenda', agenda: agendaItem, profil, menuItems, mediaSosialFooter, artikel, beritaSlider, agendaLain, formatTanggal });
+    res.render('frontend/agenda-detail', { title: agendaItem.judul, currentPage: 'agenda', agenda: agendaItem, profil, menuItems, mediaSosialFooter, artikel, beritaSlider, relatedBerita, agendaLain, formatTanggal });
   } catch (err) {
     console.error(err);
     res.status(500).send('Terjadi kesalahan');
