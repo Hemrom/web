@@ -132,25 +132,24 @@
         .hero-section {
             position: relative;
             overflow: hidden;
-            padding-top: 80px;
+            padding-top: 80px; /* tinggi navbar */
         }
         .hero-slider {
             position: relative;
             width: 100%;
-            /* Pakai padding-bottom untuk menjaga rasio 16:9 tanpa letterbox */
-            /* Rumus: (tinggi / lebar) x 100 = (9/16) x 100 = 56.25% */
-            padding-bottom: 56.25%;
-            height: 0;
-            min-height: 300px;
+            /* Isi penuh sisa viewport setelah navbar */
+            height: calc(100vh - 80px);
+            min-height: 400px;
+            max-height: 900px;
         }
-        /* Kompensasi navbar 80px — geser container ke atas sedikit */
+        /* Override aspect-ratio — tidak dipakai, pakai tinggi viewport */
         @supports (aspect-ratio: 16/9) {
             .hero-slider {
                 padding-bottom: 0;
-                height: auto;
-                aspect-ratio: 16 / 9;
-                max-height: calc(100vw * 9 / 16);
-                min-height: 300px;
+                height: calc(100vh - 80px);
+                aspect-ratio: unset;
+                max-height: 900px;
+                min-height: 400px;
             }
         }
         .hero-slide {
@@ -279,14 +278,16 @@
             right: 30px;
         }
         
-        /* Default Hero (fallback) � Colorful Animated */
+        /* Default Hero (fallback) — Colorful Animated */
         .hero-default {
-            min-height: 100vh;
+            height: calc(100vh - 80px);
+            min-height: 400px;
+            max-height: 900px;
             display: flex;
             align-items: center;
             position: relative;
             overflow: hidden;
-            padding-top: 80px;
+            padding-top: 0;
             background: linear-gradient(135deg, #0f0c29 0%, #302b63 40%, #24243e 100%);
         }
 
