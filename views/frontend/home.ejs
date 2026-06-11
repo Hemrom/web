@@ -79,7 +79,7 @@
             background: rgba(255, 255, 255, 0.95) !important;
             backdrop-filter: blur(10px);
             box-shadow: 0 2px 20px rgba(14, 165, 233, 0.1);
-            padding: 1rem 0;
+            padding: 0.5rem 0;
             transition: all 0.3s ease;
         }
         .navbar-modern.scrolled {
@@ -132,21 +132,19 @@
         .hero-section {
             position: relative;
             overflow: hidden;
-            padding-top: 80px; /* tinggi navbar */
+            padding-top: 56px; /* tinggi navbar yang sudah dikurangi */
         }
         .hero-slider {
             position: relative;
             width: 100%;
-            /* 100dvh = tinggi viewport dinamis (sudah dipotong browser UI) */
-            height: calc(100dvh - 80px);
-            /* Fallback untuk browser lama yang belum support dvh */
-            height: calc(100vh - 110px);
-            min-height: 400px;
-            max-height: 900px;
+            /* Sisakan 44px untuk ticker agar selalu terlihat tanpa scroll */
+            height: calc(100vh - 56px - 44px);
+            min-height: 350px;
+            max-height: 860px;
         }
         @supports (height: 100dvh) {
             .hero-slider {
-                height: calc(100dvh - 80px);
+                height: calc(100dvh - 56px - 44px);
             }
         }
         .hero-slide {
@@ -277,9 +275,9 @@
         
         /* Default Hero (fallback) — Colorful Animated */
         .hero-default {
-            height: calc(100vh - 110px);
-            min-height: 400px;
-            max-height: 900px;
+            height: calc(100vh - 56px - 44px);
+            min-height: 350px;
+            max-height: 860px;
             display: flex;
             align-items: center;
             position: relative;
@@ -289,7 +287,7 @@
         }
         @supports (height: 100dvh) {
             .hero-default {
-                height: calc(100dvh - 80px);
+                height: calc(100dvh - 56px - 44px);
             }
         }
 
