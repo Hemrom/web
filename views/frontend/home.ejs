@@ -137,19 +137,16 @@
         .hero-slider {
             position: relative;
             width: 100%;
-            /* Isi penuh sisa viewport setelah navbar */
-            height: calc(100vh - 80px);
+            /* 100dvh = tinggi viewport dinamis (sudah dipotong browser UI) */
+            height: calc(100dvh - 80px);
+            /* Fallback untuk browser lama yang belum support dvh */
+            height: calc(100vh - 110px);
             min-height: 400px;
             max-height: 900px;
         }
-        /* Override aspect-ratio — tidak dipakai, pakai tinggi viewport */
-        @supports (aspect-ratio: 16/9) {
+        @supports (height: 100dvh) {
             .hero-slider {
-                padding-bottom: 0;
-                height: calc(100vh - 80px);
-                aspect-ratio: unset;
-                max-height: 900px;
-                min-height: 400px;
+                height: calc(100dvh - 80px);
             }
         }
         .hero-slide {
@@ -280,7 +277,7 @@
         
         /* Default Hero (fallback) — Colorful Animated */
         .hero-default {
-            height: calc(100vh - 80px);
+            height: calc(100vh - 110px);
             min-height: 400px;
             max-height: 900px;
             display: flex;
@@ -289,6 +286,11 @@
             overflow: hidden;
             padding-top: 0;
             background: linear-gradient(135deg, #0f0c29 0%, #302b63 40%, #24243e 100%);
+        }
+        @supports (height: 100dvh) {
+            .hero-default {
+                height: calc(100dvh - 80px);
+            }
         }
 
         /* Animated gradient mesh */
