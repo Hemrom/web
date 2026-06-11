@@ -27,11 +27,11 @@ exports.getMenuItems = getMenuItems;
 const getMediaSosialFooter = async () => {
   const cached = cache.get('media_sosial_footer');
   if (cached) return cached;
-  // Urutkan: terbaru dulu (id DESC), yang punya thumbnail tampil lebih bagus tapi tidak mengorbankan urutan terbaru
+  // Urutkan: terbaru dulu (id DESC), ambil cukup untuk featured (1) + list (8) = 9
   const [rows] = await db.query(
-    "SELECT id, judul, platform, embed_url, thumbnail FROM media_sosial WHERE status = 'aktif' ORDER BY id DESC"
+    "SELECT id, judul, platform, embed_url, thumbnail FROM media_sosial WHERE status = 'aktif' ORDER BY id DESC LIMIT 9"
   );
-  cache.set('media_sosial_footer', rows, 60); // cache 60 detik saja agar lebih responsif
+  cache.set('media_sosial_footer', rows, 10); // cache 10 detik agar cepat update saat ada konten baru
   return rows;
 };
 
