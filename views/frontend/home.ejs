@@ -1084,39 +1084,60 @@
         @media (max-width: 768px) {
             .hero-section { padding-top: 56px; }
 
-            /* Tinggi slider di mobile: cukup 55% tinggi layar agar tidak terlalu besar */
+            /* Tinggi slider di mobile: pakai aspect-ratio agar gambar tidak terpotong */
             .hero-slider {
-                height: 55vh;
-                min-height: 260px;
-                max-height: 420px;
+                height: auto;
+                min-height: unset;
+                max-height: unset;
+                /* Gambar slider landscape ~2.23:1 — tapi di mobile kita buat lebih pendek */
+                aspect-ratio: 4 / 3;
             }
             @supports (height: 100dvh) {
-                .hero-slider { height: 55dvh; }
+                .hero-slider {
+                    height: auto;
+                    aspect-ratio: 4 / 3;
+                }
             }
 
-            /* Teks lebih kecil & ringkas */
-            .hero-content { max-width: 100%; padding: 0 1rem; }
-            .hero-title { font-size: 1.4rem !important; margin-bottom: 0.5rem; line-height: 1.2; }
-            .hero-subtitle { font-size: 0.85rem !important; margin-bottom: 0.4rem; }
-            .hero-description { font-size: 0.8rem; margin-bottom: 0.75rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+            /* Gambar background full dan pas */
+            .hero-slide {
+                background-size: cover !important;
+                background-position: center center !important;
+                align-items: flex-end; /* teks di bawah agar tidak nutupi gambar */
+            }
+
+            /* Overlay lebih gelap di mobile agar teks terbaca */
+            .hero-slide::before {
+                background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.05) 100%) !important;
+            }
+
+            /* Teks di bawah, lebih kecil */
+            .hero-content {
+                max-width: 100%;
+                padding: 0.75rem 1rem 2.5rem;
+            }
+            .hero-title { font-size: 1.2rem !important; margin-bottom: 0.3rem; line-height: 1.3; }
+            .hero-subtitle { font-size: 0.78rem !important; margin-bottom: 0.3rem; }
+            .hero-description { font-size: 0.78rem; margin-bottom: 0.5rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
             /* Tombol lebih kecil */
-            .btn-hero { padding: 0.5rem 1.2rem; font-size: 0.85rem; }
+            .btn-hero { padding: 0.4rem 1rem; font-size: 0.8rem; }
 
             /* Arrow navigasi lebih kecil, tempel ke tepi */
-            .slider-arrow { width: 34px; height: 34px; font-size: 0.85rem; }
-            .slider-arrow.prev { left: 8px; }
-            .slider-arrow.next { right: 8px; }
+            .slider-arrow { width: 30px; height: 30px; font-size: 0.75rem; }
+            .slider-arrow.prev { left: 6px; }
+            .slider-arrow.next { right: 6px; }
 
-            /* Dots lebih kecil */
-            .slider-dot { width: 8px; height: 8px; }
-            .slider-nav { bottom: 10px; gap: 6px; }
+            /* Dots */
+            .slider-dot { width: 7px; height: 7px; }
+            .slider-nav { bottom: 8px; gap: 5px; }
 
             /* Hero default (fallback) */
             .hero-default {
-                height: 55vh;
-                min-height: 260px;
-                max-height: 420px;
+                height: auto;
+                min-height: unset;
+                max-height: unset;
+                aspect-ratio: 4 / 3;
             }
         }
 
