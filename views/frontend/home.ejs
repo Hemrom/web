@@ -1084,60 +1084,66 @@
         @media (max-width: 768px) {
             .hero-section { padding-top: 56px; }
 
-            /* Tinggi slider di mobile: pakai aspect-ratio agar gambar tidak terpotong */
+            /* Slider tinggi otomatis ikut lebar layar × rasio gambar 2.23:1 */
             .hero-slider {
-                height: auto;
-                min-height: unset;
-                max-height: unset;
-                /* Gambar slider landscape ~2.23:1 — tapi di mobile kita buat lebih pendek */
-                aspect-ratio: 4 / 3;
+                height: auto !important;
+                min-height: unset !important;
+                max-height: unset !important;
+                /* lebar layar 390px ÷ 2.23 ≈ 175px — pakai padding-bottom trick */
+                padding-bottom: 56.25%; /* fallback 16:9 */
+                aspect-ratio: unset;
             }
-            @supports (height: 100dvh) {
+            @supports (aspect-ratio: 16/9) {
                 .hero-slider {
-                    height: auto;
-                    aspect-ratio: 4 / 3;
+                    padding-bottom: 0;
+                    aspect-ratio: 16 / 9;
                 }
             }
 
-            /* Gambar background full dan pas */
+            /* Gambar full width tanpa terpotong */
             .hero-slide {
-                background-size: cover !important;
-                background-position: center center !important;
-                align-items: flex-end; /* teks di bawah agar tidak nutupi gambar */
+                background-size: 100% auto !important;
+                background-position: center top !important;
+                background-repeat: no-repeat !important;
+                /* Background biru gelap agar bawah tidak kosong */
+                background-color: #0c4a6e !important;
+                align-items: flex-end;
             }
 
-            /* Overlay lebih gelap di mobile agar teks terbaca */
+            /* Overlay dari bawah agar teks terbaca */
             .hero-slide::before {
-                background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.05) 100%) !important;
+                background: linear-gradient(to top,
+                    rgba(0,0,0,0.85) 0%,
+                    rgba(0,0,0,0.4) 40%,
+                    rgba(0,0,0,0) 70%) !important;
             }
 
-            /* Teks di bawah, lebih kecil */
+            /* Teks di bawah */
             .hero-content {
                 max-width: 100%;
-                padding: 0.75rem 1rem 2.5rem;
+                padding: 0.5rem 1rem 2.5rem;
             }
-            .hero-title { font-size: 1.2rem !important; margin-bottom: 0.3rem; line-height: 1.3; }
-            .hero-subtitle { font-size: 0.78rem !important; margin-bottom: 0.3rem; }
-            .hero-description { font-size: 0.78rem; margin-bottom: 0.5rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+            .hero-title { font-size: 1.1rem !important; margin-bottom: 0.25rem; line-height: 1.3; }
+            .hero-subtitle { font-size: 0.75rem !important; margin-bottom: 0.25rem; }
+            .hero-description { display: none !important; } /* sembunyikan deskripsi di mobile */
+            .btn-hero { padding: 0.35rem 0.9rem; font-size: 0.78rem; }
 
-            /* Tombol lebih kecil */
-            .btn-hero { padding: 0.4rem 1rem; font-size: 0.8rem; }
-
-            /* Arrow navigasi lebih kecil, tempel ke tepi */
-            .slider-arrow { width: 30px; height: 30px; font-size: 0.75rem; }
-            .slider-arrow.prev { left: 6px; }
-            .slider-arrow.next { right: 6px; }
+            /* Arrow navigasi */
+            .slider-arrow { width: 28px; height: 28px; font-size: 0.7rem; }
+            .slider-arrow.prev { left: 5px; }
+            .slider-arrow.next { right: 5px; }
 
             /* Dots */
-            .slider-dot { width: 7px; height: 7px; }
-            .slider-nav { bottom: 8px; gap: 5px; }
+            .slider-dot { width: 6px; height: 6px; }
+            .slider-nav { bottom: 6px; gap: 4px; }
 
-            /* Hero default (fallback) */
+            /* Hero default (fallback tanpa slider) */
             .hero-default {
-                height: auto;
-                min-height: unset;
-                max-height: unset;
-                aspect-ratio: 4 / 3;
+                height: auto !important;
+                min-height: unset !important;
+                padding-top: 3rem;
+                padding-bottom: 3rem;
+                aspect-ratio: unset;
             }
         }
 
