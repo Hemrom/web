@@ -322,18 +322,16 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.45rem;
             cursor: pointer;
             background: transparent;
             border: none;
-            padding: 0.5rem 1.25rem 0.35rem;
-            color: rgba(255, 255, 255, 0.88);
-            transition: color 0.3s ease, transform 0.3s ease;
+            padding: 0.65rem 1.5rem;
+            color: rgba(255, 255, 255, 0.95);
+            transition: color 0.3s ease;
             animation: sliderNavFadeIn 1s ease 0.8s both;
         }
         .slider-scroll-nav:hover {
             color: #fff;
-            transform: translateX(-50%) translateY(2px);
         }
         .slider-scroll-nav:focus {
             outline: none;
@@ -341,62 +339,44 @@
         }
         .slider-chevrons {
             position: relative;
-            width: 26px;
-            height: 22px;
-            animation: sliderArrowBounce 2.2s ease-in-out infinite;
+            width: 30px;
+            height: 28px;
+            animation: sliderArrowBounce 1.5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
         }
         .slider-chevron {
             position: absolute;
             left: 50%;
-            width: 12px;
-            height: 12px;
-            margin-left: -6px;
-            border-right: 2px solid currentColor;
-            border-bottom: 2px solid currentColor;
+            width: 14px;
+            height: 14px;
+            margin-left: -7px;
+            border-right: 2.5px solid currentColor;
+            border-bottom: 2.5px solid currentColor;
             transform: rotate(45deg);
             border-radius: 1px;
-            filter: drop-shadow(0 1px 3px rgba(0,0,0,0.35));
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
         }
         .slider-chevron:nth-child(1) {
             top: 0;
-            opacity: 0.35;
-            animation: sliderChevronPulse 2.2s ease-in-out infinite;
+            opacity: 0.5;
+            animation: sliderChevronPulse 1.5s ease-in-out infinite;
         }
         .slider-chevron:nth-child(2) {
-            top: 7px;
-            opacity: 0.75;
-            animation: sliderChevronPulse 2.2s ease-in-out 0.18s infinite;
+            top: 9px;
+            opacity: 1;
+            animation: sliderChevronPulse 1.5s ease-in-out 0.2s infinite;
         }
         .slider-scroll-nav::after {
             content: '';
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 44px;
-            height: 44px;
-            transform: translate(-50%, -58%);
+            width: 48px;
+            height: 48px;
+            transform: translate(-50%, -50%);
             border-radius: 50%;
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            animation: sliderRingPulse 2.2s ease-in-out infinite;
+            border: 1.5px solid rgba(255, 255, 255, 0.35);
+            animation: sliderRingPulse 1.5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
             pointer-events: none;
-        }
-        .slider-slide-count {
-            font-size: 0.68rem;
-            font-weight: 700;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            opacity: 0.72;
-            line-height: 1;
-            text-shadow: 0 1px 4px rgba(0,0,0,0.45);
-        }
-        .slider-slide-count b {
-            font-size: 0.78rem;
-            opacity: 1;
-            color: #fff;
-        }
-        .slider-count-sep {
-            margin: 0 0.15rem;
-            opacity: 0.5;
         }
         @keyframes sliderNavFadeIn {
             from { opacity: 0; transform: translateX(-50%) translateY(12px); }
@@ -404,15 +384,15 @@
         }
         @keyframes sliderArrowBounce {
             0%, 100% { transform: translateY(0); }
-            50%      { transform: translateY(7px); }
+            50%      { transform: translateY(16px); }
         }
         @keyframes sliderChevronPulse {
-            0%, 100% { opacity: 0.3; }
+            0%, 100% { opacity: 0.45; }
             50%      { opacity: 1; }
         }
         @keyframes sliderRingPulse {
-            0%, 100% { opacity: 0.25; transform: translate(-50%, -58%) scale(0.92); }
-            50%      { opacity: 0.55; transform: translate(-50%, -58%) scale(1.05); }
+            0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(0.9); }
+            50%      { opacity: 0.7; transform: translate(-50%, -50%) scale(1.08); }
         }
         .slider-arrow {
             position: absolute;
@@ -1304,12 +1284,15 @@
             .slider-arrow.next { right: 5px; }
 
             /* Panah bawah slider */
-            .slider-scroll-nav { bottom: 8px; padding: 0.25rem 0.75rem; }
-            .slider-chevrons { width: 20px; height: 18px; }
-            .slider-chevron { width: 9px; height: 9px; margin-left: -4.5px; border-width: 1.5px; }
-            .slider-chevron:nth-child(2) { top: 5px; }
-            .slider-scroll-nav::after { width: 34px; height: 34px; }
-            .slider-slide-count { font-size: 0.58rem; }
+            .slider-scroll-nav { bottom: 8px; padding: 0.4rem 1rem; }
+            .slider-chevrons { width: 24px; height: 24px; }
+            .slider-chevron { width: 11px; height: 11px; margin-left: -5.5px; }
+            .slider-chevron:nth-child(2) { top: 7px; }
+            .slider-scroll-nav::after { width: 40px; height: 40px; }
+            @keyframes sliderArrowBounce {
+                0%, 100% { transform: translateY(0); }
+                50%      { transform: translateY(12px); }
+            }
 
             /* Hero default (fallback tanpa slider) */
             .hero-default {
@@ -1787,9 +1770,6 @@
                             <span class="slider-chevron"></span>
                             <span class="slider-chevron"></span>
                         </div>
-                        <span class="slider-slide-count">
-                            <b id="sliderCurrentNum">1</b><span class="slider-count-sep">/</span><%= slider.length %>
-                        </span>
                     </button>
                 <% } %>
             </div>
@@ -3113,7 +3093,6 @@
         // Slider functionality
         let currentSlide = 0;
         const slides = document.querySelectorAll('.hero-slide');
-        const sliderCounter = document.getElementById('sliderCurrentNum');
         const totalSlides = slides.length;
         
         function restartSlideAnimations(slide) {
@@ -3131,9 +3110,6 @@
             if (slides[index]) {
                 slides[index].classList.add('active');
                 restartSlideAnimations(slides[index]);
-            }
-            if (sliderCounter) {
-                sliderCounter.textContent = index + 1;
             }
         }
         
