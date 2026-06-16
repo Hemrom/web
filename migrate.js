@@ -528,6 +528,10 @@ async function run() {
     // Guru: tambah kolom alamat jika belum ada
     `ALTER TABLE guru ADD COLUMN IF NOT EXISTS alamat TEXT DEFAULT NULL`,
 
+    // Slider: posisi teks & animasi (homepage hero)
+    `ALTER TABLE slider ADD COLUMN IF NOT EXISTS posisi_teks ENUM('kiri','tengah','kanan') NOT NULL DEFAULT 'tengah' AFTER link_text`,
+    `ALTER TABLE slider ADD COLUMN IF NOT EXISTS animasi_teks VARCHAR(50) NOT NULL DEFAULT 'slide-up' AFTER posisi_teks`,
+
     // Agenda
     `CREATE TABLE IF NOT EXISTS agenda (
       id INT(11) NOT NULL AUTO_INCREMENT,

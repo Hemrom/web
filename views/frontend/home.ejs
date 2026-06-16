@@ -221,6 +221,96 @@
             text-decoration: none;
             background: rgba(255, 255, 255, 0.95);
         }
+
+        /* Slider text alignment & entry animations */
+        .hero-content-row {
+            display: flex;
+            width: 100%;
+            position: relative;
+            z-index: 2;
+        }
+        .hero-content-row.hero-align-kiri { justify-content: flex-start; }
+        .hero-content-row.hero-align-tengah { justify-content: center; }
+        .hero-content-row.hero-align-kanan { justify-content: flex-end; }
+        .hero-align-tengah .hero-content { text-align: center; max-width: 780px; }
+        .hero-align-kiri .hero-content { text-align: left; }
+        .hero-align-kanan .hero-content { text-align: right; margin-left: auto; }
+        .hero-slide .hero-anim-item {
+            opacity: 0;
+            will-change: transform, opacity, filter;
+        }
+        @keyframes heroSlideUp {
+            from { opacity: 0; transform: translateY(42px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes heroSlideUpBounce {
+            0%   { opacity: 0; transform: translateY(50px); }
+            70%  { opacity: 1; transform: translateY(-10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes heroZoomUp {
+            from { opacity: 0; transform: translateY(40px) scale(0.86); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes heroBlurUp {
+            from { opacity: 0; transform: translateY(36px); filter: blur(10px); }
+            to   { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+        @keyframes heroElasticUp {
+            0%   { opacity: 0; transform: translateY(65px); }
+            55%  { opacity: 1; transform: translateY(-14px); }
+            75%  { transform: translateY(7px); }
+            90%  { transform: translateY(-4px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes heroFadeUpFast {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes heroFlipUp {
+            from { opacity: 0; transform: perspective(700px) rotateX(40deg) translateY(45px); }
+            to   { opacity: 1; transform: perspective(700px) rotateX(0) translateY(0); }
+        }
+        @keyframes heroSlideUpLong {
+            from { opacity: 0; transform: translateY(90px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .hero-slide.active .hero-anim-slide-up .hero-anim-item:nth-child(1) { animation: heroSlideUp .85s ease .08s both; }
+        .hero-slide.active .hero-anim-slide-up .hero-anim-item:nth-child(2) { animation: heroSlideUp .85s ease .18s both; }
+        .hero-slide.active .hero-anim-slide-up .hero-anim-item:nth-child(3) { animation: heroSlideUp .85s ease .28s both; }
+        .hero-slide.active .hero-anim-slide-up .hero-anim-item:nth-child(4) { animation: heroSlideUp .85s ease .38s both; }
+        .hero-slide.active .hero-anim-slide-up-bounce .hero-anim-item:nth-child(1) { animation: heroSlideUpBounce .95s cubic-bezier(.34,1.4,.64,1) .08s both; }
+        .hero-slide.active .hero-anim-slide-up-bounce .hero-anim-item:nth-child(2) { animation: heroSlideUpBounce .95s cubic-bezier(.34,1.4,.64,1) .18s both; }
+        .hero-slide.active .hero-anim-slide-up-bounce .hero-anim-item:nth-child(3) { animation: heroSlideUpBounce .95s cubic-bezier(.34,1.4,.64,1) .28s both; }
+        .hero-slide.active .hero-anim-slide-up-bounce .hero-anim-item:nth-child(4) { animation: heroSlideUpBounce .95s cubic-bezier(.34,1.4,.64,1) .38s both; }
+        .hero-slide.active .hero-anim-zoom-up .hero-anim-item:nth-child(1) { animation: heroZoomUp .9s cubic-bezier(.16,1,.3,1) .08s both; }
+        .hero-slide.active .hero-anim-zoom-up .hero-anim-item:nth-child(2) { animation: heroZoomUp .9s cubic-bezier(.16,1,.3,1) .18s both; }
+        .hero-slide.active .hero-anim-zoom-up .hero-anim-item:nth-child(3) { animation: heroZoomUp .9s cubic-bezier(.16,1,.3,1) .28s both; }
+        .hero-slide.active .hero-anim-zoom-up .hero-anim-item:nth-child(4) { animation: heroZoomUp .9s cubic-bezier(.16,1,.3,1) .38s both; }
+        .hero-slide.active .hero-anim-blur-up .hero-anim-item:nth-child(1) { animation: heroBlurUp .9s ease .08s both; }
+        .hero-slide.active .hero-anim-blur-up .hero-anim-item:nth-child(2) { animation: heroBlurUp .9s ease .18s both; }
+        .hero-slide.active .hero-anim-blur-up .hero-anim-item:nth-child(3) { animation: heroBlurUp .9s ease .28s both; }
+        .hero-slide.active .hero-anim-blur-up .hero-anim-item:nth-child(4) { animation: heroBlurUp .9s ease .38s both; }
+        .hero-slide.active .hero-anim-elastic-up .hero-anim-item:nth-child(1) { animation: heroElasticUp 1.1s ease .08s both; }
+        .hero-slide.active .hero-anim-elastic-up .hero-anim-item:nth-child(2) { animation: heroElasticUp 1.1s ease .18s both; }
+        .hero-slide.active .hero-anim-elastic-up .hero-anim-item:nth-child(3) { animation: heroElasticUp 1.1s ease .28s both; }
+        .hero-slide.active .hero-anim-elastic-up .hero-anim-item:nth-child(4) { animation: heroElasticUp 1.1s ease .38s both; }
+        .hero-slide.active .hero-anim-fade-up-fast .hero-anim-item:nth-child(1) { animation: heroFadeUpFast .55s ease .04s both; }
+        .hero-slide.active .hero-anim-fade-up-fast .hero-anim-item:nth-child(2) { animation: heroFadeUpFast .55s ease .1s both; }
+        .hero-slide.active .hero-anim-fade-up-fast .hero-anim-item:nth-child(3) { animation: heroFadeUpFast .55s ease .16s both; }
+        .hero-slide.active .hero-anim-fade-up-fast .hero-anim-item:nth-child(4) { animation: heroFadeUpFast .55s ease .22s both; }
+        .hero-slide.active .hero-anim-flip-up .hero-anim-item:nth-child(1) { animation: heroFlipUp .95s cubic-bezier(.16,1,.3,1) .08s both; }
+        .hero-slide.active .hero-anim-flip-up .hero-anim-item:nth-child(2) { animation: heroFlipUp .95s cubic-bezier(.16,1,.3,1) .18s both; }
+        .hero-slide.active .hero-anim-flip-up .hero-anim-item:nth-child(3) { animation: heroFlipUp .95s cubic-bezier(.16,1,.3,1) .28s both; }
+        .hero-slide.active .hero-anim-flip-up .hero-anim-item:nth-child(4) { animation: heroFlipUp .95s cubic-bezier(.16,1,.3,1) .38s both; }
+        .hero-slide.active .hero-anim-slide-up-long .hero-anim-item:nth-child(1) { animation: heroSlideUpLong 1s ease .1s both; }
+        .hero-slide.active .hero-anim-slide-up-long .hero-anim-item:nth-child(2) { animation: heroSlideUpLong 1s ease .22s both; }
+        .hero-slide.active .hero-anim-slide-up-long .hero-anim-item:nth-child(3) { animation: heroSlideUpLong 1s ease .34s both; }
+        .hero-slide.active .hero-anim-slide-up-long .hero-anim-item:nth-child(4) { animation: heroSlideUpLong 1s ease .46s both; }
+        .hero-slide.active .hero-anim-stagger-up .hero-anim-item:nth-child(1) { animation: heroSlideUp .85s ease .1s both; }
+        .hero-slide.active .hero-anim-stagger-up .hero-anim-item:nth-child(2) { animation: heroSlideUp .85s ease .35s both; }
+        .hero-slide.active .hero-anim-stagger-up .hero-anim-item:nth-child(3) { animation: heroSlideUp .85s ease .6s both; }
+        .hero-slide.active .hero-anim-stagger-up .hero-anim-item:nth-child(4) { animation: heroSlideUp .85s ease .85s both; }
         
         /* Slider Controls */
         .slider-nav {
@@ -1123,6 +1213,8 @@
                 max-width: 100%;
                 padding: 0.5rem 1rem 2.5rem;
             }
+            .hero-content-row.hero-align-tengah { justify-content: center; }
+            .hero-align-tengah .hero-content { text-align: center; }
             .hero-title { font-size: 1.1rem !important; margin-bottom: 0.25rem; line-height: 1.3; }
             .hero-subtitle { font-size: 0.75rem !important; margin-bottom: 0.25rem; }
             .hero-description { display: none !important; } /* sembunyikan deskripsi di mobile */
@@ -1578,22 +1670,21 @@
         <% if (slider && slider.length > 0) { %>
             <div class="hero-slider">
                 <% slider.forEach((slide, index) => { %>
+                    <% const slidePosisi = slide.posisi_teks || 'tengah'; const slideAnim = slide.animasi_teks || 'slide-up'; %>
                     <div class="hero-slide <%= index === 0 ? 'active' : '' %>" style="background-image: url('/uploads/<%= slide.gambar %>')">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-lg-8">
-                                    <div class="hero-content">
-                                        <% if (slide.subjudul) { %>
-                                            <h2 class="hero-subtitle"><%= slide.subjudul %></h2>
-                                        <% } %>
-                                        <h1 class="hero-title"><%= slide.judul %></h1>
-                                        <% if (slide.deskripsi) { %>
-                                            <p class="hero-description"><%= slide.deskripsi %></p>
-                                        <% } %>
-                                        <% if (slide.link_url && slide.link_text) { %>
-                                            <a href="<%= slide.link_url %>" class="btn-hero"><%= slide.link_text %></a>
-                                        <% } %>
-                                    </div>
+                        <div class="container h-100 d-flex align-items-center">
+                            <div class="hero-content-row hero-align-<%= slidePosisi %> w-100">
+                                <div class="hero-content hero-anim-<%= slideAnim %>">
+                                    <% if (slide.subjudul) { %>
+                                        <h2 class="hero-subtitle hero-anim-item"><%= slide.subjudul %></h2>
+                                    <% } %>
+                                    <h1 class="hero-title hero-anim-item"><%= slide.judul %></h1>
+                                    <% if (slide.deskripsi) { %>
+                                        <p class="hero-description hero-anim-item"><%= slide.deskripsi %></p>
+                                    <% } %>
+                                    <% if (slide.link_url && slide.link_text) { %>
+                                        <a href="<%= slide.link_url %>" class="btn-hero hero-anim-item"><%= slide.link_text %></a>
+                                    <% } %>
                                 </div>
                             </div>
                         </div>
@@ -2939,6 +3030,15 @@
         const dots = document.querySelectorAll('.slider-dot');
         const totalSlides = slides.length;
         
+        function restartSlideAnimations(slide) {
+            if (!slide) return;
+            slide.querySelectorAll('.hero-anim-item').forEach(function(el) {
+                el.style.animation = 'none';
+                void el.offsetHeight;
+                el.style.animation = '';
+            });
+        }
+
         function showSlide(index) {
             // Hide all slides
             slides.forEach(slide => slide.classList.remove('active'));
@@ -2947,6 +3047,7 @@
             // Show current slide
             if (slides[index]) {
                 slides[index].classList.add('active');
+                restartSlideAnimations(slides[index]);
             }
             if (dots[index]) {
                 dots[index].classList.add('active');

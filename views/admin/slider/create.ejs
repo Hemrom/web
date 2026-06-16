@@ -65,6 +65,30 @@
                                             <label for="link_text">Teks Link (opsional)</label>
                                             <input type="text" class="form-control" id="link_text" name="link_text" placeholder="Pelajari Lebih Lanjut">
                                         </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="posisi_teks">Posisi Teks</label>
+                                                    <select class="form-control" id="posisi_teks" name="posisi_teks">
+                                                        <option value="kiri">Kiri</option>
+                                                        <option value="tengah" selected>Tengah</option>
+                                                        <option value="kanan">Kanan</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="animasi_teks">Animasi Teks & Tombol</label>
+                                                    <select class="form-control" id="animasi_teks" name="animasi_teks">
+                                                        <% animations.forEach(function(anim) { %>
+                                                        <option value="<%= anim.value %>"><%= anim.label %></option>
+                                                        <% }) %>
+                                                    </select>
+                                                    <small class="form-text text-muted" id="anim_desc"></small>
+                                                </div>
+                                            </div>
+                                        </div>
                                         
                                         <div class="form-group">
                                             <label for="urutan">Urutan</label>
@@ -116,11 +140,26 @@
                                     <h6>Tips Lainnya:</h6>
                                     <ul class="small">
                                         <li>Format <strong>JPG</strong> lebih ringan dari PNG untuk foto</li>
-                                        <li>Pastikan subjek utama berada di <strong>tengah atau kiri</strong> gambar</li>
-                                        <li>Hindari teks penting di tepi gambar (bisa terpotong di layar kecil)</li>
+                                        <li>Posisi <strong>Tengah</strong> direkomendasikan untuk tampilan modern</li>
+                                        <li>Pilih animasi <strong>Bertahap</strong> untuk efek paling dramatis</li>
                                         <li>Judul singkat, deskripsi maksimal 2-3 kalimat</li>
                                         <li>Angka urutan kecil = tampil lebih awal</li>
                                     </ul>
+                                </div>
+                            </div>
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Preview Animasi</h6>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div id="anim_preview" style="background:linear-gradient(135deg,#0c4a6e,#0369a1);min-height:160px;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;">
+                                        <div id="preview_content" style="text-align:center;color:#fff;padding:1rem;">
+                                            <div class="preview-item" style="font-size:.75rem;opacity:.85;margin-bottom:.35rem;">Subjudul Contoh</div>
+                                            <div class="preview-item" style="font-size:1rem;font-weight:700;margin-bottom:.5rem;">Judul Slider</div>
+                                            <div class="preview-item" style="font-size:.8rem;opacity:.9;margin-bottom:.75rem;">Deskripsi singkat slider.</div>
+                                            <div class="preview-item"><span style="background:#fff;color:#0369a1;padding:.35rem .9rem;border-radius:50px;font-size:.75rem;font-weight:600;">Tombol</span></div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -137,5 +176,50 @@
     <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
     <script src="/assets/js/sb-admin-2.min.js"></script>
+    <style>
+        @keyframes prevSlideUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes prevBounce { 0%{opacity:0;transform:translateY(28px)} 70%{opacity:1;transform:translateY(-4px)} 100%{opacity:1;transform:translateY(0)} }
+        @keyframes prevZoom { from { opacity:0; transform:translateY(20px) scale(.9); } to { opacity:1; transform:translateY(0) scale(1); } }
+        @keyframes prevBlur { from { opacity:0; transform:translateY(18px); filter:blur(6px); } to { opacity:1; transform:translateY(0); filter:blur(0); } }
+        @keyframes prevElastic { 0%{opacity:0;transform:translateY(30px)} 60%{opacity:1;transform:translateY(-6px)} 80%{transform:translateY(3px)} 100%{opacity:1;transform:translateY(0)} }
+        @keyframes prevFast { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes prevFlip { from { opacity:0; transform:perspective(400px) rotateX(30deg) translateY(20px); } to { opacity:1; transform:perspective(400px) rotateX(0) translateY(0); } }
+        @keyframes prevLong { from { opacity:0; transform:translateY(40px); } to { opacity:1; transform:translateY(0); } }
+    </style>
+    <script>
+    (function() {
+        var animList = <%- JSON.stringify(animations) %>;
+        var animMap = {
+            'slide-up': { anim: 'prevSlideUp', dur: '.7s' },
+            'slide-up-bounce': { anim: 'prevBounce', dur: '.8s' },
+            'zoom-up': { anim: 'prevZoom', dur: '.75s' },
+            'blur-up': { anim: 'prevBlur', dur: '.75s' },
+            'elastic-up': { anim: 'prevElastic', dur: '.9s' },
+            'fade-up-fast': { anim: 'prevFast', dur: '.45s' },
+            'stagger-up': { anim: 'prevSlideUp', dur: '.7s' },
+            'flip-up': { anim: 'prevFlip', dur: '.8s' },
+            'slide-up-long': { anim: 'prevLong', dur: '.9s' }
+        };
+        var delays = { normal: [0,.12,.24,.36], stagger: [0,.25,.5,.75] };
+        function playPreview() {
+            var val = document.getElementById('animasi_teks').value;
+            var cfg = animMap[val] || animMap['slide-up'];
+            var meta = animList.find(function(a) { return a.value === val; }) || animList[0];
+            document.getElementById('anim_desc').textContent = meta.desc;
+            var items = document.querySelectorAll('#preview_content .preview-item');
+            var ds = val === 'stagger-up' ? delays.stagger : delays.normal;
+            items.forEach(function(el, i) {
+                el.style.animation = 'none';
+                void el.offsetHeight;
+                el.style.animation = cfg.anim + ' ' + cfg.dur + ' ease ' + ds[i] + 's both';
+            });
+            var align = document.getElementById('posisi_teks').value;
+            document.getElementById('preview_content').style.textAlign = align === 'kanan' ? 'right' : (align === 'kiri' ? 'left' : 'center');
+        }
+        document.getElementById('animasi_teks').addEventListener('change', playPreview);
+        document.getElementById('posisi_teks').addEventListener('change', playPreview);
+        playPreview();
+    })();
+    </script>
 </body>
 </html>

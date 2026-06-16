@@ -44,7 +44,8 @@
                                             <th>No</th>
                                             <th>Gambar</th>
                                             <th>Judul</th>
-                                            <th>Subjudul</th>
+                                            <th>Posisi</th>
+                                            <th>Animasi</th>
                                             <th>Urutan</th>
                                             <th>Status</th>
                                             <th>Aksi</th>
@@ -53,7 +54,7 @@
                                     <tbody>
                                         <% if (slider.length === 0) { %>
                                             <tr>
-                                                <td colspan="7" class="text-center">Belum ada data slider</td>
+                                                <td colspan="8" class="text-center">Belum ada data slider</td>
                                             </tr>
                                         <% } else { %>
                                             <% slider.forEach((item, index) => { %>
@@ -64,7 +65,8 @@
                                                              style="width: 80px; height: 50px; object-fit: cover; border-radius: 5px;">
                                                     </td>
                                                     <td><%= item.judul %></td>
-                                                    <td><%= item.subjudul || '-' %></td>
+                                                    <td><span class="badge badge-info"><%= item.posisi_teks || 'tengah' %></span></td>
+                                                    <td><small><% var animLabel = item.animasi_teks || 'slide-up'; animations.forEach(function(a){ if (a.value === (item.animasi_teks || 'slide-up')) animLabel = a.label; }); %><%= animLabel %></small></td>
                                                     <td><%= item.urutan %></td>
                                                     <td>
                                                         <span class="badge badge-<%= item.status === 'aktif' ? 'success' : 'secondary' %>">

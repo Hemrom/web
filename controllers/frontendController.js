@@ -1,4 +1,5 @@
 const db = require('../config/database');
+const { ensureSliderSchema } = require('./sliderController');
 const cache = require('../utils/cache');
 
 // ── Helpers dengan cache ──────────────────────────────────────────────────────
@@ -75,6 +76,7 @@ const { getSettings } = require('./kontrolWebsiteController');
 
 exports.home = async (req, res) => {
   try {
+    await ensureSliderSchema();
     // Semua query paralel
     const [
       profil,

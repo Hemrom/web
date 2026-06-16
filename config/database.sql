@@ -882,6 +882,8 @@ CREATE TABLE `slider` (
   `gambar` varchar(255) NOT NULL,
   `link_url` varchar(255) DEFAULT NULL,
   `link_text` varchar(100) DEFAULT NULL,
+  `posisi_teks` enum('kiri','tengah','kanan') NOT NULL DEFAULT 'tengah',
+  `animasi_teks` varchar(50) NOT NULL DEFAULT 'slide-up',
   `urutan` int(11) DEFAULT 0,
   `status` enum('aktif','nonaktif') DEFAULT 'aktif',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
