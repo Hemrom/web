@@ -313,28 +313,106 @@
         .hero-slide.active .hero-anim-stagger-up .hero-anim-item:nth-child(4) { animation: heroSlideUp .85s ease .85s both; }
         
         /* Slider Controls */
-        .slider-nav {
+        .slider-scroll-nav {
             position: absolute;
-            bottom: 30px;
+            bottom: 22px;
             left: 50%;
             transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
             z-index: 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.45rem;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            padding: 0.5rem 1.25rem 0.35rem;
+            color: rgba(255, 255, 255, 0.88);
+            transition: color 0.3s ease, transform 0.3s ease;
+            animation: sliderNavFadeIn 1s ease 0.8s both;
         }
-        .slider-dot {
+        .slider-scroll-nav:hover {
+            color: #fff;
+            transform: translateX(-50%) translateY(2px);
+        }
+        .slider-scroll-nav:focus {
+            outline: none;
+            color: #fff;
+        }
+        .slider-chevrons {
+            position: relative;
+            width: 26px;
+            height: 22px;
+            animation: sliderArrowBounce 2.2s ease-in-out infinite;
+        }
+        .slider-chevron {
+            position: absolute;
+            left: 50%;
             width: 12px;
             height: 12px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.6);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid rgba(255, 255, 255, 0.8);
+            margin-left: -6px;
+            border-right: 2px solid currentColor;
+            border-bottom: 2px solid currentColor;
+            transform: rotate(45deg);
+            border-radius: 1px;
+            filter: drop-shadow(0 1px 3px rgba(0,0,0,0.35));
         }
-        .slider-dot.active {
-            background: white;
-            transform: scale(1.3);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        .slider-chevron:nth-child(1) {
+            top: 0;
+            opacity: 0.35;
+            animation: sliderChevronPulse 2.2s ease-in-out infinite;
+        }
+        .slider-chevron:nth-child(2) {
+            top: 7px;
+            opacity: 0.75;
+            animation: sliderChevronPulse 2.2s ease-in-out 0.18s infinite;
+        }
+        .slider-scroll-nav::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 44px;
+            height: 44px;
+            transform: translate(-50%, -58%);
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            animation: sliderRingPulse 2.2s ease-in-out infinite;
+            pointer-events: none;
+        }
+        .slider-slide-count {
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            opacity: 0.72;
+            line-height: 1;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.45);
+        }
+        .slider-slide-count b {
+            font-size: 0.78rem;
+            opacity: 1;
+            color: #fff;
+        }
+        .slider-count-sep {
+            margin: 0 0.15rem;
+            opacity: 0.5;
+        }
+        @keyframes sliderNavFadeIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(12px); }
+            to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        @keyframes sliderArrowBounce {
+            0%, 100% { transform: translateY(0); }
+            50%      { transform: translateY(7px); }
+        }
+        @keyframes sliderChevronPulse {
+            0%, 100% { opacity: 0.3; }
+            50%      { opacity: 1; }
+        }
+        @keyframes sliderRingPulse {
+            0%, 100% { opacity: 0.25; transform: translate(-50%, -58%) scale(0.92); }
+            50%      { opacity: 0.55; transform: translate(-50%, -58%) scale(1.05); }
         }
         .slider-arrow {
             position: absolute;
@@ -1225,9 +1303,13 @@
             .slider-arrow.prev { left: 5px; }
             .slider-arrow.next { right: 5px; }
 
-            /* Dots */
-            .slider-dot { width: 6px; height: 6px; }
-            .slider-nav { bottom: 6px; gap: 4px; }
+            /* Panah bawah slider */
+            .slider-scroll-nav { bottom: 8px; padding: 0.25rem 0.75rem; }
+            .slider-chevrons { width: 20px; height: 18px; }
+            .slider-chevron { width: 9px; height: 9px; margin-left: -4.5px; border-width: 1.5px; }
+            .slider-chevron:nth-child(2) { top: 5px; }
+            .slider-scroll-nav::after { width: 34px; height: 34px; }
+            .slider-slide-count { font-size: 0.58rem; }
 
             /* Hero default (fallback tanpa slider) */
             .hero-default {
@@ -1700,11 +1782,15 @@
                         <i class="fas fa-chevron-right"></i>
                     </button>
                     
-                    <div class="slider-nav">
-                        <% slider.forEach((slide, index) => { %>
-                            <div class="slider-dot <%= index === 0 ? 'active' : '' %>" onclick="goToSlide(<%= index %>)"></div>
-                        <% }); %>
-                    </div>
+                    <button class="slider-scroll-nav" onclick="nextSlide()" aria-label="Slide berikutnya" title="Slide berikutnya">
+                        <div class="slider-chevrons" aria-hidden="true">
+                            <span class="slider-chevron"></span>
+                            <span class="slider-chevron"></span>
+                        </div>
+                        <span class="slider-slide-count">
+                            <b id="sliderCurrentNum">1</b><span class="slider-count-sep">/</span><%= slider.length %>
+                        </span>
+                    </button>
                 <% } %>
             </div>
         <% } else { %>
@@ -3027,7 +3113,7 @@
         // Slider functionality
         let currentSlide = 0;
         const slides = document.querySelectorAll('.hero-slide');
-        const dots = document.querySelectorAll('.slider-dot');
+        const sliderCounter = document.getElementById('sliderCurrentNum');
         const totalSlides = slides.length;
         
         function restartSlideAnimations(slide) {
@@ -3040,17 +3126,14 @@
         }
 
         function showSlide(index) {
-            // Hide all slides
             slides.forEach(slide => slide.classList.remove('active'));
-            dots.forEach(dot => dot.classList.remove('active'));
             
-            // Show current slide
             if (slides[index]) {
                 slides[index].classList.add('active');
                 restartSlideAnimations(slides[index]);
             }
-            if (dots[index]) {
-                dots[index].classList.add('active');
+            if (sliderCounter) {
+                sliderCounter.textContent = index + 1;
             }
         }
         
