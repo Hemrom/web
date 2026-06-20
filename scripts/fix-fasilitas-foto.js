@@ -25,22 +25,73 @@ async function run() {
   const diskFiles = new Set(fs.readdirSync(UPLOADS));
   console.log(`📁 Total file di disk: ${diskFiles.size}\n`);
 
-  // ── Cek semua tabel yang punya kolom gambar ──────────────────────────────
+  // ── Semua tabel yang punya kolom gambar/foto ──────────────────────────────
   const TABLES = [
-    { table: 'fasilitas_foto', col: 'gambar', label: 'Foto Fasilitas' },
-    { table: 'fasilitas',      col: 'gambar', label: 'Cover Fasilitas' },
-    { table: 'galeri',         col: 'gambar', label: 'Galeri' },
-    { table: 'guru',           col: 'foto',   label: 'Foto Guru' },
-    { table: 'siswa',          col: 'foto',   label: 'Foto Siswa' },
-    { table: 'berita',         col: 'gambar', label: 'Gambar Berita' },
-    { table: 'artikel',        col: 'gambar', label: 'Gambar Artikel' },
-    { table: 'agenda',         col: 'gambar', label: 'Gambar Agenda' },
-    { table: 'slider',         col: 'gambar', label: 'Slider' },
-    { table: 'jurusan',        col: 'gambar', label: 'Gambar Jurusan' },
-    { table: 'alumni',         col: 'foto',   label: 'Foto Alumni' },
-    { table: 'profil_konten',  col: 'foto',   label: 'Foto Profil' },
-    { table: 'prestasi',       col: 'gambar', label: 'Gambar Prestasi' },
-    { table: 'halaman',        col: 'gambar', label: 'Gambar Halaman' },
+    { table: 'fasilitas_foto',       col: 'gambar', label: 'Foto Fasilitas' },
+    { table: 'fasilitas',            col: 'gambar', label: 'Cover Fasilitas' },
+    { table: 'galeri',               col: 'gambar', label: 'Galeri' },
+    { table: 'guru',                 col: 'foto',   label: 'Foto Guru' },
+    { table: 'siswa',                col: 'foto',   label: 'Foto Siswa' },
+    { table: 'berita',               col: 'gambar', label: 'Gambar Berita' },
+    { table: 'artikel',              col: 'gambar', label: 'Gambar Artikel' },
+    { table: 'agenda',               col: 'gambar', label: 'Gambar Agenda' },
+    { table: 'slider',               col: 'gambar', label: 'Slider' },
+    { table: 'jurusan',              col: 'gambar', label: 'Gambar Jurusan' },
+    { table: 'alumni',               col: 'foto',   label: 'Foto Alumni' },
+    { table: 'profil_konten',        col: 'foto',   label: 'Foto Profil' },
+    { table: 'prestasi',             col: 'gambar', label: 'Gambar Prestasi' },
+    { table: 'halaman',              col: 'gambar', label: 'Gambar Halaman' },
+    { table: 'link_terkait',         col: 'logo',   label: 'Logo Link Terkait' },
+    // BKK
+    { table: 'bkk_lowongan',         col: 'gambar', label: 'Gambar BKK' },
+    // OSIS
+    { table: 'osis_kegiatan',        col: 'gambar', label: 'Gambar OSIS Kegiatan' },
+    { table: 'osis_berita',          col: 'gambar', label: 'Gambar OSIS Berita' },
+    { table: 'osis_galeri',          col: 'gambar', label: 'Galeri OSIS' },
+    // Pramuka
+    { table: 'pramuka_kegiatan',     col: 'gambar', label: 'Gambar Pramuka Kegiatan' },
+    { table: 'pramuka_berita',       col: 'gambar', label: 'Gambar Pramuka Berita' },
+    { table: 'pramuka_galeri',       col: 'gambar', label: 'Galeri Pramuka' },
+    // Olahraga
+    { table: 'olahraga_kegiatan',    col: 'gambar', label: 'Gambar Olahraga Kegiatan' },
+    { table: 'olahraga_berita',      col: 'gambar', label: 'Gambar Olahraga Berita' },
+    { table: 'olahraga_galeri',      col: 'gambar', label: 'Galeri Olahraga' },
+    // Paskibraka
+    { table: 'paskibraka_kegiatan',  col: 'gambar', label: 'Gambar Paskibraka Kegiatan' },
+    { table: 'paskibraka_berita',    col: 'gambar', label: 'Gambar Paskibraka Berita' },
+    { table: 'paskibraka_galeri',    col: 'gambar', label: 'Galeri Paskibraka' },
+    // Seni
+    { table: 'seni_kegiatan',        col: 'gambar', label: 'Gambar Seni Kegiatan' },
+    { table: 'seni_berita',          col: 'gambar', label: 'Gambar Seni Berita' },
+    { table: 'seni_galeri',          col: 'gambar', label: 'Galeri Seni' },
+    // Bahasa Asing
+    { table: 'bahasa_asing_kegiatan',col: 'gambar', label: 'Gambar B.Asing Kegiatan' },
+    { table: 'bahasa_asing_berita',  col: 'gambar', label: 'Gambar B.Asing Berita' },
+    { table: 'bahasa_asing_galeri',  col: 'gambar', label: 'Galeri B.Asing' },
+    // Rohis
+    { table: 'rohis_kegiatan',       col: 'gambar', label: 'Gambar Rohis Kegiatan' },
+    { table: 'rohis_berita',         col: 'gambar', label: 'Gambar Rohis Berita' },
+    { table: 'rohis_galeri',         col: 'gambar', label: 'Galeri Rohis' },
+    // PMR
+    { table: 'pmr_kegiatan',         col: 'gambar', label: 'Gambar PMR Kegiatan' },
+    { table: 'pmr_berita',           col: 'gambar', label: 'Gambar PMR Berita' },
+    { table: 'pmr_galeri',           col: 'gambar', label: 'Galeri PMR' },
+    // PIK-R
+    { table: 'pikr_kegiatan',        col: 'gambar', label: 'Gambar PIK-R Kegiatan' },
+    { table: 'pikr_berita',          col: 'gambar', label: 'Gambar PIK-R Berita' },
+    { table: 'pikr_galeri',          col: 'gambar', label: 'Galeri PIK-R' },
+    // Pecinta Alam
+    { table: 'pecinta_alam_kegiatan',col: 'gambar', label: 'Gambar PA Kegiatan' },
+    { table: 'pecinta_alam_berita',  col: 'gambar', label: 'Gambar PA Berita' },
+    { table: 'pecinta_alam_galeri',  col: 'gambar', label: 'Galeri PA' },
+    // Pencak Silat
+    { table: 'pencak_silat_kegiatan',col: 'gambar', label: 'Gambar Silat Kegiatan' },
+    { table: 'pencak_silat_berita',  col: 'gambar', label: 'Gambar Silat Berita' },
+    { table: 'pencak_silat_galeri',  col: 'gambar', label: 'Galeri Silat' },
+    // Jurusan
+    { table: 'jurusan_berita',       col: 'gambar', label: 'Gambar Berita Jurusan' },
+    { table: 'jurusan_galeri',       col: 'gambar', label: 'Galeri Jurusan' },
+    { table: 'jurusan_fasilitas',    col: 'gambar', label: 'Gambar Fasilitas Jurusan' },
   ];
 
   let totalFixed = 0, totalBroken = 0;
