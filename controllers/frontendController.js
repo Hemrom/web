@@ -70,6 +70,33 @@ const getProfilKonten = async (tipe) => {
   return result;
 };
 
+async function getAlumniHome() {
+  const cached = cache.get('home_alumni');
+  if (cached) return cached;
+  const [ids] = await db.query("SELECT id FROM alumni WHERE status='disetujui'");
+  if (!ids.length) {
+    cache.set('home_alumni', [], 300);
+    return [];
+  }
+  const picked = ids.sort(() => Math.random() - 0.5).slice(0, 6).map(r => r.id);
+  const [rows] = await db.query(
+    `SELECT id,nama,tahun_lulus,jurusan,pekerjaan,perusahaan,foto,cerita FROM alumni WHERE id IN (${picked.map(() => '?').join(',')})`,
+    picked
+  );
+  const order = new Map(picked.map((id, i) => [id, i]));
+  rows.sort((a, b) => order.get(a.id) - order.get(b.id));
+  cache.set('home_alumni', rows, 300);
+  return rows;
+}
+
+async function getHomeSlider() {
+  const cached = cache.get('home_slider');
+  if (cached) return cached;
+  const [rows] = await db.query('SELECT * FROM slider WHERE status = "aktif" ORDER BY urutan ASC, created_at DESC');
+  cache.set('home_slider', rows, 120);
+  return rows;
+}
+
 const { getSettings } = require('./kontrolWebsiteController');
 
 // ── Frontend Controllers ──────────────────────────────────────────────────────
@@ -82,12 +109,12 @@ exports.home = async (req, res) => {
       profil,
       [beritaTerbaru],
       [galeri],
-      [slider],
+      slider,
       [jurusan],
       menuItems,
       mediaSosialFooter,
       [linkTerkait],
-      [alumniHome],
+      alumniHome,
       [fasilitasHome],
       [artikelHome],
       [fileDownloadHome],
@@ -99,12 +126,12 @@ exports.home = async (req, res) => {
       getProfilSekolah(),
       db.query('SELECT id, judul, slug, gambar, konten, kategori, created_at FROM berita WHERE status = "published" ORDER BY created_at DESC LIMIT 6'),
       db.query('SELECT judul, MIN(gambar) as gambar, COUNT(*) as jumlah FROM galeri GROUP BY judul ORDER BY MAX(created_at) DESC LIMIT 5'),
-      db.query('SELECT * FROM slider WHERE status = "aktif" ORDER BY urutan ASC, created_at DESC'),
+      getHomeSlider(),
       db.query("SELECT id, kode, nama, deskripsi, icon, warna, warna_badge, warna_teks_badge FROM jurusan WHERE status = 'aktif' ORDER BY kode ASC"),
       getMenuItems(),
       getMediaSosialFooter(),
       db.query("SELECT * FROM link_terkait WHERE status = 'aktif' ORDER BY urutan ASC, created_at DESC"),
-      db.query("SELECT id,nama,tahun_lulus,jurusan,pekerjaan,perusahaan,foto,cerita FROM alumni WHERE status='disetujui' ORDER BY RAND() LIMIT 6"),
+      getAlumniHome(),
       db.query("SELECT f.*, (SELECT gambar FROM fasilitas_foto WHERE fasilitas_id=f.id ORDER BY urutan ASC, id ASC LIMIT 1) as cover FROM fasilitas f WHERE f.status='published' ORDER BY f.nama ASC LIMIT 8"),
       db.query('SELECT id, judul, slug, gambar, ringkasan, konten, kategori, penulis_nama, created_at FROM artikel WHERE status = "published" AND tampil_home = 1 ORDER BY created_at DESC LIMIT 4'),
       db.query('SELECT id, judul, tipe_file, ukuran_file, kategori, jumlah_download, created_at FROM file_download WHERE status = "aktif" AND tampil_home = 1 ORDER BY created_at DESC LIMIT 6'),

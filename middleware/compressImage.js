@@ -2,19 +2,40 @@ const sharp = require('sharp');
 const path = require('path');
 const fs = require('fs');
 
+const PROFILES = {
+  hero: { maxWidth: 1920, maxHeight: 860, quality: 80 },
+  large: { maxWidth: 1400, maxHeight: 1050, quality: 78 },
+  portrait: { maxWidth: 800, maxHeight: 1000, quality: 80 },
+  thumb: { maxWidth: 600, maxHeight: 600, quality: 76 },
+  default: { maxWidth: 1200, maxHeight: 900, quality: 75 }
+};
+
+function getCompressProfile(req) {
+  const url = `${req.originalUrl || ''}${req.baseUrl || ''}${req.path || ''}`.toLowerCase();
+  if (url.includes('/slider')) return 'hero';
+  if (url.includes('/galeri') || url.includes('/fasilitas') || url.includes('/berita') ||
+      url.includes('/artikel') || url.includes('/agenda') || url.includes('/prestasi') ||
+      url.includes('/bkk') || url.includes('/halaman') || url.includes('/jurusan')) return 'large';
+  if (url.includes('/guru') || url.includes('/alumni') || url.includes('/siswa') ||
+      url.includes('/kepsek') || url.includes('/profil')) return 'portrait';
+  if (url.includes('/link-terkait') || url.includes('/media-sosial')) return 'thumb';
+  return 'default';
+}
+
 /**
  * Kompres gambar setelah upload multer selesai.
- * Mendukung req.file (single) dan req.files (array atau object fields).
- * SVG tidak dikompres karena sudah vector.
+ * Output WebP (lebih ringan) kecuali SVG/GIF atau PNG transparan.
  */
 const compressImage = async (req, res, next) => {
   try {
     const files = getUploadedFiles(req);
     if (!files.length) return next();
 
+    const profile = getCompressProfile(req);
     const failed = [];
-    await Promise.all(files.map(async file => {
-      const ok = await compressFile(file);
+
+    await Promise.all(files.map(async (file) => {
+      const ok = await compressFile(file, profile);
       if (!ok) failed.push(file.originalname);
     }));
 
@@ -46,39 +67,45 @@ function getUploadedFiles(req) {
   return Object.values(req.files).flat();
 }
 
-async function compressFile(file) {
+async function compressFile(file, profileName) {
   const ext = path.extname(file.originalname).toLowerCase();
   if (ext === '.svg' || ext === '.gif') return true;
 
+  const cfg = PROFILES[profileName] || PROFILES.default;
   const filePath = file.path;
   const isHeic = ext === '.heic' || ext === '.heif';
-  const outPath = isHeic ? filePath.replace(/\.(heic|heif)$/i, '.jpg') : filePath + '.tmp';
+  const baseNoExt = filePath.replace(/\.[^.]+$/i, '');
+  const tmpPath = `${baseNoExt}.opt.tmp`;
 
   try {
-    const sharpInstance = sharp(filePath).rotate();
+    const meta = await sharp(filePath, { failOn: 'none' }).rotate().metadata();
+    const keepPng = ext === '.png' && meta.hasAlpha;
 
-    if (ext === '.png' && !isHeic) {
-      await sharpInstance
-        .resize({ width: 1200, height: 900, fit: 'inside', withoutEnlargement: true })
-        .png({ quality: 75, compressionLevel: 9 })
-        .toFile(outPath);
+    if (keepPng) {
+      await sharp(filePath).rotate()
+        .resize({ width: cfg.maxWidth, height: cfg.maxHeight, fit: 'inside', withoutEnlargement: true })
+        .png({ quality: Math.min(cfg.quality, 80), compressionLevel: 9, palette: true })
+        .toFile(tmpPath);
+      fs.renameSync(tmpPath, filePath);
     } else {
-      await sharpInstance
-        .resize({ width: 1200, height: 900, fit: 'inside', withoutEnlargement: true })
-        .jpeg({ quality: 75, progressive: true, mozjpeg: true })
-        .toFile(outPath);
+      const webpPath = `${baseNoExt}.webp`;
+      await sharp(filePath).rotate()
+        .resize({ width: cfg.maxWidth, height: cfg.maxHeight, fit: 'inside', withoutEnlargement: true })
+        .webp({ quality: cfg.quality, effort: 4 })
+        .toFile(tmpPath);
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      fs.renameSync(tmpPath, webpPath);
+      file.filename = path.basename(webpPath);
+      file.path = webpPath;
     }
 
-    if (isHeic) {
-      fs.unlinkSync(filePath);
-      file.filename = path.basename(outPath);
-      file.path = outPath;
-    } else {
-      fs.renameSync(outPath, filePath);
+    if (isHeic && keepPng) {
+      file.filename = path.basename(filePath);
     }
+
     return true;
   } catch (err) {
-    if (fs.existsSync(outPath)) fs.unlinkSync(outPath);
+    if (fs.existsSync(tmpPath)) fs.unlinkSync(tmpPath);
     if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
     console.error('Gagal kompres gambar:', file.filename, err.message);
     return false;

@@ -1,4 +1,5 @@
 const db = require('../config/database');
+const cache = require('../utils/cache');
 const multer = require('multer');
 const path = require('path');
 const compressImage = require('../middleware/compressImage');
@@ -90,6 +91,7 @@ exports.create = (req, res) => {
         [judul, subjudul, deskripsi, gambar, link_url, link_text, posisi, animasi, urutan || 0, status]
       );
       
+      cache.del('home_slider');
       res.redirect('/admin/slider');
     } catch (error) {
       console.error(error);
@@ -142,6 +144,7 @@ exports.update = (req, res) => {
         );
       }
       
+      cache.del('home_slider');
       res.redirect('/admin/slider');
     } catch (error) {
       console.error(error);
@@ -153,6 +156,7 @@ exports.update = (req, res) => {
 exports.delete = async (req, res) => {
   try {
     await db.query('DELETE FROM slider WHERE id = ?', [req.params.id]);
+    cache.del('home_slider');
     res.redirect('/admin/slider');
   } catch (error) {
     console.error(error);

@@ -35,7 +35,7 @@ app.use(xssSanitize);
 const staticOpts = { maxAge: '7d', etag: true, lastModified: true };
 app.use(express.static('public', staticOpts));
 app.use('/assets', express.static('assets', staticOpts));
-app.use('/uploads', express.static('uploads', { maxAge: '1d', etag: true }));
+app.use('/uploads', express.static('uploads', { maxAge: '30d', etag: true, immutable: false }));
 
 app.use(session({
   secret: process.env.SESSION_SECRET || 'ganti-dengan-secret-panjang-acak',

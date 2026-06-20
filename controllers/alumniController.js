@@ -5,6 +5,8 @@ const cache = require('../utils/cache');
 
 const upload = createUpload('alumni').single('foto');
 
+const clearHomeAlumniCache = () => cache.del('home_alumni');
+
 const getCommonData = async () => {
   const { getMenuItems } = require('./frontendController');
   const cached = cache.get('media_sosial_footer');
@@ -119,21 +121,25 @@ exports.adminUpdate = (req, res) => {
     const foto = req.file ? req.file.filename : (rows[0]?.foto || null);
     await db.query('UPDATE alumni SET nama=?,nisn=?,tahun_lulus=?,jurusan=?,pekerjaan=?,perusahaan=?,kota=?,foto=?,email=?,telepon=?,instagram=?,tiktok=?,cerita=?,status=? WHERE id=?',
       [nama, nisn||null, tahun_lulus, jurusan||null, pekerjaan||null, perusahaan||null, kota||null, foto, email||null, telepon||null, instagram||null, tiktok||null, cerita||null, status, req.params.id]);
+    clearHomeAlumniCache();
     res.redirect('/admin/alumni?success=2');
   });
 };
 
 exports.adminSetujui = async (req, res) => {
   await db.query("UPDATE alumni SET status='disetujui' WHERE id=?", [req.params.id]);
+  clearHomeAlumniCache();
   res.redirect('/admin/alumni?success=3');
 };
 
 exports.adminTolak = async (req, res) => {
   await db.query("UPDATE alumni SET status='ditolak' WHERE id=?", [req.params.id]);
+  clearHomeAlumniCache();
   res.redirect('/admin/alumni?success=4');
 };
 
 exports.adminDelete = async (req, res) => {
   await db.query('DELETE FROM alumni WHERE id=?', [req.params.id]);
+  clearHomeAlumniCache();
   res.redirect('/admin/alumni?success=5');
 };

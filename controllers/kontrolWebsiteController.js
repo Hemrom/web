@@ -1,13 +1,23 @@
 const db = require('../config/database');
+const cache = require('../utils/cache');
+
+const invalidateSettingsCache = () => {
+  cache.del('website_settings');
+  cache.del('maintenance_mode');
+};
 
 const getSettings = async () => {
+  const cached = cache.get('website_settings');
+  if (cached) return cached;
   const [rows] = await db.query('SELECT setting_key, setting_value FROM website_settings');
   const s = {};
   rows.forEach(r => { s[r.setting_key] = r.setting_value; });
+  cache.set('website_settings', s, 300);
   return s;
 };
 
 exports.getSettings = getSettings;
+exports.invalidateSettingsCache = invalidateSettingsCache;
 
 exports.index = async (req, res) => {
   const activeTab = req.query.tab || 'halaman';
@@ -52,6 +62,7 @@ exports.saveTampilan = async (req, res) => {
         );
       }
     }
+    invalidateSettingsCache();
     res.redirect('/admin/kontrol-website?tab=tampilan&success=1');
   } catch (err) {
     console.error(err);
@@ -69,6 +80,7 @@ exports.saveEditorial = async (req, res) => {
         [key, value, value]
       );
     }
+    invalidateSettingsCache();
     res.redirect('/admin/kontrol-website?tab=editorial&success=1');
   } catch (err) {
     console.error(err);
@@ -85,6 +97,7 @@ exports.toggleMaintenance = async (req, res) => {
       'INSERT INTO website_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?',
       ['maintenance_mode', newVal, newVal]
     );
+    invalidateSettingsCache();
     res.redirect('/admin/kontrol-website?tab=tampilan&success=1');
   } catch (err) {
     console.error(err);
