@@ -5,11 +5,13 @@ const hpp = require('hpp');
 // Rate limiter umum
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 500,
+  max: 1500,
   message: 'Terlalu banyak request, coba lagi nanti.',
   standardHeaders: true,
   legacyHeaders: false,
   skip: (req) => {
+    // Skip static assets — tidak perlu di-rate-limit
+    if (/^\/(assets|uploads|public)\//.test(req.path)) return true;
     const ip = req.ip || req.connection?.remoteAddress || '';
     return ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
   }

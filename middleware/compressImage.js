@@ -91,7 +91,7 @@ async function compressFile(file, profileName) {
       const webpPath = `${baseNoExt}.webp`;
       await sharp(filePath).rotate()
         .resize({ width: cfg.maxWidth, height: cfg.maxHeight, fit: 'inside', withoutEnlargement: true })
-        .webp({ quality: cfg.quality, effort: 4 })
+        .webp({ quality: cfg.quality, effort: 2 })
         .toFile(tmpPath);
       if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
       fs.renameSync(tmpPath, webpPath);

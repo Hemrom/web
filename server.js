@@ -23,7 +23,6 @@ const { csrfMiddleware } = require('./middleware/csrf');
 
 app.use(helmetConfig);
 app.use(hpp());
-app.use(generalLimiter);
 app.use(secureHeaders);
 app.disable('x-powered-by');
 
@@ -31,11 +30,15 @@ app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ extended: true, limit: '5mb' }));
 app.use(xssSanitize);
 
-// Static files dengan cache headers
+// Static files dengan cache headers — letakkan SEBELUM rate limiter
+// agar request asset (CSS/JS/gambar) tidak dihitung ke kuota
 const staticOpts = { maxAge: '7d', etag: true, lastModified: true };
 app.use(express.static('public', staticOpts));
 app.use('/assets', express.static('assets', staticOpts));
 app.use('/uploads', express.static('uploads', { maxAge: '30d', etag: true, immutable: false }));
+
+// Rate limiter hanya untuk request dinamis (bukan static assets)
+app.use(generalLimiter);
 
 app.use(session({
   secret: process.env.SESSION_SECRET || 'ganti-dengan-secret-panjang-acak',
