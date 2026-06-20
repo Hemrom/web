@@ -385,7 +385,7 @@
             
             <div class="article-container">
                 <% if (berita.gambar) { %>
-                    <img src="/uploads/<%= berita.gambar %>" alt="<%= berita.judul %>" class="article-image">
+                    <img src="/uploads/<%= berita.gambar %>" alt="<%= berita.judul %>" class="article-image" loading="eager" fetchpriority="high" decoding="async" width="1200" height="600">
                 <% } %>
                 <div class="article-content">
                     <div class="article-meta">
@@ -422,7 +422,7 @@
                         <div class="col-lg-4 col-md-6 mb-4">
                             <a href="/berita/<%= item.slug %>" class="related-card d-block">
                                 <% if (item.gambar) { %>
-                                    <img src="/uploads/<%= item.gambar %>" alt="<%= item.judul %>" class="related-image">
+                                    <img src="/uploads/<%= item.gambar %>" alt="<%= item.judul %>" class="related-image" loading="lazy" decoding="async" width="400" height="200">
                                 <% } %>
                                 <div class="related-content">
                                     <h3 class="related-title"><%= item.judul %></h3>

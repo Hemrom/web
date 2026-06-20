@@ -116,7 +116,7 @@
                 <div class="col-lg-4 col-md-6 bkk-item" data-kat="<%= kat %>">
                     <div class="bkk-card">
                         <% if (l.gambar) { %>
-                        <img src="/uploads/<%= l.gambar %>" class="bkk-img" alt="<%= l.judul %>">
+                        <img src="/uploads/<%= l.gambar %>" class="bkk-img" alt="<%= l.judul %>" loading="lazy" decoding="async" width="400" height="240">
                         <% } else { %>
                         <div class="bkk-placeholder"><i class="fas fa-building"></i></div>
                         <% } %>

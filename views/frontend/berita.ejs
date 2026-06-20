@@ -155,9 +155,18 @@
         }
         .news-image {
             height: 250px;
-            background-size: cover;
-            background-position: center;
             position: relative;
+            overflow: hidden;
+        }
+        .news-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+        .news-card:hover .news-image img {
+            transform: scale(1.05);
         }
         .news-badge {
             position: absolute;
@@ -321,7 +330,8 @@
                     <% berita.forEach(b => { %>
                         <div class="col-lg-4 col-md-6">
                             <a href="/berita/<%= b.slug %>" class="news-card" style="text-decoration:none;color:inherit;display:block;">
-                                <div class="news-image" style="background-image: url('<%= b.gambar ? '/uploads/' + b.gambar : '/assets/img/undraw_posting_photo.svg' %>')">
+                                <div class="news-image">
+                                    <img src="<%= b.gambar ? '/uploads/' + b.gambar : '/assets/img/undraw_posting_photo.svg' %>" alt="<%= b.judul %>" loading="lazy" decoding="async" width="400" height="250">
                                     <div class="news-badge"><%= b.kategori %></div>
                                 </div>
                                 <div class="news-content">

@@ -56,7 +56,7 @@
                 <div class="col-lg-4 col-md-6">
                     <div class="prestasi-card">
                         <% if (p.gambar) { %>
-                        <img src="/uploads/<%= p.gambar %>" class="prestasi-img" alt="<%= p.judul %>">
+                        <img src="/uploads/<%= p.gambar %>" class="prestasi-img" alt="<%= p.judul %>" loading="lazy" decoding="async" width="400" height="200">
                         <% } else { %>
                         <div class="prestasi-img-placeholder"><i class="fas fa-trophy"></i></div>
                         <% } %>

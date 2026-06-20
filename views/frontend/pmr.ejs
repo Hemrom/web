@@ -142,7 +142,7 @@
                 <div class="col-lg-4 col-md-6">
                     <a href="/pmr/<%= k.slug %>" class="kegiatan-card">
                         <% if (k.gambar) { %>
-                        <img src="/uploads/<%= k.gambar %>" class="kegiatan-img" alt="<%= k.judul %>" onerror="this.style.display='none'">
+                        <img src="/uploads/<%= k.gambar %>" class="kegiatan-img" alt="<%= k.judul %>" loading="lazy" decoding="async" onerror="this.style.display='none'">
                         <% } else { %>
                         <div class="kegiatan-placeholder"><i class="fas fa-first-aid"></i></div>
                         <% } %>
@@ -178,7 +178,7 @@
                     <% berita.forEach(b => { %>
                     <a href="/pmr/berita/<%= b.slug %>" class="berita-item" style="text-decoration:none;color:inherit;">
                         <% if (b.gambar) { %>
-                        <img src="/uploads/<%= b.gambar %>" class="berita-thumb" alt="<%= b.judul %>" onerror="this.style.display='none'">
+                        <img src="/uploads/<%= b.gambar %>" class="berita-thumb" alt="<%= b.judul %>" loading="lazy" decoding="async" onerror="this.style.display='none'">
                         <% } else { %>
                         <div class="berita-thumb-placeholder"><i class="fas fa-newspaper"></i></div>
                         <% } %>
@@ -208,7 +208,7 @@
                 <% galeri.forEach((g, i) => { %>
                 <div class="galeri-item<% if(i===0){%> g-tall g-wide<%}else if(i===3){%> g-wide<%}%>">
                     <a href="/uploads/<%= g.gambar %>" data-lightbox="pmr-galeri" data-title="<%= g.judul %>">
-                        <img src="/uploads/<%= g.gambar %>" alt="<%= g.judul %>" onerror="this.parentElement.parentElement.style.display='none'">
+                        <img src="/uploads/<%= g.gambar %>" alt="<%= g.judul %>" loading="lazy" decoding="async" onerror="this.parentElement.parentElement.style.display='none'">
                         <div class="galeri-overlay"><span class="galeri-caption"><i class="fas fa-search-plus me-1"></i><%= g.judul %></span></div>
                     </a>
                 </div>

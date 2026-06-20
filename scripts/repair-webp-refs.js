@@ -25,12 +25,14 @@ const TARGETS = [
   { table: 'slider',         column: 'gambar' },
   { table: 'jurusan',        column: 'gambar' },
   { table: 'fasilitas',      column: 'gambar' },
+  { table: 'fasilitas_foto', column: 'gambar' },
   { table: 'alumni',         column: 'foto'   },
   { table: 'profil_konten',  column: 'foto'   },
   { table: 'link_terkait',   column: 'gambar' },
   { table: 'media_sosial',   column: 'icon'   },
   { table: 'halaman',        column: 'gambar' },
   { table: 'file_download',  column: 'thumbnail' },
+  { table: 'prestasi',       column: 'gambar' },
 ];
 
 // Ekstensi yang mungkin sudah dikonversi ke .webp

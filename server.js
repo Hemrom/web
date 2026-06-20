@@ -56,6 +56,11 @@ app.use(session({
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+// EJS view cache — aktifkan di production agar template tidak di-parse ulang tiap request
+if (process.env.NODE_ENV === 'production') {
+  app.set('view cache', true);
+}
+
 // CSRF token tersedia di semua views
 app.use(csrfMiddleware);
 

@@ -1274,8 +1274,9 @@
                         <% if(f.gambar){ %>
                         <!-- Foto asli dari upload -->
                         <div class="feature-img">
-                            <img src="/uploads/<%= f.gambar %>" alt="<%= f.nama %>"
+                        <img src="/uploads/<%= f.gambar %>" alt="<%= f.nama %>"
                                  style="width:100%;height:160px;object-fit:cover;display:block;"
+                                 loading="lazy" decoding="async" width="400" height="160"
                                  onerror="this.parentElement.innerHTML='<div style=\'height:160px;background:var(--grad-light);display:flex;align-items:center;justify-content:center;\'><i class=\'<%= f.icon %>\' style=\'font-size:3rem;color:var(--accent);opacity:.5\'></i></div>'">
                         </div>
                         <% } else if(f.svg){ %>
@@ -1344,7 +1345,7 @@
                 <div class="col-6 col-md-4 col-lg-3">
                     <div class="guru-card-new reveal" style="transition-delay:<%= idx * 0.07 %>s">
                         <% if (g.foto) { %>
-                        <img src="/uploads/<%= g.foto %>" alt="<%= g.nama %>" class="guru-avatar">
+                        <img src="/uploads/<%= g.foto %>" alt="<%= g.nama %>" class="guru-avatar" loading="lazy" decoding="async" width="200" height="200">
                         <% } else { %>
                         <div class="guru-avatar-wrap"><i class="fas fa-user"></i></div>
                         <% } %>
@@ -1387,7 +1388,7 @@
             <div class="galeri-grid reveal" id="galeriGrid">
                 <% galeriPreview.forEach(function(g){ %>
                 <a href="/uploads/<%= g.gambar %>" data-lightbox="galeri-jurusan" data-title="<%= g.judul %>" class="galeri-item-new">
-                    <img src="/uploads/<%= g.gambar %>" alt="<%= g.judul %>" onerror="this.closest('.galeri-item-new').style.display='none'">
+                    <img src="/uploads/<%= g.gambar %>" alt="<%= g.judul %>" loading="lazy" decoding="async" onerror="this.closest('.galeri-item-new').style.display='none'">
                     <div class="galeri-overlay">
                         <span class="galeri-caption"><i class="fas fa-expand me-1"></i><%= g.judul %></span>
                     </div>
@@ -1433,7 +1434,7 @@
                 <div class="col-md-6 col-lg-4">
                     <a href="/jurusan/<%= jurusan.kode.toLowerCase() %>/berita/<%= b.slug %>" class="berita-card d-block reveal" style="transition-delay:<%= idx * 0.1 %>s;color:inherit;">
                         <% if (b.gambar) { %>
-                        <img src="/uploads/<%= b.gambar %>" class="berita-img" alt="<%= b.judul %>" onerror="this.style.display='none'">
+                        <img src="/uploads/<%= b.gambar %>" class="berita-img" alt="<%= b.judul %>" loading="lazy" decoding="async" onerror="this.style.display='none'">
                         <% } else { %>
                         <div class="berita-img-placeholder"><i class="fas fa-newspaper"></i></div>
                         <% } %>

@@ -140,7 +140,7 @@
                                     <% fotos.forEach((foto, fotoIdx) => { %>
                                     <div class="card-slide">
                                         <a class="card-slide-clickable" onclick="openLightbox(<%= fi %>, <%= fotoIdx %>)" href="javascript:void(0)" aria-label="Lihat foto <%= f.nama %>">
-                                            <img src="/uploads/<%= foto.gambar %>" alt="<%= f.nama %>">
+                                            <img src="/uploads/<%= foto.gambar %>" alt="<%= f.nama %>" loading="lazy" decoding="async" width="400" height="220">
                                         </a>
                                         <div class="card-slide-hover-overlay">
                                             <i class="fas fa-search-plus"></i>

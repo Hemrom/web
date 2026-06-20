@@ -345,7 +345,7 @@
                             <a href="/guru/<%= teacher.id %>" class="teacher-card-link" style="text-decoration:none;color:inherit;display:block;">
                             <div class="teacher-card">
                                 <% if (teacher.foto) { %>
-                                    <img src="/uploads/<%= teacher.foto %>" alt="<%= teacher.nama %>" class="teacher-photo">
+                                    <img src="/uploads/<%= teacher.foto %>" alt="<%= teacher.nama %>" class="teacher-photo" loading="lazy" decoding="async" width="300" height="320">
                                 <% } else { %>
                                     <div class="teacher-photo-placeholder">
                                         <i class="fas fa-user"></i>
