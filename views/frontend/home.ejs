@@ -53,10 +53,10 @@
     <!-- Font Awesome (non-blocking) -->
     <link rel="preload" href="/assets/vendor/fontawesome6/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link href="/assets/vendor/fontawesome6/all.min.css" rel="stylesheet"></noscript>
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Inter font — self-hosted, tidak perlu request ke Google -->
+    <link rel="preload" href="/assets/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/assets/fonts/inter-700.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/assets/css/fonts.css">
     <!-- Dynamic Theme -->
     <link rel="stylesheet" href="/theme.css">
     

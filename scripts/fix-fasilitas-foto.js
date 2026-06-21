@@ -35,11 +35,11 @@ async function run() {
     { table: 'artikel',               col: 'gambar', label: 'Gambar Artikel' },
     { table: 'agenda',                col: 'gambar', label: 'Gambar Agenda' },
     { table: 'slider',                col: 'gambar', label: 'Slider' },
-    { table: 'jurusan',               col: 'gambar', label: 'Gambar Jurusan' },
+    { table: 'jurusan',               col: 'cover',  label: 'Gambar Jurusan' },
     { table: 'alumni',                col: 'foto',   label: 'Foto Alumni' },
     { table: 'profil_konten',         col: 'foto',   label: 'Foto Profil' },
     { table: 'prestasi',              col: 'gambar', label: 'Gambar Prestasi' },
-    { table: 'halaman',               col: 'gambar', label: 'Gambar Halaman' },
+    { table: 'halaman',               col: 'foto',   label: 'Foto Halaman' },
     { table: 'halaman_galeri',        col: 'gambar', label: 'Galeri Halaman' },
     { table: 'link_terkait',          col: 'logo',   label: 'Logo Link Terkait' },
     // BKK

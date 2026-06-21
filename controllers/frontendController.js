@@ -16,7 +16,7 @@ const getMenuItems = async () => {
       p.children = rows.filter(r => r.parent_id === p.id);
       p.children.forEach(c => { c.children = rows.filter(r => r.parent_id === c.id); });
     });
-    cache.set('menu', parents, 300); // cache 5 menit
+    cache.set('menu', parents, 1800); // cache 30 menit
     return parents;
   } catch (err) {
     console.error('Error loading menu:', err);
@@ -32,7 +32,7 @@ const getMediaSosialFooter = async () => {
   const [rows] = await db.query(
     "SELECT id, judul, platform, embed_url, thumbnail FROM media_sosial WHERE status = 'aktif' ORDER BY id DESC LIMIT 9"
   );
-  cache.set('media_sosial_footer', rows, 10); // cache 10 detik agar cepat update saat ada konten baru
+  cache.set('media_sosial_footer', rows, 60); // cache 60 detik
   return rows;
 };
 
@@ -43,7 +43,7 @@ const getProfilSekolah = async () => {
   if (cached) return cached;
   const [rows] = await db.query('SELECT * FROM profil_sekolah LIMIT 1');
   const profil = rows[0] || {};
-  cache.set('profil_sekolah', profil, 600); // cache 10 menit
+  cache.set('profil_sekolah', profil, 3600); // cache 1 jam
   return profil;
 };
 
@@ -93,7 +93,7 @@ async function getHomeSlider() {
   const cached = cache.get('home_slider');
   if (cached) return cached;
   const [rows] = await db.query('SELECT * FROM slider WHERE status = "aktif" ORDER BY urutan ASC, created_at DESC');
-  cache.set('home_slider', rows, 120);
+  cache.set('home_slider', rows, 600); // cache 10 menit
   return rows;
 }
 

@@ -14,7 +14,7 @@ app.set('trust proxy', 1);
 app.get('/healthz', (req, res) => res.status(200).send('ok'));
 
 // Compression (gzip) — harus sebelum semua middleware lain
-app.use(compression({ level: 6, threshold: 1024 }));
+app.use(compression({ level: 6, threshold: 512 }));
 
 // Security middleware
 const { generalLimiter, helmetConfig, hpp } = require('./middleware/security');
@@ -32,10 +32,10 @@ app.use(xssSanitize);
 
 // Static files dengan cache headers — letakkan SEBELUM rate limiter
 // agar request asset (CSS/JS/gambar) tidak dihitung ke kuota
-const staticOpts = { maxAge: '7d', etag: true, lastModified: true };
+const staticOpts = { maxAge: '30d', etag: true, lastModified: true };
 app.use(express.static('public', staticOpts));
 app.use('/assets', express.static('assets', staticOpts));
-app.use('/uploads', express.static('uploads', { maxAge: '30d', etag: true, immutable: false }));
+app.use('/uploads', express.static('uploads', { maxAge: '60d', etag: true, immutable: false }));
 
 // Rate limiter hanya untuk request dinamis (bukan static assets)
 app.use(generalLimiter);
