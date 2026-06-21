@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Admin Panel</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="/assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <%- include('../partials/sidebar') %>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <%- include('../partials/topbar', { user }) %>
+            <div class="container-fluid">
+
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800"><i class="fas fa-building text-primary mr-2"></i>Fasilitas Jurusan</h1>
+                    <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalTambah">
+                        <i class="fas fa-plus mr-1"></i>Tambah Fasilitas
+                    </button>
+                </div>
+
+                <% if (success==1) { %><div class="alert alert-success alert-dismissible fade show"><i class="fas fa-check mr-2"></i>Fasilitas berhasil ditambahkan.<button type="button" class="close" data-dismiss="alert">&times;</button></div><% } %>
+                <% if (success==2) { %><div class="alert alert-success alert-dismissible fade show"><i class="fas fa-check mr-2"></i>Fasilitas berhasil diperbarui.<button type="button" class="close" data-dismiss="alert">&times;</button></div><% } %>
+                <% if (success==3) { %><div class="alert alert-danger alert-dismissible fade show"><i class="fas fa-trash mr-2"></i>Fasilitas berhasil dihapus.<button type="button" class="close" data-dismiss="alert">&times;</button></div><% } %>
+                <% if (typeof errorMsg !== 'undefined' && errorMsg) { %><div class="alert alert-danger alert-dismissible fade show"><%= errorMsg %><button type="button" class="close" data-dismiss="alert">&times;</button></div><% } %>
+
+                <!-- Filter -->
+                <div class="mb-3">
+                    <a href="/admin/jurusan-fasilitas" class="btn btn-sm <%= !filterJurusan?'btn-primary':'btn-outline-secondary' %> mr-1">Semua</a>
+                    <% jurusanList.forEach(j=>{ %>
+                    <a href="/admin/jurusan-fasilitas?jurusan=<%= j.kode %>" class="btn btn-sm <%= filterJurusan===j.kode?'btn-primary':'btn-outline-secondary' %> mr-1"><%= j.kode %></a>
+                    <% }) %>
+                </div>
+
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable">
+                                <thead><tr><th>#</th><th>Jurusan</th><th>Foto</th><th>Nama Fasilitas</th><th>Icon</th><th>Deskripsi</th><th>Urutan</th><th>Aksi</th></tr></thead>
+                                <tbody>
+                                <% if (!fasilitas||fasilitas.length===0) { %>
+                                <tr><td colspan="8" class="text-center py-4 text-muted">Belum ada data fasilitas</td></tr>
+                                <% } else { fasilitas.forEach((f,i)=>{ %>
+                                <tr>
+                                    <td><%= i+1 %></td>
+                                    <td><span class="badge badge-info"><%= f.jurusan %></span></td>
+                                    <td style="width:60px;">
+                                        <% if(f.gambar){ %>
+                                        <img src="/uploads/<%= f.gambar %>" style="width:50px;height:40px;object-fit:cover;border-radius:6px;" loading="lazy">
+                                        <% } else { %>
+                                        <div style="width:50px;height:40px;background:#e9ecef;border-radius:6px;display:flex;align-items:center;justify-content:center;">
+                                            <i class="<%= f.icon || 'fas fa-building' %>" style="color:#6c757d;"></i>
+                                        </div>
+                                        <% } %>
+                                    </td>
+                                    <td><b><%= f.nama %></b></td>
+                                    <td><i class="<%= f.icon %>"></i> <code class="small"><%= f.icon %></code></td>
+                                    <td><small class="text-muted"><%= (f.deskripsi||'').substring(0,60) %><%= f.deskripsi&&f.deskripsi.length>60?'...':'' %></small></td>
+                                    <td><%= f.urutan %></td>
+                                    <td>
+                                        <a href="/admin/jurusan-fasilitas/edit/<%= f.id %>" class="btn btn-warning btn-sm" title="Edit"><i class="fas fa-edit"></i></a>
+                                        <form method="POST" action="/admin/jurusan-fasilitas/delete/<%= f.id %>" style="display:inline" onsubmit="return confirm('Hapus fasilitas ini?')">
+                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                            <button class="btn btn-danger btn-sm" title="Hapus"><i class="fas fa-trash"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <% }) } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <%- include('../partials/footer') %>
+    </div>
+</div>
+
+<!-- Modal Tambah -->
+<div class="modal fade" id="modalTambah" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="POST" action="/admin/jurusan-fasilitas/create" enctype="multipart/form-data">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-plus mr-2"></i>Tambah Fasilitas Jurusan</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label><b>Jurusan <span class="text-danger">*</span></b></label>
+                                <select name="jurusan" class="form-control" required>
+                                    <option value="">-- Pilih Jurusan --</option>
+                                    <% jurusanList.forEach(j=>{ %>
+                                    <option value="<%= j.kode %>" <%= filterJurusan===j.kode?'selected':'' %>><%= j.kode %> - <%= j.nama %></option>
+                                    <% }) %>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label><b>Nama Fasilitas <span class="text-danger">*</span></b></label>
+                                <input type="text" name="nama" class="form-control" placeholder="mis: Laboratorium Komputer" required>
+                            </div>
+                            <div class="form-group">
+                                <label><b>Icon FontAwesome</b></label>
+                                <input type="text" name="icon" class="form-control" value="fas fa-building" placeholder="fas fa-building">
+                                <small class="text-muted">Lihat icon di <a href="https://fontawesome.com/icons" target="_blank">fontawesome.com</a></small>
+                            </div>
+                            <div class="form-group">
+                                <label><b>Urutan</b></label>
+                                <input type="number" name="urutan" class="form-control" value="0" min="0">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label><b>Deskripsi</b></label>
+                                <textarea name="deskripsi" class="form-control" rows="3" placeholder="Deskripsi singkat fasilitas..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label><b>Foto Fasilitas</b></label>
+                                <input type="file" name="gambar" class="form-control-file" accept="image/*">
+                                <small class="text-muted">JPG/PNG/WebP, maks 10MB</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i>Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="/assets/js/sb-admin-2.min.js"></script>
+<script src="/assets/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="/assets/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+<script>$(document).ready(function(){$('#dataTable').DataTable({pageLength:25,order:[[1,'asc'],[6,'asc']]});});</script>
+</body>
+</html>

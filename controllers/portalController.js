@@ -1599,7 +1599,131 @@ exports.adminJurusanBeritaDelete = async (req, res) => {
   res.redirect('/admin/jurusan-berita?success=3');
 };
 
-// ── FRONTEND: Detail Berita Jurusan ──────────────────────────────────────────
+// ── ADMIN: Kelola Galeri Jurusan ──────────────────────────────────────────────
+const uploadGaleriJurusanAdmin = createUpload('jurusan-galeri', { maxFiles: 20 }).array('gambar', 20);
+
+exports.adminJurusanGaleriIndex = async (req, res) => {
+  const filterJurusan = req.query.jurusan || '';
+  const [galeri] = await db.query(
+    filterJurusan
+      ? 'SELECT * FROM jurusan_galeri WHERE jurusan=? ORDER BY jurusan, urutan ASC, created_at DESC'
+      : 'SELECT * FROM jurusan_galeri ORDER BY jurusan, urutan ASC, created_at DESC',
+    filterJurusan ? [filterJurusan] : []
+  );
+  const [jurusanList] = await db.query("SELECT kode,nama FROM jurusan WHERE status='aktif' ORDER BY kode");
+  res.render('admin/jurusan-konten/galeri', {
+    title: 'Galeri Jurusan', user: req.session,
+    galeri, jurusanList, filterJurusan,
+    success: req.query.success || null,
+    errorMsg: req.query.error ? decodeURIComponent(req.query.error) : null
+  });
+};
+
+exports.adminJurusanGaleriCreate = (req, res) => {
+  uploadGaleriJurusanAdmin(req, res, async (err) => {
+    if (err) return res.redirect('/admin/jurusan-galeri?error=' + encodeURIComponent(err.message));
+    try {
+      await compressImage(req, res, () => {});
+      if (!req.files || req.files.length === 0) return res.redirect('/admin/jurusan-galeri?error=Pilih+minimal+1+foto');
+      const { jurusan, judul, keterangan } = req.body;
+      for (let i = 0; i < req.files.length; i++) {
+        await db.query('INSERT INTO jurusan_galeri (jurusan,judul,gambar,keterangan) VALUES (?,?,?,?)',
+          [jurusan, judul || 'Galeri', req.files[i].filename, keterangan || null]);
+      }
+      res.redirect('/admin/jurusan-galeri?success=1');
+    } catch (e) {
+      console.error(e);
+      res.redirect('/admin/jurusan-galeri?error=' + encodeURIComponent(e.message));
+    }
+  });
+};
+
+exports.adminJurusanGaleriDelete = async (req, res) => {
+  const [rows] = await db.query('SELECT gambar FROM jurusan_galeri WHERE id=?', [req.params.id]);
+  if (rows.length && rows[0].gambar) {
+    const fp = `./uploads/${rows[0].gambar}`;
+    if (require('fs').existsSync(fp)) require('fs').unlinkSync(fp);
+  }
+  await db.query('DELETE FROM jurusan_galeri WHERE id=?', [req.params.id]);
+  res.redirect('/admin/jurusan-galeri?success=3');
+};
+
+// ── ADMIN: Kelola Fasilitas Jurusan ───────────────────────────────────────────
+const uploadFasilitasJurusanAdmin = createUpload('fasilitas', { maxFiles: 1 }).single('gambar');
+
+exports.adminJurusanFasilitasIndex = async (req, res) => {
+  const filterJurusan = req.query.jurusan || '';
+  const [fasilitas] = await db.query(
+    filterJurusan
+      ? 'SELECT * FROM jurusan_fasilitas WHERE jurusan=? ORDER BY jurusan, urutan ASC'
+      : 'SELECT * FROM jurusan_fasilitas ORDER BY jurusan, urutan ASC',
+    filterJurusan ? [filterJurusan] : []
+  );
+  const [jurusanList] = await db.query("SELECT kode,nama FROM jurusan WHERE status='aktif' ORDER BY kode");
+  res.render('admin/jurusan-konten/fasilitas', {
+    title: 'Fasilitas Jurusan', user: req.session,
+    fasilitas, jurusanList, filterJurusan,
+    success: req.query.success || null,
+    errorMsg: req.query.error ? decodeURIComponent(req.query.error) : null
+  });
+};
+
+exports.adminJurusanFasilitasCreate = (req, res) => {
+  uploadFasilitasJurusanAdmin(req, res, async (err) => {
+    if (err) return res.redirect('/admin/jurusan-fasilitas?error=' + encodeURIComponent(err.message));
+    try {
+      await compressImage(req, res, () => {});
+      const { jurusan, nama, deskripsi, icon, urutan } = req.body;
+      if (!nama || !jurusan) return res.redirect('/admin/jurusan-fasilitas?error=Jurusan+dan+Nama+wajib+diisi');
+      const gambar = req.file ? req.file.filename : null;
+      await db.query('INSERT INTO jurusan_fasilitas (jurusan,nama,deskripsi,gambar,icon,urutan) VALUES (?,?,?,?,?,?)',
+        [jurusan, nama, deskripsi || null, gambar, icon || 'fas fa-building', parseInt(urutan) || 0]);
+      res.redirect('/admin/jurusan-fasilitas?success=1');
+    } catch (e) {
+      console.error(e);
+      res.redirect('/admin/jurusan-fasilitas?error=' + encodeURIComponent(e.message));
+    }
+  });
+};
+
+exports.adminJurusanFasilitasEditPage = async (req, res) => {
+  const [rows] = await db.query('SELECT * FROM jurusan_fasilitas WHERE id=?', [req.params.id]);
+  if (!rows.length) return res.redirect('/admin/jurusan-fasilitas');
+  const [jurusanList] = await db.query("SELECT kode,nama FROM jurusan WHERE status='aktif' ORDER BY kode");
+  res.render('admin/jurusan-konten/fasilitas-edit', {
+    title: 'Edit Fasilitas Jurusan', user: req.session, item: rows[0], jurusanList
+  });
+};
+
+exports.adminJurusanFasilitasUpdate = (req, res) => {
+  uploadFasilitasJurusanAdmin(req, res, async (err) => {
+    if (err) return res.redirect('/admin/jurusan-fasilitas?error=' + encodeURIComponent(err.message));
+    try {
+      await compressImage(req, res, () => {});
+      const { jurusan, nama, deskripsi, icon, urutan } = req.body;
+      const [old] = await db.query('SELECT gambar FROM jurusan_fasilitas WHERE id=?', [req.params.id]);
+      const gambar = req.file ? req.file.filename : old[0]?.gambar;
+      await db.query('UPDATE jurusan_fasilitas SET jurusan=?,nama=?,deskripsi=?,gambar=?,icon=?,urutan=? WHERE id=?',
+        [jurusan, nama, deskripsi || null, gambar, icon || 'fas fa-building', parseInt(urutan) || 0, req.params.id]);
+      res.redirect('/admin/jurusan-fasilitas?success=2');
+    } catch (e) {
+      console.error(e);
+      res.redirect('/admin/jurusan-fasilitas?error=' + encodeURIComponent(e.message));
+    }
+  });
+};
+
+exports.adminJurusanFasilitasDelete = async (req, res) => {
+  const [rows] = await db.query('SELECT gambar FROM jurusan_fasilitas WHERE id=?', [req.params.id]);
+  if (rows.length && rows[0].gambar) {
+    const fp = `./uploads/${rows[0].gambar}`;
+    if (require('fs').existsSync(fp)) require('fs').unlinkSync(fp);
+  }
+  await db.query('DELETE FROM jurusan_fasilitas WHERE id=?', [req.params.id]);
+  res.redirect('/admin/jurusan-fasilitas?success=3');
+};
+
+
 exports.jurusanBeritaDetailPage = async (req, res) => {
   try {
     const common = await getCommon();

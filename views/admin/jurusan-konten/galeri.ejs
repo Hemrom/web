@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Admin Panel</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="/assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <%- include('../partials/sidebar') %>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <%- include('../partials/topbar', { user }) %>
+            <div class="container-fluid">
+
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800"><i class="fas fa-images text-primary mr-2"></i>Galeri Jurusan</h1>
+                </div>
+
+                <% if (success==1) { %><div class="alert alert-success alert-dismissible fade show"><i class="fas fa-check mr-2"></i>Foto berhasil diunggah.<button type="button" class="close" data-dismiss="alert">&times;</button></div><% } %>
+                <% if (success==3) { %><div class="alert alert-danger alert-dismissible fade show"><i class="fas fa-trash mr-2"></i>Foto berhasil dihapus.<button type="button" class="close" data-dismiss="alert">&times;</button></div><% } %>
+                <% if (typeof errorMsg !== 'undefined' && errorMsg) { %><div class="alert alert-danger alert-dismissible fade show"><%= errorMsg %><button type="button" class="close" data-dismiss="alert">&times;</button></div><% } %>
+
+                <!-- Upload Form -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex align-items-center">
+                        <i class="fas fa-upload mr-2 text-primary"></i>
+                        <h6 class="m-0 font-weight-bold text-primary">Upload Foto Baru</h6>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="/admin/jurusan-galeri/upload" enctype="multipart/form-data">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label><b>Jurusan <span class="text-danger">*</span></b></label>
+                                        <select name="jurusan" class="form-control" required>
+                                            <option value="">-- Pilih Jurusan --</option>
+                                            <% jurusanList.forEach(j=>{ %>
+                                            <option value="<%= j.kode %>" <%= filterJurusan===j.kode?'selected':'' %>><%= j.kode %> - <%= j.nama %></option>
+                                            <% }) %>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label><b>Judul Album</b></label>
+                                        <input type="text" name="judul" class="form-control" placeholder="mis: Praktik Jaringan 2024">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label><b>Keterangan</b></label>
+                                        <input type="text" name="keterangan" class="form-control" placeholder="Opsional">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label><b>Pilih Foto <span class="text-danger">*</span></b></label>
+                                        <input type="file" name="gambar" class="form-control-file" accept="image/*" multiple required>
+                                        <small class="text-muted">Bisa pilih beberapa sekaligus (max 20)</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-upload mr-1"></i>Upload Foto</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Filter -->
+                <div class="mb-3">
+                    <a href="/admin/jurusan-galeri" class="btn btn-sm <%= !filterJurusan?'btn-primary':'btn-outline-secondary' %> mr-1">Semua</a>
+                    <% jurusanList.forEach(j=>{ %>
+                    <a href="/admin/jurusan-galeri?jurusan=<%= j.kode %>" class="btn btn-sm <%= filterJurusan===j.kode?'btn-primary':'btn-outline-secondary' %> mr-1"><%= j.kode %></a>
+                    <% }) %>
+                </div>
+
+                <!-- Grid Foto -->
+                <% if (!galeri || galeri.length === 0) { %>
+                <div class="card shadow">
+                    <div class="card-body text-center py-5 text-muted">
+                        <i class="fas fa-images fa-3x mb-3 d-block"></i>
+                        <p>Belum ada foto galeri<% if(filterJurusan){ %> untuk jurusan <b><%= filterJurusan %></b><% } %></p>
+                    </div>
+                </div>
+                <% } else { %>
+                <!-- Group by jurusan -->
+                <% const grouped = {}; galeri.forEach(g=>{ if(!grouped[g.jurusan])grouped[g.jurusan]=[];grouped[g.jurusan].push(g); }); %>
+                <% Object.keys(grouped).sort().forEach(kode=>{ %>
+                <div class="card shadow mb-4">
+                    <div class="card-header py-2 d-flex align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-graduation-cap mr-2"></i>Jurusan <%= kode %> <span class="badge badge-info ml-2"><%= grouped[kode].length %> foto</span></h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <% grouped[kode].forEach(g=>{ %>
+                            <div class="col-xl-2 col-lg-3 col-md-4 col-6 mb-3">
+                                <div class="border rounded overflow-hidden position-relative" style="height:140px;background:#f8f9fc;">
+                                    <img src="/uploads/<%= g.gambar %>" alt="<%= g.judul %>"
+                                         style="width:100%;height:100%;object-fit:cover;"
+                                         loading="lazy" onerror="this.src='/assets/img/undraw_posting_photo.svg'">
+                                    <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.55);padding:4px 8px;">
+                                        <small class="text-white d-block text-truncate" style="font-size:.7rem;"><%= g.judul %></small>
+                                    </div>
+                                    <div style="position:absolute;top:4px;right:4px;">
+                                        <form method="POST" action="/admin/jurusan-galeri/delete/<%= g.id %>" style="display:inline"
+                                              onsubmit="return confirm('Hapus foto ini?')">
+                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                            <button class="btn btn-danger btn-sm py-0 px-1" style="font-size:.7rem;" title="Hapus">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <% }) %>
+                        </div>
+                    </div>
+                </div>
+                <% }) %>
+                <% } %>
+
+            </div>
+        </div>
+        <%- include('../partials/footer') %>
+    </div>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="/assets/js/sb-admin-2.min.js"></script>
+</body>
+</html>

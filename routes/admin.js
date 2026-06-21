@@ -343,6 +343,18 @@ router.get('/jurusan-berita/edit/:id', isAuthenticated, validateIdParam, portalC
 router.post('/jurusan-berita/edit/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminJurusanBeritaUpdate);
 router.post('/jurusan-berita/delete/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminJurusanBeritaDelete);
 
+// Admin kelola Galeri Jurusan
+router.get('/jurusan-galeri', isAuthenticated, portalController.adminJurusanGaleriIndex);
+router.post('/jurusan-galeri/upload', isAuthenticated, csrfProtect, uploadLimiter, portalController.adminJurusanGaleriCreate);
+router.post('/jurusan-galeri/delete/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminJurusanGaleriDelete);
+
+// Admin kelola Fasilitas Jurusan
+router.get('/jurusan-fasilitas', isAuthenticated, portalController.adminJurusanFasilitasIndex);
+router.post('/jurusan-fasilitas/create', isAuthenticated, csrfProtect, portalController.adminJurusanFasilitasCreate);
+router.get('/jurusan-fasilitas/edit/:id', isAuthenticated, validateIdParam, portalController.adminJurusanFasilitasEditPage);
+router.post('/jurusan-fasilitas/edit/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminJurusanFasilitasUpdate);
+router.post('/jurusan-fasilitas/delete/:id', isAuthenticated, csrfProtect, validateIdParam, portalController.adminJurusanFasilitasDelete);
+
 // Fasilitas
 router.get('/fasilitas', isAuthenticated, portalController.adminFasilitasIndex);
 router.get('/fasilitas/create', isAuthenticated, portalController.adminFasilitasCreatePage);

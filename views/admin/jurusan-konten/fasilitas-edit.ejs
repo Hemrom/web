@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Admin Panel</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <%- include('../partials/sidebar') %>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <%- include('../partials/topbar', { user }) %>
+            <div class="container-fluid">
+
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800"><i class="fas fa-edit text-warning mr-2"></i>Edit Fasilitas Jurusan</h1>
+                    <a href="/admin/jurusan-fasilitas" class="btn btn-sm btn-secondary">
+                        <i class="fas fa-arrow-left mr-1"></i>Kembali
+                    </a>
+                </div>
+
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="card shadow mb-4">
+                            <div class="card-body">
+                                <form method="POST" action="/admin/jurusan-fasilitas/edit/<%= item.id %>" enctype="multipart/form-data">
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label><b>Jurusan <span class="text-danger">*</span></b></label>
+                                                <select name="jurusan" class="form-control" required>
+                                                    <% jurusanList.forEach(j=>{ %>
+                                                    <option value="<%= j.kode %>" <%= item.jurusan===j.kode?'selected':'' %>><%= j.kode %> - <%= j.nama %></option>
+                                                    <% }) %>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label><b>Nama Fasilitas <span class="text-danger">*</span></b></label>
+                                                <input type="text" name="nama" class="form-control" value="<%= item.nama %>" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label><b>Icon FontAwesome</b></label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text" id="iconPreview"><i class="<%= item.icon %>"></i></span>
+                                                    </div>
+                                                    <input type="text" name="icon" id="iconInput" class="form-control" value="<%= item.icon || 'fas fa-building' %>"
+                                                           oninput="document.querySelector('#iconPreview i').className=this.value">
+                                                </div>
+                                                <small class="text-muted">Cari di <a href="https://fontawesome.com/icons" target="_blank">fontawesome.com</a></small>
+                                            </div>
+                                            <div class="form-group">
+                                                <label><b>Urutan Tampil</b></label>
+                                                <input type="number" name="urutan" class="form-control" value="<%= item.urutan || 0 %>" min="0">
+                                                <small class="text-muted">Angka kecil tampil lebih dulu</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label><b>Deskripsi</b></label>
+                                                <textarea name="deskripsi" class="form-control" rows="4"><%= item.deskripsi || '' %></textarea>
+                                            </div>
+                                            <div class="form-group">
+                                                <label><b>Foto Fasilitas</b></label>
+                                                <% if (item.gambar) { %>
+                                                <div class="mb-2">
+                                                    <img src="/uploads/<%= item.gambar %>" style="max-height:120px;border-radius:8px;border:1px solid #dee2e6;" loading="lazy">
+                                                    <div class="mt-1"><small class="text-muted"><i class="fas fa-image mr-1"></i><%= item.gambar %></small></div>
+                                                </div>
+                                                <% } %>
+                                                <input type="file" name="gambar" class="form-control-file" accept="image/*">
+                                                <% if (item.gambar) { %><small class="text-muted">Kosongkan jika tidak ingin mengganti foto</small><% } %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="d-flex justify-content-between">
+                                        <a href="/admin/jurusan-fasilitas" class="btn btn-secondary"><i class="fas fa-times mr-1"></i>Batal</a>
+                                        <button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i>Simpan Perubahan</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <%- include('../partials/footer') %>
+    </div>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="/assets/js/sb-admin-2.min.js"></script>
+</body>
+</html>
