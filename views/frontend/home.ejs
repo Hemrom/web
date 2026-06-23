@@ -1,4 +1,18 @@
-﻿<!DOCTYPE html>
+﻿<%
+const s1Val    = (typeof siteSettings!=='undefined' && siteSettings.stat1_value)  ? siteSettings.stat1_value  : '1000';
+const s1Suffix = (typeof siteSettings!=='undefined' && siteSettings.stat1_suffix) ? siteSettings.stat1_suffix : '+';
+const s1Label  = (typeof siteSettings!=='undefined' && siteSettings.stat1_label)  ? siteSettings.stat1_label  : 'Siswa Aktif';
+const s2Val    = (typeof siteSettings!=='undefined' && siteSettings.stat2_value)  ? siteSettings.stat2_value  : '50';
+const s2Suffix = (typeof siteSettings!=='undefined' && siteSettings.stat2_suffix) ? siteSettings.stat2_suffix : '+';
+const s2Label  = (typeof siteSettings!=='undefined' && siteSettings.stat2_label)  ? siteSettings.stat2_label  : 'Guru Berpengalaman';
+const s3Val    = (typeof siteSettings!=='undefined' && siteSettings.stat3_value)  ? siteSettings.stat3_value  : '25';
+const s3Suffix = (typeof siteSettings!=='undefined' && siteSettings.stat3_suffix) ? siteSettings.stat3_suffix : '+';
+const s3Label  = (typeof siteSettings!=='undefined' && siteSettings.stat3_label)  ? siteSettings.stat3_label  : 'Tahun Berpengalaman';
+const s4Val    = (typeof siteSettings!=='undefined' && siteSettings.stat4_value)  ? siteSettings.stat4_value  : '95';
+const s4Suffix = (typeof siteSettings!=='undefined' && siteSettings.stat4_suffix) ? siteSettings.stat4_suffix : '%';
+const s4Label  = (typeof siteSettings!=='undefined' && siteSettings.stat4_label)  ? siteSettings.stat4_label  : 'Tingkat Kelulusan';
+%>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="utf-8">
@@ -155,8 +169,8 @@
                                     <i class="fas fa-user-graduate" style="color:white;"></i>
                                 </div>
                                 <div>
-                                    <div class="hero-card-label">Siswa Aktif</div>
-                                    <div class="hero-card-value">1.000+ Siswa</div>
+                                    <div class="hero-card-label"><%= s1Label %></div>
+                                    <div class="hero-card-value"><%= s1Val %><%= s1Suffix %></div>
                                 </div>
                             </div>
                             <div class="hero-card-float" style="margin-left:2rem;">
@@ -164,8 +178,8 @@
                                     <i class="fas fa-chalkboard-teacher" style="color:white;"></i>
                                 </div>
                                 <div>
-                                    <div class="hero-card-label">Tenaga Pengajar</div>
-                                    <div class="hero-card-value">50+ Guru Ahli</div>
+                                    <div class="hero-card-label"><%= s2Label %></div>
+                                    <div class="hero-card-value"><%= s2Val %><%= s2Suffix %></div>
                                 </div>
                             </div>
                             <div class="hero-card-float">
@@ -173,8 +187,8 @@
                                     <i class="fas fa-award" style="color:white;"></i>
                                 </div>
                                 <div>
-                                    <div class="hero-card-label">Tingkat Kelulusan</div>
-                                    <div class="hero-card-value">95% Lulus</div>
+                                    <div class="hero-card-label"><%= s4Label %></div>
+                                    <div class="hero-card-value"><%= s4Val %><%= s4Suffix %></div>
                                 </div>
                             </div>
                         </div>
@@ -210,29 +224,29 @@
                 <div class="col-6 col-md-3 reveal reveal-delay-1">
                     <div class="stat-card">
                         <div class="stat-icon"><i class="fas fa-user-graduate"></i></div>
-                        <div class="stat-number" data-target="1000">0</div>
-                        <div class="stat-label">Siswa Aktif</div>
+                        <div class="stat-number" data-target="<%= s1Val %>" data-suffix="<%= s1Suffix %>">0</div>
+                        <div class="stat-label"><%= s1Label %></div>
                     </div>
                 </div>
                 <div class="col-6 col-md-3 reveal reveal-delay-2">
                     <div class="stat-card">
                         <div class="stat-icon"><i class="fas fa-chalkboard-teacher"></i></div>
-                        <div class="stat-number" data-target="50">0</div>
-                        <div class="stat-label">Guru Berpengalaman</div>
+                        <div class="stat-number" data-target="<%= s2Val %>" data-suffix="<%= s2Suffix %>">0</div>
+                        <div class="stat-label"><%= s2Label %></div>
                     </div>
                 </div>
                 <div class="col-6 col-md-3 reveal reveal-delay-3">
                     <div class="stat-card">
                         <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
-                        <div class="stat-number" data-target="25">0</div>
-                        <div class="stat-label">Tahun Berpengalaman</div>
+                        <div class="stat-number" data-target="<%= s3Val %>" data-suffix="<%= s3Suffix %>">0</div>
+                        <div class="stat-label"><%= s3Label %></div>
                     </div>
                 </div>
                 <div class="col-6 col-md-3 reveal reveal-delay-4">
                     <div class="stat-card">
                         <div class="stat-icon"><i class="fas fa-award"></i></div>
-                        <div class="stat-number" data-target="95" data-suffix="%">0</div>
-                        <div class="stat-label">Tingkat Kelulusan</div>
+                        <div class="stat-number" data-target="<%= s4Val %>" data-suffix="<%= s4Suffix %>">0</div>
+                        <div class="stat-label"><%= s4Label %></div>
                     </div>
                 </div>
             </div>

@@ -88,6 +88,29 @@ exports.saveEditorial = async (req, res) => {
   }
 };
 
+exports.saveStats = async (req, res) => {
+  try {
+    const fields = [
+      'stat1_value','stat1_suffix','stat1_label',
+      'stat2_value','stat2_suffix','stat2_label',
+      'stat3_value','stat3_suffix','stat3_label',
+      'stat4_value','stat4_suffix','stat4_label',
+    ];
+    for (const key of fields) {
+      const value = req.body[key] !== undefined ? req.body[key] : '';
+      await db.query(
+        'INSERT INTO website_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?',
+        [key, value, value]
+      );
+    }
+    invalidateSettingsCache();
+    res.redirect('/admin/kontrol-website?tab=statistik&success=1');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Terjadi kesalahan');
+  }
+};
+
 exports.toggleMaintenance = async (req, res) => {
   try {
     const settings = await getSettings();

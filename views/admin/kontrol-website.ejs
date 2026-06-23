@@ -38,6 +38,7 @@
                         <ul class="nav nav-tabs">
                             <li class="nav-item"><a class="nav-link <%= activeTab==='tampilan'?'active':'' %>" href="?tab=tampilan"><i class="fas fa-palette mr-1"></i>Tampilan</a></li>
                             <li class="nav-item"><a class="nav-link <%= activeTab==='editorial'?'active':'' %>" href="?tab=editorial"><i class="fas fa-pen-nib mr-1"></i>Editorial</a></li>
+                            <li class="nav-item"><a class="nav-link <%= activeTab==='statistik'?'active':'' %>" href="?tab=statistik"><i class="fas fa-chart-bar mr-1"></i>Statistik</a></li>
                             <li class="nav-item"><a class="nav-link <%= activeTab==='halaman'?'active':'' %>" href="?tab=halaman"><i class="fas fa-file-alt mr-1"></i>Halaman</a></li>
                             <li class="nav-item"><a class="nav-link <%= activeTab==='menu'?'active':'' %>" href="?tab=menu"><i class="fas fa-bars mr-1"></i>Menu</a></li>
                             <li class="nav-item"><a class="nav-link <%= activeTab==='users'?'active':'' %>" href="?tab=users"><i class="fas fa-user-cog mr-1"></i>User</a></li>
@@ -112,6 +113,81 @@
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-success px-4"><i class="fas fa-save mr-2"></i>Simpan Teks Editorial</button>
+                        </form>
+
+                        <% } else if (activeTab === 'statistik') { %>
+                        <p class="text-muted small mb-4"><i class="fas fa-info-circle mr-1"></i>Setting angka statistik yang tampil di bagian <strong>Stats Section</strong> dan <strong>Hero</strong> halaman depan. Angka akan tetap animasi counting saat halaman dibuka.</p>
+                        <form method="POST" action="/admin/kontrol-website/statistik">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <div class="row">
+                                <%
+                                const statDefs = [
+                                    { n:1, icon:'fa-user-graduate',       color:'linear-gradient(135deg,#6366f1,#818cf8)', labelDef:'Siswa Aktif',          valDef:'1000', sufDef:'+' },
+                                    { n:2, icon:'fa-chalkboard-teacher',  color:'linear-gradient(135deg,#0ea5e9,#38bdf8)', labelDef:'Guru Berpengalaman',   valDef:'50',   sufDef:'+' },
+                                    { n:3, icon:'fa-calendar-check',      color:'linear-gradient(135deg,#10b981,#34d399)', labelDef:'Tahun Berpengalaman',  valDef:'25',   sufDef:'+' },
+                                    { n:4, icon:'fa-award',               color:'linear-gradient(135deg,#f59e0b,#fbbf24)', labelDef:'Tingkat Kelulusan',    valDef:'95',   sufDef:'%' },
+                                ];
+                                statDefs.forEach(function(st){
+                                    const vKey = 'stat'+st.n+'_value';
+                                    const sKey = 'stat'+st.n+'_suffix';
+                                    const lKey = 'stat'+st.n+'_label';
+                                    const curVal    = settings[vKey]  || st.valDef;
+                                    const curSuffix = settings[sKey]  || st.sufDef;
+                                    const curLabel  = settings[lKey]  || st.labelDef;
+                                %>
+                                <div class="col-md-6 mb-4">
+                                    <div class="card border-0 shadow-sm h-100">
+                                        <div class="card-header d-flex align-items-center py-2 px-3" style="background:<%= st.color %>;border-radius:8px 8px 0 0;">
+                                            <div style="width:32px;height:32px;background:rgba(255,255,255,.25);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-right:.75rem;">
+                                                <i class="fas <%= st.icon %>" style="color:white;font-size:.9rem;"></i>
+                                            </div>
+                                            <span class="font-weight-bold text-white small">Statistik <%= st.n %></span>
+                                            <!-- Preview live -->
+                                            <span class="ml-auto badge badge-light stat-preview-badge" id="prevBadge<%= st.n %>"
+                                                style="font-size:1rem;font-weight:800;letter-spacing:-.02em;padding:.3rem .7rem;border-radius:8px;">
+                                                <%= curVal %><%= curSuffix %>
+                                            </span>
+                                        </div>
+                                        <div class="card-body py-3 px-3">
+                                            <div class="form-row">
+                                                <div class="col-5">
+                                                    <label class="font-weight-bold small mb-1">Angka</label>
+                                                    <input type="number" class="form-control form-control-sm stat-val-input"
+                                                        name="stat<%= st.n %>_value"
+                                                        value="<%= curVal %>"
+                                                        min="0" max="999999"
+                                                        data-n="<%= st.n %>"
+                                                        placeholder="mis. 1000">
+                                                </div>
+                                                <div class="col-3">
+                                                    <label class="font-weight-bold small mb-1">Suffix</label>
+                                                    <input type="text" class="form-control form-control-sm stat-suf-input"
+                                                        name="stat<%= st.n %>_suffix"
+                                                        value="<%= curSuffix %>"
+                                                        data-n="<%= st.n %>"
+                                                        maxlength="5"
+                                                        placeholder="mis. +">
+                                                </div>
+                                                <div class="col-4">
+                                                    <label class="font-weight-bold small mb-1">Label</label>
+                                                    <input type="text" class="form-control form-control-sm"
+                                                        name="stat<%= st.n %>_label"
+                                                        value="<%= curLabel %>"
+                                                        maxlength="40"
+                                                        placeholder="mis. Siswa Aktif">
+                                                </div>
+                                            </div>
+                                            <small class="text-muted mt-2 d-block"><i class="fas fa-info-circle mr-1"></i>Contoh: Angka <code>1000</code>, Suffix <code>+</code> → tampil <strong>1000+</strong></small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% }); %>
+                            </div>
+                            <div class="alert alert-info small mb-3">
+                                <i class="fas fa-magic mr-1"></i>Angka di atas akan otomatis animasi <strong>counting up</strong> dari 0 saat pengunjung scroll ke bagian statistik. Tidak perlu pengaturan tambahan.
+                            </div>
+                            <button type="submit" class="btn btn-primary px-4"><i class="fas fa-save mr-2"></i>Simpan Statistik</button>
+                            <a href="/" target="_blank" class="btn btn-outline-secondary ml-2"><i class="fas fa-eye mr-1"></i>Preview Website</a>
                         </form>
 
                         <% } else if (activeTab === 'halaman') { %>
@@ -194,6 +270,17 @@ function updateTickerPreview(){
     tickerPreview.textContent=items.map(function(t){return '\u2756 '+t;}).join('   ');
 }
 if(tickerInput){tickerInput.addEventListener('input',updateTickerPreview);updateTickerPreview();}
+
+// Live preview angka statistik
+document.querySelectorAll('.stat-val-input,.stat-suf-input').forEach(function(inp){
+    inp.addEventListener('input',function(){
+        var n=this.dataset.n;
+        var val=document.querySelector('.stat-val-input[data-n="'+n+'"]').value||'0';
+        var suf=document.querySelector('.stat-suf-input[data-n="'+n+'"]').value||'';
+        var badge=document.getElementById('prevBadge'+n);
+        if(badge) badge.textContent=val+suf;
+    });
+});
 </script>
 </body>
 </html>
