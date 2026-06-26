@@ -847,7 +847,7 @@ const s4Label  = (typeof siteSettings!=='undefined' && siteSettings.stat4_label)
                 <!-- Kanan: Post lainnya (kecil) -->
                 <div class="col-lg-7">
                     <div class="medsos-list">
-                        <% mediaSosialFooter.slice(1, 9).forEach(function(ms, idx) { %>
+                        <% mediaSosialFooter.slice(1, 6).forEach(function(ms, idx) { %>
                         <a href="<%= ms.embed_url %>" target="_blank" rel="noopener" class="medsos-list-item">
                             <div class="medsos-list-icon" style="background:<%= platformColors[ms.platform]||'#333' %>;">
                                 <% if (ms.platform === 'twitter') { %>

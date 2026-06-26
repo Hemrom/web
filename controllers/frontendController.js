@@ -28,9 +28,9 @@ exports.getMenuItems = getMenuItems;
 const getMediaSosialFooter = async () => {
   const cached = cache.get('media_sosial_footer');
   if (cached) return cached;
-  // Urutkan: terbaru dulu (id DESC), ambil cukup untuk featured (1) + list (8) = 9
+  // Urutkan: terbaru dulu (id DESC), ambil cukup untuk featured (1) + list (5) = 6
   const [rows] = await db.query(
-    "SELECT id, judul, platform, embed_url, thumbnail FROM media_sosial WHERE status = 'aktif' ORDER BY id DESC LIMIT 9"
+    "SELECT id, judul, platform, embed_url, thumbnail FROM media_sosial WHERE status = 'aktif' ORDER BY id DESC LIMIT 6"
   );
   cache.set('media_sosial_footer', rows, 60); // cache 60 detik
   return rows;
