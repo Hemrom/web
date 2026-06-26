@@ -84,7 +84,7 @@ async function compressFile(file, profileName) {
     if (keepPng) {
       await sharp(filePath).rotate()
         .resize({ width: cfg.maxWidth, height: cfg.maxHeight, fit: 'inside', withoutEnlargement: true })
-        .png({ quality: Math.min(cfg.quality, 80), compressionLevel: 9, palette: true })
+        .png({ quality: Math.min(cfg.quality, 80), compressionLevel: 6, palette: true })
         .toFile(tmpPath);
       fs.renameSync(tmpPath, filePath);
     } else {

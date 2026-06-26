@@ -1,6 +1,7 @@
 const db = require('../config/database');
 const cache = require('../utils/cache');
 const { createUpload } = require('../middleware/uploadSecurity');
+const compressImage = require('../middleware/compressImage');
 const upload = createUpload('medsos').single('thumbnail');
 
 const clearMedsosCahce = () => cache.del('media_sosial_footer');
@@ -31,6 +32,7 @@ exports.create = (req, res) => {
 exports.store = async (req, res) => {
   upload(req, res, async (err) => {
     if (err) return res.status(500).send('Error upload');
+    await compressImage(req, res, () => {});
     try {
       const { judul, deskripsi, platform, embed_url, urutan, status } = req.body;
       const thumbnail = req.file ? req.file.filename : null;
@@ -69,6 +71,7 @@ exports.edit = async (req, res) => {
 exports.update = async (req, res) => {
   upload(req, res, async (err) => {
     if (err) return res.status(500).send('Error upload');
+    await compressImage(req, res, () => {});
     try {
       const { judul, deskripsi, platform, embed_url, urutan, status } = req.body;
       const thumbnail = req.file ? req.file.filename : null;
