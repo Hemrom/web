@@ -1,6 +1,7 @@
 const db = require('../config/database');
 const crypto = require('crypto');
 const { createUpload } = require('../middleware/uploadSecurity');
+const compressImage = require('../middleware/compressImage');
 const cache = require('../utils/cache');
 
 const upload = createUpload('alumni').single('foto');
@@ -44,6 +45,7 @@ exports.register = (req, res) => {
     const common = await getCommonData();
     if (err) return res.render('frontend/alumni-register', { title: 'Daftar Alumni', currentPage: 'alumni', success: false, error: err.message, token: null, ...common });
     try {
+      await compressImage(req, res, () => {});
       const { nama, nisn, tahun_lulus, jurusan, pekerjaan, perusahaan, kota, email, telepon, instagram, tiktok, cerita } = req.body;
       if (!nama || !tahun_lulus) return res.render('frontend/alumni-register', { title: 'Daftar Alumni', currentPage: 'alumni', success: false, error: 'Nama dan tahun lulus wajib diisi.', token: null, ...common });
       const foto = req.file ? req.file.filename : null;
@@ -81,6 +83,7 @@ exports.editSubmit = (req, res) => {
     if (!rows.length) return res.status(404).send('Link tidak valid.');
     if (err) return res.render('frontend/alumni-edit', { title: 'Update Biodata Alumni', currentPage: 'alumni', alumni: rows[0], success: false, error: err.message, ...common });
     try {
+      await compressImage(req, res, () => {});
       const { nama, nisn, tahun_lulus, jurusan, pekerjaan, perusahaan, kota, email, telepon, instagram, tiktok, cerita } = req.body;
       const foto = req.file ? req.file.filename : rows[0].foto;
       await db.query(
@@ -116,6 +119,7 @@ exports.adminEditPage = async (req, res) => {
 exports.adminUpdate = (req, res) => {
   upload(req, res, async (err) => {
     if (err) return res.redirect('/admin/alumni?success=0');
+    await compressImage(req, res, () => {});
     const { nama, nisn, tahun_lulus, jurusan, pekerjaan, perusahaan, kota, email, telepon, instagram, tiktok, cerita, status } = req.body;
     const [rows] = await db.query('SELECT foto FROM alumni WHERE id=?', [req.params.id]);
     const foto = req.file ? req.file.filename : (rows[0]?.foto || null);
