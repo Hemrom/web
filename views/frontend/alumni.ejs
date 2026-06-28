@@ -26,7 +26,33 @@
         .alumni-foto {
             width:90px; height:90px; border-radius:50%; object-fit:cover; object-position:top;
             border:3px solid #e0f2fe; margin:0 auto 1rem; display:block;
+            cursor:zoom-in; transition:transform .2s, box-shadow .2s;
         }
+        .alumni-foto:hover {
+            transform:scale(1.08);
+            box-shadow:0 6px 20px rgba(14,165,233,.35);
+        }
+
+        /* Lightbox */
+        #alumni-lightbox {
+            display:none; position:fixed; inset:0; z-index:9999;
+            background:rgba(0,0,0,.85); backdrop-filter:blur(6px);
+            align-items:center; justify-content:center;
+        }
+        #alumni-lightbox.aktif { display:flex; }
+        #alumni-lightbox img {
+            max-width:90vw; max-height:90vh;
+            border-radius:12px;
+            box-shadow:0 20px 60px rgba(0,0,0,.5);
+            object-fit:contain;
+        }
+        #alumni-lightbox-close {
+            position:absolute; top:1rem; right:1.25rem;
+            color:white; font-size:2rem; cursor:pointer;
+            background:none; border:none; line-height:1;
+            opacity:.8; transition:opacity .2s;
+        }
+        #alumni-lightbox-close:hover { opacity:1; }
         .alumni-foto-placeholder {
             width:90px; height:90px; border-radius:50%;
             background:linear-gradient(135deg,var(--primary),var(--secondary));
@@ -124,7 +150,7 @@
                      data-jurusan="<%= (a.jurusan||'').toLowerCase() %>">
                     <div class="alumni-card">
                         <% if (a.foto) { %>
-                        <img src="/uploads/<%= a.foto %>" class="alumni-foto" alt="<%= a.nama %>" loading="lazy" decoding="async" width="90" height="90">
+                        <img src="/uploads/<%= a.foto %>" class="alumni-foto" alt="<%= a.nama %>" loading="lazy" decoding="async" width="90" height="90" onclick="bukaFotoAlumni(this.src)">
                         <% } else { %>
                         <div class="alumni-foto-placeholder"><i class="fas fa-user"></i></div>
                         <% } %>
@@ -150,9 +176,33 @@
     </section>
 
     <%- include('partials/footer') %>
+
+    <!-- Lightbox Foto Alumni -->
+    <div id="alumni-lightbox" onclick="tutupFotoAlumni()">
+        <button id="alumni-lightbox-close" onclick="tutupFotoAlumni()" aria-label="Tutup">&times;</button>
+        <img id="alumni-lightbox-img" src="" alt="Foto Alumni">
+    </div>
+
     <script src="/assets/vendor/bootstrap5/bootstrap.bundle.min.js"></script>
     <script src="/assets/vendor/jquery3/jquery.min.js"></script>
     <script>
+    function bukaFotoAlumni(src) {
+        document.getElementById('alumni-lightbox-img').src = src;
+        document.getElementById('alumni-lightbox').classList.add('aktif');
+        document.body.style.overflow = 'hidden';
+    }
+    function tutupFotoAlumni() {
+        document.getElementById('alumni-lightbox').classList.remove('aktif');
+        document.getElementById('alumni-lightbox-img').src = '';
+        document.body.style.overflow = '';
+    }
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') tutupFotoAlumni();
+    });
+    // Cegah klik pada gambar menutup lightbox
+    document.getElementById('alumni-lightbox-img').addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
     function filterAlumni() {
         const q = document.getElementById('searchInput').value.toLowerCase();
         const tahun = document.getElementById('filterTahun').value;
