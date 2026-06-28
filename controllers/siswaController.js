@@ -1,5 +1,10 @@
 const db = require('../config/database');
 const cbtDb = require('../config/database-cbt');
+const XLSX = require('xlsx');
+const multer = require('multer');
+
+// Multer memory storage untuk import Excel
+const multerExcel = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } }).single('file');
 
 // Ambil data siswa dari database CBT
 exports.getSiswaFromCBT = async (req, res) => {
@@ -263,4 +268,183 @@ exports.searchSiswa = async (req, res) => {
       message: 'Gagal mencari siswa'
     });
   }
+};
+
+// ─── Export siswa ke Excel ───────────────────────────────────────────────────
+exports.exportExcel = async (req, res) => {
+  try {
+    const [siswa] = await db.query(
+      'SELECT nis, nama, jenis_kelamin, tempat_lahir, tanggal_lahir, alamat, telepon, kelas, jurusan, tahun_masuk, status FROM siswa ORDER BY kelas, nama'
+    );
+
+    const data = siswa.length > 0
+      ? siswa.map((s, i) => ({
+          No: i + 1,
+          NIS: s.nis || '',
+          Nama: s.nama,
+          'Jenis Kelamin': s.jenis_kelamin === 'L' ? 'L' : 'P',
+          'Tempat Lahir': s.tempat_lahir || '',
+          'Tanggal Lahir': s.tanggal_lahir ? new Date(s.tanggal_lahir).toISOString().slice(0, 10) : '',
+          Alamat: s.alamat || '',
+          Telepon: s.telepon || '',
+          Kelas: s.kelas || '',
+          Jurusan: s.jurusan || '',
+          'Tahun Masuk': s.tahun_masuk || '',
+          Status: s.status || 'aktif'
+        }))
+      : [{ No: '', NIS: '', Nama: '', 'Jenis Kelamin': '', 'Tempat Lahir': '', 'Tanggal Lahir': '', Alamat: '', Telepon: '', Kelas: '', Jurusan: '', 'Tahun Masuk': '', Status: '' }];
+
+    const ws = XLSX.utils.json_to_sheet(data);
+    // Set lebar kolom
+    ws['!cols'] = [
+      { wch: 4 }, { wch: 15 }, { wch: 30 }, { wch: 14 }, { wch: 18 },
+      { wch: 14 }, { wch: 35 }, { wch: 16 }, { wch: 10 }, { wch: 15 }, { wch: 12 }, { wch: 10 }
+    ];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Data Siswa');
+    const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+    res.setHeader('Content-Disposition', 'attachment; filename="data-siswa.xlsx"');
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.send(buf);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Gagal export data siswa');
+  }
+};
+
+// ─── Download template Excel kosong ─────────────────────────────────────────
+exports.downloadTemplate = (req, res) => {
+  // Baris 1: header instruksi (warna berbeda di Excel tidak bisa via xlsx saja, tapi kita beri contoh data)
+  const contoh = [
+    {
+      NIS: '12345',
+      Nama: 'Contoh Nama Siswa',
+      'Jenis Kelamin (L/P)': 'L',
+      'Tempat Lahir': 'Kediri',
+      'Tanggal Lahir (YYYY-MM-DD)': '2008-05-15',
+      Alamat: 'Jl. Contoh No.1, Kras, Kediri',
+      'Telepon / No HP': '08123456789',
+      Kelas: 'XI',
+      Jurusan: 'TKJ',
+      'Tahun Masuk': 2023,
+      'Status (aktif/nonaktif)': 'aktif'
+    }
+  ];
+
+  const ws = XLSX.utils.json_to_sheet(contoh);
+  ws['!cols'] = [
+    { wch: 15 }, { wch: 30 }, { wch: 20 }, { wch: 18 }, { wch: 26 },
+    { wch: 35 }, { wch: 20 }, { wch: 8 }, { wch: 15 }, { wch: 12 }, { wch: 24 }
+  ];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Template Siswa');
+  const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+  res.setHeader('Content-Disposition', 'attachment; filename="template-import-siswa.xlsx"');
+  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  res.send(buf);
+};
+
+// ─── Import siswa dari Excel ─────────────────────────────────────────────────
+exports.importExcel = (req, res) => {
+  multerExcel(req, res, async (err) => {
+    if (err) {
+      req.session.message = { type: 'error', text: 'Gagal upload file: ' + err.message };
+      return res.redirect('/admin/data-sekolah?tab=siswa');
+    }
+    if (!req.file) {
+      req.session.message = { type: 'error', text: 'Tidak ada file yang dipilih.' };
+      return res.redirect('/admin/data-sekolah?tab=siswa');
+    }
+    try {
+      const wb = XLSX.read(req.file.buffer, { type: 'buffer' });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, { defval: '' });
+
+      if (!rows.length) {
+        req.session.message = { type: 'error', text: 'File Excel kosong atau format tidak dikenali.' };
+        return res.redirect('/admin/data-sekolah?tab=siswa');
+      }
+
+      let inserted = 0, updated = 0, skipped = 0;
+      const errors = [];
+
+      for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        const rowNum = i + 2; // baris Excel (baris 1 = header)
+
+        // Ambil nama — wajib ada
+        const nama = (row['Nama'] || row['nama'] || row['NAMA'] || row['Nama Lengkap'] || '').toString().trim();
+        if (!nama) { skipped++; continue; }
+
+        // Ambil field lainnya
+        const nis        = (row['NIS'] || row['nis'] || row['Nis'] || '').toString().trim() || null;
+        const rawJK      = (row['Jenis Kelamin (L/P)'] || row['Jenis Kelamin'] || row['jenis_kelamin'] || row['JK'] || '').toString().trim().toUpperCase();
+        const jenis_kelamin = rawJK === 'L' ? 'L' : rawJK === 'P' ? 'P' : 'L'; // default L jika tidak diisi
+        const tempat_lahir  = (row['Tempat Lahir'] || row['tempat_lahir'] || '').toString().trim() || null;
+        const rawTgl        = (row['Tanggal Lahir (YYYY-MM-DD)'] || row['Tanggal Lahir'] || row['tanggal_lahir'] || '').toString().trim();
+        let tanggal_lahir   = null;
+        if (rawTgl) {
+          // Coba parse tanggal — bisa string YYYY-MM-DD atau angka serial Excel
+          const parsed = new Date(rawTgl);
+          if (!isNaN(parsed.getTime())) {
+            tanggal_lahir = parsed.toISOString().slice(0, 10);
+          }
+        }
+        const alamat        = (row['Alamat'] || row['alamat'] || '').toString().trim() || null;
+        const telepon       = (row['Telepon / No HP'] || row['Telepon'] || row['telepon'] || row['No HP'] || '').toString().trim() || null;
+        const kelas         = (row['Kelas'] || row['kelas'] || '').toString().trim() || null;
+        const jurusan       = (row['Jurusan'] || row['jurusan'] || '').toString().trim() || null;
+        const rawTahun      = (row['Tahun Masuk'] || row['tahun_masuk'] || '').toString().trim();
+        const tahun_masuk   = rawTahun && !isNaN(parseInt(rawTahun)) ? parseInt(rawTahun) : null;
+        const rawStatus     = (row['Status (aktif/nonaktif)'] || row['Status'] || row['status'] || 'aktif').toString().trim().toLowerCase();
+        const status        = rawStatus === 'nonaktif' ? 'nonaktif' : 'aktif';
+
+        try {
+          // Cek duplikat: cari by NIS dulu, lalu by nama+kelas
+          let existing = [];
+          if (nis) {
+            [existing] = await db.query('SELECT id FROM siswa WHERE nis = ?', [nis]);
+          }
+          if (!existing.length && nama && kelas) {
+            [existing] = await db.query('SELECT id FROM siswa WHERE nama = ? AND kelas = ?', [nama, kelas]);
+          }
+
+          if (existing.length > 0) {
+            // Update
+            await db.query(
+              `UPDATE siswa SET nis=?, nama=?, jenis_kelamin=?, tempat_lahir=?, tanggal_lahir=?,
+               alamat=?, telepon=?, kelas=?, jurusan=?, tahun_masuk=?, status=?
+               WHERE id=?`,
+              [nis, nama, jenis_kelamin, tempat_lahir, tanggal_lahir,
+               alamat, telepon, kelas, jurusan, tahun_masuk, status, existing[0].id]
+            );
+            updated++;
+          } else {
+            // Insert baru
+            await db.query(
+              `INSERT INTO siswa (nis, nama, jenis_kelamin, tempat_lahir, tanggal_lahir,
+               alamat, telepon, kelas, jurusan, tahun_masuk, status)
+               VALUES (?,?,?,?,?,?,?,?,?,?,?)`,
+              [nis, nama, jenis_kelamin, tempat_lahir, tanggal_lahir,
+               alamat, telepon, kelas, jurusan, tahun_masuk, status]
+            );
+            inserted++;
+          }
+        } catch (rowErr) {
+          console.error(`Import error baris ${rowNum}:`, rowErr.message);
+          errors.push(`Baris ${rowNum} (${nama}): ${rowErr.message}`);
+          skipped++;
+        }
+      }
+
+      let msg = `Import selesai! ${inserted} siswa ditambahkan, ${updated} diperbarui, ${skipped} dilewati.`;
+      if (errors.length) msg += ` Error: ${errors.slice(0, 3).join('; ')}${errors.length > 3 ? '...' : ''}`;
+      req.session.message = { type: 'success', text: msg };
+      res.redirect('/admin/data-sekolah?tab=siswa');
+    } catch (e) {
+      console.error('Import Excel error:', e);
+      req.session.message = { type: 'error', text: 'Gagal import: ' + e.message };
+      res.redirect('/admin/data-sekolah?tab=siswa');
+    }
+  });
 };

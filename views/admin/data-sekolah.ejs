@@ -141,11 +141,70 @@
 
                         <!-- Tab: Siswa -->
                         <% } else if (activeTab === 'siswa') { %>
+                        <% const siswaMsg = typeof message !== 'undefined' && message ? message : null; %>
+                        <% if (siswaMsg) { %>
+                        <div class="alert alert-<%= siswaMsg.type === 'success' ? 'success' : 'danger' %> alert-dismissible fade show">
+                            <%= siswaMsg.text %>
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        </div>
+                        <% } %>
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5 class="mb-0">Data Siswa</h5>
-                            <a href="/admin/siswa/create" class="btn btn-primary btn-sm">
-                                <i class="fas fa-plus"></i> Tambah Siswa
-                            </a>
+                            <div>
+                                <!-- Import -->
+                                <button class="btn btn-success btn-sm mr-1" onclick="toggleImportSiswa()">
+                                    <i class="fas fa-file-import"></i> Import Excel
+                                </button>
+                                <!-- Export -->
+                                <a href="/admin/siswa/export" class="btn btn-warning btn-sm mr-1">
+                                    <i class="fas fa-file-export"></i> Export Excel
+                                </a>
+                                <!-- Tambah manual -->
+                                <a href="/admin/siswa/create" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-plus"></i> Tambah Siswa
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Panel Import Excel -->
+                        <div id="importSiswaPanel" style="display:none;" class="card border-left-success shadow-sm mb-3">
+                            <div class="card-body py-3">
+                                <h6 class="font-weight-bold text-success mb-2"><i class="fas fa-info-circle mr-1"></i> Panduan Import Excel Siswa</h6>
+                                <p class="small mb-1">Kolom yang tersedia (nama kolom harus persis sama):</p>
+                                <div class="table-responsive mb-2">
+                                    <table class="table table-sm table-bordered small mb-2" style="font-size:0.78rem;">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th>Kolom</th><th>Keterangan</th><th>Wajib</th><th>Contoh</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td>NIS</td><td>Nomor Induk Siswa</td><td><span class="badge badge-warning">Opsional</span></td><td>12345</td></tr>
+                                            <tr><td>Nama</td><td>Nama lengkap siswa</td><td><span class="badge badge-danger">Wajib</span></td><td>Budi Santoso</td></tr>
+                                            <tr><td>Jenis Kelamin (L/P)</td><td>Gunakan L atau P</td><td><span class="badge badge-warning">Opsional</span></td><td>L</td></tr>
+                                            <tr><td>Tempat Lahir</td><td>Kota/kabupaten tempat lahir</td><td><span class="badge badge-warning">Opsional</span></td><td>Kediri</td></tr>
+                                            <tr><td>Tanggal Lahir (YYYY-MM-DD)</td><td>Format: tahun-bulan-tanggal</td><td><span class="badge badge-warning">Opsional</span></td><td>2008-05-15</td></tr>
+                                            <tr><td>Alamat</td><td>Alamat lengkap</td><td><span class="badge badge-warning">Opsional</span></td><td>Jl. Merdeka No.1, Kras</td></tr>
+                                            <tr><td>Telepon / No HP</td><td>Nomor HP siswa/wali</td><td><span class="badge badge-warning">Opsional</span></td><td>08123456789</td></tr>
+                                            <tr><td>Kelas</td><td>Tingkat kelas (X, XI, XII)</td><td><span class="badge badge-warning">Opsional</span></td><td>XI</td></tr>
+                                            <tr><td>Jurusan</td><td>Nama/kode jurusan</td><td><span class="badge badge-warning">Opsional</span></td><td>TKJ</td></tr>
+                                            <tr><td>Tahun Masuk</td><td>Tahun pertama masuk sekolah</td><td><span class="badge badge-warning">Opsional</span></td><td>2023</td></tr>
+                                            <tr><td>Status (aktif/nonaktif)</td><td>Status siswa</td><td><span class="badge badge-warning">Opsional</span></td><td>aktif</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <p class="small text-muted mb-2"><i class="fas fa-lightbulb text-warning"></i> Jika NIS sudah ada di database, data siswa tersebut akan <strong>diperbarui</strong>. Jika belum ada, akan <strong>ditambahkan</strong> sebagai data baru.</p>
+                                <a href="/admin/siswa/template" class="btn btn-outline-secondary btn-sm mb-2">
+                                    <i class="fas fa-download mr-1"></i> Download Template Excel
+                                </a>
+                                <form method="POST" action="/admin/siswa/import" enctype="multipart/form-data" class="d-flex align-items-center flex-wrap gap-2 mt-1">
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                    <input type="file" name="file" accept=".xlsx,.xls" class="form-control-file mr-2" required style="max-width:300px;">
+                                    <button type="submit" class="btn btn-success btn-sm">
+                                        <i class="fas fa-upload mr-1"></i> Upload &amp; Import
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                         <div class="table-responsive">
                             <table class="table table-bordered table-hover">
@@ -298,5 +357,11 @@
 <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
 <script src="/assets/js/sb-admin-2.min.js"></script>
+<script>
+function toggleImportSiswa() {
+    const panel = document.getElementById('importSiswaPanel');
+    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+</script>
 </body>
 </html>
