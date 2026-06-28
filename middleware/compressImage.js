@@ -68,11 +68,15 @@ function getUploadedFiles(req) {
 }
 
 async function compressFile(file, profileName) {
-  const ext = path.extname(file.originalname).toLowerCase();
-  if (ext === '.svg' || ext === '.gif') return true;
+  // Cek dari filename aktual di disk (bisa sudah .webp dari proses sebelumnya)
+  const ext = path.extname(file.filename || file.originalname).toLowerCase();
+  if (ext === '.svg' || ext === '.gif' || ext === '.webp') return true;
 
   const cfg = PROFILES[profileName] || PROFILES.default;
   const filePath = file.path;
+
+  // Guard: file sudah tidak ada di disk (sudah diproses sebelumnya)
+  if (!filePath || !fs.existsSync(filePath)) return true;
   const isHeic = ext === '.heic' || ext === '.heif';
   const baseNoExt = filePath.replace(/\.[^.]+$/i, '');
   const tmpPath = `${baseNoExt}.opt.tmp`;
