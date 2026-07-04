@@ -81,6 +81,40 @@ app.use('/guru', require('./routes/guru'));
 app.use('/', require('./routes/portal'));
 app.use('/', require('./routes/frontend'));
 
+// ── DIAGNOSTIK SEMENTARA (hapus setelah selesai cek) ─────────────────────────
+app.get('/cek-seni-galeri', async (req, res) => {
+  const db = require('./config/database');
+  const fs = require('fs');
+  const path = require('path');
+  try {
+    const [rows] = await db.query('SELECT id, judul, gambar, created_at FROM seni_galeri ORDER BY created_at DESC');
+    let html = `<html><head><meta charset="utf-8"><title>Cek Galeri Seni</title>
+    <style>body{font-family:sans-serif;padding:20px} table{border-collapse:collapse;width:100%}
+    td,th{border:1px solid #ddd;padding:8px;text-align:left} tr.ok{background:#d4edda} tr.missing{background:#f8d7da}
+    img{max-width:120px;max-height:80px;object-fit:cover}</style></head><body>
+    <h2>Cek Galeri Seni</h2>
+    <p>Total record di database: <strong>${rows.length}</strong></p>
+    <table><tr><th>ID</th><th>Judul</th><th>Nama File (DB)</th><th>File Fisik</th><th>Preview</th><th>Tanggal</th></tr>`;
+    for (const r of rows) {
+      const filePath = path.join(__dirname, 'uploads', r.gambar || '');
+      const exists = r.gambar && fs.existsSync(filePath);
+      html += `<tr class="${exists ? 'ok' : 'missing'}">
+        <td>${r.id}</td>
+        <td>${r.judul || '-'}</td>
+        <td><code>${r.gambar || '(null)'}</code></td>
+        <td>${exists ? '✅ Ada' : '❌ Tidak ada'}</td>
+        <td>${exists ? `<img src="/uploads/${r.gambar}">` : '-'}</td>
+        <td>${r.created_at}</td>
+      </tr>`;
+    }
+    html += '</table></body></html>';
+    res.send(html);
+  } catch (e) {
+    res.send('<pre>Error: ' + e.message + '</pre>');
+  }
+});
+// ─────────────────────────────────────────────────────────────────────────────
+
 // 404 handler
 app.use((req, res) => {
   res.status(404).render('frontend/404', {
