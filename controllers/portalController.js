@@ -32,9 +32,17 @@ const getCommon = async () => {
 
 // Helper: ambil foto cover dari tabel galeri ekskul, return null jika tabel tidak ada / kosong
 async function getEkskulCover(table) {
+  const fs = require('fs');
+  const path = require('path');
   try {
-    const [rows] = await db.query(`SELECT gambar FROM \`${table}\` ORDER BY created_at DESC LIMIT 1`);
-    return rows[0]?.gambar || null;
+    const [rows] = await db.query(`SELECT gambar FROM \`${table}\` ORDER BY created_at DESC LIMIT 5`);
+    // Cari foto pertama yang file fisiknya ada
+    for (const row of rows) {
+      if (row.gambar && fs.existsSync(path.join(__dirname, '../uploads', row.gambar))) {
+        return row.gambar;
+      }
+    }
+    return null;
   } catch (e) {
     // tabel belum ada atau error lain — tampilkan placeholder saja
     return null;
@@ -786,12 +794,16 @@ exports.paskibrakaBeritaDelete = async (req, res) => {
 // ── FRONTEND SENI ─────────────────────────────────────────────────────────────
 exports.seniIndex = async (req, res) => {
   try {
+    const fs = require('fs');
+    const path = require('path');
     const common = await getCommon();
-    const [[kegiatan], [berita], [galeri]] = await Promise.all([
+    const [[kegiatan], [berita], [galeriAll]] = await Promise.all([
       db.query("SELECT * FROM seni_kegiatan WHERE status='published' ORDER BY created_at DESC"),
       db.query("SELECT * FROM seni_berita WHERE status='published' ORDER BY created_at DESC"),
       db.query("SELECT * FROM seni_galeri ORDER BY created_at DESC")
     ]);
+    // Hanya tampilkan foto yang file fisiknya benar-benar ada di server
+    const galeri = galeriAll.filter(g => g.gambar && fs.existsSync(path.join(__dirname, '../uploads', g.gambar)));
     res.render('frontend/seni', { title: 'Seni', currentPage: 'seni', kegiatan, berita, galeri, ...common });
   } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
 };
