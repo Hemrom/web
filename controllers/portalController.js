@@ -29,39 +29,53 @@ const getCommon = async () => {
 };
 
 // ── FRONTEND EKSTRAKURIKULER ──────────────────────────────────────────────────
+
+// Helper: ambil foto cover dari tabel galeri ekskul, return null jika tabel tidak ada / kosong
+async function getEkskulCover(table) {
+  try {
+    const [rows] = await db.query(`SELECT gambar FROM \`${table}\` ORDER BY created_at DESC LIMIT 1`);
+    return rows[0]?.gambar || null;
+  } catch (e) {
+    // tabel belum ada atau error lain — tampilkan placeholder saja
+    return null;
+  }
+}
+
 exports.ekstrakurikulerIndex = async (req, res) => {
   try {
     const common = await getCommon();
 
-    // Ambil foto pertama dari galeri masing-masing ekskul otomatis
-    const [[osisGaleri], [pramukaGaleri], [pmrGaleri], [paskibrakaGaleri],
-           [olahragaGaleri], [seniGaleri], [bahasaGaleri], [rohisGaleri],
-           [pikrGaleri], [pecintaAlamGaleri], [pencakSilatGaleri]] = await Promise.all([
-      db.query('SELECT gambar FROM osis_galeri ORDER BY created_at DESC LIMIT 1'),
-      db.query('SELECT gambar FROM pramuka_galeri ORDER BY created_at DESC LIMIT 1'),
-      db.query('SELECT gambar FROM pmr_galeri ORDER BY created_at DESC LIMIT 1'),
-      db.query('SELECT gambar FROM paskibraka_galeri ORDER BY created_at DESC LIMIT 1'),
-      db.query('SELECT gambar FROM olahraga_galeri ORDER BY created_at DESC LIMIT 1'),
-      db.query('SELECT gambar FROM seni_galeri ORDER BY created_at DESC LIMIT 1'),
-      db.query('SELECT gambar FROM bahasa_asing_galeri ORDER BY created_at DESC LIMIT 1'),
-      db.query('SELECT gambar FROM rohis_galeri ORDER BY created_at DESC LIMIT 1'),
-      db.query('SELECT gambar FROM pikr_galeri ORDER BY created_at DESC LIMIT 1'),
-      db.query('SELECT gambar FROM pecinta_alam_galeri ORDER BY created_at DESC LIMIT 1'),
-      db.query('SELECT gambar FROM pencak_silat_galeri ORDER BY created_at DESC LIMIT 1'),
+    // Ambil foto pertama dari galeri masing-masing ekskul secara aman (tidak crash jika tabel kosong/tidak ada)
+    const [
+      osisPhoto, pramukaPhoto, pmrPhoto, paskibrakaPhoto,
+      olahragaPhoto, seniPhoto, bahasaPhoto, rohisPhoto,
+      pikrPhoto, pecintaAlamPhoto, pencakSilatPhoto
+    ] = await Promise.all([
+      getEkskulCover('osis_galeri'),
+      getEkskulCover('pramuka_galeri'),
+      getEkskulCover('pmr_galeri'),
+      getEkskulCover('paskibraka_galeri'),
+      getEkskulCover('olahraga_galeri'),
+      getEkskulCover('seni_galeri'),
+      getEkskulCover('bahasa_asing_galeri'),
+      getEkskulCover('rohis_galeri'),
+      getEkskulCover('pikr_galeri'),
+      getEkskulCover('pecinta_alam_galeri'),
+      getEkskulCover('pencak_silat_galeri'),
     ]);
 
     const ekskul = [
-      { nama: 'OSIS', deskripsi: 'Organisasi Siswa Intra Sekolah', url: '/osis', icon: 'fas fa-users', warna: '#f59e0b', foto: osisGaleri[0]?.gambar || null },
-      { nama: 'Pramuka', deskripsi: 'Gerakan Pramuka SMKN 1 Kras', url: '/pramuka', icon: 'fas fa-campground', warna: '#16a34a', foto: pramukaGaleri[0]?.gambar || null },
-      { nama: 'PMR', deskripsi: 'Palang Merah Remaja', url: '/pmr', icon: 'fas fa-first-aid', warna: '#dc2626', foto: pmrGaleri[0]?.gambar || null },
-      { nama: 'Paskibraka', deskripsi: 'Pasukan Pengibar Bendera', url: '/paskibraka', icon: 'fas fa-flag', warna: '#991b1b', foto: paskibrakaGaleri[0]?.gambar || null },
-      { nama: 'Olahraga', deskripsi: 'Ekstrakurikuler Olahraga', url: '/olahraga', icon: 'fas fa-running', warna: '#c2410c', foto: olahragaGaleri[0]?.gambar || null },
-      { nama: 'Seni', deskripsi: 'Ekstrakurikuler Seni', url: '/seni', icon: 'fas fa-palette', warna: '#a855f7', foto: seniGaleri[0]?.gambar || null },
-      { nama: 'Bahasa Asing', deskripsi: 'Ekstrakurikuler Bahasa Asing', url: '/bahasa-asing', icon: 'fas fa-language', warna: '#0f766e', foto: bahasaGaleri[0]?.gambar || null },
-      { nama: 'Rohis', deskripsi: 'Rohani Islam SMKN 1 Kras', url: '/rohis', icon: 'fas fa-mosque', warna: '#065f46', foto: rohisGaleri[0]?.gambar || null },
-      { nama: 'PIK-R', deskripsi: 'Pusat Informasi dan Konseling Remaja', url: '/pikr', icon: 'fas fa-heart', warna: '#7c3aed', foto: pikrGaleri[0]?.gambar || null },
-      { nama: 'Pecinta Alam', deskripsi: 'Ekstrakurikuler Pecinta Alam', url: '/pecinta-alam', icon: 'fas fa-mountain', warna: '#78350f', foto: pecintaAlamGaleri[0]?.gambar || null },
-      { nama: 'Pencak Silat', deskripsi: 'Seni Bela Diri Kebanggaan Bangsa', url: '/pencak-silat', icon: 'fas fa-fist-raised', warna: '#b91c1c', foto: pencakSilatGaleri[0]?.gambar || null },
+      { nama: 'OSIS', deskripsi: 'Organisasi Siswa Intra Sekolah', url: '/osis', icon: 'fas fa-users', warna: '#f59e0b', foto: osisPhoto },
+      { nama: 'Pramuka', deskripsi: 'Gerakan Pramuka SMKN 1 Kras', url: '/pramuka', icon: 'fas fa-campground', warna: '#16a34a', foto: pramukaPhoto },
+      { nama: 'PMR', deskripsi: 'Palang Merah Remaja', url: '/pmr', icon: 'fas fa-first-aid', warna: '#dc2626', foto: pmrPhoto },
+      { nama: 'Paskibraka', deskripsi: 'Pasukan Pengibar Bendera', url: '/paskibraka', icon: 'fas fa-flag', warna: '#991b1b', foto: paskibrakaPhoto },
+      { nama: 'Olahraga', deskripsi: 'Ekstrakurikuler Olahraga', url: '/olahraga', icon: 'fas fa-running', warna: '#c2410c', foto: olahragaPhoto },
+      { nama: 'Seni', deskripsi: 'Ekstrakurikuler Seni', url: '/seni', icon: 'fas fa-palette', warna: '#a855f7', foto: seniPhoto },
+      { nama: 'Bahasa Asing', deskripsi: 'Ekstrakurikuler Bahasa Asing', url: '/bahasa-asing', icon: 'fas fa-language', warna: '#0f766e', foto: bahasaPhoto },
+      { nama: 'Rohis', deskripsi: 'Rohani Islam SMKN 1 Kras', url: '/rohis', icon: 'fas fa-mosque', warna: '#065f46', foto: rohisPhoto },
+      { nama: 'PIK-R', deskripsi: 'Pusat Informasi dan Konseling Remaja', url: '/pikr', icon: 'fas fa-heart', warna: '#7c3aed', foto: pikrPhoto },
+      { nama: 'Pecinta Alam', deskripsi: 'Ekstrakurikuler Pecinta Alam', url: '/pecinta-alam', icon: 'fas fa-mountain', warna: '#78350f', foto: pecintaAlamPhoto },
+      { nama: 'Pencak Silat', deskripsi: 'Seni Bela Diri Kebanggaan Bangsa', url: '/pencak-silat', icon: 'fas fa-fist-raised', warna: '#b91c1c', foto: pencakSilatPhoto },
     ];
     res.render('frontend/ekstrakurikuler', { title: 'Ekstrakurikuler', currentPage: 'ekstrakurikuler', ekskul, ...common });
   } catch (err) { console.error(err); res.status(500).send('Terjadi kesalahan'); }
