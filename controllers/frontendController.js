@@ -137,7 +137,7 @@ exports.home = async (req, res) => {
       db.query('SELECT id, judul, tipe_file, ukuran_file, kategori, jumlah_download, created_at FROM file_download WHERE status = "aktif" AND tampil_home = 1 ORDER BY created_at DESC LIMIT 6'),
       db.query("SELECT id, judul, slug, perusahaan, lokasi, kategori, gambar, deadline, kontak FROM bkk_lowongan WHERE status='aktif' ORDER BY created_at DESC LIMIT 6"),
       getSettings(),
-      db.query("SELECT id, judul, slug, gambar, tanggal_mulai, tanggal_selesai, waktu_mulai, waktu_selesai, lokasi FROM agenda WHERE status='aktif' AND tampil_home=1 AND (tanggal_selesai >= DATE_SUB(CURDATE(), INTERVAL 3 DAY) OR (tanggal_selesai IS NULL AND tanggal_mulai >= DATE_SUB(CURDATE(), INTERVAL 3 DAY))) ORDER BY tanggal_mulai ASC LIMIT 3"),
+      db.query("SELECT id, judul, slug, gambar, tanggal_mulai, tanggal_selesai, waktu_mulai, waktu_selesai, lokasi FROM agenda WHERE status='aktif' AND tampil_home=1 AND (tanggal_selesai >= DATE_SUB(CURDATE(), INTERVAL 3 DAY) OR (tanggal_selesai IS NULL AND tanggal_mulai >= DATE_SUB(CURDATE(), INTERVAL 3 DAY))) ORDER BY tanggal_mulai DESC LIMIT 3"),
       db.query(`SELECT id, nama, jabatan, mata_pelajaran, foto,
         CASE
           WHEN LOWER(jabatan) LIKE '%kepala sekolah%' OR LOWER(jabatan) LIKE '%kepsek%' THEN 1
