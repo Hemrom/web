@@ -8,6 +8,11 @@ const { validateSlugParam } = require('../middleware/securityHardening');
 // Dynamic theme CSS (tidak kena maintenance)
 router.get('/theme.css', kontrolWebsiteController.themeCss);
 
+// Halaman offline untuk PWA
+router.get('/offline', function (req, res) {
+  res.render('frontend/offline', { title: 'Offline' });
+});
+
 router.get('/', frontendController.home);
 router.get('/profil', frontendController.profil);
 router.get('/profil/visi-misi', frontendController.visiMisi);

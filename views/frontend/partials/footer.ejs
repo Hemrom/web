@@ -130,3 +130,124 @@
 
 <%- include('mobile-nav') %>
 
+<!-- ── PWA Install Banner ──────────────────────────────────────────────────── -->
+<div id="pwa-banner" style="
+    display: none;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 9999;
+    background: white;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+    padding: 0;
+    border-top: 3px solid #2563eb;
+">
+    <div style="
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 14px 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    ">
+        <img src="/assets/img/logo-sekolah.png"
+             style="width:44px;height:44px;object-fit:contain;border-radius:10px;flex-shrink:0;"
+             onerror="this.style.display='none'">
+        <div style="flex:1;min-width:0;">
+            <div style="font-weight:700;color:#1e293b;font-size:.95rem;line-height:1.3;">
+                Install Aplikasi SMKN 1 Kras
+            </div>
+            <div style="color:#64748b;font-size:.8rem;margin-top:2px;">
+                Akses lebih cepat langsung dari layar utama HP kamu
+            </div>
+        </div>
+        <button id="pwa-install-btn" style="
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 8px 18px;
+            font-weight: 600;
+            font-size: .85rem;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        ">Install</button>
+        <button id="pwa-dismiss-btn" style="
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 4px 8px;
+            flex-shrink: 0;
+            line-height: 1;
+        " title="Tutup">&times;</button>
+    </div>
+</div>
+
+<!-- ── PWA Script ──────────────────────────────────────────────────────────── -->
+<script>
+(function () {
+    // Daftarkan Service Worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function () {
+            navigator.serviceWorker.register('/sw.js', { scope: '/' })
+                .then(function (reg) {
+                    console.log('[PWA] Service Worker terdaftar:', reg.scope);
+                })
+                .catch(function (err) {
+                    console.warn('[PWA] Registrasi Service Worker gagal:', err);
+                });
+        });
+    }
+
+    // Banner install
+    var deferredPrompt = null;
+    var banner = document.getElementById('pwa-banner');
+    var installBtn = document.getElementById('pwa-install-btn');
+    var dismissBtn = document.getElementById('pwa-dismiss-btn');
+
+    // Jangan tampilkan banner jika sudah pernah ditutup dalam 7 hari
+    var dismissed = localStorage.getItem('pwa-banner-dismissed');
+    if (dismissed && Date.now() - parseInt(dismissed) < 7 * 24 * 60 * 60 * 1000) return;
+
+    // Tangkap event beforeinstallprompt dari browser
+    window.addEventListener('beforeinstallprompt', function (e) {
+        e.preventDefault();
+        deferredPrompt = e;
+
+        // Tampilkan banner setelah 3 detik agar tidak langsung mengganggu
+        setTimeout(function () {
+            if (banner) banner.style.display = 'block';
+        }, 3000);
+    });
+
+    // Tombol Install diklik
+    if (installBtn) {
+        installBtn.addEventListener('click', function () {
+            if (!deferredPrompt) return;
+            banner.style.display = 'none';
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then(function (result) {
+                console.log('[PWA] User choice:', result.outcome);
+                deferredPrompt = null;
+            });
+        });
+    }
+
+    // Tombol Tutup diklik
+    if (dismissBtn) {
+        dismissBtn.addEventListener('click', function () {
+            banner.style.display = 'none';
+            localStorage.setItem('pwa-banner-dismissed', Date.now().toString());
+        });
+    }
+
+    // Sembunyikan banner jika app sudah terinstall
+    window.addEventListener('appinstalled', function () {
+        if (banner) banner.style.display = 'none';
+        deferredPrompt = null;
+        console.log('[PWA] App berhasil diinstall');
+    });
+})();
+</script>

@@ -69,6 +69,9 @@ app.use((req, res, next) => {
   if (
     req.path.startsWith('/admin') ||
     req.path.startsWith('/theme.css') ||
+    req.path.startsWith('/offline') ||
+    req.path.startsWith('/sw.js') ||
+    req.path.startsWith('/manifest.json') ||
     req.path.startsWith('/healthz')
   ) {
     return next();
