@@ -295,20 +295,48 @@ exports.syncFromCBT = async (req, res) => {
 // Export guru ke Excel
 exports.exportExcel = async (req, res) => {
   try {
-    const [guru] = await db.query('SELECT nip, nama, mata_pelajaran, jabatan, email, telepon, guru_username FROM guru ORDER BY nama ASC');
+    const [guru] = await db.query(
+      'SELECT nip, nama, jenis_kelamin, mata_pelajaran, jabatan, email, telepon, alamat, guru_username FROM guru ORDER BY nama ASC'
+    );
+
+    // Password tidak bisa di-export karena tersimpan sebagai hash.
+    // Kolom Password dikosongkan — isi jika ingin set/ganti password saat import ulang.
     const data = guru.length > 0
       ? guru.map((g, i) => ({
           No: i + 1,
           NIP: g.nip || '',
           Nama: g.nama,
+          'Jenis Kelamin': g.jenis_kelamin || '',
           'Mata Pelajaran': g.mata_pelajaran || '',
           Jabatan: g.jabatan || '',
           Email: g.email || '',
           Telepon: g.telepon || '',
-          Username: g.guru_username || ''
+          Alamat: g.alamat || '',
+          Username: g.guru_username || '',
+          Password: '' // Kosongkan — isi jika ingin mengubah password
         }))
-      : [{ No: '', NIP: '', Nama: '', 'Mata Pelajaran': '', Jabatan: '', Email: '', Telepon: '', Username: '' }];
+      : [{
+          No: '', NIP: '', Nama: '', 'Jenis Kelamin': '', 'Mata Pelajaran': '',
+          Jabatan: '', Email: '', Telepon: '', Alamat: '', Username: '', Password: ''
+        }];
+
     const ws = XLSX.utils.json_to_sheet(data);
+
+    // Atur lebar kolom agar lebih mudah dibaca
+    ws['!cols'] = [
+      { wch: 5 },  // No
+      { wch: 20 }, // NIP
+      { wch: 30 }, // Nama
+      { wch: 12 }, // Jenis Kelamin
+      { wch: 25 }, // Mata Pelajaran
+      { wch: 20 }, // Jabatan
+      { wch: 30 }, // Email
+      { wch: 15 }, // Telepon
+      { wch: 40 }, // Alamat
+      { wch: 20 }, // Username
+      { wch: 20 }, // Password
+    ];
+
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Guru & Staff');
     const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
@@ -323,10 +351,40 @@ exports.exportExcel = async (req, res) => {
 
 // Download template kosong dengan header
 exports.downloadTemplate = (req, res) => {
+  // Kolom harus sama persis dengan hasil export agar file export bisa langsung diimport
   const data = [
-    { No: 1, NIP: '198001012005011001', Nama: 'Contoh Nama Guru', 'Mata Pelajaran': 'Matematika', Jabatan: 'Guru', Email: 'guru@sekolah.sch.id', Telepon: '08123456789', Username: 'budi.santoso', Password: 'password123' }
+    {
+      No: 1,
+      NIP: '198001012005011001',
+      Nama: 'Contoh Nama Guru',
+      'Jenis Kelamin': 'L', // L = Laki-laki, P = Perempuan
+      'Mata Pelajaran': 'Matematika',
+      Jabatan: 'Guru',
+      Email: 'guru@sekolah.sch.id',
+      Telepon: '08123456789',
+      Alamat: 'Jl. Contoh No. 1, Kota',
+      Username: 'budi.santoso',
+      Password: 'password123' // Kosongkan jika tidak ingin mengubah password
+    }
   ];
+
   const ws = XLSX.utils.json_to_sheet(data);
+
+  // Atur lebar kolom agar mudah dibaca
+  ws['!cols'] = [
+    { wch: 5 },  // No
+    { wch: 20 }, // NIP
+    { wch: 30 }, // Nama
+    { wch: 12 }, // Jenis Kelamin
+    { wch: 25 }, // Mata Pelajaran
+    { wch: 20 }, // Jabatan
+    { wch: 30 }, // Email
+    { wch: 15 }, // Telepon
+    { wch: 40 }, // Alamat
+    { wch: 20 }, // Username
+    { wch: 20 }, // Password
+  ];
+
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Guru & Staff');
   const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
@@ -394,11 +452,14 @@ exports.importExcel = (req, res) => {
         const jabatan = (row['Jabatan'] || row['jabatan'] || 'Guru').toString().trim();
         const email = (row['Email'] || row['email'] || '').toString().trim() || null;
         const telepon = (row['Telepon'] || row['telepon'] || row['No HP'] || '').toString().trim() || null;
+        const alamat = (row['Alamat'] || row['alamat'] || '').toString().trim() || null;
+        const jenis_kelamin_raw = (row['Jenis Kelamin'] || row['jenis_kelamin'] || row['JK'] || '').toString().trim().toUpperCase();
+        const jenis_kelamin = ['L', 'P'].includes(jenis_kelamin_raw) ? jenis_kelamin_raw : null;
         const username = (row['Username'] || row['username'] || '').toString().trim() || null;
         const passwordRaw = (row['Password'] || row['password'] || '').toString().trim();
         const hashedPassword = passwordRaw ? await bcrypt.hash(passwordRaw, 10) : null;
 
-        // Cari guru existing by NIP atau nama
+        // Cari guru existing by NIP dulu, fallback by nama
         let existing = [];
         if (nip) {
           [existing] = await db.query('SELECT id FROM guru WHERE nip = ?', [nip]);
@@ -408,17 +469,22 @@ exports.importExcel = (req, res) => {
         }
 
         if (existing.length > 0) {
-          const updateFields = 'nama=?, mata_pelajaran=?, jabatan=?, email=?, telepon=?';
+          // Update — semua kolom yang ada di file akan di-update
+          let updateFields = 'nama=?, mata_pelajaran=?, jabatan=?, email=?, telepon=?';
           const updateVals = [nama, mata_pelajaran, jabatan, email, telepon];
-          let extra = '';
-          if (username) { extra += ', guru_username=?'; updateVals.push(username); }
-          if (hashedPassword) { extra += ', guru_password=?'; updateVals.push(hashedPassword); }
-          await db.query(`UPDATE guru SET ${updateFields}${extra} WHERE id=?`, [...updateVals, existing[0].id]);
+
+          if (nip !== null) { updateFields += ', nip=?'; updateVals.push(nip); }
+          if (jenis_kelamin) { updateFields += ', jenis_kelamin=?'; updateVals.push(jenis_kelamin); }
+          if (alamat !== null) { updateFields += ', alamat=?'; updateVals.push(alamat); }
+          if (username) { updateFields += ', guru_username=?'; updateVals.push(username); }
+          if (hashedPassword) { updateFields += ', guru_password=?'; updateVals.push(hashedPassword); }
+
+          await db.query(`UPDATE guru SET ${updateFields} WHERE id=?`, [...updateVals, existing[0].id]);
           updated++;
         } else {
           await db.query(
-            'INSERT INTO guru (nip, nama, mata_pelajaran, jabatan, email, telepon, guru_username, guru_password) VALUES (?,?,?,?,?,?,?,?)',
-            [nip, nama, mata_pelajaran, jabatan, email, telepon, username, hashedPassword]
+            'INSERT INTO guru (nip, nama, jenis_kelamin, mata_pelajaran, jabatan, email, telepon, alamat, guru_username, guru_password) VALUES (?,?,?,?,?,?,?,?,?,?)',
+            [nip, nama, jenis_kelamin, mata_pelajaran, jabatan, email, telepon, alamat, username, hashedPassword]
           );
           inserted++;
         }
