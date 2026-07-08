@@ -330,11 +330,11 @@ exports.resetPasswordMassal = async (req, res) => {
       type: 'success',
       text: `Password berhasil direset untuk ${safeIds.length} guru menjadi "${passwordPlain}".`
     };
-    res.redirect('/admin/guru');
+    res.redirect('/admin/data-sekolah?tab=guru');
   } catch (err) {
     console.error('Reset password massal error:', err);
     req.session.message = { type: 'error', text: 'Gagal reset password: ' + err.message };
-    res.redirect('/admin/guru');
+    res.redirect('/admin/data-sekolah?tab=guru');
   }
 };
 

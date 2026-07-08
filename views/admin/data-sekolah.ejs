@@ -9,6 +9,9 @@
     <style>
         .nav-tabs .nav-link { color: #6c757d; font-weight: 500; }
         .nav-tabs .nav-link.active { color: #4e73df; font-weight: 600; border-bottom: 2px solid #4e73df; }
+        #btnResetMassal { display: none; }
+        .guru-checkbox { cursor: pointer; }
+        tr.selected-row td { background-color: #fff8e1 !important; }
     </style>
 </head>
 <body id="page-top">
@@ -67,8 +70,18 @@
                         </div>
                         <% } %>
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="mb-0">Guru &amp; Staff</h5>
+                            <h5 class="mb-0">Guru &amp; Staff
+                                <small id="infoSeleksi" class="text-muted font-weight-normal ml-2" style="display:none; font-size:0.8rem;">
+                                    — <span id="jumlahDipilih">0</span> dipilih
+                                </small>
+                            </h5>
                             <div>
+                                <!-- Tombol reset muncul saat ada yang dipilih -->
+                                <button type="button" id="btnResetMassal"
+                                    class="btn btn-warning btn-sm mr-1"
+                                    data-toggle="modal" data-target="#modalResetPassword">
+                                    <i class="fas fa-key"></i> Reset Password (<span id="jumlahDipilih2">0</span>)
+                                </button>
                                 <!-- Import -->
                                 <button class="btn btn-success btn-sm mr-1" onclick="document.getElementById('importForm').style.display=document.getElementById('importForm').style.display==='none'?'block':'none'">
                                     <i class="fas fa-file-import"></i> Import Excel
@@ -103,14 +116,29 @@
                         <div class="table-responsive">
                             <table class="table table-bordered table-hover">
                                 <thead class="thead-light">
-                                    <tr><th>#</th><th>Foto</th><th>NIP</th><th>Nama</th><th>Mata Pelajaran</th><th>Jabatan</th><th>Aksi</th></tr>
+                                    <tr>
+                                        <th style="width:36px; text-align:center;">
+                                            <input type="checkbox" id="selectAllGuru" title="Pilih semua">
+                                        </th>
+                                        <th>#</th>
+                                        <th>Foto</th>
+                                        <th>NIP</th>
+                                        <th>Nama</th>
+                                        <th>Mata Pelajaran</th>
+                                        <th>Jabatan</th>
+                                        <th>Status Login</th>
+                                        <th>Aksi</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
                                     <% if (!guru || guru.length === 0) { %>
-                                    <tr><td colspan="7" class="text-center">Belum ada data guru</td></tr>
+                                    <tr><td colspan="9" class="text-center">Belum ada data guru</td></tr>
                                     <% } else { %>
                                     <% guru.forEach((g, i) => { %>
                                     <tr>
+                                        <td style="text-align:center; vertical-align:middle;">
+                                            <input type="checkbox" class="guru-checkbox" value="<%= g.id %>" data-nama="<%= g.nama %>">
+                                        </td>
                                         <td><%= i+1 %></td>
                                         <td>
                                             <% if (g.foto) { %>
@@ -125,6 +153,17 @@
                                         <td><%= g.nama %></td>
                                         <td><%= g.mata_pelajaran || '-' %></td>
                                         <td><%= g.jabatan || '-' %></td>
+                                        <td style="text-align:center;">
+                                            <% if (g.guru_username) { %>
+                                            <span class="badge badge-success" title="Username: <%= g.guru_username %>">
+                                                <i class="fas fa-check mr-1"></i>Ada akun
+                                            </span>
+                                            <% } else { %>
+                                            <span class="badge badge-secondary">
+                                                <i class="fas fa-times mr-1"></i>Belum ada
+                                            </span>
+                                            <% } %>
+                                        </td>
                                         <td>
                                             <a href="/admin/guru/edit/<%= g.id %>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
                                             <form method="POST" action="/admin/guru/delete/<%= g.id %>" style="display:inline" onsubmit="return confirm('Hapus guru ini?')">
@@ -137,6 +176,57 @@
                                     <% } %>
                                 </tbody>
                             </table>
+                        </div>
+
+                        <!-- Modal Reset Password Massal -->
+                        <div class="modal fade" id="modalResetPassword" tabindex="-1" role="dialog" aria-labelledby="modalResetPasswordLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <form method="POST" action="/admin/guru/reset-password-massal" id="formResetMassal">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                        <div id="hiddenIds"></div>
+                                        <div class="modal-header" style="background:#f6c23e;">
+                                            <h5 class="modal-title" id="modalResetPasswordLabel">
+                                                <i class="fas fa-key mr-2"></i>Reset Password Massal
+                                            </h5>
+                                            <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="alert alert-info py-2 small mb-3">
+                                                <i class="fas fa-info-circle mr-1"></i>
+                                                Password akan direset untuk <strong><span id="modalJumlah">0</span> guru</strong> yang dipilih.
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="small font-weight-bold text-muted">Guru yang dipilih:</label>
+                                                <div id="daftarNamaGuru" class="border rounded p-2 bg-light small"
+                                                     style="max-height:130px; overflow-y:auto;"></div>
+                                            </div>
+                                            <div class="form-group mb-1">
+                                                <label for="password_baru" class="font-weight-bold">Password Baru</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="password_baru" name="password_baru"
+                                                           value="Guru@1234" minlength="6" required placeholder="Min. 6 karakter">
+                                                    <div class="input-group-append">
+                                                        <button type="button" class="btn btn-outline-secondary"
+                                                                onclick="document.getElementById('password_baru').value='Guru@1234'"
+                                                                title="Reset ke default">
+                                                            <i class="fas fa-undo"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <small class="text-muted">Default: <code>Guru@1234</code> &mdash; atau isi password custom.</small>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                                            <button type="submit" class="btn btn-warning"
+                                                    onclick="return confirm('Yakin reset password semua guru yang dipilih?')">
+                                                <i class="fas fa-key mr-1"></i>Reset Password
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Tab: Siswa -->
@@ -362,6 +452,80 @@ function toggleImportSiswa() {
     const panel = document.getElementById('importSiswaPanel');
     panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
 }
+
+// ── Reset Password Massal ─────────────────────────────────────────────────────
+(function () {
+    const selectAll = document.getElementById('selectAllGuru');
+    if (!selectAll) return; // hanya aktif di tab guru
+
+    function updateSeleksi() {
+        const dipilih = document.querySelectorAll('.guru-checkbox:checked');
+        const jumlah = dipilih.length;
+
+        document.querySelectorAll('#jumlahDipilih, #jumlahDipilih2').forEach(el => el.textContent = jumlah);
+
+        const btnReset = document.getElementById('btnResetMassal');
+        const infoSeleksi = document.getElementById('infoSeleksi');
+        if (jumlah > 0) {
+            btnReset.style.display = 'inline-block';
+            infoSeleksi.style.display = 'inline';
+        } else {
+            btnReset.style.display = 'none';
+            infoSeleksi.style.display = 'none';
+            selectAll.checked = false;
+        }
+
+        // Highlight baris
+        document.querySelectorAll('.guru-checkbox').forEach(function (cb) {
+            const row = cb.closest('tr');
+            if (cb.checked) row.classList.add('selected-row');
+            else row.classList.remove('selected-row');
+        });
+    }
+
+    // Pilih semua
+    selectAll.addEventListener('change', function () {
+        document.querySelectorAll('.guru-checkbox').forEach(cb => cb.checked = this.checked);
+        updateSeleksi();
+    });
+
+    // Checkbox individual
+    document.addEventListener('change', function (e) {
+        if (e.target.classList.contains('guru-checkbox')) updateSeleksi();
+    });
+
+    // Isi modal sebelum tampil
+    const modal = document.getElementById('modalResetPassword');
+    if (modal) {
+        modal.addEventListener('show.bs.modal', function () {
+            const dipilih = document.querySelectorAll('.guru-checkbox:checked');
+            const hiddenIds = document.getElementById('hiddenIds');
+            hiddenIds.innerHTML = '';
+            let html = '';
+            dipilih.forEach(function (cb) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'ids[]';
+                input.value = cb.value;
+                hiddenIds.appendChild(input);
+                html += '<div><i class="fas fa-user-circle mr-1 text-muted"></i>' + cb.dataset.nama + '</div>';
+            });
+            document.getElementById('daftarNamaGuru').innerHTML = html || '<em class="text-muted">Tidak ada guru dipilih</em>';
+            document.getElementById('modalJumlah').textContent = dipilih.length;
+        });
+    }
+
+    // Cegah submit kosong
+    const form = document.getElementById('formResetMassal');
+    if (form) {
+        form.addEventListener('submit', function (e) {
+            if (!document.querySelector('#hiddenIds input')) {
+                e.preventDefault();
+                alert('Tidak ada guru yang dipilih.');
+            }
+        });
+    }
+})();
 </script>
 </body>
 </html>
