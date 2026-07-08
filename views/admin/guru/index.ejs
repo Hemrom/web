@@ -6,8 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title><%= title %> - Admin Panel</title>
     <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
-    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
     <link href="/assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <style>
+        .btn-reset-massal { display: none; }
+        .btn-reset-massal.show { display: inline-block; }
+        #selectAllGuru { cursor: pointer; }
+        .guru-checkbox { cursor: pointer; }
+        tr.selected-row { background-color: #fff3cd !important; }
+    </style>
 </head>
 <body id="page-top">
     <div id="wrapper">
@@ -16,9 +24,10 @@
             <div id="content">
                 <%- include('../partials/topbar', { user }) %>
                 <div class="container-fluid">
-                    <!-- Alert Messages -->
+
                     <% if (typeof message !== 'undefined' && message) { %>
                         <div class="alert alert-<%= message.type === 'success' ? 'success' : 'danger' %> alert-dismissible fade show" role="alert">
+                            <i class="fas fa-<%= message.type === 'success' ? 'check-circle' : 'exclamation-circle' %> mr-1"></i>
                             <%= message.text %>
                             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
@@ -29,8 +38,15 @@
 
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Kelola Guru & Staff</h1>
-                        <div>
-                            <a href="/admin/guru/sync-cbt" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm mr-2"
+                        <div class="d-flex flex-wrap gap-2" style="gap: 8px;">
+                            <!-- Tombol muncul saat ada guru dipilih -->
+                            <button type="button" id="btnResetMassal"
+                                class="btn-reset-massal d-none d-sm-inline-block btn btn-sm btn-warning shadow-sm"
+                                data-toggle="modal" data-target="#modalResetPassword">
+                                <i class="fas fa-key fa-sm text-white-50"></i>
+                                Reset Password (<span id="jumlahDipilih">0</span>)
+                            </button>
+                            <a href="/admin/guru/sync-cbt" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"
                                onclick="return confirm('Sinkronisasi data guru dari database CBT? Proses ini akan menambah/update data guru.')">
                                 <i class="fas fa-sync fa-sm text-white-50"></i> Sinkronisasi CBT
                             </a>
@@ -41,14 +57,21 @@
                     </div>
 
                     <div class="card shadow mb-4">
-                        <div class="card-header py-3">
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
                             <h6 class="m-0 font-weight-bold text-primary">Data Guru & Staff</h6>
+                            <small class="text-muted" id="infoSeleksi" style="display:none;">
+                                <span id="jumlahDipilih2">0</span> guru dipilih
+                                &mdash; <a href="#" id="linkBatalPilih" class="text-danger">Batal pilih semua</a>
+                            </small>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
+                                            <th style="width:36px; text-align:center;">
+                                                <input type="checkbox" id="selectAllGuru" title="Pilih semua guru">
+                                            </th>
                                             <th>No</th>
                                             <th>Foto</th>
                                             <th>NIP</th>
@@ -56,21 +79,25 @@
                                             <th>Mata Pelajaran</th>
                                             <th>Jabatan</th>
                                             <th>Kontak</th>
+                                            <th>Status Login</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <% if (guru.length === 0) { %>
                                             <tr>
-                                                <td colspan="8" class="text-center">Belum ada data guru</td>
+                                                <td colspan="10" class="text-center">Belum ada data guru</td>
                                             </tr>
                                         <% } else { %>
                                             <% guru.forEach((item, index) => { %>
                                                 <tr>
+                                                    <td style="text-align:center; vertical-align:middle;">
+                                                        <input type="checkbox" class="guru-checkbox" value="<%= item.id %>" data-nama="<%= item.nama %>">
+                                                    </td>
                                                     <td><%= index + 1 %></td>
                                                     <td>
                                                         <% if (item.foto) { %>
-                                                            <img src="/uploads/<%= item.foto %>" alt="<%= item.nama %>" 
+                                                            <img src="/uploads/<%= item.foto %>" alt="<%= item.nama %>"
                                                                  style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
                                                         <% } else { %>
                                                             <div style="width: 50px; height: 50px; background: #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
@@ -88,15 +115,26 @@
                                                             <%= item.telepon || '-' %>
                                                         </small>
                                                     </td>
+                                                    <td style="text-align:center;">
+                                                        <% if (item.guru_username) { %>
+                                                            <span class="badge badge-success" title="Username: <%= item.guru_username %>">
+                                                                <i class="fas fa-check mr-1"></i>Ada akun
+                                                            </span>
+                                                        <% } else { %>
+                                                            <span class="badge badge-secondary">
+                                                                <i class="fas fa-times mr-1"></i>Belum ada
+                                                            </span>
+                                                        <% } %>
+                                                    </td>
                                                     <td>
-                                                        <a href="/admin/guru/edit/<%= item.id %>" class="btn btn-warning btn-sm">
+                                                        <a href="/admin/guru/edit/<%= item.id %>" class="btn btn-warning btn-sm" title="Edit">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
-                                                        <form method="POST" action="/admin/guru/delete/<%= item.id %>" 
-                                                              style="display: inline;" 
+                                                        <form method="POST" action="/admin/guru/delete/<%= item.id %>"
+                                                              style="display: inline;"
                                                               onsubmit="return confirm('Yakin ingin menghapus data guru ini?')">
-                                                                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                            <button type="submit" class="btn btn-danger btn-sm" title="Hapus">
                                                                 <i class="fas fa-trash"></i>
                                                             </button>
                                                         </form>
@@ -109,14 +147,75 @@
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
             <%- include('../partials/footer') %>
         </div>
     </div>
+
+    <!-- Modal Reset Password Massal -->
+    <div class="modal fade" id="modalResetPassword" tabindex="-1" role="dialog" aria-labelledby="modalResetPasswordLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="POST" action="/admin/guru/reset-password-massal" id="formResetMassal">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <div id="hiddenIds"></div><!-- Diisi oleh JS -->
+
+                    <div class="modal-header bg-warning">
+                        <h5 class="modal-title" id="modalResetPasswordLabel">
+                            <i class="fas fa-key mr-2"></i>Reset Password Massal
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="alert alert-info py-2 small mb-3">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            Password akan direset untuk <strong><span id="modalJumlah">0</span> guru</strong> yang dipilih.
+                        </div>
+
+                        <!-- Daftar nama guru yang akan direset -->
+                        <div class="mb-3">
+                            <label class="font-weight-bold small text-muted">Guru yang dipilih:</label>
+                            <div id="daftarNamaGuru" class="border rounded p-2 bg-light small"
+                                 style="max-height: 120px; overflow-y: auto;"></div>
+                        </div>
+
+                        <div class="form-group mb-2">
+                            <label for="password_baru" class="font-weight-bold">Password Baru</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="password_baru" name="password_baru"
+                                       value="Guru@1234" minlength="6" required
+                                       placeholder="Min. 6 karakter">
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-outline-secondary" id="btnResetDefault" title="Pakai password default">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <small class="form-text text-muted">Default: <code>Guru@1234</code> &mdash; atau isi password custom.</small>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-warning"
+                                onclick="return confirm('Yakin reset password semua guru yang dipilih?')">
+                            <i class="fas fa-key mr-1"></i>Reset Password
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
+
     <script src="/assets/vendor/jquery/jquery.min.js"></script>
     <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
@@ -124,5 +223,94 @@
     <script src="/assets/vendor/datatables/jquery.dataTables.min.js"></script>
     <script src="/assets/vendor/datatables/dataTables.bootstrap4.min.js"></script>
     <script src="/assets/js/demo/datatables-demo.js"></script>
+
+    <script>
+    $(document).ready(function () {
+
+        // ── Pilih semua / batal semua ──────────────────────────────────────
+        $('#selectAllGuru').on('change', function () {
+            // Pilih hanya checkbox yang visible (halaman aktif DataTables)
+            $('#dataTable tbody tr:visible .guru-checkbox').prop('checked', this.checked);
+            updateSeleksi();
+        });
+
+        // Saat checkbox individual berubah
+        $(document).on('change', '.guru-checkbox', function () {
+            updateSeleksi();
+        });
+
+        // Klik baris → toggle checkbox (kecuali klik di kolom aksi atau checkbox itu sendiri)
+        $(document).on('click', '#dataTable tbody tr td:not(:first-child):not(:last-child)', function () {
+            const cb = $(this).closest('tr').find('.guru-checkbox');
+            cb.prop('checked', !cb.prop('checked'));
+            updateSeleksi();
+        });
+
+        // Batal pilih semua
+        $('#linkBatalPilih').on('click', function (e) {
+            e.preventDefault();
+            $('#selectAllGuru').prop('checked', false);
+            $('.guru-checkbox').prop('checked', false);
+            updateSeleksi();
+        });
+
+        // ── Update UI seleksi ──────────────────────────────────────────────
+        function updateSeleksi() {
+            const dipilih = $('.guru-checkbox:checked');
+            const jumlah = dipilih.length;
+
+            $('#jumlahDipilih, #jumlahDipilih2').text(jumlah);
+            $('#modalJumlah').text(jumlah);
+
+            if (jumlah > 0) {
+                $('#btnResetMassal').removeClass('d-none').addClass('d-sm-inline-block');
+                $('#infoSeleksi').show();
+            } else {
+                $('#btnResetMassal').addClass('d-none').removeClass('d-sm-inline-block');
+                $('#infoSeleksi').hide();
+                $('#selectAllGuru').prop('checked', false);
+            }
+
+            // Highlight baris yang dipilih
+            $('#dataTable tbody tr').each(function () {
+                const checked = $(this).find('.guru-checkbox').is(':checked');
+                $(this).toggleClass('selected-row', checked);
+            });
+        }
+
+        // ── Isi data ke modal sebelum muncul ──────────────────────────────
+        $('#modalResetPassword').on('show.bs.modal', function () {
+            const dipilih = $('.guru-checkbox:checked');
+
+            // Bersihkan hidden id lama
+            $('#hiddenIds').empty();
+            let namaList = '';
+
+            dipilih.each(function () {
+                const id = $(this).val();
+                const nama = $(this).data('nama');
+                $('#hiddenIds').append('<input type="hidden" name="ids[]" value="' + id + '">');
+                namaList += '<div><i class="fas fa-user-circle mr-1 text-muted"></i>' + nama + '</div>';
+            });
+
+            $('#daftarNamaGuru').html(namaList || '<em class="text-muted">Tidak ada guru dipilih</em>');
+            $('#modalJumlah').text(dipilih.length);
+        });
+
+        // ── Tombol reset ke default ────────────────────────────────────────
+        $('#btnResetDefault').on('click', function () {
+            $('#password_baru').val('Guru@1234');
+        });
+
+        // ── Cegah submit jika tidak ada guru dipilih ──────────────────────
+        $('#formResetMassal').on('submit', function (e) {
+            if ($('#hiddenIds input').length === 0) {
+                e.preventDefault();
+                alert('Tidak ada guru yang dipilih.');
+            }
+        });
+
+    });
+    </script>
 </body>
 </html>

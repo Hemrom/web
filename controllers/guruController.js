@@ -292,7 +292,53 @@ exports.syncFromCBT = async (req, res) => {
   }
 };
 
-// Export guru ke Excel
+// Reset password massal
+exports.resetPasswordMassal = async (req, res) => {
+  try {
+    const bcrypt = require('bcryptjs');
+    const { ids, password_baru } = req.body;
+
+    // ids bisa string (1 guru) atau array (banyak guru)
+    const idList = Array.isArray(ids) ? ids : (ids ? [ids] : []);
+    if (idList.length === 0) {
+      req.session.message = { type: 'error', text: 'Tidak ada guru yang dipilih.' };
+      return res.redirect('/admin/guru');
+    }
+
+    const passwordPlain = (password_baru || '').trim() || 'Guru@1234';
+    if (passwordPlain.length < 6) {
+      req.session.message = { type: 'error', text: 'Password minimal 6 karakter.' };
+      return res.redirect('/admin/guru');
+    }
+
+    const hashed = await bcrypt.hash(passwordPlain, 10);
+
+    // Validasi semua id adalah angka untuk keamanan
+    const safeIds = idList.map(id => parseInt(id)).filter(id => !isNaN(id));
+    if (safeIds.length === 0) {
+      req.session.message = { type: 'error', text: 'ID guru tidak valid.' };
+      return res.redirect('/admin/guru');
+    }
+
+    const placeholders = safeIds.map(() => '?').join(',');
+    await db.query(
+      `UPDATE guru SET guru_password = ? WHERE id IN (${placeholders})`,
+      [hashed, ...safeIds]
+    );
+
+    req.session.message = {
+      type: 'success',
+      text: `Password berhasil direset untuk ${safeIds.length} guru menjadi "${passwordPlain}".`
+    };
+    res.redirect('/admin/guru');
+  } catch (err) {
+    console.error('Reset password massal error:', err);
+    req.session.message = { type: 'error', text: 'Gagal reset password: ' + err.message };
+    res.redirect('/admin/guru');
+  }
+};
+
+
 exports.exportExcel = async (req, res) => {
   try {
     const [guru] = await db.query(
