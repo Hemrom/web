@@ -219,8 +219,7 @@
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                                            <button type="submit" class="btn btn-warning"
-                                                    onclick="return confirm('Yakin reset password semua guru yang dipilih?')">
+                                            <button type="submit" class="btn btn-warning" id="btnSubmitReset">
                                                 <i class="fas fa-key mr-1"></i>Reset Password
                                             </button>
                                         </div>
@@ -458,26 +457,39 @@ function toggleImportSiswa() {
     const selectAll = document.getElementById('selectAllGuru');
     if (!selectAll) return; // hanya aktif di tab guru
 
+    // Simpan data terpilih di sini — sumber kebenaran tunggal
+    var guruTerpilih = {}; // { id: nama }
+
     function updateSeleksi() {
-        const dipilih = document.querySelectorAll('.guru-checkbox:checked');
-        const jumlah = dipilih.length;
+        // Sinkronkan guruTerpilih dengan state checkbox saat ini
+        document.querySelectorAll('.guru-checkbox').forEach(function (cb) {
+            if (cb.checked) {
+                guruTerpilih[cb.value] = cb.dataset.nama;
+            } else {
+                delete guruTerpilih[cb.value];
+            }
+        });
 
-        document.querySelectorAll('#jumlahDipilih, #jumlahDipilih2').forEach(el => el.textContent = jumlah);
+        var jumlah = Object.keys(guruTerpilih).length;
 
-        const btnReset = document.getElementById('btnResetMassal');
-        const infoSeleksi = document.getElementById('infoSeleksi');
+        document.querySelectorAll('#jumlahDipilih, #jumlahDipilih2').forEach(function (el) {
+            el.textContent = jumlah;
+        });
+
+        var btnReset = document.getElementById('btnResetMassal');
+        var infoSeleksi = document.getElementById('infoSeleksi');
         if (jumlah > 0) {
             btnReset.style.display = 'inline-block';
-            infoSeleksi.style.display = 'inline';
+            if (infoSeleksi) infoSeleksi.style.display = 'inline';
         } else {
             btnReset.style.display = 'none';
-            infoSeleksi.style.display = 'none';
+            if (infoSeleksi) infoSeleksi.style.display = 'none';
             selectAll.checked = false;
         }
 
         // Highlight baris
         document.querySelectorAll('.guru-checkbox').forEach(function (cb) {
-            const row = cb.closest('tr');
+            var row = cb.closest('tr');
             if (cb.checked) row.classList.add('selected-row');
             else row.classList.remove('selected-row');
         });
@@ -485,7 +497,9 @@ function toggleImportSiswa() {
 
     // Pilih semua
     selectAll.addEventListener('change', function () {
-        document.querySelectorAll('.guru-checkbox').forEach(cb => cb.checked = this.checked);
+        document.querySelectorAll('.guru-checkbox').forEach(function (cb) {
+            cb.checked = selectAll.checked;
+        });
         updateSeleksi();
     });
 
@@ -494,34 +508,40 @@ function toggleImportSiswa() {
         if (e.target.classList.contains('guru-checkbox')) updateSeleksi();
     });
 
-    // Isi modal sebelum tampil
-    const modal = document.getElementById('modalResetPassword');
-    if (modal) {
-        modal.addEventListener('show.bs.modal', function () {
-            const dipilih = document.querySelectorAll('.guru-checkbox:checked');
-            const hiddenIds = document.getElementById('hiddenIds');
+    // Tombol Reset diklik → isi modal dari guruTerpilih (BUKAN dari DOM checkbox)
+    var btnReset = document.getElementById('btnResetMassal');
+    if (btnReset) {
+        btnReset.addEventListener('click', function () {
+            var ids = Object.keys(guruTerpilih);
+            var hiddenIds = document.getElementById('hiddenIds');
             hiddenIds.innerHTML = '';
-            let html = '';
-            dipilih.forEach(function (cb) {
-                const input = document.createElement('input');
+            var html = '';
+
+            ids.forEach(function (id) {
+                var input = document.createElement('input');
                 input.type = 'hidden';
                 input.name = 'ids[]';
-                input.value = cb.value;
+                input.value = id;
                 hiddenIds.appendChild(input);
-                html += '<div><i class="fas fa-user-circle mr-1 text-muted"></i>' + cb.dataset.nama + '</div>';
+                html += '<div><i class="fas fa-user-circle mr-1 text-muted"></i>' + guruTerpilih[id] + '</div>';
             });
+
             document.getElementById('daftarNamaGuru').innerHTML = html || '<em class="text-muted">Tidak ada guru dipilih</em>';
-            document.getElementById('modalJumlah').textContent = dipilih.length;
+            document.getElementById('modalJumlah').textContent = ids.length;
         });
     }
 
-    // Cegah submit kosong
-    const form = document.getElementById('formResetMassal');
+    // Cegah submit jika benar-benar kosong, dan minta konfirmasi
+    var form = document.getElementById('formResetMassal');
     if (form) {
         form.addEventListener('submit', function (e) {
-            if (!document.querySelector('#hiddenIds input')) {
+            if (document.querySelectorAll('#hiddenIds input').length === 0) {
                 e.preventDefault();
                 alert('Tidak ada guru yang dipilih.');
+                return;
+            }
+            if (!confirm('Yakin reset password semua guru yang dipilih?')) {
+                e.preventDefault();
             }
         });
     }
