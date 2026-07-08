@@ -296,11 +296,16 @@ exports.syncFromCBT = async (req, res) => {
 exports.exportExcel = async (req, res) => {
   try {
     const [guru] = await db.query(
-      'SELECT nip, nama, jenis_kelamin, mata_pelajaran, jabatan, email, telepon, alamat, guru_username FROM guru ORDER BY nama ASC'
+      'SELECT nip, nama, jenis_kelamin, mata_pelajaran, jabatan, email, telepon, alamat, guru_username, guru_password FROM guru ORDER BY nama ASC'
     );
 
-    // Password tidak bisa di-export karena tersimpan sebagai hash.
-    // Kolom Password dikosongkan — isi jika ingin set/ganti password saat import ulang.
+    // Password disimpan sebagai bcrypt hash sehingga tidak bisa dibaca kembali.
+    // - Guru yang belum punya password → tampilkan "Guru@1234" (password default)
+    // - Guru yang sudah punya password → tampilkan "Guru@1234" sebagai saran reset,
+    //   kolom Keterangan akan menandai bahwa password sebelumnya sudah pernah diset.
+    // Saat import ulang, kolom Password ini akan diproses dan di-hash ulang.
+    const DEFAULT_PASSWORD = 'Guru@1234';
+
     const data = guru.length > 0
       ? guru.map((g, i) => ({
           No: i + 1,
@@ -313,11 +318,12 @@ exports.exportExcel = async (req, res) => {
           Telepon: g.telepon || '',
           Alamat: g.alamat || '',
           Username: g.guru_username || '',
-          Password: '' // Kosongkan — isi jika ingin mengubah password
+          Password: DEFAULT_PASSWORD,
+          Keterangan: g.guru_password ? 'Password lama akan direset jika diimport' : 'Belum punya password'
         }))
       : [{
           No: '', NIP: '', Nama: '', 'Jenis Kelamin': '', 'Mata Pelajaran': '',
-          Jabatan: '', Email: '', Telepon: '', Alamat: '', Username: '', Password: ''
+          Jabatan: '', Email: '', Telepon: '', Alamat: '', Username: '', Password: '', Keterangan: ''
         }];
 
     const ws = XLSX.utils.json_to_sheet(data);
@@ -334,7 +340,8 @@ exports.exportExcel = async (req, res) => {
       { wch: 15 }, // Telepon
       { wch: 40 }, // Alamat
       { wch: 20 }, // Username
-      { wch: 20 }, // Password
+      { wch: 15 }, // Password
+      { wch: 40 }, // Keterangan
     ];
 
     const wb = XLSX.utils.book_new();
@@ -364,7 +371,8 @@ exports.downloadTemplate = (req, res) => {
       Telepon: '08123456789',
       Alamat: 'Jl. Contoh No. 1, Kota',
       Username: 'budi.santoso',
-      Password: 'password123' // Kosongkan jika tidak ingin mengubah password
+      Password: 'Guru@1234', // Isi password yang diinginkan, kosongkan untuk tidak mengubah
+      Keterangan: '' // Kolom ini diabaikan saat import
     }
   ];
 
@@ -382,7 +390,8 @@ exports.downloadTemplate = (req, res) => {
     { wch: 15 }, // Telepon
     { wch: 40 }, // Alamat
     { wch: 20 }, // Username
-    { wch: 20 }, // Password
+    { wch: 15 }, // Password
+    { wch: 40 }, // Keterangan
   ];
 
   const wb = XLSX.utils.book_new();
