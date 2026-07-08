@@ -139,4 +139,12 @@ app.use((err, req, res, next) => {
 app.listen(PORT, HOST, () => {
   console.log(`Server berjalan di http://${HOST}:${PORT}`);
   console.log(`Admin panel: http://${HOST}:${PORT}/admin`);
+
+  // Generate PWA icons saat startup jika belum ada
+  try {
+    const { generateAll } = require('./scripts/generate-pwa-icons');
+    generateAll();
+  } catch (e) {
+    console.warn('[PWA Icons] Gagal generate icons:', e.message);
+  }
 });
