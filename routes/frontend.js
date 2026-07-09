@@ -178,18 +178,27 @@ router.get('/sitemap.xml', async (req, res) => {
     const baseUrl = 'https://smkn1kras.sch.id';
     const now = new Date().toISOString().split('T')[0];
 
+    // Encode URL agar karakter spesial tidak merusak XML
+    function safeUrl(url) {
+      return url
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
     const [[berita], [artikel], [jurusan], [halaman], [agenda], [prestasi]] = await Promise.all([
-      db.query("SELECT slug, updated_at FROM berita WHERE status='published' ORDER BY updated_at DESC"),
-      db.query("SELECT slug, updated_at FROM artikel WHERE status='published' ORDER BY updated_at DESC"),
-      db.query("SELECT kode FROM jurusan WHERE status='aktif'"),
-      db.query("SELECT slug FROM halaman WHERE status='aktif'"),
-      db.query("SELECT slug FROM agenda WHERE status='aktif' AND slug IS NOT NULL"),
-      db.query("SELECT slug FROM prestasi WHERE status='published' AND slug IS NOT NULL"),
+      db.query("SELECT slug, updated_at FROM berita WHERE status='published' AND slug IS NOT NULL AND slug != '' ORDER BY updated_at DESC"),
+      db.query("SELECT slug, updated_at FROM artikel WHERE status='published' AND slug IS NOT NULL AND slug != '' ORDER BY updated_at DESC"),
+      db.query("SELECT kode FROM jurusan WHERE status='aktif' AND kode IS NOT NULL"),
+      db.query("SELECT slug FROM halaman WHERE status='aktif' AND slug IS NOT NULL AND slug != ''"),
+      db.query("SELECT slug FROM agenda WHERE status='aktif' AND slug IS NOT NULL AND slug != ''"),
+      db.query("SELECT slug FROM prestasi WHERE status='published' AND slug IS NOT NULL AND slug != ''"),
     ]);
 
-    // Halaman statis dengan prioritas
     const staticPages = [
-      { url: '',                pri: '1.0', freq: 'daily'   },
+      { url: '/',               pri: '1.0', freq: 'daily'   },
       { url: '/berita',         pri: '0.9', freq: 'daily'   },
       { url: '/profil',         pri: '0.8', freq: 'monthly' },
       { url: '/jurusan',        pri: '0.8', freq: 'monthly' },
@@ -216,40 +225,90 @@ router.get('/sitemap.xml', async (req, res) => {
       { url: '/kontak',         pri: '0.5', freq: 'monthly' },
     ];
 
-    let urls = staticPages.map(p => `
-  <url>
+    const urlEntries = [];
+
+    staticPages.forEach(p => {
+      urlEntries.push(`  <url>
     <loc>${baseUrl}${p.url}</loc>
     <lastmod>${now}</lastmod>
     <changefreq>${p.freq}</changefreq>
     <priority>${p.pri}</priority>
-  </url>`).join('');
+  </url>`);
+    });
 
     berita.forEach(b => {
+      if (!b.slug) return;
       const d = b.updated_at ? new Date(b.updated_at).toISOString().split('T')[0] : now;
-      urls += `\n  <url><loc>${baseUrl}/berita/${b.slug}</loc><lastmod>${d}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>`;
-    });
-    artikel.forEach(a => {
-      const d = a.updated_at ? new Date(a.updated_at).toISOString().split('T')[0] : now;
-      urls += `\n  <url><loc>${baseUrl}/artikel/${a.slug}</loc><lastmod>${d}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>`;
-    });
-    jurusan.forEach(j => {
-      urls += `\n  <url><loc>${baseUrl}/jurusan/${j.kode.toLowerCase()}</loc><lastmod>${now}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>`;
-    });
-    halaman.forEach(h => {
-      urls += `\n  <url><loc>${baseUrl}/page/${h.slug}</loc><lastmod>${now}</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>`;
-    });
-    agenda.forEach(a => {
-      if (a.slug) urls += `\n  <url><loc>${baseUrl}/agenda/${a.slug}</loc><lastmod>${now}</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>`;
-    });
-    prestasi.forEach(p => {
-      if (p.slug) urls += `\n  <url><loc>${baseUrl}/prestasi/${p.slug}</loc><lastmod>${now}</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>`;
+      urlEntries.push(`  <url>
+    <loc>${safeUrl(`${baseUrl}/berita/${b.slug}`)}</loc>
+    <lastmod>${d}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>`);
     });
 
-    res.type('application/xml');
-    res.send(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}\n</urlset>`);
+    artikel.forEach(a => {
+      if (!a.slug) return;
+      const d = a.updated_at ? new Date(a.updated_at).toISOString().split('T')[0] : now;
+      urlEntries.push(`  <url>
+    <loc>${safeUrl(`${baseUrl}/artikel/${a.slug}`)}</loc>
+    <lastmod>${d}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>`);
+    });
+
+    jurusan.forEach(j => {
+      if (!j.kode) return;
+      urlEntries.push(`  <url>
+    <loc>${safeUrl(`${baseUrl}/jurusan/${j.kode.toLowerCase()}`)}</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>`);
+    });
+
+    halaman.forEach(h => {
+      if (!h.slug) return;
+      urlEntries.push(`  <url>
+    <loc>${safeUrl(`${baseUrl}/page/${h.slug}`)}</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>`);
+    });
+
+    agenda.forEach(a => {
+      if (!a.slug) return;
+      urlEntries.push(`  <url>
+    <loc>${safeUrl(`${baseUrl}/agenda/${a.slug}`)}</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>`);
+    });
+
+    prestasi.forEach(p => {
+      if (!p.slug) return;
+      urlEntries.push(`  <url>
+    <loc>${safeUrl(`${baseUrl}/prestasi/${p.slug}`)}</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>`);
+    });
+
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urlEntries.join('\n')}
+</urlset>`;
+
+    res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, max-age=3600'); // cache 1 jam
+    res.send(xml);
   } catch (e) {
     console.error('Sitemap error:', e);
-    res.status(500).send('Error generating sitemap');
+    res.status(500).type('text/plain').send('Error generating sitemap');
   }
 });
 
