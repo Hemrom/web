@@ -13,6 +13,16 @@ app.set('trust proxy', 1);
 // Health check
 app.get('/healthz', (req, res) => res.status(200).send('ok'));
 
+// ── Redirect domain kedua ke domain utama (canonical) ────────────────────────
+// smknegeri1kras.sch.id → smkn1kras.sch.id (301 permanent)
+app.use((req, res, next) => {
+  const host = req.hostname || '';
+  if (host === 'smknegeri1kras.sch.id' || host === 'www.smknegeri1kras.sch.id' || host === 'www.smkn1kras.sch.id') {
+    return res.redirect(301, `https://smkn1kras.sch.id${req.originalUrl}`);
+  }
+  next();
+});
+
 // Compression (gzip) — harus sebelum semua middleware lain
 app.use(compression({ level: 6, threshold: 512 }));
 

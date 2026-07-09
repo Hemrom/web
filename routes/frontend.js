@@ -125,13 +125,13 @@ router.get('/ekstrakurikuler', portalController.ekstrakurikulerIndex);
 // SEO
 router.get('/robots.txt', (req, res) => {
   res.type('text/plain');
-  // Hanya blokir halaman admin dan login portal — halaman publik ekskul tetap bisa diindex
   res.send([
     'User-agent: *',
     'Allow: /',
     '',
     '# Halaman admin - tidak perlu diindex',
     'Disallow: /admin',
+    'Disallow: /guru/portal',
     '',
     '# Login portal operator ekskul - tidak perlu diindex',
     'Disallow: /bkk/login',
@@ -162,14 +162,14 @@ router.get('/robots.txt', (req, res) => {
     'Disallow: /pecinta-alam/dashboard',
     'Disallow: /pencak-silat/dashboard',
     '',
-    'Sitemap: https://smknegeri1kras.sch.id/sitemap.xml'
+    'Sitemap: https://smkn1kras.sch.id/sitemap.xml'
   ].join('\n'));
 });
 
 router.get('/sitemap.xml', async (req, res) => {
   try {
     const db = require('../config/database');
-    const baseUrl = 'https://smknegeri1kras.sch.id';
+    const baseUrl = 'https://smkn1kras.sch.id';
     const now = new Date().toISOString().split('T')[0];
 
     const [[berita], [artikel], [jurusan], [halaman], [agenda], [prestasi]] = await Promise.all([
@@ -183,35 +183,40 @@ router.get('/sitemap.xml', async (req, res) => {
 
     // Halaman statis dengan prioritas
     const staticPages = [
-      { url: '',               pri: '1.0', freq: 'daily'   },
-      { url: '/berita',        pri: '0.9', freq: 'daily'   },
-      { url: '/profil',        pri: '0.8', freq: 'monthly' },
-      { url: '/jurusan',       pri: '0.8', freq: 'monthly' },
-      { url: '/galeri',        pri: '0.7', freq: 'weekly'  },
-      { url: '/prestasi',      pri: '0.7', freq: 'weekly'  },
-      { url: '/fasilitas',     pri: '0.7', freq: 'monthly' },
-      { url: '/guru',          pri: '0.6', freq: 'monthly' },
-      { url: '/ekstrakurikuler',pri:'0.7', freq: 'monthly' },
-      { url: '/bkk',           pri: '0.7', freq: 'weekly'  },
-      { url: '/alumni',        pri: '0.6', freq: 'monthly' },
-      { url: '/artikel',       pri: '0.7', freq: 'weekly'  },
-      { url: '/agenda',        pri: '0.7', freq: 'weekly'  },
-      { url: '/osis',          pri: '0.6', freq: 'monthly' },
-      { url: '/pramuka',       pri: '0.6', freq: 'monthly' },
-      { url: '/pmr',           pri: '0.6', freq: 'monthly' },
-      { url: '/paskibraka',    pri: '0.6', freq: 'monthly' },
-      { url: '/olahraga',      pri: '0.6', freq: 'monthly' },
-      { url: '/seni',          pri: '0.6', freq: 'monthly' },
-      { url: '/bahasa-asing',  pri: '0.6', freq: 'monthly' },
-      { url: '/rohis',         pri: '0.6', freq: 'monthly' },
-      { url: '/pikr',          pri: '0.6', freq: 'monthly' },
-      { url: '/pecinta-alam',  pri: '0.6', freq: 'monthly' },
-      { url: '/pencak-silat',  pri: '0.6', freq: 'monthly' },
-      { url: '/kontak',        pri: '0.5', freq: 'monthly' },
+      { url: '',                pri: '1.0', freq: 'daily'   },
+      { url: '/berita',         pri: '0.9', freq: 'daily'   },
+      { url: '/profil',         pri: '0.8', freq: 'monthly' },
+      { url: '/jurusan',        pri: '0.8', freq: 'monthly' },
+      { url: '/galeri',         pri: '0.7', freq: 'weekly'  },
+      { url: '/prestasi',       pri: '0.7', freq: 'weekly'  },
+      { url: '/fasilitas',      pri: '0.7', freq: 'monthly' },
+      { url: '/guru',           pri: '0.6', freq: 'monthly' },
+      { url: '/ekstrakurikuler',pri: '0.7', freq: 'monthly' },
+      { url: '/bkk',            pri: '0.7', freq: 'weekly'  },
+      { url: '/alumni',         pri: '0.6', freq: 'monthly' },
+      { url: '/artikel',        pri: '0.7', freq: 'weekly'  },
+      { url: '/agenda',         pri: '0.7', freq: 'weekly'  },
+      { url: '/osis',           pri: '0.6', freq: 'monthly' },
+      { url: '/pramuka',        pri: '0.6', freq: 'monthly' },
+      { url: '/pmr',            pri: '0.6', freq: 'monthly' },
+      { url: '/paskibraka',     pri: '0.6', freq: 'monthly' },
+      { url: '/olahraga',       pri: '0.6', freq: 'monthly' },
+      { url: '/seni',           pri: '0.6', freq: 'monthly' },
+      { url: '/bahasa-asing',   pri: '0.6', freq: 'monthly' },
+      { url: '/rohis',          pri: '0.6', freq: 'monthly' },
+      { url: '/pikr',           pri: '0.6', freq: 'monthly' },
+      { url: '/pecinta-alam',   pri: '0.6', freq: 'monthly' },
+      { url: '/pencak-silat',   pri: '0.6', freq: 'monthly' },
+      { url: '/kontak',         pri: '0.5', freq: 'monthly' },
     ];
 
     let urls = staticPages.map(p => `
-  <url><loc>${baseUrl}${p.url}</loc><lastmod>${now}</lastmod><changefreq>${p.freq}</changefreq><priority>${p.pri}</priority></url>`).join('');
+  <url>
+    <loc>${baseUrl}${p.url}</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>${p.freq}</changefreq>
+    <priority>${p.pri}</priority>
+  </url>`).join('');
 
     berita.forEach(b => {
       const d = b.updated_at ? new Date(b.updated_at).toISOString().split('T')[0] : now;

@@ -12,7 +12,7 @@
  *
  * Variabel global yang harus tersedia: profil
  */
-const _baseUrl   = 'https://smknegeri1kras.sch.id';
+const _baseUrl   = 'https://smkn1kras.sch.id';
 const _namaSekolah = (typeof profil !== 'undefined' && profil && profil.nama_sekolah)
                       ? profil.nama_sekolah : 'SMK Negeri 1 Kras';
 const _logoUrl   = (typeof profil !== 'undefined' && profil && profil.logo)
@@ -31,6 +31,9 @@ const _fullTitle = `${_seoTitle} - ${_namaSekolah}`;
     <meta name="description" content="<%- _seoDesc.substring(0,160) %>">
     <meta name="robots" content="<%= _noindex ? 'noindex, nofollow' : 'index, follow' %>">
     <meta name="author" content="<%= _namaSekolah %>">
+    <meta name="keywords" content="SMK Negeri 1 Kras, SMKN 1 Kras, sekolah menengah kejuruan Kediri, SMK Kras Kediri, TKR, TKJ, Kuliner, akuntansi Kediri">
+    <meta name="geo.region" content="ID-JI">
+    <meta name="geo.placename" content="Kras, Kediri, Jawa Timur">
     <link rel="canonical" href="<%= _seoUrl %>">
 
     <!-- Open Graph -->
@@ -62,3 +65,49 @@ const _fullTitle = `${_seoTitle} - ${_namaSekolah}`;
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="SMKN 1 Kras">
     <link rel="apple-touch-icon" href="/assets/img/logo-sekolah.png">
+
+    <!-- Structured Data JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "EducationalOrganization",
+      "name": "<%= _namaSekolah %>",
+      "alternateName": ["SMKN 1 Kras", "SMK Negeri 1 Kras", "SMK N 1 Kras"],
+      "url": "https://smkn1kras.sch.id",
+      "logo": "<%= _logoUrl %>",
+      "image": "<%= _seoImage %>",
+      "description": "<%= _seoDesc.substring(0,200).replace(/"/g, '\\"') %>",
+      "sameAs": [
+        "https://smkn1kras.sch.id",
+        "https://smknegeri1kras.sch.id"
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Kras",
+        "addressRegion": "Kediri",
+        "addressCountry": "ID"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "availableLanguage": "Indonesian"
+      }
+    }
+    </script>
+<% if (_seoType === 'article') { %>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "<%- _seoTitle.replace(/"/g, '\\"') %>",
+      "description": "<%- _seoDesc.substring(0,200).replace(/"/g, '\\"') %>",
+      "image": "<%= _seoImage %>",
+      "url": "<%= _seoUrl %>",
+      "publisher": {
+        "@type": "Organization",
+        "name": "<%= _namaSekolah %>",
+        "logo": { "@type": "ImageObject", "url": "<%= _logoUrl %>" }
+      }
+    }
+    </script>
+<% } %>
