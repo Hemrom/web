@@ -82,6 +82,7 @@ app.use((req, res, next) => {
     req.path.startsWith('/offline') ||
     req.path.startsWith('/sw.js') ||
     req.path.startsWith('/manifest.json') ||
+    req.path.startsWith('/google49e50901a00a9978.html') ||
     req.path.startsWith('/healthz')
   ) {
     return next();

@@ -13,6 +13,12 @@ router.get('/offline', function (req, res) {
   res.render('frontend/offline', { title: 'Offline' });
 });
 
+// Google Search Console verification
+router.get('/google49e50901a00a9978.html', function (req, res) {
+  res.type('text/html');
+  res.send('google-site-verification: google49e50901a00a9978.html');
+});
+
 router.get('/', frontendController.home);
 router.get('/profil', frontendController.profil);
 router.get('/profil/visi-misi', frontendController.visiMisi);
