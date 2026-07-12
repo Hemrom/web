@@ -17,10 +17,15 @@
 <body>
 <%- include('../partials/navbar') %>
 <div class="container py-4">
-    <div class="d-flex align-items-center justify-content-between mb-4">
-        <div>
-            <h4 class="fw-bold mb-1">Artikel Saya</h4>
-            <p class="text-muted small mb-0">Kelola artikel yang Anda tulis</p>
+    <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+        <div class="d-flex align-items-center gap-2">
+            <a href="/guru/dashboard" class="btn btn-outline-secondary btn-sm" title="Kembali ke Dashboard">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div>
+                <h4 class="fw-bold mb-0">Artikel Saya</h4>
+                <p class="text-muted small mb-0">Kelola artikel yang Anda tulis</p>
+            </div>
         </div>
         <a href="/guru/artikel/create" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Tulis Artikel</a>
     </div>
