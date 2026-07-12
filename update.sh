@@ -58,7 +58,7 @@ echo -e "${GREEN}  ✓ Migrasi selesai${NC}"
 
 # ── 5. Buat folder yang dibutuhkan ────────────────────────────
 echo -e "${YELLOW}[5/6] Cek folder uploads & logs...${NC}"
-mkdir -p uploads logs
+mkdir -p uploads logs uploads/sk uploads/files
 echo -e "${GREEN}  ✓ Folder siap${NC}"
 
 # ── 6. Restart aplikasi dengan PM2 ───────────────────────────

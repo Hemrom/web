@@ -554,6 +554,41 @@ async function run() {
       PRIMARY KEY (id),
       UNIQUE KEY slug (slug)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+
+    // SK Guru (SK Mengajar & SK Tugas Tambahan)
+    `CREATE TABLE IF NOT EXISTS sk_guru (
+      id INT(11) NOT NULL AUTO_INCREMENT,
+      judul VARCHAR(255) NOT NULL,
+      jenis ENUM('sk_mengajar','sk_tugas_tambahan','lainnya') NOT NULL DEFAULT 'sk_mengajar',
+      nomor_sk VARCHAR(100) DEFAULT NULL,
+      tahun_ajaran VARCHAR(20) DEFAULT NULL,
+      tanggal_sk DATE DEFAULT NULL,
+      deskripsi TEXT DEFAULT NULL,
+      nama_file VARCHAR(255) NOT NULL,
+      nama_file_asli VARCHAR(255) DEFAULT NULL,
+      ukuran_file VARCHAR(30) DEFAULT NULL,
+      tipe_file VARCHAR(10) DEFAULT NULL,
+      status ENUM('aktif','nonaktif') DEFAULT 'aktif',
+      dibuat_oleh INT(11) DEFAULT NULL,
+      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      PRIMARY KEY (id),
+      KEY idx_jenis (jenis),
+      KEY idx_status (status)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci`,
+
+    // Relasi SK Guru dengan penerima (guru)
+    `CREATE TABLE IF NOT EXISTS sk_guru_penerima (
+      id INT(11) NOT NULL AUTO_INCREMENT,
+      sk_id INT(11) NOT NULL,
+      guru_id INT(11) NOT NULL,
+      dibaca TINYINT(1) DEFAULT 0,
+      tanggal_dibaca DATETIME DEFAULT NULL,
+      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      PRIMARY KEY (id),
+      UNIQUE KEY unique_sk_guru (sk_id, guru_id),
+      KEY idx_guru_id (guru_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci`,
   ];
 
   let ok = 0, skip = 0;
