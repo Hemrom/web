@@ -64,10 +64,19 @@ exports.dashboard = async (req, res) => {
       'SELECT id, judul, slug, gambar, created_at FROM berita WHERE status = "published" ORDER BY created_at DESC LIMIT 5'
     );
 
+    // Agenda mendatang (5) — tampilkan yang tanggal mulai >= hari ini
+    const [agenda] = await db.query(
+      `SELECT id, judul, slug, tanggal_mulai, tanggal_selesai, waktu_mulai, lokasi
+       FROM agenda
+       WHERE status = 'aktif' AND tanggal_mulai >= CURDATE()
+       ORDER BY tanggal_mulai ASC LIMIT 5`
+    );
+
     res.render('guru/dashboard', {
       title: 'Dashboard Guru',
       guru,
-      berita
+      berita,
+      agenda
     });
   } catch (err) {
     console.error(err);
