@@ -34,4 +34,9 @@ router.get('/file-download/edit/:id', isGuruAuthenticated, fileCtrl.guruEditPage
 router.post('/file-download/edit/:id', isGuruAuthenticated, csrfProtect, fileCtrl.guruUpdate);
 router.post('/file-download/delete/:id', isGuruAuthenticated, csrfProtect, fileCtrl.guruDelete);
 
+// SK Saya (guru)
+const skGuruCtrl = require('../controllers/skGuruController');
+router.get('/sk-saya', isGuruAuthenticated, skGuruCtrl.guruIndex);
+router.get('/sk-saya/download/:id', isGuruAuthenticated, skGuruCtrl.guruDownload);
+
 module.exports = router;

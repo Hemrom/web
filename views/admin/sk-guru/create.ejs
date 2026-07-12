@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= title %> - Admin Panel</title>
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png?v=4">
+    <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet">
+    <style>
+        .guru-search-box { position: relative; }
+        .guru-list-container {
+            max-height: 320px;
+            overflow-y: auto;
+            border: 1px solid #e3e6f0;
+            border-radius: 0.35rem;
+        }
+        .guru-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.6rem 1rem;
+            cursor: pointer;
+            transition: background .15s;
+            border-bottom: 1px solid #f8f9fc;
+        }
+        .guru-item:hover { background: #f1f5ff; }
+        .guru-item input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; flex-shrink: 0; }
+        .guru-item.selected { background: #e8f0fe; }
+        .guru-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid #dee2e6; flex-shrink:0; }
+        .guru-avatar-placeholder { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg,#4e73df,#224abe); display:flex; align-items:center; justify-content:center; color:white; font-size:.85rem; flex-shrink:0; }
+        .selected-count { font-size: .85rem; color: #4e73df; font-weight: 600; }
+        .btn-select-all { font-size: .8rem; }
+    </style>
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <%- include('../partials/sidebar') %>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <%- include('../partials/topbar', { user }) %>
+            <div class="container-fluid">
+
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800"><i class="fas fa-upload mr-2 text-primary"></i>Upload SK Guru</h1>
+                    <a href="/admin/sk-guru" class="btn btn-sm btn-secondary shadow-sm">
+                        <i class="fas fa-arrow-left fa-sm mr-1"></i>Kembali
+                    </a>
+                </div>
+
+                <% if (error) { %>
+                <div class="alert alert-danger alert-dismissible fade show">
+                    <i class="fas fa-exclamation-triangle mr-1"></i><%= error %>
+                    <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
+                </div>
+                <% } %>
+
+                <form action="/admin/sk-guru/create" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <div class="row">
+
+                        <!-- Kolom kiri: Info SK -->
+                        <div class="col-lg-7">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-file-alt mr-2"></i>Informasi SK</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Jenis SK <span class="text-danger">*</span></label>
+                                        <div class="d-flex gap-3 flex-wrap">
+                                            <div class="custom-control custom-radio custom-control-inline">
+                                                <input type="radio" id="jenisMengajar" name="jenis" value="sk_mengajar" class="custom-control-input" checked>
+                                                <label class="custom-control-label" for="jenisMengajar">
+                                                    <i class="fas fa-chalkboard-teacher text-primary mr-1"></i>SK Mengajar
+                                                </label>
+                                            </div>
+                                            <div class="custom-control custom-radio custom-control-inline">
+                                                <input type="radio" id="jenisTugas" name="jenis" value="sk_tugas_tambahan" class="custom-control-input">
+                                                <label class="custom-control-label" for="jenisTugas">
+                                                    <i class="fas fa-briefcase text-success mr-1"></i>SK Tugas Tambahan
+                                                </label>
+                                            </div>
+                                            <div class="custom-control custom-radio custom-control-inline">
+                                                <input type="radio" id="jenisLainnya" name="jenis" value="lainnya" class="custom-control-input">
+                                                <label class="custom-control-label" for="jenisLainnya">
+                                                    <i class="fas fa-file text-secondary mr-1"></i>Lainnya
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Judul SK <span class="text-danger">*</span></label>
+                                        <input type="text" name="judul" class="form-control" required
+                                               placeholder="Contoh: SK Mengajar Semester Ganjil 2025/2026">
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label class="font-weight-bold">Nomor SK</label>
+                                            <input type="text" name="nomor_sk" class="form-control"
+                                                   placeholder="Contoh: 421/SK/2025/001">
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label class="font-weight-bold">Tahun Ajaran</label>
+                                            <input type="text" name="tahun_ajaran" class="form-control"
+                                                   placeholder="Contoh: 2025/2026">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Tanggal SK</label>
+                                        <input type="date" name="tanggal_sk" class="form-control">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Deskripsi</label>
+                                        <textarea name="deskripsi" class="form-control" rows="3"
+                                                  placeholder="Keterangan tambahan tentang SK ini (opsional)"></textarea>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Status</label>
+                                        <select name="status" class="form-control">
+                                            <option value="aktif">Aktif (guru dapat melihat & download)</option>
+                                            <option value="nonaktif">Nonaktif (disembunyikan dari guru)</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Upload File -->
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">File SK <span class="text-danger">*</span></label>
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" id="fileSK" name="file_sk"
+                                                   accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.rar" required>
+                                            <label class="custom-file-label" for="fileSK">Pilih file...</label>
+                                        </div>
+                                        <small class="form-text text-muted mt-1">
+                                            <i class="fas fa-info-circle mr-1"></i>
+                                            Format: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, ZIP, RAR. Maks. 20 MB.
+                                        </small>
+                                        <div id="filePreview" class="mt-2" style="display:none;">
+                                            <div class="alert alert-info py-2 mb-0">
+                                                <i class="fas fa-file mr-1"></i>
+                                                <span id="fileName"></span>
+                                                <span class="badge badge-secondary ml-2" id="fileSize"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Kolom kanan: Pilih Penerima -->
+                        <div class="col-lg-5">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                                    <h6 class="m-0 font-weight-bold text-primary">
+                                        <i class="fas fa-users mr-2"></i>Pilih Penerima
+                                    </h6>
+                                    <span class="selected-count">
+                                        <span id="selectedCount">0</span> guru dipilih
+                                    </span>
+                                </div>
+                                <div class="card-body pb-2">
+                                    <div class="d-flex gap-2 mb-2 flex-wrap">
+                                        <button type="button" class="btn btn-sm btn-outline-primary btn-select-all" id="btnPilihSemua">
+                                            <i class="fas fa-check-double mr-1"></i>Pilih Semua
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary btn-select-all" id="btnBatalSemua">
+                                            <i class="fas fa-times mr-1"></i>Batal Semua
+                                        </button>
+                                    </div>
+
+                                    <!-- Pencarian guru -->
+                                    <div class="guru-search-box mb-2">
+                                        <div class="input-group input-group-sm">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                            </div>
+                                            <input type="text" id="searchGuru" class="form-control" placeholder="Cari nama guru...">
+                                        </div>
+                                    </div>
+
+                                    <div class="guru-list-container" id="guruList">
+                                        <% if (!guruList.length) { %>
+                                        <div class="text-center text-muted py-3">
+                                            <i class="fas fa-user-slash fa-2x mb-2 d-block"></i>
+                                            Belum ada data guru
+                                        </div>
+                                        <% } %>
+                                        <% guruList.forEach(g => { %>
+                                        <label class="guru-item mb-0" data-nama="<%= g.nama.toLowerCase() %>">
+                                            <input type="checkbox" name="guru_ids[]" value="<%= g.id %>"
+                                                   onchange="updateCount()">
+                                            <% if (false) { /* placeholder, foto tidak ditampilkan di admin listing */ } %>
+                                            <div class="guru-avatar-placeholder">
+                                                <%= g.nama.charAt(0).toUpperCase() %>
+                                            </div>
+                                            <div class="flex-grow-1 overflow-hidden">
+                                                <div class="font-weight-bold text-dark" style="font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                                    <%= g.nama %>
+                                                </div>
+                                                <div class="text-muted" style="font-size:.75rem;">
+                                                    <%= g.jabatan || 'Guru' %><% if (g.nip) { %> · NIP: <%= g.nip %><% } %>
+                                                </div>
+                                            </div>
+                                        </label>
+                                        <% }) %>
+                                    </div>
+
+                                    <small class="text-muted d-block mt-2">
+                                        <i class="fas fa-info-circle mr-1"></i>
+                                        SK akan muncul di portal setiap guru yang dipilih.
+                                    </small>
+                                </div>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-block btn-lg shadow-sm">
+                                    <i class="fas fa-upload mr-2"></i>Upload & Kirim SK
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+
+            </div>
+        </div>
+        <%- include('../partials/footer') %>
+    </div>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/js/sb-admin-2.min.js"></script>
+<script>
+// File input label
+document.getElementById('fileSK').addEventListener('change', function() {
+    const file = this.files[0];
+    if (file) {
+        document.querySelector('.custom-file-label').textContent = file.name;
+        document.getElementById('fileName').textContent = file.name;
+        const size = file.size < 1024*1024
+            ? (file.size/1024).toFixed(1)+' KB'
+            : (file.size/1024/1024).toFixed(1)+' MB';
+        document.getElementById('fileSize').textContent = size;
+        document.getElementById('filePreview').style.display = '';
+    }
+});
+
+// Hitung guru dipilih
+function updateCount() {
+    const checked = document.querySelectorAll('input[name="guru_ids[]"]:checked').length;
+    document.getElementById('selectedCount').textContent = checked;
+    document.querySelectorAll('.guru-item').forEach(item => {
+        const cb = item.querySelector('input[type="checkbox"]');
+        item.classList.toggle('selected', cb && cb.checked);
+    });
+}
+
+// Pilih semua
+document.getElementById('btnPilihSemua').addEventListener('click', function() {
+    document.querySelectorAll('#guruList input[type="checkbox"]').forEach(cb => cb.checked = true);
+    updateCount();
+});
+
+// Batal semua
+document.getElementById('btnBatalSemua').addEventListener('click', function() {
+    document.querySelectorAll('#guruList input[type="checkbox"]').forEach(cb => cb.checked = false);
+    updateCount();
+});
+
+// Search guru
+document.getElementById('searchGuru').addEventListener('input', function() {
+    const q = this.value.toLowerCase();
+    document.querySelectorAll('#guruList .guru-item').forEach(item => {
+        const nama = item.getAttribute('data-nama') || '';
+        item.style.display = nama.includes(q) ? '' : 'none';
+    });
+});
+</script>
+</body>
+</html>

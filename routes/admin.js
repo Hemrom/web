@@ -19,6 +19,7 @@ const portalController = require('../controllers/portalController');
 const artikelController = require('../controllers/artikelController');
 const fileDownloadController = require('../controllers/fileDownloadController');
 const agendaController = require('../controllers/agendaController');
+const skGuruController = require('../controllers/skGuruController');
 
 const { loginLimiter, uploadLimiter, formLimiter } = require('../middleware/security');
 const { csrfProtect } = require('../middleware/csrf');
@@ -422,5 +423,14 @@ router.post('/agenda/create', isAuthenticated, csrfProtect, uploadLimiter, agend
 router.get('/agenda/edit/:id', isAuthenticated, validateIdParam, agendaController.adminEditPage);
 router.post('/agenda/edit/:id', isAuthenticated, csrfProtect, validateIdParam, uploadLimiter, agendaController.adminUpdate);
 router.post('/agenda/delete/:id', isAuthenticated, csrfProtect, validateIdParam, agendaController.adminDelete);
+
+// SK Guru (SK Mengajar & SK Tugas Tambahan)
+router.get('/sk-guru', isAuthenticated, skGuruController.adminIndex);
+router.get('/sk-guru/create', isAuthenticated, skGuruController.adminCreatePage);
+router.post('/sk-guru/create', isAuthenticated, csrfProtect, uploadLimiter, skGuruController.adminCreate);
+router.get('/sk-guru/detail/:id', isAuthenticated, validateIdParam, skGuruController.adminDetail);
+router.get('/sk-guru/edit/:id', isAuthenticated, validateIdParam, skGuruController.adminEditPage);
+router.post('/sk-guru/edit/:id', isAuthenticated, csrfProtect, validateIdParam, uploadLimiter, skGuruController.adminUpdate);
+router.post('/sk-guru/delete/:id', isAuthenticated, csrfProtect, validateIdParam, skGuruController.adminDelete);
 
 module.exports = router;

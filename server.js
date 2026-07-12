@@ -47,6 +47,12 @@ app.use(express.static('public', staticOpts));
 app.use('/assets', express.static('assets', staticOpts));
 app.use('/uploads', express.static('uploads', { maxAge: '60d', etag: true, immutable: false }));
 
+// Proteksi: file SK tidak boleh diakses langsung via URL /uploads/sk/*
+// Hanya bisa didownload lewat /guru/sk-saya/download/:id (dicek kepemilikan)
+app.use('/uploads/sk', (req, res) => {
+  res.status(403).send('Akses ditolak');
+});
+
 // Rate limiter hanya untuk request dinamis (bukan static assets)
 app.use(generalLimiter);
 
